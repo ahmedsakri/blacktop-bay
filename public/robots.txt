@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://blacktop-bay.web.app/sitemap.xml

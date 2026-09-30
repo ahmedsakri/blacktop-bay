@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#08121e" />
+    <meta
+      name="description"
+      content="A coastal arcade racer from AppsOverFlow. Chase your best time across a waterfront circuit with a red sports coupe, responsive drifting and keyboard or touch controls."
+    />
+    <meta name="robots" content="index,follow,max-image-preview:large" />
+    <link rel="canonical" href="https://blacktop-bay.web.app/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Blacktop Bay — Own the corner." />
+    <meta
+      property="og:description"
+      content="Three laps. One waterfront. Your next best. Play an original 3D coastal drift racer by AppsOverFlow."
+    />
+    <meta property="og:url" content="https://blacktop-bay.web.app/" />
+    <meta
+      property="og:image"
+      content="https://blacktop-bay.web.app/assets/blacktop-bay-gameplay.png"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "VideoGame",
+        "name": "Blacktop Bay",
+        "url": "https://blacktop-bay.web.app/",
+        "description": "A free 3D coastal arcade racer with three-lap time trials, drift scoring and a personal-best ghost.",
+        "genre": ["Racing", "Arcade"],
+        "gamePlatform": "Web browser",
+        "playMode": "SinglePlayer",
+        "author": {
+          "@type": "Organization",
+          "name": "AppsOverFlow",
+          "url": "https://appsoverflow.web.app/"
+        },
+        "inLanguage": "en",
+        "isAccessibleForFree": true
+      }
+    </script>
+    <title>Blacktop Bay — AppsOverFlow</title>
+    <link rel="icon" href="/assets/mark.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <a class="skip" href="#start">Skip to race controls</a>
+    <div
+      id="scene"
+      aria-label="Three-dimensional waterfront racing circuit"
+    ></div>
+    <div class="vignette" aria-hidden="true"></div>
+    <div id="loading" role="status">
+      <svg viewBox="0 0 100 60" aria-hidden="true">
+        <path fill-rule="evenodd" d="M10 49 27 11h35c21 0 23 13 7 20 10 8-2 18-18 18H10Zm28-29-3 7h22c8 0 12-7 3-7H38Zm-7 15-3 7h24c8 0 12-7 3-7H31Z" /></svg
+      ><span>WARMING UP THE COAST</span>
+    </div>
+    <header class="topbar">
+      <a class="wordmark" href="#" aria-label="Game home" id="home-link"
+        ><svg viewBox="0 0 100 60" aria-hidden="true">
+          <path fill-rule="evenodd" d="M10 49 27 11h35c21 0 23 13 7 20 10 8-2 18-18 18H10Zm28-29-3 7h22c8 0 12-7 3-7H38Zm-7 15-3 7h24c8 0 12-7 3-7H31Z" /></svg
+        ><span
+          ><strong data-brand>BLACKTOP BAY</strong
+          ><small>BY APPSOVERFLOW</small></span
+        ></a
+      >
+      <div class="top-actions">
+        <button
+          class="icon-button"
+          id="sound"
+          aria-label="Turn sound off"
+          title="Sound"
+        >
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path
+              d="M4 9h4l5-4v14l-5-4H4V9Zm12-1c2 2 2 6 0 8m3-11c4 4 4 10 0 14"
+              stroke="currentColor"
+              stroke-width="1.6"
+            />
+          </svg></button
+        ><button
+          class="icon-button"
+          id="fullscreen"
+          aria-label="Enter fullscreen"
+          title="Fullscreen"
+        >
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path
+              d="M8 4H4v4m12-4h4v4M4 16v4h4m12-4v4h-4"
+              stroke="currentColor"
+              stroke-width="1.6"
+            />
+          </svg></button
+        ><button
+          class="icon-button"
+          id="pause"
+          aria-label="Pause race"
+          title="Pause"
+          hidden
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M7 5h3v14H7zm7 0h3v14h-3z" fill="currentColor" />
+          </svg>
+        </button>
+      </div>
+    </header>
+    <main>
+      <section id="menu" class="menu panel-show" aria-labelledby="menu-title">
+        <div class="menu-copy">
+          <p class="eyebrow">
+            <span class="status-dot"></span> THE WATERFRONT CIRCUIT
+          </p>
+          <h1 id="menu-title">
+            Chase the night.<br /><em>Own the corner.</em>
+          </h1>
+          <p class="intro">
+            A redline. A coastline. A little sideways.<br />Three laps between
+            you and your next best.
+          </p>
+          <div class="track-facts">
+            <span><b>01</b> HARBOR AFTERGLOW</span><span><b>03</b> LAPS</span
+            ><span><b id="track-km">1.2</b> KM</span>
+          </div>
+          <button id="start" class="button primary">
+            LET’S DRIVE <span aria-hidden="true">↗</span></button
+          ><button class="text-button" id="how">
+            How to find your line <span aria-hidden="true">→</span>
+          </button>
+          <p class="best-time" id="menu-best">YOUR FIRST NIGHT STARTS HERE.</p>
+        </div>
+        <div class="car-spec">
+          <span class="spec-line"></span>
+          <p>THE COUPE</p>
+          <strong>Built for the <em>long way home.</em></strong>
+          <div>
+            REAR-WHEEL DRIVE <span>·</span> WET ASPHALT <span>·</span> YOU
+          </div>
+        </div>
+        <footer>
+          <a href="https://appsoverflow.web.app/" target="_blank" rel="noopener"
+            >AppsOverFlow ↗</a
+          ><span>MADE FOR ONE MORE LAP.</span
+          ><button id="privacy-link">Privacy</button>
+        </footer>
+      </section>
+      <section id="hud" aria-label="Race information" hidden>
+        <div class="drift-score">
+          <span id="drift-label">FIND YOUR FLOW</span
+          ><strong id="combo">DRIFT <em>×1</em></strong
+          ><b id="score">0</b>
+          <div class="combo-meter"><i id="combo-fill"></i></div>
+        </div>
+        <div class="race-clock">
+          <div><span>LAP</span><b id="lap">1</b><small>/ 3</small></div>
+          <time id="timer">00:00.00</time>
+          <p id="lap-time">FIRST LAP</p>
+        </div>
+        <div class="mini-map">
+          <canvas
+            id="map"
+            width="280"
+            height="280"
+            aria-label="Circuit map"
+          ></canvas
+          ><span id="ghost-label">CYAN · PACE CAR</span>
+        </div>
+        <div class="speedo">
+          <svg viewBox="0 0 160 160" aria-hidden="true">
+            <circle cx="80" cy="80" r="68" />
+            <circle id="speed-arc" cx="80" cy="80" r="68" />
+          </svg>
+          <div>
+            <b id="speed">0</b><span>KM/H</span><small id="gear">N</small>
+          </div>
+        </div>
+        <div class="drive-hint">
+          <kbd>←</kbd><kbd>→</kbd> STEER <span>·</span> <kbd>SPACE</kbd> DRIFT
+          <span>·</span> <kbd>↓</kbd> BRAKE
+        </div>
+        <button id="recover" class="recover" title="Reset to the road (R)">
+          Reset car <span aria-hidden="true">↺</span>
+        </button>
+      </section>
+      <div id="countdown" class="countdown" aria-live="assertive" hidden></div>
+      <div id="toast" class="toast" role="status"></div>
+      <div class="touch-controls" id="touch" hidden>
+        <div class="steering">
+          <button data-input="left" aria-label="Steer left">‹</button
+          ><button data-input="right" aria-label="Steer right">›</button>
+        </div>
+        <div class="pedals">
+          <button data-input="brake" aria-label="Brake">
+            <span>Ⅱ</span><small>BRAKE</small></button
+          ><button
+            data-input="drift"
+            class="drift-pedal"
+            aria-label="Hold to drift"
+          >
+            <svg viewBox="0 0 32 32" aria-hidden="true">
+              <path
+                d="m12 7 12 3-3 12-12-3 3-12ZM6 21l-2 4m10-2-2 5"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              /></svg
+            ><small>DRIFT</small>
+          </button>
+        </div>
+      </div>
+      <div id="modal-backdrop" class="modal-backdrop" hidden>
+        <section
+          id="dialog"
+          class="dialog"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="dialog-title"
+          tabindex="-1"
+        >
+          <p class="eyebrow" id="dialog-eyebrow">TAKE A BREATHER</p>
+          <h2 id="dialog-title">Your coast.<br /><em>Your pace.</em></h2>
+          <div id="dialog-content"></div>
+          <div class="dialog-actions" id="dialog-actions"></div>
+        </section>
+      </div>
+      <div id="unsupported" class="unsupported" hidden>
+        <h2>Let’s get you on the road.</h2>
+        <p>
+          This game needs WebGL 2 graphics. Try a current Safari, Chrome, Edge
+          or Firefox browser with hardware acceleration enabled.
+        </p>
+        <a href="https://appsoverflow.web.app/">Explore AppsOverFlow ↗</a>
+      </div>
+    </main>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
