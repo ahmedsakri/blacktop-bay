@@ -284,7 +284,8 @@ function needsLandscape() {
 function orientationGate(show) {
   const wasHidden = $("orientation-gate").hidden;
   $("orientation-gate").hidden = !show;
-  for (const el of [document.querySelector("main"), document.querySelector("header"), $("scene")]) if (el) el.inert = show;
+  for (const el of [document.querySelector("main"), $("scene")]) if (el) el.inert = show;
+  document.querySelector("header").inert = show || Boolean(modalKind);
   if (show) {
     clearInput();
     $("orientation-message").textContent = pendingLandscapeStart
@@ -474,6 +475,8 @@ function openGarage() {
   event("garage_open");
 }
 function start() {
+  // Preserve the initial tap activation before a physical rotation starts the race.
+  sound.unlock();
   if (needsLandscape()) {
     pendingLandscapeStart = true;
     orientationGate(true);
