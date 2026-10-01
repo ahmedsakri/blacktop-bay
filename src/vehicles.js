@@ -1,4 +1,4 @@
-// Six fictional race builds from two licensed mesh families. Physics units:
+// Ten fictional race builds: GT, Formula and original Prototype coachwork. Physics units:
 // m/s², m/s, steering multiplier, boost seconds, charge seconds per driving second.
 export const VEHICLES = Object.freeze([
   Object.freeze({
@@ -30,6 +30,26 @@ export const VEHICLES = Object.freeze([
     id: 'formula', family: 'formula', name: 'Vortex X', number: '55', tagline: 'Open wheels. An open invitation to push.', color: '#b5d849',
     specs: Object.freeze({ body: 'Formula attack build', speed: '169 km/h', character: 'Fast response', boost: '3.2 sec' }),
     handling: Object.freeze({ acceleration: 14.8, topSpeed: 47, handling: 1.04, nitroCapacity: 3.2, recharge: .26 }),
+  }),
+  Object.freeze({
+    id: 'prototype', family: 'prototype', name: 'Spectre LM', number: '63', tagline: 'A new silhouette. A longer horizon.', color: '#dddcd5',
+    specs: Object.freeze({ body: 'Closed-cockpit prototype', speed: '176 km/h', character: 'Endurance', boost: '3.6 sec' }),
+    handling: Object.freeze({ acceleration: 14.7, topSpeed: 49, handling: .96, nitroCapacity: 3.6, recharge: .24 }),
+  }),
+  Object.freeze({
+    id: 'hyper', family: 'prototype', name: 'Spectre LM-R', number: '91', tagline: 'Every straight is an invitation.', color: '#ef5727',
+    specs: Object.freeze({ body: 'Long-tail racing prototype', speed: '180 km/h', character: 'Top speed', boost: '3.3 sec' }),
+    handling: Object.freeze({ acceleration: 15.1, topSpeed: 50, handling: .92, nitroCapacity: 3.3, recharge: .23 }),
+  }),
+  Object.freeze({
+    id: 'barchetta', family: 'prototype', name: 'Cinder R', number: '16', tagline: 'Open cockpit. Nothing held back.', color: '#3f7cad',
+    specs: Object.freeze({ body: 'Open-cockpit sports racer', speed: '162 km/h', character: 'Corner speed', boost: '3.1 sec' }),
+    handling: Object.freeze({ acceleration: 15.3, topSpeed: 45, handling: 1.11, nitroCapacity: 3.1, recharge: .29 }),
+  }),
+  Object.freeze({
+    id: 'spyder', family: 'prototype', name: 'Cinder RX', number: '72', tagline: 'Turn in early. Leave them behind.', color: '#b2263b',
+    specs: Object.freeze({ body: 'Open-cockpit aero racer', speed: '169 km/h', character: 'Attack', boost: '3.5 sec' }),
+    handling: Object.freeze({ acceleration: 15.6, topSpeed: 47, handling: 1.06, nitroCapacity: 3.5, recharge: .27 }),
   }),
 ]);
 

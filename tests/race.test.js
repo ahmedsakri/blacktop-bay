@@ -78,9 +78,9 @@ test('vehicle choices preserve their tuning across start and give distinct accel
   assert.equal(createRace({ vehicle: 'invalid' }).vehicle, 'coupe');
 });
 
-test('three track choices are distinct and simulations retain their own layout', () => {
-  assert.deepEqual(TRACKS.map(track => track.id), ['harbor', 'dockyard', 'coast']);
-  assert.equal(new Set(TRACKS.map(track => Math.round(track.length))).size, 3);
+test('five track choices are distinct and simulations retain their own layout', () => {
+  assert.deepEqual(TRACKS.map(track => track.id), ['harbor', 'dockyard', 'coast', 'summit', 'grandprix']);
+  assert.equal(new Set(TRACKS.map(track => Math.round(track.length))).size, 5);
   for (const descriptor of TRACKS) {
     const track = setTrack(descriptor.id), start = sampleTrack(0, track), end = sampleTrack(track.length, track);
     assert.equal(TRACK.id, descriptor.id);
@@ -168,3 +168,38 @@ test('competitive fixture produces four actual finish times and freezes the clas
   advance(race, { throttle: 1, nitro: true }, 1);
   assert.equal(JSON.stringify(race), result);
 });
+
+
+for (const id of ['summit', 'grandprix']) {
+  test(`${id} has a clear grid straight and separated, non-crossing asphalt ribbons`, () => {
+    const track = getTrack(id), points = track.samples, spacing = track.length / points.length;
+    const start = sampleTrack(0, track), exit = sampleTrack(35, track);
+    const startTurn = Math.atan2(exit.tx * start.tz - exit.tz * start.tx, exit.tx * start.tx + exit.tz * start.tz);
+    assert.ok(Math.abs(startTurn) < .065, 'the first 35m must not put the starting grid on a sharp bend');
+    const orient = (a, b, c) => (b.x - a.x) * (c.z - a.z) - (b.z - a.z) * (c.x - a.x);
+    let minimumGap = Infinity, minimumRadius = Infinity;
+    for (let i = 0; i < points.length; i++) {
+      const before = points[(i + points.length - 1) % points.length], after = points[(i + 1) % points.length];
+      const turn = Math.abs(Math.atan2(after.tx * before.tz - after.tz * before.tx, after.tx * before.tx + after.tz * before.tz));
+      minimumRadius = Math.min(minimumRadius, 2 * spacing / Math.max(turn, .00001));
+      for (let j = i + 2; j < points.length; j++) {
+        if (i === 0 && j === points.length - 1) continue;
+        const a = points[i], b = points[(i + 1) % points.length], c = points[j], d = points[(j + 1) % points.length];
+        assert.ok(!(orient(a, b, c) * orient(a, b, d) < 0 && orient(c, d, a) * orient(c, d, b) < 0), 'centerline segments must not intersect');
+        if (Math.min(j - i, points.length - j + i) * spacing >= 55) minimumGap = Math.min(minimumGap, Math.hypot(a.x - c.x, a.z - c.z));
+      }
+    }
+    assert.ok(minimumGap > track.width + 20, 'non-adjacent road sections need clear verge space between barriers');
+    assert.ok(minimumRadius > track.width / 2 + 7, 'inside curve ribbon must retain a positive radius');
+    assert.equal(track.width, id === 'grandprix' ? 18 : 16);
+  });
+  test(`${id} allows the player and all rivals to complete real three-lap races`, () => {
+    const { race, frames } = createCompletedRaceFixture({ track: id });
+    assert.equal(race.completedLaps, 3);
+    assert.equal(race.recoveries, 0);
+    assert.equal(race.allFinished, true);
+    assert.ok(race.leaderboard.every(row => row.finished && row.completedLaps === 3));
+    assert.ok(frames.length > 1000 && frames.length < 2400);
+    setTrack('harbor');
+  });
+}

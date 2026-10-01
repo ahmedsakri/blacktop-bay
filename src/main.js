@@ -1,3 +1,4 @@
+import { PAINT_COLORS, PAINT_FINISHES, loadPaint, savePaint, getPaint, applyPaint } from './paint.js';
 import "./style.css";
 import "./racing.css";
 import * as THREE from "three";
@@ -85,6 +86,9 @@ function saveChoices() {
   } catch {}
 }
 const progression = loadProgression();
+const paintChoices = loadPaint();
+const playerColor = () => getPaint(preferences.vehicle, paintChoices[preferences.vehicle]).color;
+function createPlayerCar(){const car=createCar({vehicle:preferences.vehicle,low:mobile});applyPaint(car,preferences.vehicle,paintChoices[preferences.vehicle]);return car;}
 const newRace = () =>
   createRace({ vehicle: preferences.vehicle, track: preferences.track, upgrades: progression.cars[preferences.vehicle] });
 function event(name, extra = {}) {
@@ -202,11 +206,13 @@ async function initGame() {
     );
     loadProgress(26, "BUILDING THE WATERFRONT");
     await nextPaint();
+    // Track signage is rasterized once; load its typeface before painting it.
+    if(document.fonts) await document.fonts.load('32px "Racing Sans One"').catch(()=>{});
     world = createWorld(renderer, { low: mobile });
     loadProgress(52, "PREPARING THE RACE CARS");
     await nextPaint();
     await prepareCarAssets({ low: mobile });
-    player = createCar({ vehicle: preferences.vehicle, low: mobile });
+    player = createPlayerCar();
     world.scene.add(player.group);
     rivalModels = race.rivals.map((r) => {
       const model = createCar({ vehicle: r.vehicle, color: r.color, low: true });
@@ -370,6 +376,7 @@ function toast(message) {
   toastTimer = setTimeout(() => $("toast").classList.remove("show"), 2400);
 }
 function closeDialog() {
+  document.body.classList.remove("paint-preview");
   modalKind = "";
   $("modal-backdrop").hidden = true;
   $("menu").inert = false;
@@ -418,6 +425,7 @@ function updateGarageCopy() {
   $("garage-tagline").textContent = v.tagline;
   $("garage-specs").innerHTML =
     `<dt>Top speed</dt><dd>${speedLabel(stats)}</dd><dt>Character</dt><dd>${v.specs.character}</dd><dt>Nitro tank</dt><dd>${stats.nitroCapacity.toFixed(1)} sec</dd>`;
+  $("paint-label").textContent = getPaint(v.id, paintChoices[v.id]).name;
   $("garage-wallet").textContent = `${progression.credits.toLocaleString()} CR · RACE CREDITS`;
   for (const b of document.querySelectorAll("[data-vehicle]")) {
     b.setAttribute("aria-pressed", String(b.dataset.vehicle === v.id));
@@ -441,6 +449,20 @@ function showUpgrades(focusComponent) {
   }
   if (focusComponent) document.querySelector(`[data-upgrade="${focusComponent}"]:not(:disabled)`)?.focus();
 }
+function showPaint() {
+  const vehicle = getVehicle(preferences.vehicle), current = paintChoices[vehicle.id];
+  dialog({kind:"paint",eyebrow:`THE PAINT STUDIO · ${vehicle.name.toUpperCase()}`,title:"Your colour.<br><em>Your signature.</em>",html:`<p>Preview a finish on your car. Paint is free and saved separately for each build.</p><div class="paint-colors" role="group" aria-label="Body colour">${PAINT_COLORS.map(p=>`<button type="button" class="paint-swatch" data-paint-color="${p.id}" aria-pressed="${current.color===p.id}" aria-label="${p.name}" style="--paint-color:${p.color??vehicle.color}"><i aria-hidden="true"></i><span>${p.name}</span></button>`).join("")}</div><h3 class="finish-label">SURFACE FINISH</h3><div class="paint-finishes" role="group" aria-label="Paint finish">${PAINT_FINISHES.map(f=>`<button type="button" data-paint-finish="${f.id}" aria-pressed="${current.finish===f.id}">${f.name}</button>`).join("")}</div><p id="paint-status" role="status" class="paint-status">${getPaint(vehicle.id,current).name} · ${getPaint(vehicle.id,current).finish.name}</p>`,actions:[{label:"BACK TO GARAGE",primary:true,action:()=>{closeDialog();$("open-paint").focus();}}]});
+  document.body.classList.add("paint-preview"); previousFocus=$("open-paint");
+  const choose=(property,value)=>{
+    const result=savePaint(paintChoices,vehicle.id,{...paintChoices[vehicle.id],[property]:value});
+    const paint=applyPaint(player,vehicle.id,paintChoices[vehicle.id]);updateGarageCopy();
+    for(const button of document.querySelectorAll("[data-paint-color]"))button.setAttribute("aria-pressed",String(button.dataset.paintColor===paintChoices[vehicle.id].color));
+    for(const button of document.querySelectorAll("[data-paint-finish]"))button.setAttribute("aria-pressed",String(button.dataset.paintFinish===paintChoices[vehicle.id].finish));
+    $("paint-status").textContent=`${paint.name} · ${paint.finish.name}${result.persisted?" · Saved":" · Active for this session; browser storage is unavailable"}`;
+  };
+  for(const button of document.querySelectorAll("[data-paint-color]"))button.onclick=()=>choose("color",button.dataset.paintColor);
+  for(const button of document.querySelectorAll("[data-paint-finish]"))button.onclick=()=>choose("finish",button.dataset.paintFinish);
+}
 function chooseVehicle(id) {
   if (mode !== "menu" && mode !== "garage") return;
   preferences.vehicle = getVehicle(id).id;
@@ -448,7 +470,7 @@ function chooseVehicle(id) {
   if (player) {
     player.group.removeFromParent();
     player.dispose();
-    player = createCar({ vehicle: preferences.vehicle, low: mobile });
+    player = createPlayerCar();
     world.scene.add(player.group);
     addHeadlights(player);
   }
@@ -581,7 +603,7 @@ function how() {
     kind: "how",
     eyebrow: "FIND YOUR LINE",
     title: "Brake. Turn.<br><em>Let it slide.</em>",
-    html: `<p>The car accelerates for you. Steer into each corner, hold drift briefly to loosen the rear, then release it and steer gently back into line.</p><div class="controls-guide"><div><b>Steer</b><span>← / → or A / D</span></div><div><b>Drift / handbrake</b><span>Hold Space</span></div><div><b>Brake</b><span>↓ or S</span></div><div><b>Nitro boost</b><span>Hold Shift</span></div><div><b>Reset / pause</b><span>R / Esc</span></div></div><p>On a phone, rotate to landscape to race with the large driving pads. Turning upright pauses the race. Race three laps against three AI drivers. Hold Shift or the NITRO pad for extra speed; release it to recharge while driving and drifting. Finish first to take the win. Best times are saved separately for each car and circuit on this device. Earn race credits at the finish, then use Garage → Upgrade car to improve each car’s engine, tyres, nitro and handling. Keep a drift clean to build your multiplier; hitting a barrier loses unbanked points.</p>`,
+    html: `<p>The car accelerates for you. Steer into each corner, hold drift briefly to loosen the rear, then release it and steer gently back into line.</p><div class="controls-guide"><div><b>Steer</b><span>← / → or A / D</span></div><div><b>Drift / handbrake</b><span>Hold Space</span></div><div><b>Brake</b><span>↓ or S</span></div><div><b>Nitro boost</b><span>Hold Shift</span></div><div><b>Reset / pause</b><span>R / Esc</span></div></div><p>On a phone, rotate to landscape to race with the large driving pads. Turning upright pauses the race. Race three laps against three rivals. Hold Shift or the NITRO pad for extra speed; release it to recharge while driving and drifting. Finish first to take the win. Best times are saved separately for each car and circuit on this device. Earn race credits at the finish, then use Garage → Upgrade car to improve each car’s engine, tyres, nitro and handling. Keep a drift clean to build your multiplier; hitting a barrier loses unbanked points.</p>`,
     actions: [
       { label: "GOT IT", primary: true, action: closeDialog },
       { label: "LET’S DRIVE", action: start },
@@ -593,7 +615,7 @@ function privacy() {
     kind: "privacy",
     eyebrow: "YOUR RACE. YOUR CHOICE.",
     title: "You’re in <em>control.</em>",
-    html: `<p>Your car and circuit choices, best times, sound setting, upgrade levels and race-credit balance stay in this browser. Clearing race records keeps your workshop progress. Clearing this website’s browser data removes all of them. Gameplay analytics is ${getAnalyticsConsent() === "granted" ? "enabled" : "off"}. When allowed, Google Analytics receives game events such as circuit selection and race completion, without your name, email address or recorded keystrokes.</p><p>Read the <a href="/privacy/">full privacy notice</a> for hosting, Google services and advertising details.</p><div class="privacy-controls"><button id="privacy-enable">Allow analytics</button><button id="privacy-disable">Turn analytics off</button></div>`,
+    html: `<p>Your car and circuit choices, per-car paint colours and finishes, best times, sound setting, upgrade levels and race-credit balance stay in this browser. Clearing race records keeps your workshop progress. Clearing this website’s browser data removes all of them. Gameplay analytics is ${getAnalyticsConsent() === "granted" ? "enabled" : "off"}. When allowed, Google Analytics receives game events such as circuit selection and race completion, without your name, email address or recorded keystrokes.</p><p>Read the <a href="/privacy/">full privacy notice</a> for hosting, Google services and advertising details.</p><div class="privacy-controls"><button id="privacy-enable">Allow analytics</button><button id="privacy-disable">Turn analytics off</button></div>`,
     actions: [
       { label: "CLOSE", primary: true, action: closeDialog },
       {
@@ -745,13 +767,14 @@ $("garage-cars").replaceChildren(
     b.dataset.vehicle = v.id;
     b.style.setProperty("--car-color", v.color);
     b.setAttribute("aria-pressed", String(v.id === preferences.vehicle));
-    b.innerHTML = `<small>0${i + 1} / ${v.specs.character.toUpperCase()}</small><strong>${v.name}</strong><span>${v.specs.speed} · ${v.specs.boost} boost</span>`;
+    b.innerHTML = `<small>${String(i + 1).padStart(2, "0")} / ${v.specs.character.toUpperCase()}</small><strong>${v.name}</strong><span>${v.specs.speed} · ${v.specs.boost} boost</span>`;
     b.onclick = () => { chooseVehicle(v.id); b.scrollIntoView({block:"nearest",inline:"nearest",behavior:reduced ? "instant" : "smooth"}); };
     return b;
   }),
 );
 $("open-garage").onclick = openGarage;
 $("open-upgrades").onclick = () => showUpgrades();
+$("open-paint").onclick = showPaint;
 $("garage-back").onclick = menu;
 $("garage-race").onclick = start;
 $("garage-angle").onclick = () => {
@@ -926,6 +949,7 @@ window.addEventListener("resize", () => {
   composer?.setSize(innerWidth, innerHeight);
   checkOrientation();
   updateTouchControls();
+  if(mode === "garage") document.querySelector("[data-vehicle][aria-pressed=\"true\"]")?.scrollIntoView({block:"nearest",inline:"center",behavior:"instant"});
 });
 function placeCar() {
   player.group.position.set(race.car.x, 0.055, race.car.z);
@@ -965,6 +989,15 @@ function updateCamera(dt, instant = false) {
     lookTarget.y = narrow ? -0.05 : 0.95;
     camera.fov = narrow ? 53 : 49;
     cameraHeading = c.yaw;
+  } else if (mode === "countdown") {
+    // Frame the grid, start lights and full gantry before settling into chase view.
+    camTarget.copy(pos).addScaledVector(f, -15);
+    camTarget.y = 6.1;
+    lookTarget.copy(pos).addScaledVector(f, 5.5);
+    lookTarget.y = 2.6;
+    camera.fov = 60;
+    cameraHeading = c.yaw;
+    cameraSpeed = 0;
   } else {
     const velocityYaw = c.speed > 6 ? Math.atan2(c.vx, c.vz) : c.yaw;
     const slip = Math.atan2(
@@ -1086,7 +1119,7 @@ function updateHud() {
   $("rival-order").innerHTML = race.leaderboard
     .map(
       (r) =>
-        `<li class="${r.isPlayer ? "you" : ""}" style="--car-color:${r.isPlayer ? getVehicle(preferences.vehicle).color : r.color}"><b>${r.position}</b><i></i>${r.isPlayer ? "YOU" : r.name.toUpperCase()}</li>`,
+        `<li class="${r.isPlayer ? "you" : ""}" style="--car-color:${r.isPlayer ? playerColor() : r.color}"><b>${r.position}</b><i></i>${r.isPlayer ? "YOU" : r.name.toUpperCase()}</li>`,
     )
     .join("");
   const charge = race.nitro.charge / race.nitro.capacity;

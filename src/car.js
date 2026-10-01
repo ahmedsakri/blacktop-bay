@@ -1,3 +1,4 @@
+import { createPrototypeCar } from './prototype-car.js';
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
@@ -350,6 +351,7 @@ function raceNumberTexture(number,accent){
 // Object-space surface detail survives material batching without texture seams.
 // Derivative filtering fades individual flakes/threads before they can shimmer.
 function finishSurface(material,kind) {
+  if(kind==='paint'){material.userData.bodyPaint=true;material.metalness=.22;material.roughness=.22;material.clearcoat=1;material.clearcoatRoughness=.10;}
   material.onBeforeCompile=shader=>{
     shader.vertexShader=shader.vertexShader.replace('#include <common>','#include <common>\nvarying vec3 vFinishPosition; varying vec3 vFinishNormal;').replace('#include <begin_vertex>','#include <begin_vertex>\nvFinishPosition=position;vFinishNormal=normal;');
     shader.fragmentShader=shader.fragmentShader.replace('#include <common>',`#include <common>
@@ -360,7 +362,7 @@ float finishHash(vec3 p){p=fract(p*.1031);p+=dot(p,p.yzx+33.33);return fract((p.
 vec3 fp=vFinishPosition*1450.0;
 float footprint=max(length(dFdx(fp)),length(dFdy(fp)));
 float grain=mix(finishHash(floor(fp)),.5,smoothstep(1.0,3.2,footprint));
-roughnessFactor=clamp(roughnessFactor+(grain-.5)*.045,.16,.45);
+roughnessFactor=clamp(roughnessFactor+(grain-.5)*.018,.16,.65);
 diffuseColor.rgb*=.985+grain*.03;
 `:`
 vec3 fn=abs(normalize(vFinishNormal));
@@ -447,5 +449,10 @@ function batchStaticMeshes(parent) {
 export function createCar({ghost=false,vehicle='coupe',color,low=false}={}) {
   const model=getVehicle(vehicle);
   if(model.family==='formula')return createFormulaCar({ghost,vehicle:model.id,color,low});
+  if(model.family==='prototype'){
+    const template=gtAssets.get(low?'low':'high')||gtAssets.get('low');
+    if(!template)throw new Error('Car assets are not ready. Await prepareCarAssets() before opening the garage.');
+    return createPrototypeCar({model,template,color,ghost,low,finishSurface,raceNumberTexture,batchStaticMeshes});
+  }
   return createGTRacer({ghost,vehicle:model.id,color,low});
 }

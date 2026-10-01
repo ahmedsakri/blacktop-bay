@@ -1,3 +1,5 @@
+import { VEHICLES } from './vehicles.js';
+import { TRACKS } from './track.js';
 // One production-only GTM entry point. Advertising storage stays denied.
 export const ANALYTICS_CONFIG = Object.freeze({
   measurementId: "G-RC925EV263",
@@ -22,9 +24,9 @@ let currentConsent = null,
 export function sanitizeGameEvent(name, values = {}) {
   if (!ANALYTICS_EVENTS.includes(name)) return null;
   const result = { event: name, game_name: "Blacktop Bay" };
-  if (["harbor", "dockyard", "coast"].includes(values.circuit))
+  if (TRACKS.some(track => track.id === values.circuit))
     result.circuit = values.circuit;
-  if (["coupe", "sprint", "gt", "endurance", "rally", "formula"].includes(values.vehicle))
+  if (VEHICLES.some(vehicle => vehicle.id === values.vehicle))
     result.vehicle = values.vehicle;
   const limits = {
     position: [1, 4],

@@ -1,17 +1,12 @@
+import { VEHICLES } from './vehicles.js';
 import { TRACK, TRACKS, getTrack, setTrack, projectOnTrack, sampleTrack } from './track.js';
 import { RIVAL_GRID, rivalControls } from './rivals.js';
 import { normalizeUpgrades } from './progression.js';
 
 export { TRACK, TRACKS, getTrack, setTrack, projectOnTrack, sampleTrack };
 
-export const VEHICLE_SPECS = Object.freeze({
-  coupe: Object.freeze({ acceleration: 14, topSpeed: 45, handling: 1, nitroCapacity: 3, recharge: 0.24 }),
-  sprint: Object.freeze({ acceleration: 15, topSpeed: 44, handling: 1.08, nitroCapacity: 2.8, recharge: 0.28 }),
-  gt: Object.freeze({ acceleration: 15.2, topSpeed: 48, handling: 0.91, nitroCapacity: 3, recharge: 0.22 }),
-  endurance: Object.freeze({ acceleration: 14.4, topSpeed: 46, handling: 0.98, nitroCapacity: 3.8, recharge: 0.25 }),
-  rally: Object.freeze({ acceleration: 13.6, topSpeed: 42, handling: 1.13, nitroCapacity: 3.4, recharge: 0.27 }),
-  formula: Object.freeze({ acceleration: 14.8, topSpeed: 47, handling: 1.04, nitroCapacity: 3.2, recharge: 0.26 }),
-});
+// Garage labels and race tuning share one source of truth.
+export const VEHICLE_SPECS = Object.freeze(Object.fromEntries(VEHICLES.map(vehicle => [vehicle.id, vehicle.handling])));
 
 export function getUpgradeStats(vehicle = 'coupe', upgrades = {}) {
   const base = Object.hasOwn(VEHICLE_SPECS, vehicle) ? VEHICLE_SPECS[vehicle] : VEHICLE_SPECS.coupe;

@@ -1361,3 +1361,63 @@ select:focus-visible { outline:3px solid var(--cyan); outline-offset:4px; }
 @keyframes phone-landscape { 0%,15% { transform:rotate(0); } 45%,85% { transform:rotate(90deg); } 100% { transform:rotate(0); } }
 @media(prefers-reduced-motion:reduce) { .rotate-device span { animation:none; } }
 @media(max-height:650px) { .orientation-gate { padding:16px 24px; } .orientation-gate img { width:175px; } .rotate-device { height:95px; margin:10px auto; transform:scale(.8); } .orientation-gate h2 { font-size:28px; margin:10px 0; } .orientation-gate p:not(.eyebrow) { font-size:11px; } }
+
+/* A fixed-height rail keeps ten cars clear of the inspection controls. */
+.garage-bottom { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; }
+.garage-cars { width:100%; }
+.car-choice { flex:0 0 168px; height:104px; min-height:104px; max-height:104px; padding:12px 13px; }
+.car-choice strong { font-size:20px; line-height:1.15; margin:8px 0; white-space:nowrap; }
+.car-choice small { line-height:1.4; letter-spacing:.8px; }
+.car-choice span { display:block; white-space:nowrap; font-size:9px; }
+.garage-orbit { bottom:170px; z-index:2; }
+.garage-workshop #open-paint { margin-top:8px; background:#162734e6; color:#e7f1f5; border:1px solid #7290a45c; }
+#paint-label { max-width:95px; overflow:hidden; text-overflow:ellipsis; font:500 9px/1.3 Manrope,Arial,sans-serif; opacity:.75; }
+body.paint-preview .modal-backdrop { justify-items:start; padding:20px 32px; background:linear-gradient(90deg,#04101cd9,transparent 65%); backdrop-filter:none; }
+.dialog[data-kind="paint"] { width:340px; max-width:100%; max-height:calc(100dvh - 40px); padding:24px; overflow-y:auto; background:#112330f5; border:1px solid #86b5cc40; }
+.dialog[data-kind="paint"] h2 { font-size:32px; line-height:1.05; margin:12px 0; }
+.dialog[data-kind="paint"] p { font-size:11px; line-height:1.6; }
+.paint-colors { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px; }
+.paint-swatch { display:flex; flex-direction:column; align-items:center; gap:7px; min-height:67px; padding:8px 4px; border:1px solid transparent; border-radius:8px; background:#0a17224d; color:#c5d7df; }
+.paint-swatch i { display:block; width:32px; height:27px; border-radius:7px; background:linear-gradient(135deg,#ffffff55,transparent 55%,#00000050),var(--paint-color); box-shadow:inset 0 0 0 1px #ffffff55,0 2px 4px #0005; }
+.paint-swatch span { font:600 9px/1.3 Manrope,Arial,sans-serif; }
+.paint-swatch[aria-pressed="true"],.paint-finishes button[aria-pressed="true"] { border-color:var(--cyan); background:#2c566464; color:white; }
+.paint-swatch[aria-pressed="true"] i:after { content:'✓'; display:block; color:white; font:900 16px/27px Manrope; text-shadow:0 1px 4px #000; }
+.finish-label { font:800 9px Manrope; letter-spacing:1.3px; margin:17px 0 8px; color:#a6c5d4; }
+.paint-finishes { display:flex; gap:6px; }
+.paint-finishes button { flex:1; min-height:44px; border:1px solid #7596ad44; border-radius:6px; background:#10202c; color:#c1d4df; font:700 11px Manrope; }
+.dialog[data-kind="paint"] .paint-status { min-height:34px; color:#a6dadd; margin:12px 0 0; }
+.dialog[data-kind="paint"] .dialog-actions { margin-top:12px; }
+.dialog[data-kind="paint"] .dialog-actions .button { width:100%; min-height:44px; }
+@media(max-width:900px) and (min-height:541px) {
+  .garage-bottom { grid-template-columns:1fr; gap:10px; }
+  .garage-actions { justify-self:end; }
+  .garage-orbit { bottom:218px; }
+}
+@media(max-width:600px) {
+  .car-choice { flex-basis:154px; height:96px; min-height:96px; max-height:96px; }
+  .garage-workshop { display:grid; grid-template-columns:1fr 1fr; gap:7px; }
+  .garage-wallet { grid-column:1/-1; max-width:none; font-size:8px; }
+  .garage-workshop .button { width:100%; max-width:none; min-height:44px; }
+  .garage-workshop #open-paint { margin-top:0; }
+  #paint-label { display:none; }
+  body.paint-preview .modal-backdrop { justify-items:center; padding:12px; background:#08121b90; }
+  .dialog[data-kind="paint"] { max-height:calc(100dvh - 24px); padding:20px; }
+}
+@media(max-height:540px) and (orientation:landscape) {
+  .garage-bottom { grid-template-columns:minmax(0,1fr) auto; gap:12px; bottom:10px; }
+  .garage-cars { padding-block:5px; }
+  .car-choice { height:76px; min-height:76px; max-height:76px; flex-basis:150px; padding:8px 10px; }
+  .car-choice strong { font-size:17px; margin:5px 0; }
+  .car-choice small { font-size:7px; }
+  .car-choice span { font-size:8px; }
+  .garage-orbit { bottom:104px; min-height:44px; }
+  .garage-workshop { display:flex; flex-direction:column; gap:6px; align-items:stretch; }
+  .garage-workshop .button { min-height:44px; margin:0!important; padding:8px!important; }
+  #paint-label { display:none; }
+  .garage-wallet { margin:0; font-size:7px; }
+  .dialog[data-kind="paint"] { width:420px; padding:15px; }
+  .dialog[data-kind="paint"] h2 { font-size:25px; }
+  .paint-colors { grid-template-columns:repeat(6,minmax(0,1fr)); }
+  .paint-swatch { min-height:59px; }
+  .paint-swatch span { font-size:8px; }
+}

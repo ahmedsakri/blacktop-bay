@@ -19,6 +19,20 @@ const CIRCUITS = [
     [-150, -115], [-55, -155], [70, -155], [165, -111], [181, -20],
     [167, 73], [105, 142], [7, 160], [-90, 145], [-170, 85], [-185, -4],
   ] },
+  { id: 'summit', name: 'Summit Switchback', description: 'A technical asphalt loop through rocky pine-lined switchbacks.', points: [
+    [-110, -155], [-25, -155], [85, -155], [162, -126], [183, -75],
+    [149, -34], [70, -36], [38, -3], [71, 32], [150, 43], [187, 85],
+    [162, 132], [88, 150], [21, 126], [-34, 84], [-101, 124],
+    [-163, 104], [-179, 46], [-144, 7], [-67, 4], [-45, -33],
+    [-81, -71], [-145, -69], [-190, -98], [-175, -147],
+  ] },
+  { id: 'grandprix', name: 'Bay Grand Prix', description: 'A wide permanent circuit with a long pit straight and flowing chicanes.', width: 18, points: [
+    [-120, -160], [-30, -160], [85, -160], [174, -153], [210, -110],
+    [204, -45], [148, -2], [122, 43], [166, 94], [174, 157],
+    [114, 190], [25, 185], [-42, 126], [-90, 120], [-168, 166],
+    [-216, 122], [-219, 50], [-174, 3], [-178, -67], [-215, -108],
+    [-194, -155],
+  ] },
 ];
 const COUNT = 440;
 const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
@@ -33,7 +47,7 @@ function catmull(p0, p1, p2, p3, t) {
   ));
 }
 
-function buildTrack({ id, name, description, points }) {
+function buildTrack({ id, name, description, points, width = 16 }) {
   const dense = [];
   const pointCount = points.length;
   for (let segment = 0; segment < pointCount; segment++) {
@@ -70,7 +84,7 @@ function buildTrack({ id, name, description, points }) {
     sample.nz = -sample.tx;
   });
   return {
-    id, name, description, samples, length, width: 16,
+    id, name, description, samples, length, width,
     spawn: { x: samples[0].x, z: samples[0].z, yaw: Math.atan2(samples[0].tx, samples[0].tz) },
   };
 }

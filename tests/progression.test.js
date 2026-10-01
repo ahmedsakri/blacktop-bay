@@ -18,7 +18,7 @@ test('a new garage starts with 1200 credits and independent zero-level cars', ()
   assert.equal(state.credits, 1200);
   assert.equal(state.version, 1);
   assert.deepEqual(state.awardedRaces, []);
-  assert.deepEqual(Object.keys(state.cars), ['coupe', 'sprint', 'gt', 'endurance', 'rally', 'formula']);
+  assert.deepEqual(Object.keys(state.cars), ['coupe', 'sprint', 'gt', 'endurance', 'rally', 'formula', 'prototype', 'hyper', 'barchetta', 'spyder']);
   assert.deepEqual(state.cars.coupe, { engine: 0, tyres: 0, nitro: 0, handling: 0 });
   state.cars.coupe.engine = 2;
   assert.equal(state.cars.gt.engine, 0);
@@ -137,4 +137,21 @@ test('a race reward is idempotent after both an in-memory repeat and a fresh mod
   assert.equal(fresh.awardRaceCredits(reloaded, { ...finished }, store).awarded, false);
   assert.equal(reloaded.credits, 2100);
   assert.equal(UPGRADE_COMPONENTS.length, 4);
+});
+
+
+test('six-car saves expand with independent prototype upgrades while preserving existing progress', () => {
+  const store = memoryStorage();
+  const oldCars = Object.fromEntries(['coupe', 'sprint', 'gt', 'endurance', 'rally', 'formula'].map(id => [id, {engine: 2, tyres: 1, nitro: 3, handling: 4}]));
+  store.setItem(PROGRESSION_KEY, JSON.stringify({version: 1, credits: 1600, cars: oldCars, awardedRaces: ['legacy-receipt-123']}));
+  const state = loadProgression(store);
+  for (const id of ['prototype', 'hyper', 'barchetta', 'spyder']) {
+    assert.deepEqual(state.cars[id], {engine: 0, tyres: 0, nitro: 0, handling: 0});
+    assert.equal(buyUpgrade(state, id, 'engine', store).ok, true);
+  }
+  assert.equal(state.credits, 800);
+  assert.deepEqual(state.awardedRaces, ['legacy-receipt-123']);
+  for (const id of Object.keys(oldCars)) assert.deepEqual(state.cars[id], oldCars[id]);
+  const reload = loadProgression(store);
+  for (const id of ['prototype', 'hyper', 'barchetta', 'spyder']) assert.equal(reload.cars[id].engine, 1);
 });

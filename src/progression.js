@@ -1,9 +1,10 @@
+import { VEHICLES } from './vehicles.js';
 export const PROGRESSION_KEY = 'blacktop-bay-progression-v1';
 export const MAX_LEVEL = 5;
 export const MAX_CREDITS = 1_000_000;
 export const UPGRADE_COMPONENTS = Object.freeze(['engine', 'tyres', 'nitro', 'handling']);
 export const UPGRADE_COSTS = Object.freeze([200, 400, 700, 1100, 1600]);
-const VEHICLE_IDS = ['coupe', 'sprint', 'gt', 'endurance', 'rally', 'formula'];
+const VEHICLE_IDS = VEHICLES.map(vehicle => vehicle.id);
 const FINISH_REWARDS = [900, 650, 500, 350];
 const MAX_RECEIPTS = 2048;
 const validId = (id) => typeof id === 'string' && /^[a-zA-Z0-9_-]{8,100}$/.test(id);
@@ -23,7 +24,7 @@ function clean(value) {
   const state = defaults();
   if (!value || typeof value !== 'object' || Array.isArray(value) || value.version !== 1) return state;
   if (integer(value.credits) && value.credits >= 0) state.credits = Math.min(MAX_CREDITS, value.credits);
-  // Older three-car saves keep their wallet, levels and receipts. Newly added
+  // Existing garage saves keep their wallet, levels and receipts. Newly added
   // race builds receive independent zero-level upgrades under the same key.
   for (const id of VEHICLE_IDS) state.cars[id] = normalizeUpgrades(value.cars?.[id]);
   if (Array.isArray(value.awardedRaces)) state.awardedRaces = [...new Set(value.awardedRaces.filter(validId))].slice(-MAX_RECEIPTS);

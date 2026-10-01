@@ -10,12 +10,12 @@
     <meta name="google-site-verification" content="MVksP1BKzZeDBEt2hMa1NDzucJcgohpkwcTVNynpOsU" />
     <meta name="msvalidate.01" content="EF8EF5B503FE7522D9132204FA0D1115" />
     <meta name="theme-color" content="#08121e" />
-    <meta name="description" content="Race three AI rivals in Blacktop Bay, a free 3D browser racer. Choose six race builds and three circuits, earn credits, and upgrade engine, tyres, nitro and handling." />
+    <meta name="description" content="Race three rivals in Blacktop Bay, a free 3D browser racer. Choose ten race builds and five circuits, earn credits, and upgrade engine, tyres, nitro and handling." />
     <meta name="robots" content="index,follow,max-image-preview:large" />
     <link rel="canonical" href="https://blacktop-bay.web.app/" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Blacktop Bay — Own the corner." />
-    <meta property="og:description" content="Choose from six GT and Formula race builds and race three AI rivals across three circuits. Free 3D browser racing by AppsOverFlow." />
+    <meta property="og:description" content="Choose from ten GT, Formula and Prototype race builds and race three rivals across five circuits. Free 3D browser racing by AppsOverFlow." />
     <meta property="og:url" content="https://blacktop-bay.web.app/" />
     <meta
       property="og:image"
@@ -24,7 +24,7 @@
     <meta property="og:image:alt" content="An actual Blacktop Bay waterfront racing gameplay screenshot" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Blacktop Bay — Free 3D Racing Game" />
-    <meta name="twitter:description" content="Six race builds, three circuits and three AI rivals. Earn credits and upgrade your car. Free browser racing." />
+    <meta name="twitter:description" content="Ten race builds, five circuits and three rivals. Earn credits and upgrade your car. Free single-player browser racing." />
     <meta name="twitter:image" content="https://blacktop-bay.web.app/assets/blacktop-bay-gameplay.png" />
     <script type="application/ld+json">
 {
@@ -33,7 +33,7 @@
   "@id": "https://blacktop-bay.web.app/#game",
   "name": "Blacktop Bay",
   "url": "https://blacktop-bay.web.app/",
-  "description": "Free single-player 3D browser racing from AppsOverFlow: six GT and Formula race builds, three asphalt circuits, three AI opponents, three-lap races, nitro, drift scoring and five-level car upgrades bought with earned race credits.",
+  "description": "Free single-player 3D browser racing from AppsOverFlow: ten GT, Formula and Prototype race builds, five asphalt circuits, three race opponents, three-lap races, nitro, drift scoring and five-level car upgrades bought with earned race credits.",
   "image": "https://blacktop-bay.web.app/assets/blacktop-bay-gameplay.png",
   "screenshot": "https://blacktop-bay.web.app/assets/blacktop-bay-gameplay.png",
   "genre": [
@@ -52,9 +52,9 @@
     "maxValue": 1
   },
   "featureList": [
-    "6 race builds: Apex GT, Apex Sprint, Torque R, Torque RS, Vortex P1 and Vortex X",
-    "3 circuits: Harbor Flow, Dockyard Technical and Coast Run",
-    "3 AI opponents and 3 laps per race",
+    "10 race builds: Apex GT, Apex Sprint, Torque R, Torque RS, Vortex P1, Vortex X, Spectre LM, Spectre LM-R, Cinder R and Cinder RX",
+    "5 circuits: Harbor Flow, Dockyard Technical, Coast Run, Summit Switchback and Bay Grand Prix",
+    "3 race opponents and 3 laps per race",
     "Keyboard and touch controls",
     "Rechargeable nitro and drift scoring",
     "5 upgrade levels each for Engine, Tyres, Nitro and Handling",
@@ -216,7 +216,7 @@
             Chase the night.<br /><em>Own the corner.</em>
           </h1>
           <p class="intro">
-            Six race builds. Three circuits. One finish line.<br />Outdrive the
+            Ten race builds. Five circuits. One finish line.<br />Outdrive the
             rivals. Make the coast yours.
           </p>
           <div class="track-facts">
@@ -257,7 +257,7 @@
       </section>
       <section id="garage" class="garage" aria-label="Car collection" hidden>
         <div class="garage-intro">
-          <p class="eyebrow">THE COLLECTION · 06 RACE BUILDS</p>
+          <p class="eyebrow">THE COLLECTION · 10 RACE BUILDS</p>
           <h2>Find your <em>edge.</em></h2>
           <p>Different character. Same hunger for the finish.</p>
         </div>
@@ -269,6 +269,7 @@
           <div class="garage-workshop">
             <span class="garage-wallet" id="garage-wallet"></span>
             <button id="open-upgrades" class="button primary">Upgrade car <span aria-hidden="true">↗</span></button>
+            <button id="open-paint" class="button secondary">Paint car <span id="paint-label">Team original</span></button>
           </div>
         </div>
         <button id="garage-angle" class="garage-orbit">
@@ -280,7 +281,7 @@
             id="garage-cars"
             class="garage-cars"
             role="group"
-            aria-label="Select one of six race builds. Swipe or use Tab to explore."
+            aria-label="Select one of ten race builds. Swipe or use Tab to explore."
           ></div>
           <div class="garage-actions">
             <button id="garage-back" class="button secondary">BACK</button
