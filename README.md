@@ -1,6 +1,6 @@
 # Blacktop Bay
 
-A free AppsOverFlow browser racer. **Own the corner.** Choose from 16 individually sourced manufacturer car representations across 13 brands, upgrade their performance, and compete against three rivals across thirty-four asphalt circuits.
+A free AppsOverFlow browser racer. **Own the corner.** Choose from 27 individually sourced manufacturer car representations across 16 brands, upgrade their performance, and compete against three rivals across thirty-four asphalt circuits.
 
 [Play Blacktop Bay](https://blacktop-bay.web.app/) · [Driver’s guide](https://blacktop-bay.web.app/guide/) · [Asset credits](https://blacktop-bay.web.app/credits/)
 
@@ -16,7 +16,7 @@ Mira, Jax and Nova use the same physical simulation, with steering, braking, avo
 
 ### Manufacturer models
 
-These 16 artist-made representations span 13 brands and retain their credited identities. Ratings below describe the game, not real-world performance.
+These 27 artist-made representations span 16 brands and retain their credited identities. Ratings below describe the game, not real-world performance.
 
 | Car | Model type | Base speed rating | Base nitro |
 | --- | --- | ---: | ---: |
@@ -36,6 +36,17 @@ These 16 artist-made representations span 13 brands and retain their credited id
 | GMA T.50 Custom | Artist’s T.50 track interpretation | 180 km/h | 3.4 sec |
 | Aston Martin One-77 | V12 grand tourer | 176 km/h | 3.6 sec |
 | Rimac Nevera | Electric hypercar | 185 km/h | 3.8 sec |
+| Porsche 911 GT3 | Track-focused sports car | 175 km/h | 3.3 sec |
+| Lamborghini Gallardo 2004 | V10 supercar | 175 km/h | 3.4 sec |
+| Lamborghini Huracán | V10 supercar | 180 km/h | 3.6 sec |
+| BMW i8 | Hybrid sports car | 169 km/h | 3.5 sec |
+| BMW F22 Eurofighter | Custom widebody drift car | 173 km/h | 3.4 sec |
+| Audi R8 LMS GT3 | GT3 racing car | 178 km/h | 3.5 sec |
+| Audi R18 | Endurance racing prototype | 185 km/h | 3.8 sec |
+| Ferrari 250 GTO | Classic GT racing car | 167 km/h | 3.2 sec |
+| Ferrari Testarossa | Classic flat-12 sports car | 171 km/h | 3.4 sec |
+| Mercedes-AMG GT | V8 sports car | 176 km/h | 3.5 sec |
+| Nissan GT-R 2018 | Twin-turbo sports car | 178 km/h | 3.6 sec |
 
 ### Circuits
 
@@ -101,7 +112,7 @@ Garage → Paint offers ten curated colours plus Team original, with Gloss, Meta
 
 The visual palette uses electric violet `#9246FF` as the dominant UI accent, yellow `#FFF71E` as the secondary highlight for important CTAs and key moments, near-black base `#110017`, navy panels `#021439` and white text `#FFFFFF`. Dark surfaces remain the majority of each screen. Alerts use `#FF0054`, rewards use `#FFD700`, and lime `#C3FB13` is reserved for occasional status emphasis. Vector logos retain white chrome shading with violet forms and small yellow accents; the guide, privacy and credits pages share the same hierarchy. Keep body text white on dark surfaces and button labels white on violet or dark on yellow.
 
-The game renders sixteen individually credited manufacturer car representations across thirteen brands. Road cars, classics, grand tourers and track-focused models retain their actual identities; Audi R8 Custom and GMA T.50 Custom remain labelled artist interpretations. The garage supports drag rotation, keyboard-accessible quarter turns, neutral studio lighting and responsive camera framing. Wheels steer and roll, brake lamps respond and nitro uses model-specific exhaust outlets. Body paint, glass, carbon and rubber use separate physical materials. Mobile and race opponents use reduced-detail geometry. Earlier fictional builds are no longer selectable; their legacy source assets and attribution notices remain in the repository.
+The game renders twenty-seven individually credited manufacturer car representations across sixteen brands. Road cars, classics, grand tourers and track-focused models retain their actual identities; Audi R8 Custom and GMA T.50 Custom remain labelled artist interpretations. The garage supports drag rotation, keyboard-accessible quarter turns, neutral studio lighting and responsive camera framing. Wheels steer and roll, brake lamps respond and nitro uses model-specific exhaust outlets. Body paint, glass, carbon and rubber use separate physical materials. Mobile and race opponents use reduced-detail geometry. Earlier fictional builds are no longer selectable; their legacy source assets and attribution notices remain in the repository.
 
 All thirty-four circuits have covered spectator stands with animated seated and standing crowds with varied poses, clothing and asynchronous cheering behind the barriers. Bay Grand Prix adds a larger permanent grandstand and pit complex. A full-width checkered stripe, four numbered starting bays, branded truss gantry and three twin-lamp countdown columns mark the start/finish area.
 
@@ -150,7 +161,7 @@ Deployment targets only Firebase Hosting site `blacktop-bay` in project `echo-he
 
 ## Manufacturer collection and expressive crowd
 
-The garage now includes McLaren 570S Coupé, McLaren Senna, McLaren P1 GTR, Ferrari 458 Spider, Lamborghini Aventador, Koenigsegg One:1, Pagani Zonda C12, Bugatti Veyron, Maserati GranTurismo MC Stradale, Lotus Elise, Audi R8 Custom, Rimac Concept One, Porsche 911 (930) Turbo, GMA T.50 Custom, Aston Martin One-77, Rimac Nevera. Names match the credited model geometry. Road cars and classics are labelled honestly; all performance figures, Nitro and upgrades are arcade tuning rather than manufacturer claims. Source details and modifications are recorded in public/assets/cars/manufacturers/manifest.json and the public credits page.
+The garage now includes McLaren 570S Coupé, McLaren Senna, McLaren P1 GTR, Ferrari 458 Spider, Lamborghini Aventador, Koenigsegg One:1, Pagani Zonda C12, Bugatti Veyron, Maserati GranTurismo MC Stradale, Lotus Elise, Audi R8 Custom, Rimac Concept One, Porsche 911 (930) Turbo, GMA T.50 Custom, Aston Martin One-77, Rimac Nevera, Porsche 911 GT3, Lamborghini Gallardo 2004, Lamborghini Huracán, BMW i8, BMW F22 Eurofighter, Audi R8 LMS GT3, Audi R18, Ferrari 250 GTO, Ferrari Testarossa, Mercedes-AMG GT, Nissan GT-R 2018. Names match the credited model geometry. Road cars and classics are labelled honestly; all performance figures, Nitro and upgrades are arcade tuning rather than manufacturer claims. Source details and modifications are recorded in public/assets/cars/manufacturers/manifest.json and the public credits page.
 
 Manufacturer GLBs load on selection, with high/mobile variants, a two-transfer queue and a reference-counted cache retaining at most two unused templates. Car selection keeps the previous playable car until the new model succeeds. Every instance owns paint/brake materials; immutable geometry/textures are shared until unused-cache eviction. Static portraits prevent the car browser from downloading the full garage.
 

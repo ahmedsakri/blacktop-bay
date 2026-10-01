@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { MANUFACTURER_ASSETS } from './manufacturer-asset-manifest.js';
+import { configureManufacturerPaint } from './manufacturer-paint.js';
 
 // This module downloads only the requested car. Geometry and texture images are
 // immutable cache resources; every displayed car owns its mutable materials.
@@ -173,6 +174,7 @@ export function createManufacturerCar({assetId, vehicle, color, low = false, gho
     const copy = source => {
       if (materialCopies.has(source)) return materialCopies.get(source);
       const material = cloneMaterial(source, paintable && paintNames.has(source.name), ghost, color);
+      configureManufacturerPaint(material, assetId, {customColor: color !== undefined && color !== null});
       materialCopies.set(source, material);
       if (!ghost && material.emissive && (brakeNames.has(source.name) || source.userData.brakeLight === true)) {
         brakeLights.push({material, emissive: material.emissive.clone(), intensity: material.emissiveIntensity});

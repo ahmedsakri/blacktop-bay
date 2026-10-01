@@ -1,0 +1,253 @@
+{
+  "preparedOn": "2026-10-01",
+  "models": [
+    {
+      "pack": "porsche-lamborghini",
+      "id": "porsche-911-gt3",
+      "uid": "78d5c47ab2554c2592b7e499179a0792",
+      "brand": "Porsche",
+      "model": "911 GT3",
+      "author": "ChevroletSS",
+      "source": "https://sketchfab.com/3d-models/porsche-911-gt3-78d5c47ab2554c2592b7e499179a0792",
+      "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-046/78d5c47ab2554c2592b7e499179a0792.glb",
+      "license": "CC-BY-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "sourceSha256": "2c8ecc16ff979bd09aaac8eca6775cc838fdbc2ca618c24db704aced69c00d32",
+      "metadata": "porsche-lamborghini/78d5c47ab2554c2592b7e499179a0792.json",
+      "sourceAsset": {
+        "author": "ChevroletSS (https://sketchfab.com/ChevroletSS)",
+        "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+        "source": "https://sketchfab.com/3d-models/porsche-911-gt3-78d5c47ab2554c2592b7e499179a0792",
+        "title": "Porsche 911 GT3"
+      },
+      "additionalCredits": []
+    },
+    {
+      "pack": "porsche-lamborghini",
+      "id": "lamborghini-gallardo",
+      "uid": "e6a7d7e98f4c46ca841eb930184b0f09",
+      "brand": "Lamborghini",
+      "model": "Gallardo · 2004",
+      "author": "ALIEEEN",
+      "source": "https://sketchfab.com/3d-models/free-lamborghini-gallardo-2004-e6a7d7e98f4c46ca841eb930184b0f09",
+      "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-071/e6a7d7e98f4c46ca841eb930184b0f09.glb",
+      "license": "CC-BY-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "sourceSha256": "8f249dffc5ffbdf03044ee22829b8fdf1a6b71bcf5160a2b4e13fba605919e57",
+      "metadata": "porsche-lamborghini/e6a7d7e98f4c46ca841eb930184b0f09.json",
+      "sourceAsset": {
+        "author": "Desiccated_Lemon (https://sketchfab.com/Desiccated_Lemon)",
+        "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+        "source": "https://sketchfab.com/3d-models/free-lamborghini-gallardo-2004-e6a7d7e98f4c46ca841eb930184b0f09",
+        "title": "Free Lamborghini Gallardo 2004"
+      },
+      "additionalCredits": []
+    },
+    {
+      "pack": "porsche-lamborghini",
+      "id": "lamborghini-huracan",
+      "uid": "b2f5c24c44fd417fb89286603af9b5a5",
+      "brand": "Lamborghini",
+      "model": "Huracán",
+      "author": "jpo1703",
+      "source": "https://sketchfab.com/3d-models/lamborghini-huracan-b2f5c24c44fd417fb89286603af9b5a5",
+      "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-054/b2f5c24c44fd417fb89286603af9b5a5.glb",
+      "license": "CC-BY-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "sourceSha256": "992f2f03918501d4784eea931a56370f30c90612e451e77d060f4f2ba2478b86",
+      "metadata": "porsche-lamborghini/b2f5c24c44fd417fb89286603af9b5a5.json",
+      "sourceAsset": {
+        "author": "jpo1703 (https://sketchfab.com/jpo1703)",
+        "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+        "source": "https://sketchfab.com/3d-models/lamborghini-huracan-b2f5c24c44fd417fb89286603af9b5a5",
+        "title": "Lamborghini huracan"
+      },
+      "additionalCredits": []
+    },
+    {
+      "pack": "ferrari-audi",
+      "id": "audi-r8-lms-gt3",
+      "uid": "80d3f346956b43cebcab72d25ac3e81e",
+      "brand": "Audi",
+      "model": "R8 LMS GT3 · 2019",
+      "author": "mrDiG",
+      "source": "https://sketchfab.com/3d-models/audi-r8-gt3-lms-80d3f346956b43cebcab72d25ac3e81e",
+      "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-154/80d3f346956b43cebcab72d25ac3e81e.glb",
+      "license": "CC-BY-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "sourceSha256": "53061151919e01b8265f822975a6e513225718ebd5a8e57891fde3d1ed1d1b30",
+      "metadata": "ferrari-audi/80d3f346956b43cebcab72d25ac3e81e.json",
+      "sourceAsset": {
+        "author": "mrDiG (https://sketchfab.com/mrDiG)",
+        "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+        "source": "https://sketchfab.com/3d-models/audi-r8-gt3-lms-80d3f346956b43cebcab72d25ac3e81e",
+        "title": "Audi - R8 GT3 LMS"
+      },
+      "additionalCredits": []
+    },
+    {
+      "pack": "ferrari-audi",
+      "id": "audi-r18",
+      "uid": "3a5f4938e662429b8633120aa62805a4",
+      "brand": "Audi",
+      "model": "R18",
+      "author": "Godheim",
+      "source": "https://sketchfab.com/3d-models/audi-r18-3a5f4938e662429b8633120aa62805a4",
+      "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-032/3a5f4938e662429b8633120aa62805a4.glb",
+      "license": "CC-BY-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "sourceSha256": "168039f9112c76b098b6a5ec490f56dfa2d4762612eee95a320ec2fc0de7a7da",
+      "metadata": "ferrari-audi/3a5f4938e662429b8633120aa62805a4.json",
+      "sourceAsset": {
+        "author": "Godheim (https://sketchfab.com/Godheim)",
+        "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+        "source": "https://sketchfab.com/3d-models/audi-r18-3a5f4938e662429b8633120aa62805a4",
+        "title": "AUDI R18"
+      },
+      "additionalCredits": []
+    },
+    {
+      "pack": "ferrari-audi",
+      "id": "ferrari-250-gto",
+      "uid": "849c88c65911496d92363dc2980f6f4e",
+      "brand": "Ferrari",
+      "model": "250 GTO · 1964",
+      "author": "dagtholander",
+      "source": "https://sketchfab.com/3d-models/1964-ferrari-250-gto-849c88c65911496d92363dc2980f6f4e",
+      "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-050/849c88c65911496d92363dc2980f6f4e.glb",
+      "license": "CC-BY-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "sourceSha256": "ed898e31038d0e931565c5da5a9807e6f5458077a03c75bc252857351d3d9eae",
+      "metadata": "ferrari-audi/849c88c65911496d92363dc2980f6f4e.json",
+      "sourceAsset": {
+        "author": "dagtholander (https://sketchfab.com/dagtholander)",
+        "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+        "source": "https://sketchfab.com/3d-models/1964-ferrari-250-gto-849c88c65911496d92363dc2980f6f4e",
+        "title": "1964 Ferrari 250 GTO"
+      },
+      "additionalCredits": []
+    },
+    {
+      "pack": "ferrari-audi",
+      "id": "ferrari-testarossa",
+      "uid": "7bcceae8f461476883a5b182bfb15165",
+      "brand": "Ferrari",
+      "model": "Testarossa",
+      "author": "dagtholander",
+      "source": "https://sketchfab.com/3d-models/testarossa-7bcceae8f461476883a5b182bfb15165",
+      "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-059/7bcceae8f461476883a5b182bfb15165.glb",
+      "license": "CC-BY-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "sourceSha256": "9ec0065726b676d30e73e043011fd7a0c213ced6d6baf9fb3343d9df37ed019b",
+      "metadata": "ferrari-audi/7bcceae8f461476883a5b182bfb15165.json",
+      "sourceAsset": {
+        "author": "dagtholander (https://sketchfab.com/dagtholander)",
+        "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+        "source": "https://sketchfab.com/3d-models/testarossa-7bcceae8f461476883a5b182bfb15165",
+        "title": "Testarossa"
+      },
+      "additionalCredits": []
+    },
+    {
+      "pack": "bmw",
+      "id": "bmw-i8",
+      "uid": "c884666736f049c296044992107e12a7",
+      "brand": "BMW",
+      "model": "i8",
+      "author": "salza",
+      "source": "https://sketchfab.com/3d-models/bmw-i8-c884666736f049c296044992107e12a7",
+      "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-156/c884666736f049c296044992107e12a7.glb",
+      "license": "CC-BY-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "sourceSha256": "e3a29f3aa043b73f1067e7dd126a41051be57dda1636d9071a9a3a4d0bef7e51",
+      "metadata": "bmw/c884666736f049c296044992107e12a7.json",
+      "sourceAsset": {
+        "author": "salza (https://sketchfab.com/salza)",
+        "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+        "source": "https://sketchfab.com/3d-models/bmw-i8-c884666736f049c296044992107e12a7",
+        "title": "BMW I8"
+      },
+      "additionalCredits": []
+    },
+    {
+      "pack": "bmw",
+      "id": "bmw-f22-eurofighter",
+      "uid": "d4ffe0df9066481fa028eb1e1348c4b0",
+      "brand": "BMW",
+      "model": "F22 Eurofighter",
+      "author": "autoNgraphic",
+      "source": "https://sketchfab.com/3d-models/bmw-f22-eurofighter-free-d4ffe0df9066481fa028eb1e1348c4b0",
+      "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-099/d4ffe0df9066481fa028eb1e1348c4b0.glb",
+      "license": "CC-BY-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "sourceSha256": "db318fc4ff56d6059c955fb4df8e7562c7fe0bda1f19290fc0b0a4054c655e8e",
+      "metadata": "bmw/d4ffe0df9066481fa028eb1e1348c4b0.json",
+      "sourceAsset": {
+        "author": "autoNgraphic (https://sketchfab.com/autoNgraphic)",
+        "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+        "source": "https://sketchfab.com/3d-models/bmw-f22-eurofighter-d4ffe0df9066481fa028eb1e1348c4b0",
+        "title": "BMW F22 \"EUROFIGHTER\""
+      },
+      "additionalCredits": [
+        {
+          "title": "F22 Eurofighter edit",
+          "author": "autoNgraphic",
+          "source": "https://vk.com/autongraphic"
+        },
+        {
+          "title": "F22 Eurofighter bodykit",
+          "author": "crooked.hand",
+          "source": "https://vk.com/crooked.hand"
+        },
+        {
+          "title": "F22 Eurofighter wheels",
+          "author": "ondori_ws",
+          "source": "https://vk.com/ondori_ws"
+        }
+      ],
+      "sourceAttributionNote": "The source listing identifies autoNgraphic as uploader/editor (edit), credits crooked.hand for the bodykit and ondori_ws for the wheels, and does not identify the base car author. Base-model authorship has not been independently verified. The recorded CC BY 4.0 license is the uploader's model license, not a BMW license or endorsement."
+    },
+    {
+      "pack": "mercedes",
+      "id": "mercedes-amg-gt",
+      "uid": "661dcab94455463784651a3ebc63cfb9",
+      "brand": "Mercedes-Benz",
+      "model": "AMG GT",
+      "author": "Yan Carvalho",
+      "source": "https://sketchfab.com/3d-models/mercedes-benz-amg-gt-661dcab94455463784651a3ebc63cfb9",
+      "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-136/661dcab94455463784651a3ebc63cfb9.glb",
+      "license": "CC-BY-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "sourceSha256": "28efb2e0cd593d8b02103fd051a826b5eb35e0314baa3f4a5df8c58de561080b",
+      "metadata": "mercedes/661dcab94455463784651a3ebc63cfb9.json",
+      "sourceAsset": {
+        "author": "Yan Carvalho (https://sketchfab.com/carvalhoyan)",
+        "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+        "source": "https://sketchfab.com/3d-models/mercedes-benz-amg-gt-661dcab94455463784651a3ebc63cfb9",
+        "title": "Mercedes Benz AMG GT"
+      },
+      "additionalCredits": []
+    },
+    {
+      "pack": "nissan",
+      "id": "nissan-gt-r-2018",
+      "uid": "e595ef868dd94f77b83c332f9d5c6f5d",
+      "brand": "Nissan",
+      "model": "GT-R · 2018",
+      "author": "Tanvir.Ahmed",
+      "source": "https://sketchfab.com/3d-models/nissan-gtr-2018-e595ef868dd94f77b83c332f9d5c6f5d",
+      "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-111/e595ef868dd94f77b83c332f9d5c6f5d.glb",
+      "license": "CC-BY-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "sourceSha256": "f9f2c08aef442454757d213d304695a733e2a453b23488b1ffe64e2b4012527c",
+      "metadata": "nissan/e595ef868dd94f77b83c332f9d5c6f5d.json",
+      "sourceAsset": {
+        "author": "Tanvir.Ahmed (https://sketchfab.com/Tanvir.Ahmed)",
+        "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+        "source": "https://sketchfab.com/3d-models/nissan-gtr-2018-e595ef868dd94f77b83c332f9d5c6f5d",
+        "title": "Nissan GTR 2018"
+      },
+      "additionalCredits": []
+    }
+  ]
+}

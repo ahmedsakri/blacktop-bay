@@ -1,0 +1,138 @@
+{
+  "uri": "https://api.sketchfab.com/v3/models/849c88c65911496d92363dc2980f6f4e",
+  "uid": "849c88c65911496d92363dc2980f6f4e",
+  "name": "1964 Ferrari 250 GTO",
+  "staffpickedAt": null,
+  "viewCount": 3568,
+  "likeCount": 76,
+  "animationCount": 0,
+  "viewerUrl": "https://sketchfab.com/3d-models/849c88c65911496d92363dc2980f6f4e",
+  "embedUrl": "https://sketchfab.com/models/849c88c65911496d92363dc2980f6f4e/embed",
+  "commentCount": 10,
+  "isDownloadable": true,
+  "publishedAt": "2019-02-10T17:47:47.245349",
+  "tags": [],
+  "categories": [
+    {
+      "name": "cars-vehicles"
+    }
+  ],
+  "thumbnails": {
+    "images": [
+      {
+        "uid": "087739f00d3b4227868e2b21e5b37e46",
+        "size": 92247,
+        "width": 1920,
+        "url": "https://media.sketchfab.com/models/849c88c65911496d92363dc2980f6f4e/thumbnails/e120743aee5f4ec0afd1bcc49b5b4f50/8e694ae5e3684134a024961a7f8e1f2f.jpeg",
+        "height": 1080
+      },
+      {
+        "uid": "f613da49f5a04594844c41ce54b8066b",
+        "size": 31973,
+        "width": 1024,
+        "url": "https://media.sketchfab.com/models/849c88c65911496d92363dc2980f6f4e/thumbnails/e120743aee5f4ec0afd1bcc49b5b4f50/d82804ca60b548d3a594760b3ea641fa.jpeg",
+        "height": 576
+      },
+      {
+        "uid": "0a35f8f5f94a4e1998921ad1dcb7a3d5",
+        "size": 19142,
+        "width": 720,
+        "url": "https://media.sketchfab.com/models/849c88c65911496d92363dc2980f6f4e/thumbnails/e120743aee5f4ec0afd1bcc49b5b4f50/d82e202d5afa42f295eb8f021a69b41e.jpeg",
+        "height": 405
+      },
+      {
+        "uid": "9c5b3cef60e142a9a065d1c263bac229",
+        "size": 4387,
+        "width": 256,
+        "url": "https://media.sketchfab.com/models/849c88c65911496d92363dc2980f6f4e/thumbnails/e120743aee5f4ec0afd1bcc49b5b4f50/3f47e561ad5d49af866cd45417cbce2d.jpeg",
+        "height": 144
+      },
+      {
+        "uid": "b3b527f03a034a40b0d7bf0529004297",
+        "size": 1083,
+        "width": 64,
+        "url": "https://media.sketchfab.com/models/849c88c65911496d92363dc2980f6f4e/thumbnails/e120743aee5f4ec0afd1bcc49b5b4f50/aa6d77a1dc254e1299ae99b24aefdef1.jpeg",
+        "height": 36
+      }
+    ]
+  },
+  "user": {
+    "uid": "b75b94d30fd642f595692422be06a4ca",
+    "username": "dagtholander",
+    "displayName": "dagtholander",
+    "profileUrl": "https://sketchfab.com/dagtholander",
+    "account": "basic",
+    "avatar": {
+      "uri": "https://api.sketchfab.com/v3/avatars/51af6a870cce449eb75b0345feebaebb",
+      "images": [
+        {
+          "size": 5719,
+          "width": 90,
+          "url": "https://media.sketchfab.com/avatars/51af6a870cce449eb75b0345feebaebb/2ef0f894055b4bb69123b2a27fa2d379.jpeg",
+          "height": 90
+        },
+        {
+          "size": 6496,
+          "width": 100,
+          "url": "https://media.sketchfab.com/avatars/51af6a870cce449eb75b0345feebaebb/ab11eedf96374486acb544f71a23b165.jpeg",
+          "height": 100
+        },
+        {
+          "size": 1359,
+          "width": 32,
+          "url": "https://media.sketchfab.com/avatars/51af6a870cce449eb75b0345feebaebb/35f6f9b6c9a14a548ce472582d8a9bb5.jpeg",
+          "height": 32
+        },
+        {
+          "size": 2584,
+          "width": 48,
+          "url": "https://media.sketchfab.com/avatars/51af6a870cce449eb75b0345feebaebb/a8072a51447c4d41ab177b357111b420.jpeg",
+          "height": 48
+        }
+      ]
+    },
+    "uri": "https://api.sketchfab.com/v3/users/b75b94d30fd642f595692422be06a4ca"
+  },
+  "description": "Ferrari 250 GTO. Missing some details due to me modelling it quickly.",
+  "faceCount": 97848,
+  "createdAt": "2019-02-10T17:24:45.869917",
+  "vertexCount": 51304,
+  "isAgeRestricted": false,
+  "archives": {
+    "glb": {
+      "textureCount": 12,
+      "size": 7098696,
+      "type": "glb",
+      "textureMaxResolution": 1024,
+      "faceCount": 97846,
+      "vertexCount": 59014
+    },
+    "gltf": {
+      "textureCount": 12,
+      "size": 5381714,
+      "type": "gltf",
+      "textureMaxResolution": 1024,
+      "faceCount": 97846,
+      "vertexCount": 59014
+    },
+    "source": {
+      "textureCount": null,
+      "size": 5774895,
+      "type": "source",
+      "textureMaxResolution": null,
+      "faceCount": null,
+      "vertexCount": null
+    },
+    "usdz": {
+      "textureCount": null,
+      "size": 3235620,
+      "type": "usdz",
+      "textureMaxResolution": null,
+      "faceCount": null,
+      "vertexCount": null
+    }
+  },
+  "license": "by",
+  "archiveMetadataUrl": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/metadata/000-050.json.gz",
+  "downloadUrl": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-050/849c88c65911496d92363dc2980f6f4e.glb"
+}

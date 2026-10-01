@@ -49,6 +49,7 @@ export function applyPaint(car, vehicle, choice) {
     for (const material of Array.isArray(object.material) ? object.material : [object.material]) {
       if (!material.userData.bodyPaint || seen.has(material)) continue;
       seen.add(material);
+      if (material.userData.bodyPaintMask) material.userData.bodyPaintMask.enabled.value = paint.id === 'factory' ? 0 : 1;
       if (paint.id === 'factory' && material.userData.factoryColor) {
         material.color.set(material.userData.factoryColor);
         const finish = paint.finish.id === 'gloss' ? material.userData.factoryFinish : paint.finish;

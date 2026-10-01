@@ -1,0 +1,210 @@
+{
+  "uri": "https://api.sketchfab.com/v3/models/7bcceae8f461476883a5b182bfb15165",
+  "uid": "7bcceae8f461476883a5b182bfb15165",
+  "name": "Testarossa",
+  "staffpickedAt": null,
+  "viewCount": 6008,
+  "likeCount": 81,
+  "animationCount": 0,
+  "viewerUrl": "https://sketchfab.com/3d-models/testarossa-7bcceae8f461476883a5b182bfb15165",
+  "embedUrl": "https://sketchfab.com/models/7bcceae8f461476883a5b182bfb15165/embed",
+  "commentCount": 5,
+  "isDownloadable": true,
+  "publishedAt": "2019-11-02T18:10:08.024184",
+  "tags": [
+    {
+      "name": "ferrari",
+      "slug": "ferrari",
+      "uri": "https://api.sketchfab.com/v3/tags/ferrari"
+    },
+    {
+      "name": "red",
+      "slug": "red",
+      "uri": "https://api.sketchfab.com/v3/tags/red"
+    },
+    {
+      "name": "vehicle",
+      "slug": "vehicle",
+      "uri": "https://api.sketchfab.com/v3/tags/vehicle"
+    },
+    {
+      "name": "car",
+      "slug": "car",
+      "uri": "https://api.sketchfab.com/v3/tags/car"
+    }
+  ],
+  "categories": [
+    {
+      "name": "cars-vehicles"
+    }
+  ],
+  "thumbnails": {
+    "images": [
+      {
+        "uid": "15cf4a95e8e447d58a7e18b71caf00b5",
+        "size": 122254,
+        "width": 1920,
+        "url": "https://media.sketchfab.com/models/7bcceae8f461476883a5b182bfb15165/thumbnails/dd3281876faf404fada9ab37795681d4/9519df25b8bb44019d059910a6213e9c.jpeg",
+        "height": 1080
+      },
+      {
+        "uid": "542dfba458e34062ad96fea7be81cf23",
+        "size": 43478,
+        "width": 1024,
+        "url": "https://media.sketchfab.com/models/7bcceae8f461476883a5b182bfb15165/thumbnails/dd3281876faf404fada9ab37795681d4/002d84a27a8641eeb18410ce44dd57b4.jpeg",
+        "height": 576
+      },
+      {
+        "uid": "c989deb904f0432eab015935eab34d64",
+        "size": 25973,
+        "width": 720,
+        "url": "https://media.sketchfab.com/models/7bcceae8f461476883a5b182bfb15165/thumbnails/dd3281876faf404fada9ab37795681d4/76443f5de0ab46c7be294fe1221af289.jpeg",
+        "height": 405
+      },
+      {
+        "uid": "239fb50da294497bb3769c7497dfb6c3",
+        "size": 5908,
+        "width": 256,
+        "url": "https://media.sketchfab.com/models/7bcceae8f461476883a5b182bfb15165/thumbnails/dd3281876faf404fada9ab37795681d4/b5409f0679dc49cfbf7af81166905021.jpeg",
+        "height": 144
+      },
+      {
+        "uid": "acbaafd3cdf844b0ba1c8f28e29e8751",
+        "size": 1340,
+        "width": 64,
+        "url": "https://media.sketchfab.com/models/7bcceae8f461476883a5b182bfb15165/thumbnails/dd3281876faf404fada9ab37795681d4/a7384617f6d247e19d3329faf7a969c2.jpeg",
+        "height": 36
+      }
+    ]
+  },
+  "user": {
+    "uid": "b75b94d30fd642f595692422be06a4ca",
+    "username": "dagtholander",
+    "displayName": "dagtholander",
+    "profileUrl": "https://sketchfab.com/dagtholander",
+    "account": "basic",
+    "avatar": {
+      "uri": "https://api.sketchfab.com/v3/avatars/51af6a870cce449eb75b0345feebaebb",
+      "images": [
+        {
+          "size": 5719,
+          "width": 90,
+          "url": "https://media.sketchfab.com/avatars/51af6a870cce449eb75b0345feebaebb/2ef0f894055b4bb69123b2a27fa2d379.jpeg",
+          "height": 90
+        },
+        {
+          "size": 6496,
+          "width": 100,
+          "url": "https://media.sketchfab.com/avatars/51af6a870cce449eb75b0345feebaebb/ab11eedf96374486acb544f71a23b165.jpeg",
+          "height": 100
+        },
+        {
+          "size": 1359,
+          "width": 32,
+          "url": "https://media.sketchfab.com/avatars/51af6a870cce449eb75b0345feebaebb/35f6f9b6c9a14a548ce472582d8a9bb5.jpeg",
+          "height": 32
+        },
+        {
+          "size": 2584,
+          "width": 48,
+          "url": "https://media.sketchfab.com/avatars/51af6a870cce449eb75b0345feebaebb/a8072a51447c4d41ab177b357111b420.jpeg",
+          "height": 48
+        }
+      ]
+    },
+    "uri": "https://api.sketchfab.com/v3/users/b75b94d30fd642f595692422be06a4ca"
+  },
+  "description": "Game ready Ferrari Testarossa 3d model",
+  "faceCount": 24973,
+  "createdAt": "2019-11-02T17:30:32.278030",
+  "vertexCount": 13771,
+  "isAgeRestricted": false,
+  "archives": {
+    "glb": {
+      "textureCount": 7,
+      "size": 4406132,
+      "type": "glb",
+      "textureMaxResolution": 2048,
+      "faceCount": 24972,
+      "vertexCount": 20155
+    },
+    "gltf": {
+      "textureCount": 7,
+      "size": 3688844,
+      "type": "gltf",
+      "textureMaxResolution": 2048,
+      "faceCount": 24972,
+      "vertexCount": 20155
+    },
+    "source": {
+      "textureCount": null,
+      "size": 3683546,
+      "type": "source",
+      "textureMaxResolution": null,
+      "faceCount": null,
+      "vertexCount": null
+    },
+    "usdz": {
+      "textureCount": null,
+      "size": 3010872,
+      "type": "usdz",
+      "textureMaxResolution": null,
+      "faceCount": null,
+      "vertexCount": null
+    }
+  },
+  "license": {
+    "slug": "by",
+    "url": "https://creativecommons.org/licenses/by/4.0/",
+    "label": "CC Attribution",
+    "evidence": "Archived Objaverse metadata license=by and source GLB asset.extras both identify matching CC BY 4.0; current listing returns404."
+  },
+  "archiveMetadataUrl": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/metadata/000-059.json.gz",
+  "downloadUrl": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-059/7bcceae8f461476883a5b182bfb15165.glb",
+  "archivedLicense": "by",
+  "author": {
+    "uid": "b75b94d30fd642f595692422be06a4ca",
+    "username": "dagtholander",
+    "displayName": "dagtholander",
+    "profileUrl": "https://sketchfab.com/dagtholander",
+    "account": "basic",
+    "avatar": {
+      "uri": "https://api.sketchfab.com/v3/avatars/51af6a870cce449eb75b0345feebaebb",
+      "images": [
+        {
+          "size": 5719,
+          "width": 90,
+          "url": "https://media.sketchfab.com/avatars/51af6a870cce449eb75b0345feebaebb/2ef0f894055b4bb69123b2a27fa2d379.jpeg",
+          "height": 90
+        },
+        {
+          "size": 6496,
+          "width": 100,
+          "url": "https://media.sketchfab.com/avatars/51af6a870cce449eb75b0345feebaebb/ab11eedf96374486acb544f71a23b165.jpeg",
+          "height": 100
+        },
+        {
+          "size": 1359,
+          "width": 32,
+          "url": "https://media.sketchfab.com/avatars/51af6a870cce449eb75b0345feebaebb/35f6f9b6c9a14a548ce472582d8a9bb5.jpeg",
+          "height": 32
+        },
+        {
+          "size": 2584,
+          "width": 48,
+          "url": "https://media.sketchfab.com/avatars/51af6a870cce449eb75b0345feebaebb/a8072a51447c4d41ab177b357111b420.jpeg",
+          "height": 48
+        }
+      ]
+    },
+    "uri": "https://api.sketchfab.com/v3/users/b75b94d30fd642f595692422be06a4ca"
+  },
+  "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-059/7bcceae8f461476883a5b182bfb15165.glb",
+  "sourceSha256": "9ec0065726b676d30e73e043011fd7a0c213ced6d6baf9fb3343d9df37ed019b",
+  "sourceAsset": {
+    "author": "dagtholander (https://sketchfab.com/dagtholander)",
+    "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "source": "https://sketchfab.com/3d-models/testarossa-7bcceae8f461476883a5b182bfb15165",
+    "title": "Testarossa"
+  }
+}

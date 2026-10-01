@@ -1,0 +1,169 @@
+{
+  "uid": "e6a7d7e98f4c46ca841eb930184b0f09",
+  "metadata": {
+    "animationCount": 0,
+    "categories": [
+      {
+        "uid": "22a2f677efad4d7bbca5ad45f9b5868e",
+        "name": "Cars & Vehicles",
+        "slug": "cars-vehicles",
+        "uri": "https://api.sketchfab.com/v3/categories/22a2f677efad4d7bbca5ad45f9b5868e",
+        "icon": "https://static.sketchfab.com/static/builds/web/dist/static/assets/images/icons/categories/45dd0cc0860ac57fcd63bde1cc3f2b7c-v2.svg",
+        "thumbnails": [
+          {
+            "width": "512",
+            "height": "288",
+            "url": "https://static.sketchfab.com/categories/22a2f677efad4d7bbca5ad45f9b5868e/512x288.png"
+          },
+          {
+            "width": "800",
+            "height": "450",
+            "url": "https://static.sketchfab.com/categories/22a2f677efad4d7bbca5ad45f9b5868e/800x450.png"
+          }
+        ]
+      }
+    ],
+    "commentCount": 6,
+    "createdAt": "2021-11-01T07:25:45.299624",
+    "embedUrl": "https://sketchfab.com/models/e6a7d7e98f4c46ca841eb930184b0f09/embed",
+    "faceCount": 82216,
+    "isAgeRestricted": false,
+    "license": {
+      "uri": "https://api.sketchfab.com/v3/licenses/322a749bcfa841b29dff1e8a1bb74b0b",
+      "label": "CC Attribution",
+      "fullName": "Creative Commons Attribution",
+      "requirements": "Author must be credited. Commercial use is allowed.",
+      "url": "http://creativecommons.org/licenses/by/4.0/",
+      "slug": "by"
+    },
+    "likeCount": 101,
+    "name": "Free Lamborghini Gallardo 2004",
+    "publishedAt": "2021-11-01T08:44:18.391639",
+    "soundCount": 0,
+    "staffpickedAt": null,
+    "tags": [
+      {
+        "name": "lamborghini",
+        "slug": "lamborghini",
+        "uri": "https://api.sketchfab.com/v3/tags/lamborghini"
+      },
+      {
+        "name": "gallardo",
+        "slug": "gallardo",
+        "uri": "https://api.sketchfab.com/v3/tags/gallardo"
+      },
+      {
+        "name": "2004",
+        "slug": "2004",
+        "uri": "https://api.sketchfab.com/v3/tags/2004"
+      }
+    ],
+    "thumbnails": {
+      "images": [
+        {
+          "uid": "ee80349d8abe4ef49b19059d822cdaee",
+          "width": 1920,
+          "height": 1080,
+          "size": 229006,
+          "url": "https://media.sketchfab.com/models/e6a7d7e98f4c46ca841eb930184b0f09/thumbnails/e5d7900d56144279855fb90639c9ec0d/a1588cdd246c4cf0bf2cb82300fc87b8.jpeg"
+        },
+        {
+          "uid": "af4d924f047a4a6589bf62dc4984ea7c",
+          "width": 1024,
+          "height": 576,
+          "size": 42385,
+          "url": "https://media.sketchfab.com/models/e6a7d7e98f4c46ca841eb930184b0f09/thumbnails/e5d7900d56144279855fb90639c9ec0d/b2538404ddf14aa0a420cf0be3a119a3.jpeg"
+        },
+        {
+          "uid": "cdc6d193fddb49b8a0b08ac35f794cd6",
+          "width": 720,
+          "height": 405,
+          "size": 24799,
+          "url": "https://media.sketchfab.com/models/e6a7d7e98f4c46ca841eb930184b0f09/thumbnails/e5d7900d56144279855fb90639c9ec0d/d1e919c023bf4957ab83045386c4d7b4.jpeg"
+        },
+        {
+          "uid": "a3d5588538e14d61941681acf7dc810d",
+          "width": 256,
+          "height": 144,
+          "size": 6142,
+          "url": "https://media.sketchfab.com/models/e6a7d7e98f4c46ca841eb930184b0f09/thumbnails/e5d7900d56144279855fb90639c9ec0d/441b8843f9eb4d2fbb1a28aabf5d7cc3.jpeg"
+        },
+        {
+          "uid": "6681395626d94c6191738cf24d360652",
+          "width": 64,
+          "height": 36,
+          "size": 1328,
+          "url": "https://media.sketchfab.com/models/e6a7d7e98f4c46ca841eb930184b0f09/thumbnails/e5d7900d56144279855fb90639c9ec0d/0685bb4de0ef4f839078e1ee3f841eab.jpeg"
+        }
+      ]
+    },
+    "uid": "e6a7d7e98f4c46ca841eb930184b0f09",
+    "uri": "https://api.sketchfab.com/v3/models/e6a7d7e98f4c46ca841eb930184b0f09",
+    "user": {
+      "uid": "cd31b492092d4fbda9f587fea3c090be",
+      "username": "ALIEEEN",
+      "displayName": "ALIEEEN",
+      "account": "basic",
+      "profileUrl": "https://sketchfab.com/ALIEEEN",
+      "avatar": {
+        "uid": "a7491ae1694b4975b0df9dbee6cff533",
+        "uri": "https://api.sketchfab.com/v3/avatars/a7491ae1694b4975b0df9dbee6cff533",
+        "images": [
+          {
+            "width": 32,
+            "height": 32,
+            "size": 459,
+            "url": "https://media.sketchfab.com/avatars/a7491ae1694b4975b0df9dbee6cff533/d8a7cd40e9a74387910236a8f3f668f2.png"
+          },
+          {
+            "width": 48,
+            "height": 48,
+            "size": 728,
+            "url": "https://media.sketchfab.com/avatars/a7491ae1694b4975b0df9dbee6cff533/5f23ee160c7840a4a369e2c64e668b6c.png"
+          },
+          {
+            "width": 90,
+            "height": 90,
+            "size": 1579,
+            "url": "https://media.sketchfab.com/avatars/a7491ae1694b4975b0df9dbee6cff533/2e3f55cf033540138c3e710aec3c2564.png"
+          },
+          {
+            "width": 100,
+            "height": 100,
+            "size": 1772,
+            "url": "https://media.sketchfab.com/avatars/a7491ae1694b4975b0df9dbee6cff533/b098d12620fd44cf8eba3adbbae227a7.png"
+          }
+        ]
+      },
+      "uri": "https://api.sketchfab.com/v3/users/cd31b492092d4fbda9f587fea3c090be"
+    },
+    "vertexCount": 43421,
+    "viewCount": 9722,
+    "viewerUrl": "https://sketchfab.com/3d-models/free-lamborghini-gallardo-2004-e6a7d7e98f4c46ca841eb930184b0f09",
+    "isDownloadable": true,
+    "isProtected": false,
+    "description": "**Lamborghini Gallardo 2004**\n\nYou can use this model in your projects, commercial or personal. Attribution is not required but is greatly appreciated.\n\nYou can\u2019t sell this model alone (or in a bundle) without SIGNIFICANT modification.\n\nThe Car is 56k Triangles Without the rims.\n\nLeft/Right turning signals have different materials so you can turn them on separately.",
+    "price": null,
+    "downloadCount": 1970,
+    "editorUrl": "https://sketchfab.com/models/e6a7d7e98f4c46ca841eb930184b0f09/edit",
+    "status": {
+      "warning": {},
+      "processing": "SUCCEEDED"
+    },
+    "source": "website",
+    "hasCommentsDisabled": false,
+    "updatedAt": "2022-07-20T17:54:03.542328",
+    "pbrType": "metalness",
+    "textureCount": 52,
+    "materialCount": 26
+  },
+  "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-071/e6a7d7e98f4c46ca841eb930184b0f09.glb",
+  "sha256": "8f249dffc5ffbdf03044ee22829b8fdf1a6b71bcf5160a2b4e13fba605919e57",
+  "sourceSha256": "8f249dffc5ffbdf03044ee22829b8fdf1a6b71bcf5160a2b4e13fba605919e57",
+  "sourceAsset": {
+    "author": "Desiccated_Lemon (https://sketchfab.com/Desiccated_Lemon)",
+    "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "source": "https://sketchfab.com/3d-models/free-lamborghini-gallardo-2004-e6a7d7e98f4c46ca841eb930184b0f09",
+    "title": "Free Lamborghini Gallardo 2004"
+  }
+}

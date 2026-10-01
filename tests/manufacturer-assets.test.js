@@ -37,7 +37,7 @@ test('every manufacturer garage entry resolves to one attributed shipping model 
     const model = MANUFACTURER_ASSETS[vehicle.assetId];
     assert.equal(vehicle.brand, model.brand);
     assert.equal(vehicle.origin, 'manufacturer');
-    assert.ok(['electric', 'combustion'].includes(vehicle.powertrain));
+    assert.ok(['electric', 'hybrid', 'combustion'].includes(vehicle.powertrain));
     assert.ok(model.author?.trim() && model.model?.trim());
     assert.equal(new URL(model.source).protocol, 'https:');
     assert.ok(['sketchfab.com', 'github.com'].includes(new URL(model.source).hostname), 'source identifies the creator page or official asset distribution');

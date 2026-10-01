@@ -1,0 +1,165 @@
+{
+  "animationCount": 0,
+  "categories": [
+    {
+      "uid": "22a2f677efad4d7bbca5ad45f9b5868e",
+      "name": "Cars & Vehicles",
+      "slug": "cars-vehicles",
+      "uri": "https://api.sketchfab.com/v3/categories/22a2f677efad4d7bbca5ad45f9b5868e",
+      "icon": "https://static.sketchfab.com/static/builds/web/dist/static/assets/images/icons/categories/45dd0cc0860ac57fcd63bde1cc3f2b7c-v2.svg",
+      "thumbnails": [
+        {
+          "width": "512",
+          "height": "288",
+          "url": "https://static.sketchfab.com/categories/22a2f677efad4d7bbca5ad45f9b5868e/512x288.png"
+        },
+        {
+          "width": "800",
+          "height": "450",
+          "url": "https://static.sketchfab.com/categories/22a2f677efad4d7bbca5ad45f9b5868e/800x450.png"
+        }
+      ]
+    }
+  ],
+  "commentCount": 9,
+  "createdAt": "2018-10-13T21:56:23.617264",
+  "embedUrl": "https://sketchfab.com/models/e595ef868dd94f77b83c332f9d5c6f5d/embed",
+  "faceCount": 630049,
+  "isAgeRestricted": false,
+  "license": {
+    "uri": "https://api.sketchfab.com/v3/licenses/322a749bcfa841b29dff1e8a1bb74b0b",
+    "label": "CC Attribution",
+    "fullName": "Creative Commons Attribution",
+    "requirements": "Author must be credited. Commercial use is allowed.",
+    "url": "http://creativecommons.org/licenses/by/4.0/",
+    "slug": "by"
+  },
+  "likeCount": 217,
+  "name": "Nissan GTR 2018",
+  "publishedAt": "2018-10-14T00:20:54.580859",
+  "soundCount": 0,
+  "staffpickedAt": null,
+  "tags": [
+    {
+      "name": "nissan",
+      "slug": "nissan",
+      "uri": "https://api.sketchfab.com/v3/tags/nissan"
+    },
+    {
+      "name": "sportscar",
+      "slug": "sportscar",
+      "uri": "https://api.sketchfab.com/v3/tags/sportscar"
+    },
+    {
+      "name": "GTR",
+      "slug": "gtr",
+      "uri": "https://api.sketchfab.com/v3/tags/gtr"
+    }
+  ],
+  "thumbnails": {
+    "images": [
+      {
+        "uid": "989ca29c8c4d4b28a3e59012f93ce76a",
+        "width": 1920,
+        "height": 1080,
+        "size": 484282,
+        "url": "https://media.sketchfab.com/models/e595ef868dd94f77b83c332f9d5c6f5d/thumbnails/997432275aee47b3b4ca36b779ec421a/267955bfbdf54522b5fa364d84886183.jpeg"
+      },
+      {
+        "uid": "cfa04965285b48c1af9123dc0994bfd8",
+        "width": 1024,
+        "height": 576,
+        "size": 109508,
+        "url": "https://media.sketchfab.com/models/e595ef868dd94f77b83c332f9d5c6f5d/thumbnails/997432275aee47b3b4ca36b779ec421a/9565b5b82d0548dc89616a271bd4b36c.jpeg"
+      },
+      {
+        "uid": "6de0a292b6fa4e0196168ac33ff225e1",
+        "width": 720,
+        "height": 405,
+        "size": 57843,
+        "url": "https://media.sketchfab.com/models/e595ef868dd94f77b83c332f9d5c6f5d/thumbnails/997432275aee47b3b4ca36b779ec421a/b870a0372a4842a3b6943c289fbc9224.jpeg"
+      },
+      {
+        "uid": "b135242440d644a4a2730bb7ba17b339",
+        "width": 256,
+        "height": 144,
+        "size": 9127,
+        "url": "https://media.sketchfab.com/models/e595ef868dd94f77b83c332f9d5c6f5d/thumbnails/997432275aee47b3b4ca36b779ec421a/2e68bb4d4efb42e28aad0a119b552921.jpeg"
+      },
+      {
+        "uid": "a64c526c7c334b3c8d06684af6380eac",
+        "width": 64,
+        "height": 36,
+        "size": 1155,
+        "url": "https://media.sketchfab.com/models/e595ef868dd94f77b83c332f9d5c6f5d/thumbnails/997432275aee47b3b4ca36b779ec421a/c7a32e5a85cb4f8687388461caa552a6.jpeg"
+      }
+    ]
+  },
+  "uid": "e595ef868dd94f77b83c332f9d5c6f5d",
+  "uri": "https://api.sketchfab.com/v3/models/e595ef868dd94f77b83c332f9d5c6f5d",
+  "user": {
+    "uid": "2ee4129d2c0d49258bea0cbc004cd937",
+    "username": "Tanvir.Ahmed",
+    "displayName": "Tanvir.Ahmed",
+    "account": "basic",
+    "profileUrl": "https://sketchfab.com/Tanvir.Ahmed",
+    "avatar": {
+      "uid": "12f60a770ddd4b37913c1df6d89ced7e",
+      "uri": "https://api.sketchfab.com/v3/avatars/12f60a770ddd4b37913c1df6d89ced7e",
+      "images": [
+        {
+          "width": 32,
+          "height": 32,
+          "size": 577,
+          "url": "https://media.sketchfab.com/avatars/12f60a770ddd4b37913c1df6d89ced7e/11c6e7d21e1a41f98884826546aa6dee.jpeg"
+        },
+        {
+          "width": 48,
+          "height": 48,
+          "size": 842,
+          "url": "https://media.sketchfab.com/avatars/12f60a770ddd4b37913c1df6d89ced7e/a253509033a74fa0b5db36e236e0f613.jpeg"
+        },
+        {
+          "width": 90,
+          "height": 90,
+          "size": 1634,
+          "url": "https://media.sketchfab.com/avatars/12f60a770ddd4b37913c1df6d89ced7e/425d987e38dc47d6b35a91d4aacf4fbb.jpeg"
+        },
+        {
+          "width": 100,
+          "height": 100,
+          "size": 1898,
+          "url": "https://media.sketchfab.com/avatars/12f60a770ddd4b37913c1df6d89ced7e/92a78963ef8c419eb3cd70d945e95642.jpeg"
+        }
+      ]
+    },
+    "uri": "https://api.sketchfab.com/v3/users/2ee4129d2c0d49258bea0cbc004cd937"
+  },
+  "vertexCount": 389606,
+  "viewCount": 20783,
+  "viewerUrl": "https://sketchfab.com/3d-models/nissan-gtr-2018-e595ef868dd94f77b83c332f9d5c6f5d",
+  "isDownloadable": true,
+  "isProtected": false,
+  "description": "Full textured \nFinest quad  topology",
+  "price": null,
+  "downloadCount": 6880,
+  "editorUrl": "https://sketchfab.com/models/e595ef868dd94f77b83c332f9d5c6f5d/edit",
+  "status": {
+    "warning": {},
+    "processing": "SUCCEEDED"
+  },
+  "source": "website",
+  "hasCommentsDisabled": false,
+  "updatedAt": "2022-07-20T20:23:48.278604",
+  "pbrType": "metalness",
+  "textureCount": 16,
+  "materialCount": 57,
+  "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-111/e595ef868dd94f77b83c332f9d5c6f5d.glb",
+  "sourceSha256": "f9f2c08aef442454757d213d304695a733e2a453b23488b1ffe64e2b4012527c",
+  "sourceAsset": {
+    "author": "Tanvir.Ahmed (https://sketchfab.com/Tanvir.Ahmed)",
+    "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "source": "https://sketchfab.com/3d-models/nissan-gtr-2018-e595ef868dd94f77b83c332f9d5c6f5d",
+    "title": "Nissan GTR 2018"
+  }
+}

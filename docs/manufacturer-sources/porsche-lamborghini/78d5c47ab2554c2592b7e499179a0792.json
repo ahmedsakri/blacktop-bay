@@ -1,0 +1,184 @@
+{
+  "uid": "78d5c47ab2554c2592b7e499179a0792",
+  "metadata": {
+    "animationCount": 0,
+    "categories": [
+      {
+        "uid": "22a2f677efad4d7bbca5ad45f9b5868e",
+        "name": "Cars & Vehicles",
+        "slug": "cars-vehicles",
+        "uri": "https://api.sketchfab.com/v3/categories/22a2f677efad4d7bbca5ad45f9b5868e",
+        "icon": "https://static.sketchfab.com/static/builds/web/dist/static/assets/images/icons/categories/45dd0cc0860ac57fcd63bde1cc3f2b7c-v2.svg",
+        "thumbnails": [
+          {
+            "width": "512",
+            "height": "288",
+            "url": "https://static.sketchfab.com/categories/22a2f677efad4d7bbca5ad45f9b5868e/512x288.png"
+          },
+          {
+            "width": "800",
+            "height": "450",
+            "url": "https://static.sketchfab.com/categories/22a2f677efad4d7bbca5ad45f9b5868e/800x450.png"
+          }
+        ]
+      }
+    ],
+    "commentCount": 21,
+    "createdAt": "2021-06-03T18:04:45.949187",
+    "embedUrl": "https://sketchfab.com/models/78d5c47ab2554c2592b7e499179a0792/embed",
+    "faceCount": 239145,
+    "isAgeRestricted": false,
+    "license": {
+      "uri": "https://api.sketchfab.com/v3/licenses/322a749bcfa841b29dff1e8a1bb74b0b",
+      "label": "CC Attribution",
+      "fullName": "Creative Commons Attribution",
+      "requirements": "Author must be credited. Commercial use is allowed.",
+      "url": "http://creativecommons.org/licenses/by/4.0/",
+      "slug": "by"
+    },
+    "likeCount": 454,
+    "name": "Porsche 911 GT3",
+    "publishedAt": "2021-06-03T18:24:52.711735",
+    "soundCount": 0,
+    "staffpickedAt": null,
+    "tags": [
+      {
+        "name": "porsche",
+        "slug": "porsche",
+        "uri": "https://api.sketchfab.com/v3/tags/porsche"
+      },
+      {
+        "name": "cars",
+        "slug": "cars",
+        "uri": "https://api.sketchfab.com/v3/tags/cars"
+      },
+      {
+        "name": "GT3",
+        "slug": "gt3",
+        "uri": "https://api.sketchfab.com/v3/tags/gt3"
+      },
+      {
+        "name": "blender",
+        "slug": "blender",
+        "uri": "https://api.sketchfab.com/v3/tags/blender"
+      },
+      {
+        "name": "car",
+        "slug": "car",
+        "uri": "https://api.sketchfab.com/v3/tags/car"
+      },
+      {
+        "name": "race",
+        "slug": "race",
+        "uri": "https://api.sketchfab.com/v3/tags/race"
+      }
+    ],
+    "thumbnails": {
+      "images": [
+        {
+          "uid": "e19d43bb24884ce7a38c3af84faf1ec2",
+          "width": 1920,
+          "height": 1080,
+          "size": 257772,
+          "url": "https://media.sketchfab.com/models/78d5c47ab2554c2592b7e499179a0792/thumbnails/3f10c49b7b0746e8ba59c1917f364088/df735a03fe7540f6a2d31a892581740d.jpeg"
+        },
+        {
+          "uid": "fcdd27bd5aca40308dcfe7cc9f69d43e",
+          "width": 1024,
+          "height": 576,
+          "size": 49010,
+          "url": "https://media.sketchfab.com/models/78d5c47ab2554c2592b7e499179a0792/thumbnails/3f10c49b7b0746e8ba59c1917f364088/dfa4b7f4b2334afba31c8779bc6df366.jpeg"
+        },
+        {
+          "uid": "1ba552951c2645bab23bce13a36710f6",
+          "width": 720,
+          "height": 405,
+          "size": 25435,
+          "url": "https://media.sketchfab.com/models/78d5c47ab2554c2592b7e499179a0792/thumbnails/3f10c49b7b0746e8ba59c1917f364088/8f39771af6d044bc9dada2e73c7f4480.jpeg"
+        },
+        {
+          "uid": "06402c87d7a5424a8265bc695669ff3e",
+          "width": 256,
+          "height": 144,
+          "size": 4945,
+          "url": "https://media.sketchfab.com/models/78d5c47ab2554c2592b7e499179a0792/thumbnails/3f10c49b7b0746e8ba59c1917f364088/883ed065ed00404cabf7ca0b51b69b25.jpeg"
+        },
+        {
+          "uid": "3697942480894952a0655cacb43aff83",
+          "width": 64,
+          "height": 36,
+          "size": 1128,
+          "url": "https://media.sketchfab.com/models/78d5c47ab2554c2592b7e499179a0792/thumbnails/3f10c49b7b0746e8ba59c1917f364088/2e071c6d8ff044ccbe1c06d548380904.jpeg"
+        }
+      ]
+    },
+    "uid": "78d5c47ab2554c2592b7e499179a0792",
+    "uri": "https://api.sketchfab.com/v3/models/78d5c47ab2554c2592b7e499179a0792",
+    "user": {
+      "uid": "d09bb85d13254849bf29ffa9a75ecfe3",
+      "username": "ChevroletSS",
+      "displayName": "ChevroletSS",
+      "account": "basic",
+      "profileUrl": "https://sketchfab.com/ChevroletSS",
+      "avatar": {
+        "uid": "51af6a870cce449eb75b0345feebaebb",
+        "uri": "https://api.sketchfab.com/v3/avatars/51af6a870cce449eb75b0345feebaebb",
+        "images": [
+          {
+            "width": 90,
+            "height": 90,
+            "size": 5719,
+            "url": "https://media.sketchfab.com/avatars/51af6a870cce449eb75b0345feebaebb/2ef0f894055b4bb69123b2a27fa2d379.jpeg"
+          },
+          {
+            "width": 100,
+            "height": 100,
+            "size": 6496,
+            "url": "https://media.sketchfab.com/avatars/51af6a870cce449eb75b0345feebaebb/ab11eedf96374486acb544f71a23b165.jpeg"
+          },
+          {
+            "width": 32,
+            "height": 32,
+            "size": 1359,
+            "url": "https://media.sketchfab.com/avatars/51af6a870cce449eb75b0345feebaebb/35f6f9b6c9a14a548ce472582d8a9bb5.jpeg"
+          },
+          {
+            "width": 48,
+            "height": 48,
+            "size": 2584,
+            "url": "https://media.sketchfab.com/avatars/51af6a870cce449eb75b0345feebaebb/a8072a51447c4d41ab177b357111b420.jpeg"
+          }
+        ]
+      },
+      "uri": "https://api.sketchfab.com/v3/users/d09bb85d13254849bf29ffa9a75ecfe3"
+    },
+    "vertexCount": 137519,
+    "viewCount": 92636,
+    "viewerUrl": "https://sketchfab.com/3d-models/porsche-911-gt3-78d5c47ab2554c2592b7e499179a0792",
+    "isDownloadable": true,
+    "isProtected": false,
+    "description": "The Porsche 911 GT3 is a high-performance homologation model of the Porsche 911 sports car. It is a line of high-performance models, which began with the 1973 911 Carrera RS. The GT3 has had a successful racing career in the one-make national and regional Porsche Carrera Cup and GT3 Cup Challenge series, as well as the international Porsche Supercup supporting the FIA Formula 1 World Championship.\n\n This is my first model on sketchfab, so the materials are not as good as they should be.\n \n The car comes with an interior and a detailed body.",
+    "price": null,
+    "downloadCount": 28237,
+    "editorUrl": "https://sketchfab.com/models/78d5c47ab2554c2592b7e499179a0792/edit",
+    "status": {
+      "warning": {},
+      "processing": "SUCCEEDED"
+    },
+    "source": "blender-exporter",
+    "hasCommentsDisabled": false,
+    "updatedAt": "2024-04-27T19:40:20.907087",
+    "pbrType": null,
+    "textureCount": 0,
+    "materialCount": 56
+  },
+  "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-046/78d5c47ab2554c2592b7e499179a0792.glb",
+  "sha256": "2c8ecc16ff979bd09aaac8eca6775cc838fdbc2ca618c24db704aced69c00d32",
+  "sourceSha256": "2c8ecc16ff979bd09aaac8eca6775cc838fdbc2ca618c24db704aced69c00d32",
+  "sourceAsset": {
+    "author": "ChevroletSS (https://sketchfab.com/ChevroletSS)",
+    "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "source": "https://sketchfab.com/3d-models/porsche-911-gt3-78d5c47ab2554c2592b7e499179a0792",
+    "title": "Porsche 911 GT3"
+  }
+}

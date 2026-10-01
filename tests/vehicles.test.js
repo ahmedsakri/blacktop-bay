@@ -4,9 +4,10 @@ import {DEFAULT_VEHICLE_ID, VEHICLES, getVehicle} from '../src/vehicles.js';
 import {LEGACY_VEHICLES} from '../src/legacy-vehicles.js';
 import {createRace, getUpgradeStats, VEHICLE_SPECS} from '../src/physics.js';
 
-test('the public collection contains sixteen actual manufacturer models', () => {
-  assert.equal(VEHICLES.length, 16);
-  assert.equal(new Set(VEHICLES.map(car => car.id)).size, 16);
+test('the public collection contains twenty-seven actual manufacturer models across sixteen brands', () => {
+  assert.equal(VEHICLES.length, 27);
+  assert.equal(new Set(VEHICLES.map(car => car.id)).size, 27);
+  assert.equal(new Set(VEHICLES.map(car => car.brand)).size, 16);
   for (const car of VEHICLES) {
     assert.ok(car.brand && car.assetId && car.origin === 'manufacturer');
     assert.equal(getVehicle(car.id), car);

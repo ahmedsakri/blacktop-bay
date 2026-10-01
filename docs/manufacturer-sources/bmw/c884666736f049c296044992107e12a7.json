@@ -1,0 +1,148 @@
+{
+  "animationCount": 0,
+  "categories": [
+    {
+      "uid": "22a2f677efad4d7bbca5ad45f9b5868e",
+      "name": "Cars & Vehicles",
+      "slug": "cars-vehicles",
+      "uri": "https://api.sketchfab.com/v3/categories/22a2f677efad4d7bbca5ad45f9b5868e",
+      "icon": "https://static.sketchfab.com/static/builds/web/dist/static/assets/images/icons/categories/45dd0cc0860ac57fcd63bde1cc3f2b7c-v2.svg",
+      "thumbnails": [
+        {
+          "width": "512",
+          "height": "288",
+          "url": "https://static.sketchfab.com/categories/22a2f677efad4d7bbca5ad45f9b5868e/512x288.png"
+        },
+        {
+          "width": "800",
+          "height": "450",
+          "url": "https://static.sketchfab.com/categories/22a2f677efad4d7bbca5ad45f9b5868e/800x450.png"
+        }
+      ]
+    }
+  ],
+  "commentCount": 5,
+  "createdAt": "2017-01-21T13:13:33.555514",
+  "embedUrl": "https://sketchfab.com/models/c884666736f049c296044992107e12a7/embed",
+  "faceCount": 382769,
+  "isAgeRestricted": false,
+  "license": {
+    "uri": "https://api.sketchfab.com/v3/licenses/322a749bcfa841b29dff1e8a1bb74b0b",
+    "label": "CC Attribution",
+    "fullName": "Creative Commons Attribution",
+    "requirements": "Author must be credited. Commercial use is allowed.",
+    "url": "http://creativecommons.org/licenses/by/4.0/",
+    "slug": "by"
+  },
+  "likeCount": 52,
+  "name": "BMW I8",
+  "publishedAt": "2017-01-21T13:34:08.241997",
+  "soundCount": 0,
+  "staffpickedAt": null,
+  "tags": [
+    {
+      "name": "bmw",
+      "slug": "bmw",
+      "uri": "https://api.sketchfab.com/v3/tags/bmw"
+    }
+  ],
+  "thumbnails": {
+    "images": [
+      {
+        "uid": "6fe679ad6cda4bd29764fd3e2c4ba8a1",
+        "width": 720,
+        "height": 405,
+        "size": 49732,
+        "url": "https://media.sketchfab.com/models/c884666736f049c296044992107e12a7/thumbnails/b95375a8ff8b417d9f536c444fad4341/720x405.jpeg"
+      },
+      {
+        "uid": "a79d14d6450f4d3da83b7a1799c9ff9d",
+        "width": 1024,
+        "height": 576,
+        "size": 83632,
+        "url": "https://media.sketchfab.com/models/c884666736f049c296044992107e12a7/thumbnails/b95375a8ff8b417d9f536c444fad4341/1024x576.jpeg"
+      },
+      {
+        "uid": "44258f74c5784b0da8815d08f243d43f",
+        "width": 256,
+        "height": 144,
+        "size": 9730,
+        "url": "https://media.sketchfab.com/models/c884666736f049c296044992107e12a7/thumbnails/b95375a8ff8b417d9f536c444fad4341/256x144.jpeg"
+      },
+      {
+        "uid": "a489080a25e34244812595c9edc26212",
+        "width": 64,
+        "height": 36,
+        "size": 1333,
+        "url": "https://media.sketchfab.com/models/c884666736f049c296044992107e12a7/thumbnails/b95375a8ff8b417d9f536c444fad4341/64x36.jpeg"
+      }
+    ]
+  },
+  "uid": "c884666736f049c296044992107e12a7",
+  "uri": "https://api.sketchfab.com/v3/models/c884666736f049c296044992107e12a7",
+  "user": {
+    "uid": "aa725d01c85743078d1b7b94051f1ec6",
+    "username": "salza",
+    "displayName": "salza",
+    "account": "basic",
+    "profileUrl": "https://sketchfab.com/salza",
+    "avatar": {
+      "uid": "51af6a870cce449eb75b0345feebaebb",
+      "uri": "https://api.sketchfab.com/v3/avatars/51af6a870cce449eb75b0345feebaebb",
+      "images": [
+        {
+          "width": 90,
+          "height": 90,
+          "size": 5719,
+          "url": "https://media.sketchfab.com/avatars/51af6a870cce449eb75b0345feebaebb/2ef0f894055b4bb69123b2a27fa2d379.jpeg"
+        },
+        {
+          "width": 100,
+          "height": 100,
+          "size": 6496,
+          "url": "https://media.sketchfab.com/avatars/51af6a870cce449eb75b0345feebaebb/ab11eedf96374486acb544f71a23b165.jpeg"
+        },
+        {
+          "width": 32,
+          "height": 32,
+          "size": 1359,
+          "url": "https://media.sketchfab.com/avatars/51af6a870cce449eb75b0345feebaebb/35f6f9b6c9a14a548ce472582d8a9bb5.jpeg"
+        },
+        {
+          "width": 48,
+          "height": 48,
+          "size": 2584,
+          "url": "https://media.sketchfab.com/avatars/51af6a870cce449eb75b0345feebaebb/a8072a51447c4d41ab177b357111b420.jpeg"
+        }
+      ]
+    },
+    "uri": "https://api.sketchfab.com/v3/users/aa725d01c85743078d1b7b94051f1ec6"
+  },
+  "vertexCount": 310575,
+  "viewCount": 16418,
+  "viewerUrl": "https://sketchfab.com/3d-models/bmw-i8-c884666736f049c296044992107e12a7",
+  "isDownloadable": true,
+  "isProtected": false,
+  "description": "",
+  "price": null,
+  "downloadCount": 2666,
+  "editorUrl": "https://sketchfab.com/models/c884666736f049c296044992107e12a7/edit",
+  "status": {
+    "warning": {},
+    "processing": "SUCCEEDED"
+  },
+  "source": "website-deflated",
+  "hasCommentsDisabled": false,
+  "updatedAt": "2022-07-18T08:06:32.294587",
+  "pbrType": null,
+  "textureCount": 11,
+  "materialCount": 47,
+  "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-156/c884666736f049c296044992107e12a7.glb",
+  "sourceSha256": "e3a29f3aa043b73f1067e7dd126a41051be57dda1636d9071a9a3a4d0bef7e51",
+  "sourceAsset": {
+    "author": "salza (https://sketchfab.com/salza)",
+    "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "source": "https://sketchfab.com/3d-models/bmw-i8-c884666736f049c296044992107e12a7",
+    "title": "BMW I8"
+  }
+}

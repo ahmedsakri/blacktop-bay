@@ -1357,5 +1357,947 @@ export const MANUFACTURER_ASSETS = Object.freeze({
       "Object_49"
     ],
     "low": "/assets/cars/manufacturers/mclaren-senna-low.glb"
+  },
+  "porsche-911-gt3": {
+    "id": "porsche-911-gt3",
+    "brand": "Porsche",
+    "model": "911 GT3",
+    "uid": "78d5c47ab2554c2592b7e499179a0792",
+    "length": 4.545,
+    "author": "ChevroletSS",
+    "source": "https://sketchfab.com/3d-models/porsche-911-gt3-78d5c47ab2554c2592b7e499179a0792",
+    "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-046/78d5c47ab2554c2592b7e499179a0792.glb",
+    "license": "CC-BY-4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "sourceSha256": "2c8ecc16ff979bd09aaac8eca6775cc838fdbc2ca618c24db704aced69c00d32",
+    "sourceAsset": {
+      "author": "ChevroletSS (https://sketchfab.com/ChevroletSS)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/porsche-911-gt3-78d5c47ab2554c2592b7e499179a0792",
+      "title": "Porsche 911 GT3"
+    },
+    "additionalCredits": [],
+    "paintMaterialNames": [
+      "body-paint-EXT_Carpaint.004"
+    ],
+    "paintable": true,
+    "brakeLightMaterialNames": [
+      "EXT_Glass_Light_INT.001",
+      "rear-brake-lights"
+    ],
+    "wheelNames": [
+      "wheel_front_left",
+      "wheel_front_right",
+      "wheel_rear_left",
+      "wheel_rear_right"
+    ],
+    "factoryPaintPreservesTexture": true,
+    "changes": "Removed staging/people where present. Baked world transforms, normalized scale and +Z forward/+Y up coordinates. Preserved authored normals/UVs; separated whole wheel components into articulated pivots. Conservatively simplified secondary geometry with normals/UV weights, merged compatible material batches without changing vertex data, corrected named material roles where archived viewport shading was unsuitable for PBR, resized embedded textures and Meshopt-compressed for delivery. Removed authored alternate blurred rim and damage overlay. Restored exterior paint, rubber, alloy, glass and brake material roles.",
+    "variants": {
+      "high": {
+        "triangles": 234762,
+        "bytes": 1896004,
+        "sha256": "36ea43d806b971b6f5f71abd98054d9092c71329987c6b3a1913a73d76c9034e",
+        "sourceTriangles": 234762,
+        "primitives": 56
+      },
+      "low": {
+        "triangles": 159120,
+        "bytes": 1421192,
+        "sha256": "79c53bcdf43ea04f86cbf1465e8f6765c97fe084f93f84c8a739a09ef70e99fc",
+        "sourceTriangles": 234762,
+        "primitives": 56
+      }
+    },
+    "high": "/assets/cars/manufacturers/porsche-911-gt3-high.glb",
+    "wheelRadius": {
+      "wheel_front_left": 0.3458362817764282,
+      "wheel_front_right": 0.3458362817764282,
+      "wheel_rear_left": 0.3632872307935031,
+      "wheel_rear_right": 0.3632872307935031
+    },
+    "wheelPositions": {
+      "wheel_front_left": [
+        0.769470602273941,
+        0.3458362817764282,
+        1.2249698042869568
+      ],
+      "wheel_front_right": [
+        -0.769470602273941,
+        0.3458362817764282,
+        1.2249698042869568
+      ],
+      "wheel_rear_left": [
+        0.7650087773799896,
+        0.3637386357149808,
+        -1.2232121229171753
+      ],
+      "wheel_rear_right": [
+        -0.7650437951087952,
+        0.3637386357149808,
+        -1.2232121229171753
+      ]
+    },
+    "width": 1.9774922188201858,
+    "height": 1.2998471016911275,
+    "removedNodes": [
+      "Object_20",
+      "Object_398"
+    ],
+    "low": "/assets/cars/manufacturers/porsche-911-gt3-low.glb"
+  },
+  "lamborghini-gallardo": {
+    "id": "lamborghini-gallardo",
+    "brand": "Lamborghini",
+    "model": "Gallardo · 2004",
+    "uid": "e6a7d7e98f4c46ca841eb930184b0f09",
+    "length": 4.3,
+    "author": "ALIEEEN",
+    "source": "https://sketchfab.com/3d-models/free-lamborghini-gallardo-2004-e6a7d7e98f4c46ca841eb930184b0f09",
+    "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-071/e6a7d7e98f4c46ca841eb930184b0f09.glb",
+    "license": "CC-BY-4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "sourceSha256": "8f249dffc5ffbdf03044ee22829b8fdf1a6b71bcf5160a2b4e13fba605919e57",
+    "sourceAsset": {
+      "author": "Desiccated_Lemon (https://sketchfab.com/Desiccated_Lemon)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/free-lamborghini-gallardo-2004-e6a7d7e98f4c46ca841eb930184b0f09",
+      "title": "Free Lamborghini Gallardo 2004"
+    },
+    "additionalCredits": [],
+    "paintMaterialNames": [
+      "body-paint-Main_Body"
+    ],
+    "paintable": true,
+    "brakeLightMaterialNames": [
+      "Tail_lights_red"
+    ],
+    "wheelNames": [
+      "wheel_front_left",
+      "wheel_front_right",
+      "wheel_rear_left",
+      "wheel_rear_right"
+    ],
+    "factoryPaintPreservesTexture": true,
+    "changes": "Removed staging/people where present. Baked world transforms, normalized scale and +Z forward/+Y up coordinates. Preserved authored normals/UVs; separated whole wheel components into articulated pivots. Conservatively simplified secondary geometry with normals/UV weights, merged compatible material batches without changing vertex data, corrected named material roles where archived viewport shading was unsuitable for PBR, resized embedded textures and Meshopt-compressed for delivery. Original texture maps retained, with glass alpha/roughness corrected for the game renderer.",
+    "variants": {
+      "high": {
+        "triangles": 82146,
+        "bytes": 1517404,
+        "sha256": "65fc6f9a6a5bf1dbcefe7bc3518d21a8f07cd915c291397bde9375c9ed906a5e",
+        "sourceTriangles": 82146,
+        "primitives": 38
+      },
+      "low": {
+        "triangles": 82146,
+        "bytes": 894272,
+        "sha256": "bab83f49926452339c1dacbb8b90df731dee6a072cf3ae52ee83e9f28e3665f5",
+        "sourceTriangles": 82146,
+        "primitives": 38
+      }
+    },
+    "high": "/assets/cars/manufacturers/lamborghini-gallardo-high.glb",
+    "wheelRadius": {
+      "wheel_front_left": 0.32384636998176575,
+      "wheel_front_right": 0.32384636998176575,
+      "wheel_rear_left": 0.32384637381383996,
+      "wheel_rear_right": 0.32384637381383996
+    },
+    "wheelPositions": {
+      "wheel_front_left": [
+        0.8101882934570312,
+        0.32384636998176575,
+        1.149271011352539
+      ],
+      "wheel_front_right": [
+        -0.8101882934570312,
+        0.32384636998176575,
+        1.149271011352539
+      ],
+      "wheel_rear_left": [
+        0.8101882934570312,
+        0.3238464853589811,
+        -1.405493974685669
+      ],
+      "wheel_rear_right": [
+        -0.8101882934570312,
+        0.3238464853589811,
+        -1.405493974685669
+      ]
+    },
+    "width": 2.0859325049430852,
+    "height": 1.1587466262274884,
+    "removedNodes": [],
+    "low": "/assets/cars/manufacturers/lamborghini-gallardo-low.glb"
+  },
+  "lamborghini-huracan": {
+    "id": "lamborghini-huracan",
+    "brand": "Lamborghini",
+    "model": "Huracán",
+    "uid": "b2f5c24c44fd417fb89286603af9b5a5",
+    "length": 4.459,
+    "author": "jpo1703",
+    "source": "https://sketchfab.com/3d-models/lamborghini-huracan-b2f5c24c44fd417fb89286603af9b5a5",
+    "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-054/b2f5c24c44fd417fb89286603af9b5a5.glb",
+    "license": "CC-BY-4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "sourceSha256": "992f2f03918501d4784eea931a56370f30c90612e451e77d060f4f2ba2478b86",
+    "sourceAsset": {
+      "author": "jpo1703 (https://sketchfab.com/jpo1703)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/lamborghini-huracan-b2f5c24c44fd417fb89286603af9b5a5",
+      "title": "Lamborghini huracan"
+    },
+    "additionalCredits": [],
+    "paintMaterialNames": [
+      "body-paint-huracan-paint"
+    ],
+    "paintable": true,
+    "brakeLightMaterialNames": [
+      "huracan-rear-lights"
+    ],
+    "wheelNames": [
+      "wheel_front_left",
+      "wheel_front_right",
+      "wheel_rear_left",
+      "wheel_rear_right"
+    ],
+    "factoryPaintPreservesTexture": true,
+    "changes": "Removed staging/people where present. Baked world transforms, normalized scale and +Z forward/+Y up coordinates. Preserved authored normals/UVs; separated whole wheel components into articulated pivots. Conservatively simplified secondary geometry with normals/UV weights, merged compatible material batches without changing vertex data, corrected named material roles where archived viewport shading was unsuitable for PBR, resized embedded textures and Meshopt-compressed for delivery. The author export had one blank material for all geometry. Assigned PBR roles to the authored named body, tire, rim, glass, metal, interior and lamp meshes; retained detailed authored body topology.",
+    "variants": {
+      "high": {
+        "triangles": 356823,
+        "bytes": 3277616,
+        "sha256": "e70730aa596b283ca15d08ef39ffd5187987d7e18e15b00a2c115c3ecf20de36",
+        "sourceTriangles": 1704172,
+        "primitives": 23
+      },
+      "low": {
+        "triangles": 163662,
+        "bytes": 1945028,
+        "sha256": "62f5f9aad88f0b4af1c9151f06f733e95cb5e74c6da773360941a169e41f78c2",
+        "sourceTriangles": 1704172,
+        "primitives": 23
+      }
+    },
+    "high": "/assets/cars/manufacturers/lamborghini-huracan-high.glb",
+    "wheelRadius": {
+      "wheel_front_left": 0.3501877570894578,
+      "wheel_front_right": 0.3501877570894578,
+      "wheel_rear_left": 0.35018777027234194,
+      "wheel_rear_right": 0.3501877784729004
+    },
+    "wheelPositions": {
+      "wheel_front_left": [
+        0.8382507860660553,
+        0.3501879190656325,
+        1.1639394462108612
+      ],
+      "wheel_front_right": [
+        -0.8382503688335419,
+        0.3501879190656325,
+        1.1639394462108612
+      ],
+      "wheel_rear_left": [
+        0.8382505774497986,
+        0.3501880846966827,
+        -1.4597267508506775
+      ],
+      "wheel_rear_right": [
+        -0.8382505774497986,
+        0.3501877784729004,
+        -1.4597265720367432
+      ]
+    },
+    "width": 2.2394403823074387,
+    "height": 1.175941691196182,
+    "removedNodes": [],
+    "low": "/assets/cars/manufacturers/lamborghini-huracan-low.glb"
+  },
+  "audi-r8-lms-gt3": {
+    "id": "audi-r8-lms-gt3",
+    "brand": "Audi",
+    "model": "R8 LMS GT3 · 2019",
+    "uid": "80d3f346956b43cebcab72d25ac3e81e",
+    "length": 4.573,
+    "author": "mrDiG",
+    "source": "https://sketchfab.com/3d-models/audi-r8-gt3-lms-80d3f346956b43cebcab72d25ac3e81e",
+    "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-154/80d3f346956b43cebcab72d25ac3e81e.glb",
+    "license": "CC-BY-4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "sourceSha256": "53061151919e01b8265f822975a6e513225718ebd5a8e57891fde3d1ed1d1b30",
+    "sourceAsset": {
+      "author": "mrDiG (https://sketchfab.com/mrDiG)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/audi-r8-gt3-lms-80d3f346956b43cebcab72d25ac3e81e",
+      "title": "Audi - R8 GT3 LMS"
+    },
+    "additionalCredits": [],
+    "paintMaterialNames": [
+      "body-paint-material"
+    ],
+    "paintable": true,
+    "brakeLightMaterialNames": [],
+    "wheelNames": [
+      "wheel_front_left",
+      "wheel_front_right",
+      "wheel_rear_left",
+      "wheel_rear_right"
+    ],
+    "factoryPaintPreservesTexture": true,
+    "changes": "Removed staging/people where present. Baked world transforms, normalized scale and +Z forward/+Y up coordinates. Preserved authored normals/UVs; separated whole wheel components into articulated pivots. Conservatively simplified secondary geometry with normals/UV weights, merged compatible material batches without changing vertex data, corrected named material roles where archived viewport shading was unsuitable for PBR, resized embedded textures and Meshopt-compressed for delivery.",
+    "variants": {
+      "high": {
+        "triangles": 48677,
+        "bytes": 1828320,
+        "sha256": "6d48277aec994d05c8d626b6150fd89629a8d7cbd016b7dfa866b8dd70be486e",
+        "sourceTriangles": 48677,
+        "primitives": 9
+      },
+      "low": {
+        "triangles": 48677,
+        "bytes": 1096752,
+        "sha256": "71160542912f813c09beca6316f562f8c3f1d07211845fa2f232b3853c2b06c4",
+        "sourceTriangles": 48677,
+        "primitives": 9
+      }
+    },
+    "high": "/assets/cars/manufacturers/audi-r8-lms-gt3-high.glb",
+    "wheelRadius": {
+      "wheel_front_left": 0.34615740180015564,
+      "wheel_front_right": 0.34615740180015564,
+      "wheel_rear_left": 0.3565421040984802,
+      "wheel_rear_right": 0.3565421040984802
+    },
+    "wheelPositions": {
+      "wheel_front_left": [
+        0.8755567371845245,
+        0.34615740180015564,
+        1.2700182795524597
+      ],
+      "wheel_front_right": [
+        -0.8755568563938141,
+        0.34615740180015564,
+        1.2700182795524597
+      ],
+      "wheel_rear_left": [
+        0.836690366268158,
+        0.35827154555590823,
+        -1.405403196811676
+      ],
+      "wheel_rear_right": [
+        -0.836690366268158,
+        0.35827154555590823,
+        -1.405403196811676
+      ]
+    },
+    "width": 2.054583582541828,
+    "height": 1.293166477640339,
+    "removedNodes": [],
+    "low": "/assets/cars/manufacturers/audi-r8-lms-gt3-low.glb"
+  },
+  "audi-r18": {
+    "id": "audi-r18",
+    "brand": "Audi",
+    "model": "R18",
+    "uid": "3a5f4938e662429b8633120aa62805a4",
+    "length": 4.65,
+    "author": "Godheim",
+    "source": "https://sketchfab.com/3d-models/audi-r18-3a5f4938e662429b8633120aa62805a4",
+    "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-032/3a5f4938e662429b8633120aa62805a4.glb",
+    "license": "CC-BY-4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "sourceSha256": "168039f9112c76b098b6a5ec490f56dfa2d4762612eee95a320ec2fc0de7a7da",
+    "sourceAsset": {
+      "author": "Godheim (https://sketchfab.com/Godheim)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/audi-r18-3a5f4938e662429b8633120aa62805a4",
+      "title": "AUDI R18"
+    },
+    "additionalCredits": [],
+    "paintMaterialNames": [
+      "body-paint-Texture"
+    ],
+    "paintable": true,
+    "brakeLightMaterialNames": [],
+    "wheelNames": [
+      "wheel_front_left",
+      "wheel_front_right",
+      "wheel_rear_left",
+      "wheel_rear_right"
+    ],
+    "factoryPaintPreservesTexture": true,
+    "changes": "Removed staging/people where present. Baked world transforms, normalized scale and +Z forward/+Y up coordinates. Preserved authored normals/UVs; separated whole wheel components into articulated pivots. Conservatively simplified secondary geometry with normals/UV weights, merged compatible material batches without changing vertex data, corrected named material roles where archived viewport shading was unsuitable for PBR, resized embedded textures and Meshopt-compressed for delivery. The full-body texture uses opaque surface rendering to avoid source-wide transparency sorting artifacts.",
+    "variants": {
+      "high": {
+        "triangles": 43796,
+        "bytes": 604248,
+        "sha256": "996cf29c9be2cf3e368bb7c526f8ccb5fda93a73dfd9a20520382d2f63c7f31c",
+        "sourceTriangles": 43796,
+        "primitives": 10
+      },
+      "low": {
+        "triangles": 43796,
+        "bytes": 464472,
+        "sha256": "dfdf48774dc7ae7d09cb9349b10905531c8b4cffc1dd7e563158fe9d8c4bbccd",
+        "sourceTriangles": 43796,
+        "primitives": 10
+      }
+    },
+    "high": "/assets/cars/manufacturers/audi-r18-high.glb",
+    "wheelRadius": {
+      "wheel_front_left": 0.3496568202972412,
+      "wheel_front_right": 0.3496568202972412,
+      "wheel_rear_left": 0.3496567727997899,
+      "wheel_rear_right": 0.3496567727997899
+    },
+    "wheelPositions": {
+      "wheel_front_left": [
+        0.8403315544128418,
+        0.3496568202972412,
+        1.3667649626731873
+      ],
+      "wheel_front_right": [
+        -0.8403416872024536,
+        0.3496568202972412,
+        1.3668056726455688
+      ],
+      "wheel_rear_left": [
+        0.8212152123451233,
+        0.3557325480505824,
+        -1.5898921489715576
+      ],
+      "wheel_rear_right": [
+        -0.8212253451347351,
+        0.3557325480505824,
+        -1.5898514986038208
+      ]
+    },
+    "width": 2.0449961114438473,
+    "height": 1.2005447505362272,
+    "removedNodes": [],
+    "low": "/assets/cars/manufacturers/audi-r18-low.glb"
+  },
+  "ferrari-250-gto": {
+    "id": "ferrari-250-gto",
+    "brand": "Ferrari",
+    "model": "250 GTO · 1964",
+    "uid": "849c88c65911496d92363dc2980f6f4e",
+    "length": 4.325,
+    "author": "dagtholander",
+    "source": "https://sketchfab.com/3d-models/1964-ferrari-250-gto-849c88c65911496d92363dc2980f6f4e",
+    "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-050/849c88c65911496d92363dc2980f6f4e.glb",
+    "license": "CC-BY-4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "sourceSha256": "ed898e31038d0e931565c5da5a9807e6f5458077a03c75bc252857351d3d9eae",
+    "sourceAsset": {
+      "author": "dagtholander (https://sketchfab.com/dagtholander)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/1964-ferrari-250-gto-849c88c65911496d92363dc2980f6f4e",
+      "title": "1964 Ferrari 250 GTO"
+    },
+    "additionalCredits": [],
+    "paintMaterialNames": [
+      "body-paint-body"
+    ],
+    "paintable": true,
+    "brakeLightMaterialNames": [
+      "rear-brake-lights"
+    ],
+    "wheelNames": [
+      "wheel_front_left",
+      "wheel_front_right",
+      "wheel_rear_left",
+      "wheel_rear_right"
+    ],
+    "factoryPaintPreservesTexture": true,
+    "changes": "Removed staging/people where present. Baked world transforms, normalized scale and +Z forward/+Y up coordinates. Preserved authored normals/UVs; separated whole wheel components into articulated pivots. Conservatively simplified secondary geometry with normals/UV weights, merged compatible material batches without changing vertex data, corrected named material roles where archived viewport shading was unsuitable for PBR, resized embedded textures and Meshopt-compressed for delivery. Retained the complete authored body and wire-wheel geometry in both variants; reduced texture resolution for the lower-detail delivery.",
+    "variants": {
+      "high": {
+        "triangles": 97846,
+        "bytes": 1532292,
+        "sha256": "b91204783b344428791bf39f47d771f7a627788fac5eb86c75446f250bb06d3a",
+        "sourceTriangles": 97846,
+        "primitives": 9
+      },
+      "low": {
+        "triangles": 97846,
+        "bytes": 1188752,
+        "sha256": "8ef806c671ec4c57946cfdffb381c03d5eb6888d235dad2ab710c86287fdaa63",
+        "sourceTriangles": 97846,
+        "primitives": 9
+      }
+    },
+    "high": "/assets/cars/manufacturers/ferrari-250-gto-high.glb",
+    "wheelRadius": {
+      "wheel_front_left": 0.3645163878418849,
+      "wheel_front_right": 0.3645164370536804,
+      "wheel_rear_left": 0.3712245742790401,
+      "wheel_rear_right": 0.3712245933711529
+    },
+    "wheelPositions": {
+      "wheel_front_left": [
+        0.729590505361557,
+        0.36451642666083117,
+        1.2423385977745056
+      ],
+      "wheel_front_right": [
+        -0.7302620112895966,
+        0.3645164370536804,
+        1.242338478565216
+      ],
+      "wheel_rear_left": [
+        0.7189548015594482,
+        0.3795949895866215,
+        -1.2337433695793152
+      ],
+      "wheel_rear_right": [
+        -0.7196263372898102,
+        0.37959497049450874,
+        -1.2337434589862823
+      ]
+    },
+    "width": 1.739396928870416,
+    "height": 1.204493948251822,
+    "removedNodes": [],
+    "low": "/assets/cars/manufacturers/ferrari-250-gto-low.glb"
+  },
+  "ferrari-testarossa": {
+    "id": "ferrari-testarossa",
+    "brand": "Ferrari",
+    "model": "Testarossa",
+    "uid": "7bcceae8f461476883a5b182bfb15165",
+    "length": 4.485,
+    "author": "dagtholander",
+    "source": "https://sketchfab.com/3d-models/testarossa-7bcceae8f461476883a5b182bfb15165",
+    "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-059/7bcceae8f461476883a5b182bfb15165.glb",
+    "license": "CC-BY-4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "sourceSha256": "9ec0065726b676d30e73e043011fd7a0c213ced6d6baf9fb3343d9df37ed019b",
+    "sourceAsset": {
+      "author": "dagtholander (https://sketchfab.com/dagtholander)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/testarossa-7bcceae8f461476883a5b182bfb15165",
+      "title": "Testarossa"
+    },
+    "additionalCredits": [],
+    "paintMaterialNames": [
+      "body-paint-tr512"
+    ],
+    "paintable": true,
+    "brakeLightMaterialNames": [],
+    "wheelNames": [
+      "wheel_front_left",
+      "wheel_front_right",
+      "wheel_rear_left",
+      "wheel_rear_right"
+    ],
+    "factoryPaintPreservesTexture": true,
+    "changes": "Removed staging/people where present. Baked world transforms, normalized scale and +Z forward/+Y up coordinates. Preserved authored normals/UVs; separated whole wheel components into articulated pivots. Conservatively simplified secondary geometry with normals/UV weights, merged compatible material batches without changing vertex data, corrected named material roles where archived viewport shading was unsuitable for PBR, resized embedded textures and Meshopt-compressed for delivery. Retained the complete authored body, cabin and four source wheels in both variants; reduced texture resolution for the lower-detail delivery.",
+    "variants": {
+      "high": {
+        "triangles": 24972,
+        "bytes": 1026676,
+        "sha256": "d723b6ba36dca08dd070fe75c55aa038e8c6a7b1da103bebd8c4a9c016ab0e5b",
+        "sourceTriangles": 24972,
+        "primitives": 9
+      },
+      "low": {
+        "triangles": 24972,
+        "bytes": 496060,
+        "sha256": "104e1d417e87317cabe3410605c2c648dd0a4c3ff7e0cd33c4a81968d78b75a5",
+        "sourceTriangles": 24972,
+        "primitives": 9
+      }
+    },
+    "high": "/assets/cars/manufacturers/ferrari-testarossa-high.glb",
+    "wheelRadius": {
+      "wheel_front_left": 0.3310367084565726,
+      "wheel_front_right": 0.3316680753196124,
+      "wheel_rear_left": 0.3310367166996002,
+      "wheel_rear_right": 0.33166808358510025
+    },
+    "wheelPositions": {
+      "wheel_front_left": [
+        0.7519640326499939,
+        0.33103690375656214,
+        1.130368322134018
+      ],
+      "wheel_front_right": [
+        -0.751959353685379,
+        0.3322253263031598,
+        1.1292525231838226
+      ],
+      "wheel_rear_left": [
+        0.8181702196598053,
+        0.3310367166996002,
+        -1.4327165484428406
+      ],
+      "wheel_rear_right": [
+        -0.8181686103343964,
+        0.33222513922373764,
+        -1.4338323473930359
+      ]
+    },
+    "width": 2.0413225005955637,
+    "height": 1.1470102190749725,
+    "removedNodes": [],
+    "low": "/assets/cars/manufacturers/ferrari-testarossa-low.glb"
+  },
+  "bmw-i8": {
+    "id": "bmw-i8",
+    "brand": "BMW",
+    "model": "i8",
+    "uid": "c884666736f049c296044992107e12a7",
+    "length": 4.689,
+    "author": "salza",
+    "source": "https://sketchfab.com/3d-models/bmw-i8-c884666736f049c296044992107e12a7",
+    "license": "CC-BY-4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "sourceSha256": "e3a29f3aa043b73f1067e7dd126a41051be57dda1636d9071a9a3a4d0bef7e51",
+    "sourceAsset": {
+      "author": "salza (https://sketchfab.com/salza)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/bmw-i8-c884666736f049c296044992107e12a7",
+      "title": "BMW I8"
+    },
+    "additionalCredits": [],
+    "paintMaterialNames": [
+      "body-paint-Material__121"
+    ],
+    "paintable": true,
+    "brakeLightMaterialNames": [
+      "Material__78"
+    ],
+    "wheelNames": [
+      "wheel_front_left",
+      "wheel_front_right",
+      "wheel_rear_left",
+      "wheel_rear_right"
+    ],
+    "factoryPaintPreservesTexture": true,
+    "changes": "Removed staging/people where present. Baked world transforms, normalized scale and +Z forward/+Y up coordinates. Preserved authored normals/UVs; separated whole wheel components into articulated pivots. Conservatively simplified secondary geometry with normals/UV weights, merged compatible material batches without changing vertex data, corrected named material roles where archived viewport shading was unsuitable for PBR, resized embedded textures and Meshopt-compressed for delivery.",
+    "variants": {
+      "high": {
+        "triangles": 444684,
+        "bytes": 5243656,
+        "sha256": "2f053d84b5132de5e0906234f2d072b4200d276d4aeb7f654e4da14dd6cb0ba6",
+        "sourceTriangles": 582260,
+        "primitives": 39
+      },
+      "low": {
+        "triangles": 189554,
+        "bytes": 2222728,
+        "sha256": "30462219eb39cc471733a3390035a41b3f11117350c5dba085f0ee68b279054e",
+        "sourceTriangles": 582260,
+        "primitives": 39
+      }
+    },
+    "high": "/assets/cars/manufacturers/bmw-i8-high.glb",
+    "wheelRadius": {
+      "wheel_front_left": 0.33877331018447876,
+      "wheel_front_right": 0.33877331018447876,
+      "wheel_rear_left": 0.3387733184804773,
+      "wheel_rear_right": 0.3387733184804773
+    },
+    "wheelPositions": {
+      "wheel_front_left": [
+        0.7879769206047058,
+        0.33877331018447876,
+        1.4275232553482056
+      ],
+      "wheel_front_right": [
+        -0.7879769206047058,
+        0.33877331018447876,
+        1.4275230765342712
+      ],
+      "wheel_rear_left": [
+        0.7879771888256073,
+        0.33877365951634886,
+        -1.4321341514587402
+      ],
+      "wheel_rear_right": [
+        -0.7879765033721924,
+        0.33877365951634886,
+        -1.4321341514587402
+      ]
+    },
+    "width": 2.1608664854206387,
+    "height": 1.2842911072372385,
+    "removedNodes": [],
+    "low": "/assets/cars/manufacturers/bmw-i8-low.glb",
+    "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-156/c884666736f049c296044992107e12a7.glb"
+  },
+  "bmw-f22-eurofighter": {
+    "id": "bmw-f22-eurofighter",
+    "brand": "BMW",
+    "model": "F22 Eurofighter",
+    "uid": "d4ffe0df9066481fa028eb1e1348c4b0",
+    "length": 4.7,
+    "author": "autoNgraphic",
+    "source": "https://sketchfab.com/3d-models/bmw-f22-eurofighter-free-d4ffe0df9066481fa028eb1e1348c4b0",
+    "license": "CC-BY-4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "sourceSha256": "db318fc4ff56d6059c955fb4df8e7562c7fe0bda1f19290fc0b0a4054c655e8e",
+    "sourceAsset": {
+      "author": "autoNgraphic (https://sketchfab.com/autoNgraphic)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/bmw-f22-eurofighter-d4ffe0df9066481fa028eb1e1348c4b0",
+      "title": "BMW F22 \"EUROFIGHTER\""
+    },
+    "additionalCredits": [
+      {
+        "title": "F22 Eurofighter edit",
+        "author": "autoNgraphic",
+        "source": "https://vk.com/autongraphic"
+      },
+      {
+        "title": "F22 Eurofighter bodykit",
+        "author": "crooked.hand",
+        "source": "https://vk.com/crooked.hand"
+      },
+      {
+        "title": "F22 Eurofighter wheels",
+        "author": "ondori_ws",
+        "source": "https://vk.com/ondori_ws"
+      }
+    ],
+    "paintMaterialNames": [
+      "body-paint-remap__prim_env_2_spec"
+    ],
+    "paintable": true,
+    "brakeLightMaterialNames": [
+      "TAIL_GLASS"
+    ],
+    "wheelNames": [
+      "wheel_front_left",
+      "wheel_front_right",
+      "wheel_rear_left",
+      "wheel_rear_right"
+    ],
+    "factoryPaintPreservesTexture": true,
+    "changes": "Removed staging/people where present. Baked world transforms, normalized scale and +Z forward/+Y up coordinates. Preserved authored normals/UVs; separated whole wheel components into articulated pivots. Conservatively simplified secondary geometry with normals/UV weights, merged compatible material batches without changing vertex data, corrected named material roles where archived viewport shading was unsuitable for PBR, resized embedded textures and Meshopt-compressed for delivery.",
+    "variants": {
+      "high": {
+        "triangles": 439173,
+        "bytes": 5064420,
+        "sha256": "b9ca6277c6405d68a5daf41e8fd1a6c284583dc1b61e71992deebc03f86ceecb",
+        "sourceTriangles": 516384,
+        "primitives": 46
+      },
+      "low": {
+        "triangles": 199351,
+        "bytes": 2702352,
+        "sha256": "18a3c825d535c685881df634e45ed35a3c2611cc03422f7de6ac4a90728fb23a",
+        "sourceTriangles": 516384,
+        "primitives": 46
+      }
+    },
+    "high": "/assets/cars/manufacturers/bmw-f22-eurofighter-high.glb",
+    "wheelRadius": {
+      "wheel_front_left": 0.343612939119339,
+      "wheel_front_right": 0.343612939119339,
+      "wheel_rear_left": 0.3356390609405935,
+      "wheel_rear_right": 0.3356390609405935
+    },
+    "wheelPositions": {
+      "wheel_front_left": [
+        0.8682383298873901,
+        0.343612939119339,
+        1.4632519483566284
+      ],
+      "wheel_front_right": [
+        -0.8682383298873901,
+        0.343612939119339,
+        1.4632519483566284
+      ],
+      "wheel_rear_left": [
+        0.8544643521308899,
+        0.3356390609405935,
+        -1.344677746295929
+      ],
+      "wheel_rear_right": [
+        -0.8544643521308899,
+        0.3356390609405935,
+        -1.344677746295929
+      ]
+    },
+    "width": 2.129875284045349,
+    "height": 1.4629623925295177,
+    "removedNodes": [],
+    "low": "/assets/cars/manufacturers/bmw-f22-eurofighter-low.glb",
+    "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-099/d4ffe0df9066481fa028eb1e1348c4b0.glb"
+  },
+  "mercedes-amg-gt": {
+    "id": "mercedes-amg-gt",
+    "brand": "Mercedes-Benz",
+    "model": "AMG GT",
+    "uid": "661dcab94455463784651a3ebc63cfb9",
+    "length": 4.546,
+    "author": "Yan Carvalho",
+    "source": "https://sketchfab.com/3d-models/mercedes-benz-amg-gt-661dcab94455463784651a3ebc63cfb9",
+    "license": "CC-BY-4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "sourceSha256": "28efb2e0cd593d8b02103fd051a826b5eb35e0314baa3f4a5df8c58de561080b",
+    "sourceAsset": {
+      "author": "Yan Carvalho (https://sketchfab.com/carvalhoyan)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/mercedes-benz-amg-gt-661dcab94455463784651a3ebc63cfb9",
+      "title": "Mercedes Benz AMG GT"
+    },
+    "additionalCredits": [],
+    "paintMaterialNames": [
+      "body-paint-Material.001"
+    ],
+    "paintable": true,
+    "brakeLightMaterialNames": [
+      "Material.034"
+    ],
+    "wheelNames": [
+      "wheel_front_left",
+      "wheel_front_right",
+      "wheel_rear_left",
+      "wheel_rear_right"
+    ],
+    "factoryPaintPreservesTexture": true,
+    "changes": "Removed staging/people where present. Baked world transforms, normalized scale and +Z forward/+Y up coordinates. Preserved authored normals/UVs; separated whole wheel components into articulated pivots. Conservatively simplified secondary geometry with normals/UV weights, merged compatible material batches without changing vertex data, corrected named material roles where archived viewport shading was unsuitable for PBR, resized embedded textures and Meshopt-compressed for delivery. The source display floor was removed. Authored front wheel steering was straightened around the real axle pivots so runtime steering and rolling use aligned axes. Paint, rubber, glass and metal received named PBR material corrections.",
+    "variants": {
+      "high": {
+        "triangles": 175529,
+        "bytes": 4568600,
+        "sha256": "fc9598088635943f937d151616fbf856e690c0b096c2c9f555ef14bcbcb70aae",
+        "sourceTriangles": 175529,
+        "primitives": 28
+      },
+      "low": {
+        "triangles": 174767,
+        "bytes": 4566168,
+        "sha256": "f0044aeb4c87a4eb7ba8ad330c838e7f65ed0a4c65777088ce388bd0ecbb53b3",
+        "sourceTriangles": 175529,
+        "primitives": 28
+      }
+    },
+    "high": "/assets/cars/manufacturers/mercedes-amg-gt-high.glb",
+    "wheelRadius": {
+      "wheel_front_left": 0.3352366089820862,
+      "wheel_front_right": 0.3352365748270252,
+      "wheel_rear_left": 0.33523659402075623,
+      "wheel_rear_right": 0.33523662071235094
+    },
+    "wheelPositions": {
+      "wheel_front_left": [
+        0.828251987695694,
+        0.3352366089820862,
+        1.391190528869629
+      ],
+      "wheel_front_right": [
+        -0.8249581456184387,
+        0.3352366431371472,
+        1.3671728372573853
+      ],
+      "wheel_rear_left": [
+        0.858856588602066,
+        0.3352372199898639,
+        -1.2568430304527283
+      ],
+      "wheel_rear_right": [
+        -0.8035305440425873,
+        0.3352373125075587,
+        -1.2626007199287415
+      ]
+    },
+    "width": 2.1513801256430174,
+    "height": 1.2776665966289633,
+    "removedNodes": [
+      "Object_4"
+    ],
+    "low": "/assets/cars/manufacturers/mercedes-amg-gt-low.glb",
+    "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-136/661dcab94455463784651a3ebc63cfb9.glb"
+  },
+  "nissan-gt-r-2018": {
+    "id": "nissan-gt-r-2018",
+    "brand": "Nissan",
+    "model": "GT-R · 2018",
+    "uid": "e595ef868dd94f77b83c332f9d5c6f5d",
+    "length": 4.71,
+    "author": "Tanvir.Ahmed",
+    "source": "https://sketchfab.com/3d-models/nissan-gtr-2018-e595ef868dd94f77b83c332f9d5c6f5d",
+    "license": "CC-BY-4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "sourceSha256": "f9f2c08aef442454757d213d304695a733e2a453b23488b1ffe64e2b4012527c",
+    "sourceAsset": {
+      "author": "Tanvir.Ahmed (https://sketchfab.com/Tanvir.Ahmed)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/nissan-gtr-2018-e595ef868dd94f77b83c332f9d5c6f5d",
+      "title": "Nissan GTR 2018"
+    },
+    "additionalCredits": [],
+    "paintMaterialNames": [
+      "body-paint-body"
+    ],
+    "paintable": true,
+    "brakeLightMaterialNames": [
+      "taillight2S"
+    ],
+    "wheelNames": [
+      "wheel_front_left",
+      "wheel_front_right",
+      "wheel_rear_left",
+      "wheel_rear_right"
+    ],
+    "factoryPaintPreservesTexture": true,
+    "changes": "Removed staging/people where present. Baked world transforms, normalized scale and +Z forward/+Y up coordinates. Preserved authored normals/UVs; separated whole wheel components into articulated pivots. Conservatively simplified secondary geometry with normals/UV weights, merged compatible material batches without changing vertex data, corrected named material roles where archived viewport shading was unsuitable for PBR, resized embedded textures and Meshopt-compressed for delivery. Removed the display floor; neutralized source front wheel steering by 20 degrees; repaired named PBR material roles while retaining authored geometry and UVs.",
+    "variants": {
+      "high": {
+        "triangles": 437487,
+        "bytes": 8771068,
+        "sha256": "8b014ca1391a92dac40730967447dd9129711dee6a7bdbdab4689c66a806c77a",
+        "sourceTriangles": 627578,
+        "primitives": 49
+      },
+      "low": {
+        "triangles": 188894,
+        "bytes": 3711816,
+        "sha256": "50696348224a60cef094686644116f9dba02934164855b8f0de0de0ca9925008",
+        "sourceTriangles": 627578,
+        "primitives": 49
+      }
+    },
+    "high": "/assets/cars/manufacturers/nissan-gt-r-2018-high.glb",
+    "wheelRadius": {
+      "wheel_front_left": 0.3413669764995575,
+      "wheel_front_right": 0.3413669764995575,
+      "wheel_rear_left": 0.34136693074562174,
+      "wheel_rear_right": 0.34136693074562174
+    },
+    "wheelPositions": {
+      "wheel_front_left": [
+        0.7896503508090973,
+        0.3413669764995575,
+        1.3378128111362457
+      ],
+      "wheel_front_right": [
+        -0.7896502912044525,
+        0.3413669764995575,
+        1.3375658690929413
+      ],
+      "wheel_rear_left": [
+        0.7997740805149078,
+        0.34136693074562174,
+        -1.405221939086914
+      ],
+      "wheel_rear_right": [
+        -0.7958232760429382,
+        0.34136693074562174,
+        -1.405221939086914
+      ]
+    },
+    "width": 2.048942546343806,
+    "height": 1.3294178697814771,
+    "removedNodes": [
+      "Plane_floor_0"
+    ],
+    "low": "/assets/cars/manufacturers/nissan-gt-r-2018-low.glb",
+    "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-111/e595ef868dd94f77b83c332f9d5c6f5d.glb"
   }
 });

@@ -1,0 +1,225 @@
+{
+  "uri": "https://api.sketchfab.com/v3/models/80d3f346956b43cebcab72d25ac3e81e",
+  "uid": "80d3f346956b43cebcab72d25ac3e81e",
+  "name": "Audi - R8 GT3 LMS",
+  "staffpickedAt": null,
+  "viewCount": 841,
+  "likeCount": 5,
+  "animationCount": 0,
+  "viewerUrl": "https://sketchfab.com/3d-models/audi-r8-gt3-lms-80d3f346956b43cebcab72d25ac3e81e",
+  "embedUrl": "https://sketchfab.com/models/80d3f346956b43cebcab72d25ac3e81e/embed",
+  "commentCount": 1,
+  "isDownloadable": true,
+  "publishedAt": "2021-09-28T23:25:01.722625",
+  "tags": [
+    {
+      "name": "racecars",
+      "slug": "racecars",
+      "uri": "https://api.sketchfab.com/v3/tags/racecars"
+    },
+    {
+      "name": "gt3",
+      "slug": "gt3",
+      "uri": "https://api.sketchfab.com/v3/tags/gt3"
+    },
+    {
+      "name": "audi-r8",
+      "slug": "audi-r8",
+      "uri": "https://api.sketchfab.com/v3/tags/audi-r8"
+    },
+    {
+      "name": "lms",
+      "slug": "lms",
+      "uri": "https://api.sketchfab.com/v3/tags/lms"
+    },
+    {
+      "name": "vehicle",
+      "slug": "vehicle",
+      "uri": "https://api.sketchfab.com/v3/tags/vehicle"
+    },
+    {
+      "name": "car",
+      "slug": "car",
+      "uri": "https://api.sketchfab.com/v3/tags/car"
+    },
+    {
+      "name": "sport",
+      "slug": "sport",
+      "uri": "https://api.sketchfab.com/v3/tags/sport"
+    }
+  ],
+  "categories": [
+    {
+      "name": "cars-vehicles"
+    }
+  ],
+  "thumbnails": {
+    "images": [
+      {
+        "uid": "85c602e5265642fe9df9866e17354440",
+        "size": 111759,
+        "width": 1920,
+        "url": "https://media.sketchfab.com/models/80d3f346956b43cebcab72d25ac3e81e/thumbnails/3fb892f51bc046238a1d1338c59a78ba/085e20b15fa2434e83c8997a848e4488.jpeg",
+        "height": 1080
+      },
+      {
+        "uid": "c71ea3cbde8a4073af6ab64ba1c53111",
+        "size": 43441,
+        "width": 1024,
+        "url": "https://media.sketchfab.com/models/80d3f346956b43cebcab72d25ac3e81e/thumbnails/3fb892f51bc046238a1d1338c59a78ba/c90e6f73dad247d58a9543665bed9983.jpeg",
+        "height": 576
+      },
+      {
+        "uid": "c71f38917c1244ae8e81f57c2b690311",
+        "size": 26253,
+        "width": 720,
+        "url": "https://media.sketchfab.com/models/80d3f346956b43cebcab72d25ac3e81e/thumbnails/3fb892f51bc046238a1d1338c59a78ba/a58f8ec7adc94d8d8cdd4cfac17fea22.jpeg",
+        "height": 405
+      },
+      {
+        "uid": "4132777777f64778990b978abccab5ca",
+        "size": 5959,
+        "width": 256,
+        "url": "https://media.sketchfab.com/models/80d3f346956b43cebcab72d25ac3e81e/thumbnails/3fb892f51bc046238a1d1338c59a78ba/da3e147c5322440b818134846ad77238.jpeg",
+        "height": 144
+      },
+      {
+        "uid": "e072cd59e1f84ab4812524e7f7d0fd26",
+        "size": 1275,
+        "width": 64,
+        "url": "https://media.sketchfab.com/models/80d3f346956b43cebcab72d25ac3e81e/thumbnails/3fb892f51bc046238a1d1338c59a78ba/b3b3d0616fac4b3590941d5adf8ca40e.jpeg",
+        "height": 36
+      }
+    ]
+  },
+  "user": {
+    "uid": "38cdb8650c2d4de69b5b6112d2655f1c",
+    "username": "mrDiG",
+    "displayName": "mrDiG",
+    "profileUrl": "https://sketchfab.com/mrDiG",
+    "account": "basic",
+    "avatar": {
+      "uri": "https://api.sketchfab.com/v3/avatars/5a665f827ce24767aa56f3cf54724644",
+      "images": [
+        {
+          "size": 488,
+          "width": 32,
+          "url": "https://media.sketchfab.com/avatars/5a665f827ce24767aa56f3cf54724644/f773d84bc74d42c1a7427daad181d928.jpeg",
+          "height": 32
+        },
+        {
+          "size": 617,
+          "width": 48,
+          "url": "https://media.sketchfab.com/avatars/5a665f827ce24767aa56f3cf54724644/da43769c03b24ff4802da8805bb5d295.jpeg",
+          "height": 48
+        },
+        {
+          "size": 1085,
+          "width": 90,
+          "url": "https://media.sketchfab.com/avatars/5a665f827ce24767aa56f3cf54724644/823e4c73df6546be926d911dbee82289.jpeg",
+          "height": 90
+        },
+        {
+          "size": 1223,
+          "width": 100,
+          "url": "https://media.sketchfab.com/avatars/5a665f827ce24767aa56f3cf54724644/a79416fb771243b5b387ccdcb657ba94.jpeg",
+          "height": 100
+        }
+      ]
+    },
+    "uri": "https://api.sketchfab.com/v3/users/38cdb8650c2d4de69b5b6112d2655f1c"
+  },
+  "description": "LowPoly model of race car Audi - R8 GT3 2019 with 4k textures, fitted for mobile games and apps",
+  "faceCount": 48677,
+  "createdAt": "2021-09-28T23:09:27.678145",
+  "vertexCount": 27291,
+  "isAgeRestricted": false,
+  "archives": {
+    "glb": {
+      "textureCount": 17,
+      "size": 32644580,
+      "type": "glb",
+      "textureMaxResolution": 4096,
+      "faceCount": 48677,
+      "vertexCount": 48465
+    },
+    "gltf": {
+      "textureCount": 17,
+      "size": 30946109,
+      "type": "gltf",
+      "textureMaxResolution": 4096,
+      "faceCount": 48677,
+      "vertexCount": 48465
+    },
+    "source": {
+      "textureCount": null,
+      "size": 30652535,
+      "type": "source",
+      "textureMaxResolution": null,
+      "faceCount": null,
+      "vertexCount": null
+    },
+    "usdz": {
+      "textureCount": null,
+      "size": 3905505,
+      "type": "usdz",
+      "textureMaxResolution": null,
+      "faceCount": null,
+      "vertexCount": null
+    }
+  },
+  "license": {
+    "slug": "by",
+    "url": "https://creativecommons.org/licenses/by/4.0/",
+    "label": "CC Attribution",
+    "evidence": "Objaverse archival model metadata; live API license field returned empty object on 2026-10-01."
+  },
+  "archivedLicense": "by",
+  "downloadUrl": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-154/80d3f346956b43cebcab72d25ac3e81e.glb",
+  "archiveMetadataUrl": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/metadata/000-154.json.gz",
+  "author": {
+    "uid": "38cdb8650c2d4de69b5b6112d2655f1c",
+    "username": "mrDiG",
+    "displayName": "mrDiG",
+    "profileUrl": "https://sketchfab.com/mrDiG",
+    "account": "basic",
+    "avatar": {
+      "uri": "https://api.sketchfab.com/v3/avatars/5a665f827ce24767aa56f3cf54724644",
+      "images": [
+        {
+          "size": 488,
+          "width": 32,
+          "url": "https://media.sketchfab.com/avatars/5a665f827ce24767aa56f3cf54724644/f773d84bc74d42c1a7427daad181d928.jpeg",
+          "height": 32
+        },
+        {
+          "size": 617,
+          "width": 48,
+          "url": "https://media.sketchfab.com/avatars/5a665f827ce24767aa56f3cf54724644/da43769c03b24ff4802da8805bb5d295.jpeg",
+          "height": 48
+        },
+        {
+          "size": 1085,
+          "width": 90,
+          "url": "https://media.sketchfab.com/avatars/5a665f827ce24767aa56f3cf54724644/823e4c73df6546be926d911dbee82289.jpeg",
+          "height": 90
+        },
+        {
+          "size": 1223,
+          "width": 100,
+          "url": "https://media.sketchfab.com/avatars/5a665f827ce24767aa56f3cf54724644/a79416fb771243b5b387ccdcb657ba94.jpeg",
+          "height": 100
+        }
+      ]
+    },
+    "uri": "https://api.sketchfab.com/v3/users/38cdb8650c2d4de69b5b6112d2655f1c"
+  },
+  "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-154/80d3f346956b43cebcab72d25ac3e81e.glb",
+  "sourceSha256": "53061151919e01b8265f822975a6e513225718ebd5a8e57891fde3d1ed1d1b30",
+  "sourceAsset": {
+    "author": "mrDiG (https://sketchfab.com/mrDiG)",
+    "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "source": "https://sketchfab.com/3d-models/audi-r8-gt3-lms-80d3f346956b43cebcab72d25ac3e81e",
+    "title": "Audi - R8 GT3 LMS"
+  }
+}

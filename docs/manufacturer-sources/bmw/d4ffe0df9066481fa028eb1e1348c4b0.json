@@ -1,0 +1,170 @@
+{
+  "animationCount": 0,
+  "categories": [
+    {
+      "uid": "22a2f677efad4d7bbca5ad45f9b5868e",
+      "name": "Cars & Vehicles",
+      "slug": "cars-vehicles",
+      "uri": "https://api.sketchfab.com/v3/categories/22a2f677efad4d7bbca5ad45f9b5868e",
+      "icon": "https://static.sketchfab.com/static/builds/web/dist/static/assets/images/icons/categories/45dd0cc0860ac57fcd63bde1cc3f2b7c-v2.svg",
+      "thumbnails": [
+        {
+          "width": "512",
+          "height": "288",
+          "url": "https://static.sketchfab.com/categories/22a2f677efad4d7bbca5ad45f9b5868e/512x288.png"
+        },
+        {
+          "width": "800",
+          "height": "450",
+          "url": "https://static.sketchfab.com/categories/22a2f677efad4d7bbca5ad45f9b5868e/800x450.png"
+        }
+      ]
+    }
+  ],
+  "commentCount": 29,
+  "createdAt": "2021-12-08T11:25:24.336245",
+  "embedUrl": "https://sketchfab.com/models/d4ffe0df9066481fa028eb1e1348c4b0/embed",
+  "faceCount": 516422,
+  "isAgeRestricted": false,
+  "license": {
+    "uri": "https://api.sketchfab.com/v3/licenses/322a749bcfa841b29dff1e8a1bb74b0b",
+    "label": "CC Attribution",
+    "fullName": "Creative Commons Attribution",
+    "requirements": "Author must be credited. Commercial use is allowed.",
+    "url": "http://creativecommons.org/licenses/by/4.0/",
+    "slug": "by"
+  },
+  "likeCount": 652,
+  "name": "BMW F22 \"EUROFIGHTER\" [FREE]",
+  "publishedAt": "2021-12-08T13:45:59.691173",
+  "soundCount": 0,
+  "staffpickedAt": null,
+  "tags": [
+    {
+      "name": "bmw",
+      "slug": "bmw",
+      "uri": "https://api.sketchfab.com/v3/tags/bmw"
+    },
+    {
+      "name": "eurofighter",
+      "slug": "eurofighter",
+      "uri": "https://api.sketchfab.com/v3/tags/eurofighter"
+    },
+    {
+      "name": "F2.2",
+      "slug": "f22",
+      "uri": "https://api.sketchfab.com/v3/tags/f22"
+    },
+    {
+      "name": "hgk",
+      "slug": "hgk",
+      "uri": "https://api.sketchfab.com/v3/tags/hgk"
+    }
+  ],
+  "thumbnails": {
+    "images": [
+      {
+        "uid": "4d992e986e9e461bb154e360a32fffcd",
+        "width": 1920,
+        "height": 1080,
+        "size": 273780,
+        "url": "https://media.sketchfab.com/models/d4ffe0df9066481fa028eb1e1348c4b0/thumbnails/63c1f465e058417db2a3acea71b3e44e/2a5e2fdc6e9d464a96189cb61585db32.jpeg"
+      },
+      {
+        "uid": "4054ca7e86084135a613d9f35d1ff1a5",
+        "width": 1024,
+        "height": 576,
+        "size": 69530,
+        "url": "https://media.sketchfab.com/models/d4ffe0df9066481fa028eb1e1348c4b0/thumbnails/63c1f465e058417db2a3acea71b3e44e/35d711d21ad143fe9ede03ec597e44e3.jpeg"
+      },
+      {
+        "uid": "df40b7116f4e4efb84b7100042716c0a",
+        "width": 720,
+        "height": 405,
+        "size": 35350,
+        "url": "https://media.sketchfab.com/models/d4ffe0df9066481fa028eb1e1348c4b0/thumbnails/63c1f465e058417db2a3acea71b3e44e/5f35d93da72e4233be1f7e5e4f92d77f.jpeg"
+      },
+      {
+        "uid": "062661f6004b47cb956bf55af488901b",
+        "width": 256,
+        "height": 144,
+        "size": 6646,
+        "url": "https://media.sketchfab.com/models/d4ffe0df9066481fa028eb1e1348c4b0/thumbnails/63c1f465e058417db2a3acea71b3e44e/628bca86503242e99a88176970ebdfc8.jpeg"
+      },
+      {
+        "uid": "ad4960c491804510ad3bb758316133f3",
+        "width": 64,
+        "height": 36,
+        "size": 1282,
+        "url": "https://media.sketchfab.com/models/d4ffe0df9066481fa028eb1e1348c4b0/thumbnails/63c1f465e058417db2a3acea71b3e44e/e253ef601d314f27b8cccfd8ab93c990.jpeg"
+      }
+    ]
+  },
+  "uid": "d4ffe0df9066481fa028eb1e1348c4b0",
+  "uri": "https://api.sketchfab.com/v3/models/d4ffe0df9066481fa028eb1e1348c4b0",
+  "user": {
+    "uid": "3317f62653014230b1ecb053286dba2d",
+    "username": "autoNgraphic",
+    "displayName": "autoNgraphic",
+    "account": "basic",
+    "profileUrl": "https://sketchfab.com/autoNgraphic",
+    "avatar": {
+      "uid": "c68c507f49c442bfa9820083361af393",
+      "uri": "https://api.sketchfab.com/v3/avatars/c68c507f49c442bfa9820083361af393",
+      "images": [
+        {
+          "width": 32,
+          "height": 32,
+          "size": 1195,
+          "url": "https://media.sketchfab.com/avatars/c68c507f49c442bfa9820083361af393/beb38a6e793e4ec1b56a3d8de16d6480.jpeg"
+        },
+        {
+          "width": 48,
+          "height": 48,
+          "size": 1848,
+          "url": "https://media.sketchfab.com/avatars/c68c507f49c442bfa9820083361af393/f25f0bce69144d76ad056f73c14aa9b5.jpeg"
+        },
+        {
+          "width": 90,
+          "height": 90,
+          "size": 4758,
+          "url": "https://media.sketchfab.com/avatars/c68c507f49c442bfa9820083361af393/bd9b6650d77e4e9bb7a2d2c0ea359899.jpeg"
+        },
+        {
+          "width": 100,
+          "height": 100,
+          "size": 5565,
+          "url": "https://media.sketchfab.com/avatars/c68c507f49c442bfa9820083361af393/eb4b73a6797b47d4abf29c5f6e34091b.jpeg"
+        }
+      ]
+    },
+    "uri": "https://api.sketchfab.com/v3/users/3317f62653014230b1ecb053286dba2d"
+  },
+  "vertexCount": 281039,
+  "viewCount": 62161,
+  "viewerUrl": "https://sketchfab.com/3d-models/bmw-f22-eurofighter-free-d4ffe0df9066481fa028eb1e1348c4b0",
+  "isDownloadable": true,
+  "isProtected": false,
+  "description": "BMW F22 EUROFIGHTER\n\nedit - vk.com/autongraphic\nbodykit - vk.com/crooked.hand\nwheel - vk.com/ondori_ws",
+  "price": null,
+  "downloadCount": 21627,
+  "editorUrl": "https://sketchfab.com/models/d4ffe0df9066481fa028eb1e1348c4b0/edit",
+  "status": {
+    "warning": {},
+    "processing": "SUCCEEDED"
+  },
+  "source": "website",
+  "hasCommentsDisabled": false,
+  "updatedAt": "2024-01-15T10:33:06.177990",
+  "pbrType": null,
+  "textureCount": 27,
+  "materialCount": 34,
+  "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-099/d4ffe0df9066481fa028eb1e1348c4b0.glb",
+  "sourceSha256": "db318fc4ff56d6059c955fb4df8e7562c7fe0bda1f19290fc0b0a4054c655e8e",
+  "sourceAsset": {
+    "author": "autoNgraphic (https://sketchfab.com/autoNgraphic)",
+    "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "source": "https://sketchfab.com/3d-models/bmw-f22-eurofighter-d4ffe0df9066481fa028eb1e1348c4b0",
+    "title": "BMW F22 \"EUROFIGHTER\""
+  }
+}

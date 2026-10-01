@@ -1,0 +1,244 @@
+{
+  "animationCount": 0,
+  "categories": [
+    {
+      "uid": "22a2f677efad4d7bbca5ad45f9b5868e",
+      "name": "Cars & Vehicles",
+      "slug": "cars-vehicles",
+      "uri": "https://api.sketchfab.com/v3/categories/22a2f677efad4d7bbca5ad45f9b5868e",
+      "icon": "https://static.sketchfab.com/static/builds/web/dist/static/assets/images/icons/categories/45dd0cc0860ac57fcd63bde1cc3f2b7c-v2.svg",
+      "thumbnails": [
+        {
+          "width": "512",
+          "height": "288",
+          "url": "https://static.sketchfab.com/categories/22a2f677efad4d7bbca5ad45f9b5868e/512x288.png"
+        },
+        {
+          "width": "800",
+          "height": "450",
+          "url": "https://static.sketchfab.com/categories/22a2f677efad4d7bbca5ad45f9b5868e/800x450.png"
+        }
+      ]
+    }
+  ],
+  "commentCount": 10,
+  "createdAt": "2018-04-05T23:45:13.871621",
+  "embedUrl": "https://sketchfab.com/models/3a5f4938e662429b8633120aa62805a4/embed",
+  "faceCount": 39868,
+  "isAgeRestricted": false,
+  "license": {
+    "uri": "https://api.sketchfab.com/v3/licenses/322a749bcfa841b29dff1e8a1bb74b0b",
+    "label": "CC Attribution",
+    "fullName": "Creative Commons Attribution",
+    "requirements": "Author must be credited. Commercial use is allowed.",
+    "url": "http://creativecommons.org/licenses/by/4.0/",
+    "slug": "by"
+  },
+  "likeCount": 237,
+  "name": "AUDI R18",
+  "publishedAt": "2018-04-06T00:12:06.274784",
+  "soundCount": 0,
+  "staffpickedAt": null,
+  "tags": [
+    {
+      "name": "voiture",
+      "slug": "voiture",
+      "uri": "https://api.sketchfab.com/v3/tags/voiture"
+    },
+    {
+      "name": "audi",
+      "slug": "audi",
+      "uri": "https://api.sketchfab.com/v3/tags/audi"
+    },
+    {
+      "name": "course",
+      "slug": "course",
+      "uri": "https://api.sketchfab.com/v3/tags/course"
+    },
+    {
+      "name": "lemans",
+      "slug": "lemans",
+      "uri": "https://api.sketchfab.com/v3/tags/lemans"
+    },
+    {
+      "name": "24h",
+      "slug": "24h",
+      "uri": "https://api.sketchfab.com/v3/tags/24h"
+    },
+    {
+      "name": "lmp1",
+      "slug": "lmp1",
+      "uri": "https://api.sketchfab.com/v3/tags/lmp1"
+    },
+    {
+      "name": "lmp",
+      "slug": "lmp",
+      "uri": "https://api.sketchfab.com/v3/tags/lmp"
+    },
+    {
+      "name": "mans",
+      "slug": "mans",
+      "uri": "https://api.sketchfab.com/v3/tags/mans"
+    },
+    {
+      "name": "r18",
+      "slug": "r18",
+      "uri": "https://api.sketchfab.com/v3/tags/r18"
+    },
+    {
+      "name": "car",
+      "slug": "car",
+      "uri": "https://api.sketchfab.com/v3/tags/car"
+    },
+    {
+      "name": "race",
+      "slug": "race",
+      "uri": "https://api.sketchfab.com/v3/tags/race"
+    }
+  ],
+  "thumbnails": {
+    "images": [
+      {
+        "uid": "c83194857c524b9cb9aa2d353dfd5668",
+        "width": 64,
+        "height": 36,
+        "size": 799,
+        "url": "https://media.sketchfab.com/models/3a5f4938e662429b8633120aa62805a4/thumbnails/fb2fa67879624563beb5862705f87fb1/7a47fc1a13b144ec83e9c7271ffbe565.jpeg"
+      },
+      {
+        "uid": "00e6005d89e04847961f179471bc0b53",
+        "width": 1920,
+        "height": 1080,
+        "size": 166718,
+        "url": "https://media.sketchfab.com/models/3a5f4938e662429b8633120aa62805a4/thumbnails/fb2fa67879624563beb5862705f87fb1/a5cfc987cc4643ed9afa1b662114d99d.jpeg"
+      },
+      {
+        "uid": "402e693a604c4aa48116a14405c7745b",
+        "width": 1024,
+        "height": 576,
+        "size": 47604,
+        "url": "https://media.sketchfab.com/models/3a5f4938e662429b8633120aa62805a4/thumbnails/fb2fa67879624563beb5862705f87fb1/3d724cce9755447d94b8667c9a22473e.jpeg"
+      },
+      {
+        "uid": "d66932dda4264bfe9d5d9a1f89b8daf2",
+        "width": 720,
+        "height": 405,
+        "size": 26611,
+        "url": "https://media.sketchfab.com/models/3a5f4938e662429b8633120aa62805a4/thumbnails/fb2fa67879624563beb5862705f87fb1/5799765bd76446f2942e6919c5660988.jpeg"
+      },
+      {
+        "uid": "85a11e33242144dcb0d2bf972b8d71dc",
+        "width": 256,
+        "height": 144,
+        "size": 4964,
+        "url": "https://media.sketchfab.com/models/3a5f4938e662429b8633120aa62805a4/thumbnails/fb2fa67879624563beb5862705f87fb1/eaefb0ce8ca148bb83cd68fd9cdc9d71.jpeg"
+      }
+    ]
+  },
+  "uid": "3a5f4938e662429b8633120aa62805a4",
+  "uri": "https://api.sketchfab.com/v3/models/3a5f4938e662429b8633120aa62805a4",
+  "user": {
+    "uid": "60c82ce0df184e9abaa36f7cc80f18db",
+    "username": "Godheim",
+    "displayName": "Godheim",
+    "account": "basic",
+    "profileUrl": "https://sketchfab.com/Godheim",
+    "avatar": {
+      "uid": "3cbc145427fd446c9ca1c2ecbf901bd1",
+      "uri": "https://api.sketchfab.com/v3/avatars/3cbc145427fd446c9ca1c2ecbf901bd1",
+      "images": [
+        {
+          "width": 32,
+          "height": 32,
+          "size": 1406,
+          "url": "https://media.sketchfab.com/avatars/3cbc145427fd446c9ca1c2ecbf901bd1/5ac89f4b12c544efbb28d8f9850d71b2.jpeg"
+        },
+        {
+          "width": 48,
+          "height": 48,
+          "size": 2166,
+          "url": "https://media.sketchfab.com/avatars/3cbc145427fd446c9ca1c2ecbf901bd1/892603ddded647aba8a9f2ad719b586d.jpeg"
+        },
+        {
+          "width": 90,
+          "height": 90,
+          "size": 5070,
+          "url": "https://media.sketchfab.com/avatars/3cbc145427fd446c9ca1c2ecbf901bd1/5f45ca8f711d4da38192be0091bd748e.jpeg"
+        },
+        {
+          "width": 100,
+          "height": 100,
+          "size": 5802,
+          "url": "https://media.sketchfab.com/avatars/3cbc145427fd446c9ca1c2ecbf901bd1/f490ad7c930f469782c91af10b3265b0.jpeg"
+        }
+      ]
+    },
+    "uri": "https://api.sketchfab.com/v3/users/60c82ce0df184e9abaa36f7cc80f18db"
+  },
+  "vertexCount": 20211,
+  "viewCount": 13705,
+  "viewerUrl": "https://sketchfab.com/3d-models/audi-r18-3a5f4938e662429b8633120aa62805a4",
+  "isDownloadable": true,
+  "isProtected": false,
+  "description": "2 weeks individual project at HETIC.\n\n22.083 Verts / 21.898 Quads / 43.796 Tris\n\nLower res textures + psd in the source folder.",
+  "price": null,
+  "downloadCount": 3546,
+  "editorUrl": "https://sketchfab.com/models/3a5f4938e662429b8633120aa62805a4/edit",
+  "status": {
+    "warning": {},
+    "processing": "SUCCEEDED"
+  },
+  "source": "website",
+  "hasCommentsDisabled": false,
+  "updatedAt": "2022-07-20T13:46:03.670051",
+  "pbrType": "metalness",
+  "textureCount": 7,
+  "materialCount": 2,
+  "author": {
+    "uid": "60c82ce0df184e9abaa36f7cc80f18db",
+    "username": "Godheim",
+    "displayName": "Godheim",
+    "account": "basic",
+    "profileUrl": "https://sketchfab.com/Godheim",
+    "avatar": {
+      "uid": "3cbc145427fd446c9ca1c2ecbf901bd1",
+      "uri": "https://api.sketchfab.com/v3/avatars/3cbc145427fd446c9ca1c2ecbf901bd1",
+      "images": [
+        {
+          "width": 32,
+          "height": 32,
+          "size": 1406,
+          "url": "https://media.sketchfab.com/avatars/3cbc145427fd446c9ca1c2ecbf901bd1/5ac89f4b12c544efbb28d8f9850d71b2.jpeg"
+        },
+        {
+          "width": 48,
+          "height": 48,
+          "size": 2166,
+          "url": "https://media.sketchfab.com/avatars/3cbc145427fd446c9ca1c2ecbf901bd1/892603ddded647aba8a9f2ad719b586d.jpeg"
+        },
+        {
+          "width": 90,
+          "height": 90,
+          "size": 5070,
+          "url": "https://media.sketchfab.com/avatars/3cbc145427fd446c9ca1c2ecbf901bd1/5f45ca8f711d4da38192be0091bd748e.jpeg"
+        },
+        {
+          "width": 100,
+          "height": 100,
+          "size": 5802,
+          "url": "https://media.sketchfab.com/avatars/3cbc145427fd446c9ca1c2ecbf901bd1/f490ad7c930f469782c91af10b3265b0.jpeg"
+        }
+      ]
+    },
+    "uri": "https://api.sketchfab.com/v3/users/60c82ce0df184e9abaa36f7cc80f18db"
+  },
+  "downloadUrl": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-032/3a5f4938e662429b8633120aa62805a4.glb",
+  "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-032/3a5f4938e662429b8633120aa62805a4.glb",
+  "sourceSha256": "168039f9112c76b098b6a5ec490f56dfa2d4762612eee95a320ec2fc0de7a7da",
+  "sourceAsset": {
+    "author": "Godheim (https://sketchfab.com/Godheim)",
+    "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "source": "https://sketchfab.com/3d-models/audi-r18-3a5f4938e662429b8633120aa62805a4",
+    "title": "AUDI R18"
+  }
+}
