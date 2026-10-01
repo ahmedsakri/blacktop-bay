@@ -3,7 +3,8 @@ import * as THREE from 'three';
 // Original closed/open-cockpit race coachwork. The credited GT source supplies
 // only its articulated wheels; every body panel below is authored for this game.
 export function createPrototypeCar({ model, template, color, ghost = false, low = false, finishSurface, raceNumberTexture, batchStaticMeshes }) {
-  const open = ['barchetta', 'spyder'].includes(model.id), attack = ['hyper', 'spyder'].includes(model.id);
+  const singleSeat = model.id === 'monoposto', lowCanopy = model.id === 'mirage', extreme = model.id === 'tempest';
+  const open = ['barchetta', 'spyder'].includes(model.id) || singleSeat, attack = ['hyper', 'spyder'].includes(model.id) || extreme;
   const group = new THREE.Group(), chassis = new THREE.Group();
   group.name = model.name.toLowerCase().replaceAll(' ', '-'); chassis.name = 'sprung-body'; group.add(chassis);
   const geometry = [], materials = [], textures = [], wheels = [];
@@ -46,19 +47,24 @@ export function createPrototypeCar({ model, template, color, ghost = false, low 
     wheels.push({ pivot, rolling, front });
   }
 
-  const tail = attack ? -2.54 : -2.36, nose = 2.43;
+  const tail = lowCanopy ? -2.74 : singleSeat ? -2.24 : extreme ? -2.65 : attack ? -2.54 : -2.36;
+  const nose = lowCanopy ? 2.48 : singleSeat ? 2.32 : extreme ? 2.58 : 2.43;
   box(1.94, .07, nose - tail - .16, 0, .135, (nose + tail) / 2, carbon, 'carbon-underfloor');
   // A broader nose joins the monocoque to the fenders instead of reading as
   // three separate rounded pods. Long-tail models retain their rear extension.
-  const width = z => .57 + .16 * Math.exp(-Math.pow((z + .65) / 1.0, 2)) - .075 * Math.exp(-Math.pow((z - 2.35) / .5, 2));
-  const top = z => .42 + .12 * Math.exp(-Math.pow((z + .8) / 1.6, 2)) + .04 * Math.exp(-Math.pow((z - 1.45) / .7, 2));
+  const width = z => .57 + (lowCanopy ? .055 : singleSeat ? -.045 : extreme ? .04 : 0)
+    + .16 * Math.exp(-Math.pow((z + .65) / 1.0, 2)) - .075 * Math.exp(-Math.pow((z - 2.35) / .5, 2))
+    - (extreme ? .19 * THREE.MathUtils.smoothstep(z, 1.15, nose) : 0);
+  const top = z => .42 + (lowCanopy ? -.025 : singleSeat ? .018 : 0)
+    + .12 * Math.exp(-Math.pow((z + .8) / 1.6, 2)) + .04 * Math.exp(-Math.pow((z - 1.45) / .7, 2));
   surface(low ? 36 : 64, 24, (u, v) => { const z = tail + (nose - tail) * v, theta = Math.PI * u; return [Math.cos(theta) * width(z), .20 + Math.sin(theta) * (top(z) - .20), z]; }, paint, 'sculpted-central-monocoque');
   for (const side of [-1, 1]) {
-    const outer = z => 1.02 + .10 * Math.exp(-Math.pow((z - 1.39) / .8, 2)) + .10 * Math.exp(-Math.pow((z + 1.47) / .8, 2)) - .12 * Math.exp(-Math.pow((z - 2.4) / .25, 2));
-    const inner = z => .62 + .04 * Math.sin(z);
+    const noseTaper = lowCanopy || singleSeat || extreme ? nose : 2.4;
+    const outer = z => 1.02 + (extreme ? .065 : 0) + .10 * Math.exp(-Math.pow((z - 1.39) / .8, 2)) + .10 * Math.exp(-Math.pow((z + 1.47) / .8, 2)) - .12 * Math.exp(-Math.pow((z - noseTaper) / .25, 2));
+    const inner = z => (singleSeat ? .69 : .62) + .04 * Math.sin(z);
     // Broader, flatter wheel shoulders and a small outer chamfer preserve tyre
     // clearance while replacing the original bulbous fender cross-section.
-    const crown = z => .48 + .35 * Math.exp(-Math.pow((z - 1.39) / .74, 4)) + .35 * Math.exp(-Math.pow((z + 1.47) / .74, 4));
+    const crown = z => .48 + (lowCanopy ? -.022 : extreme ? .025 : 0) + .35 * Math.exp(-Math.pow((z - 1.39) / .74, 4)) + .35 * Math.exp(-Math.pow((z + 1.47) / .74, 4));
     const fairingHeight = (z, u) => crown(z) + .015 * Math.sin(u * Math.PI) - .025 * THREE.MathUtils.smoothstep(u, .68, 1);
     surface(low ? 48 : 88, 14, (u, v) => { const z = tail + (nose - tail) * v; return [side * THREE.MathUtils.lerp(inner(z), outer(z), u), fairingHeight(z, u), z]; }, paint, 'flowing-wheel-fairing');
     surface(low ? 48 : 88, 6, (u, v) => {
@@ -95,8 +101,10 @@ export function createPrototypeCar({ model, template, color, ghost = false, low 
       const slat = box(.26, .012, .027, side * .865, y, z, carbon, 'fender-extraction-louvre'); slat.rotation.y = side * -.16;
     }
     // Headlight pods face forward, with three small LED strips in each housing.
-    box(.28, .125, .055, side * .865, .408, 2.423, dark, 'headlight-housing');
-    for (let i = 0; i < 3; i++) box(.22, .013, .009, side * .865, .372 + i * .035, 2.454, headlights, 'led-headlight');
+    const lightHeight = lowCanopy ? .060 : singleSeat ? .075 : .125;
+    box(.28, lightHeight, .055, side * .865, .408, nose - .007, dark, 'headlight-housing');
+    if (extreme) for (let i = 0; i < 3; i++) box(.014, .092, .009, side * (.795 + i * .07), .408, nose + .024, headlights, 'vertical-led-headlight');
+    else for (let i = 0; i < (lowCanopy || singleSeat ? 2 : 3); i++) box(.22, .013, .009, side * .865, lowCanopy || singleSeat ? .394 + i * .028 : .372 + i * .035, nose + .024, headlights, 'led-headlight');
     box(.39, .038, .025, side * .825, .44, tail - .008, lamps, 'rear-light-bar');
     // Two tiny mirrors with stalks, separate lenses and a restrained race accent.
     tube([[side * .49, .61, .35], [side * .62, .80, .23], [side * .77, .82, .22]], .012, carbon, 'mirror-stalk');
@@ -106,37 +114,71 @@ export function createPrototypeCar({ model, template, color, ghost = false, low 
     const cap = add(new THREE.CylinderGeometry(.050, .050, .014, 16), alloy, chassis, 'fuel-cap'); cap.position.set(side * .80, fairingHeight(-.5, (.80 - inner(-.5)) / (outer(-.5) - inner(-.5))) + .012, -.5);
   }
   // Splitter lips, front cooling mouth and rear diffuser vanes.
-  patch([[-1.11, .175, 2.18], [-.94, .175, 2.51], [0, .175, 2.55], [.94, .175, 2.51], [1.11, .175, 2.18]], carbon, 'front-splitter');
-  patch([[-.43, .225, 2.445], [-.38, .355, 2.445], [.38, .355, 2.445], [.43, .225, 2.445]], dark, 'front-brake-duct');
+  const splitterHalf = extreme ? 1.24 : 1.11;
+  patch([[-splitterHalf, .175, nose - .25], [-.94, .175, nose + .08], [0, .175, nose + .12], [.94, .175, nose + .08], [splitterHalf, .175, nose - .25]], carbon, 'front-splitter');
+  patch([[-.43, .225, nose + .015], [-.38, .355, nose + .015], [.38, .355, nose + .015], [.43, .225, nose + .015]], dark, 'front-brake-duct');
   for (let i = -3; i <= 3; i++) box(.013, .16, .48, i * .24, .19, tail + .20, carbon, 'diffuser-vane');
+  const wingHeight = lowCanopy ? .94 : singleSeat ? .89 : extreme ? 1.13 : 1.02;
+  const wingHalf = extreme ? 1.26 : singleSeat ? 1.03 : 1.11;
   for (const side of [-1, 1]) {
-    box(.036, .50, .11, side * .66, .72, tail + .31, carbon, 'wing-upright');
-    box(.030, .26, .50, side * 1.11, 1.035, tail + .32, paint, 'wing-endplate');
+    box(.036, wingHeight - .52, .11, side * .66, (wingHeight + .42) / 2, tail + .31, carbon, 'wing-upright');
+    box(.030, extreme ? .34 : .26, .50, side * wingHalf, wingHeight + .015, tail + .32, paint, 'wing-endplate');
   }
-  surface(12, 28, (u, v) => [(u - .5) * 2.22, 1.02 + .055 * Math.sin(v * Math.PI), tail + .09 + v * .44], carbon, 'sculpted-rear-wing');
-  if (attack) surface(8, 24, (u, v) => [(u - .5) * 2.22, 1.145 + .028 * Math.sin(v * Math.PI), tail + .11 + v * .20], carbon, 'upper-wing-element');
+  surface(12, 28, (u, v) => [(u - .5) * wingHalf * 2, wingHeight + .055 * Math.sin(v * Math.PI), tail + .09 + v * (extreme ? .56 : .44)], carbon, 'sculpted-rear-wing');
+  if (attack) surface(8, 24, (u, v) => [(u - .5) * wingHalf * 2, wingHeight + .125 + .028 * Math.sin(v * Math.PI), tail + .11 + v * .20], carbon, 'upper-wing-element');
+  if (extreme) {
+    for (const side of [-1, 1]) {
+      // Swept dive planes, tall diffuser fences and roof-mounted swan necks
+      // give the wide track body a functional, visibly separate aero package.
+      for (const y of [.35, .51]) patch([[side * .98, y, 2.08], [side * 1.26, y - .055, 2.16], [side * 1.24, y - .025, 1.61], [side * 1.05, y + .04, 1.42]], carbon, 'stacked-front-dive-plane');
+      patch([[side * 1.01, .20, -.62], [side * 1.24, .19, -.94], [side * 1.24, .36, tail + .17], [side * .99, .52, tail + .17]], carbon, 'rear-diffuser-fence');
+      tube([[side * .38, .58, -1.18], [side * .38, 1.21, -1.80], [side * .38, 1.24, tail + .48]], .028, carbon, 'swan-neck-wing-support');
+    }
+  }
 
   if (!open) {
     // A low roof, long raked screen and separate rear fall-off give the cockpit
     // an automotive silhouette instead of one symmetric glass bubble.
+    const canopyRear = lowCanopy ? -1.30 : extreme ? -1.15 : -1.02, canopyFront = lowCanopy ? .93 : 1.04;
+    const roofRear = lowCanopy ? -.62 : -.42, roofFront = lowCanopy ? .08 : .25;
+    const roofHeight = lowCanopy ? .865 : extreme ? .945 : .995, sillHeight = lowCanopy ? .46 : .49;
+    const canopyLength = canopyFront - canopyRear, canopyWidth = lowCanopy ? .365 : extreme ? .36 : .39;
     const canopy = (u, v) => {
-      const z = -1.02 + v * 2.06, across = u * 2 - 1;
-      const rear = THREE.MathUtils.smoothstep(z, -1.02, -.42), front = THREE.MathUtils.smoothstep(z, .25, 1.04);
-      const roof = z < -.42 ? THREE.MathUtils.lerp(.53, .995, rear) : z > .25 ? THREE.MathUtils.lerp(.995, .52, front) : 1.005 - .010 * ((z + .085) / .335) ** 2;
-      const halfWidth = z < -.42 ? THREE.MathUtils.lerp(.22, .39, rear) : THREE.MathUtils.lerp(.39, .35, front);
-      return [across * halfWidth, .49 + (roof - .49) * (1 - Math.abs(across) ** 4), z];
+      const z = canopyRear + v * canopyLength, across = u * 2 - 1;
+      const rear = THREE.MathUtils.smoothstep(z, canopyRear, roofRear), front = THREE.MathUtils.smoothstep(z, roofFront, canopyFront);
+      const roof = z < roofRear ? THREE.MathUtils.lerp(sillHeight + .04, roofHeight, rear) : z > roofFront ? THREE.MathUtils.lerp(roofHeight, sillHeight + .03, front) : roofHeight + .01 - .010 * ((z - (roofFront + roofRear) / 2) / ((roofFront - roofRear) / 2)) ** 2;
+      const halfWidth = z < roofRear ? THREE.MathUtils.lerp(.22, canopyWidth, rear) : THREE.MathUtils.lerp(canopyWidth, canopyWidth - .04, front);
+      return [across * halfWidth, sillHeight + (roof - sillHeight) * (1 - Math.abs(across) ** 4), z];
     };
     box(.57, .12, 1.05, 0, .52, -.03, dark, 'closed-cockpit-interior');
     const seat = box(.34, .34, .12, 0, .64, -.40, carbon, 'closed-cockpit-seat'); seat.rotation.x=-.16;
     surface(low ? 28 : 44, 28, canopy, glass, 'raked-glazed-cockpit');
-    surface(12, 12, (u, v) => { const p = canopy(.20 + u * .60, (.60 + v * .67) / 2.06); p[1] += .006; return p; }, paint, 'painted-cockpit-roof');
-    for (const z of [-.42, .25]) tube(Array.from({length: 25}, (_, i) => canopy(i / 24, (z + 1.02) / 2.06).map((n, index) => index === 1 ? n + .006 : n)), .012, paint, 'screen-header');
+    surface(12, 12, (u, v) => { const p = canopy(.20 + u * .60, (roofRear - canopyRear + v * (roofFront - roofRear)) / canopyLength); p[1] += .006; return p; }, paint, 'painted-cockpit-roof');
+    for (const z of [roofRear, roofFront]) tube(Array.from({length: 25}, (_, i) => canopy(i / 24, (z - canopyRear) / canopyLength).map((n, index) => index === 1 ? n + .006 : n)), .012, paint, 'screen-header');
     for (const side of [-1, 1]) {
       const u = side < 0 ? .12 : .88;
       tube(Array.from({length: 25}, (_, i) => canopy(u, i / 24).map((n, index) => index === 1 ? n + .006 : n)), .010, paint, 'cockpit-pillar');
-      tube([[side * .35, .50, 1.02], [side * .39, .49, .10], [side * .24, .50, -.99]], .014, carbon, 'cockpit-sill');
+      tube([[side * (canopyWidth - .04), sillHeight + .01, canopyFront - .02], [side * canopyWidth, sillHeight, .10], [side * .24, sillHeight + .01, canopyRear + .03]], .014, carbon, 'cockpit-sill');
     }
-    patch([[0, .55, -.98], [0, .87, -1.24], [0, .97, tail + .49], [0, .53, tail + .30]], paint, 'stability-fin');
+    patch([[0, .55, canopyRear + .04], [0, lowCanopy || extreme ? roofHeight - .10 : .87, canopyRear - .22], [0, wingHeight - .05, tail + .49], [0, .53, tail + .30]], paint, 'stability-fin');
+  } else if (singleSeat) {
+    // One narrow seat and a central faired roll structure change the body
+    // section, not just the livery of the existing two-hoop sports racers.
+    box(.48, .035, 1.03, 0, .535, .02, dark, 'single-seat-cockpit-opening');
+    const seat = box(.32, .37, .11, 0, .67, -.34, carbon, 'single-bucket-seat'); seat.rotation.x = -.20;
+    box(.32, .065, .42, 0, .55, -.04, carbon, 'single-seat-base');
+    for (const side of [-1, 1]) {
+      box(.045, .31, .020, side * .08, .69, -.27, accent, 'single-seat-harness');
+      tube([[side * .255, .55, .56], [side * .265, .59, -.10], [side * .235, .63, -.45]], .026, paint, 'single-cockpit-coaming');
+    }
+    surface(28, 18, (u, v) => {
+      const z = -.39 - v * 1.45, fade = 1 - THREE.MathUtils.smoothstep(v, .15, 1), theta = Math.PI * u;
+      return [Math.cos(theta) * (.23 * fade + .06), .52 + Math.sin(theta) * .43 * fade, z];
+    }, paint, 'tapered-central-headrest-fairing');
+    tube([[-.17, .59, -.44], [-.17, .93, -.43], [0, 1.005, -.44], [.17, .93, -.43], [.17, .59, -.44]], .028, trim, 'single-rollover-hoop');
+    surface(12, 20, (u, v) => { const theta = (u - .5) * Math.PI * .7; return [Math.sin(theta) * .29, .56 + v * .16, .54 - (1 - Math.cos(theta)) * .18 - v * .065]; }, glass, 'single-seat-aeroscreen');
+    const wheel = add(new THREE.TorusGeometry(.12, .016, 8, 20), rubber, chassis, 'single-seat-steering-wheel'); wheel.position.set(0, .69, .25); wheel.rotation.x = -.28;
+    box(.12, .055, .035, 0, .65, .45, dark, 'single-seat-dashboard');
   } else {
     // Open cockpit includes a visible bucket, harness, dash, steering wheel and
     // twin rollover hoops. These are real meshes, not an opaque painted window.
@@ -151,7 +193,7 @@ export function createPrototypeCar({ model, template, color, ghost = false, low 
     for (const side of [-1, 1]) box(.055, .050, 1.28, side * .42, .545, -.01, paint, 'cockpit-edge');
   }
   // Original team stripes follow the curved upper nose rather than float above it.
-  for (const side of [-1, 1]) surface(20, 3, (u, v) => { const z = .96 + v * 1.35, x = side * (.07 + u * (attack ? .070 : .045)); const theta = Math.acos(x / width(z)); return [x, .204 + Math.sin(theta) * (top(z) - .20), z]; }, accent, 'nose-team-stripe');
+  for (const side of [-1, 1]) surface(20, 3, (u, v) => { const z = .96 + v * (nose - 1.08), x = side * (.07 + u * (attack ? .070 : .045)); const theta = Math.acos(x / width(z)); return [x, .204 + Math.sin(theta) * (top(z) - .20), z]; }, accent, 'nose-team-stripe');
   const texture = ghost ? null : raceNumberTexture(model.number, model.color);
   if (texture) {
     const numberGroup=new THREE.Group();numberGroup.name='original-race-numbers';chassis.add(numberGroup);
@@ -180,6 +222,6 @@ export function createPrototypeCar({ model, template, color, ghost = false, low 
     lamps.emissiveIntensity = ghost ? 0 : .6 + (brake ? 1.8 : 0); flames.visible = !ghost && Boolean(nitro); flames.scale.z = .89 + .11 * Math.sin(time * 47);
   }
   function dispose() { if (disposed) return; disposed = true; group.removeFromParent(); geometry.forEach(g => g.dispose()); materials.forEach(m => m.dispose()); textures.forEach(t => t.dispose()); }
-  group.userData = {kind: 'original-prototype-coachwork', vehicle: model.id, dimensions: {length: 2.55 - tail, width: 2.25, height: 1.18}, source: 'AppsOverFlow original body; credited vicent091036 GT wheels', effects: {rearAxle: -1.47, tyreOffset: .965, tyreWidth: .29, exhausts}};
+  group.userData = {kind: 'original-prototype-coachwork', vehicle: model.id, bodyProfile: lowCanopy ? 'low-canopy-long-tail' : singleSeat ? 'single-seat-speedster' : extreme ? 'wide-aero-prototype' : open ? 'open-sports-racer' : 'closed-prototype', dimensions: {length: nose + .12 - tail, width: extreme ? 2.56 : 2.25, height: extreme ? 1.35 : lowCanopy ? 1.07 : 1.18}, source: 'AppsOverFlow original body; credited vicent091036 GT wheels', license: 'CC BY 4.0 source wheels', effects: {rearAxle: -1.47, tyreOffset: .965, tyreWidth: .29, exhausts}};
   return {group, update, dispose};
 }

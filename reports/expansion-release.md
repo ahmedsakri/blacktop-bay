@@ -1,6 +1,6 @@
 # Blacktop Bay expansion — development evidence
 
-Recorded 1 October 2026. This is a factual development and local UI-review checkpoint, not a deployment receipt. The user superseded the earlier driving controls after that release. The current automatic-acceleration and drag-steering revision awaits the release owner’s final UI, test/build and replacement deployment receipt.
+Recorded 1 October 2026. The ten-build expansion and superseding controls below are historical release evidence. A later HUD release is recorded in [racing-hud-redesign.md](./racing-hud-redesign.md). The new fourteen-build garage revision is pending final game validation and deployment.
 
 ## Scope implemented
 
@@ -44,3 +44,10 @@ Released 01 October 2026 at 12:15 IST. Both repositories were pushed to GitHub a
 - The live game was checked at **844×390**, with no browser warnings/errors. The final screenshot is saved locally as `reports/nitro-only-mobile-live.png` (ignored by Git). The earlier final-build check at **390×844** confirmed rotation pauses the race and presents the landscape gate. Physical-device performance remains unmeasured.
 
 The automatic-drift/one-button design supersedes the earlier manual-pedal checkpoint. The current production release has no Gas, Brake, Drift or steering buttons on the mobile driving surface. Optional keyboard braking remains supported; touch reset is in Pause.
+
+
+## Fourteen-build garage follow-up — pending release
+
+Kestrel GT-R (long-nose GT time attack), Mirage LMP (low closed-canopy prototype), Solstice One (single-seat open speedster) and Tempest XR (extreme-aero prototype) expand the garage from ten to fourteen fictional race builds. They combine shared licensed GT parts with newly authored coachwork and aero. All fourteen support their own free paint and performance upgrades. Five circuits, three laps, three opponents and the automatic-acceleration/drag-steering controls remain unchanged.
+
+Guide, metadata, credits and AppsOverFlow copy now describe the expanded catalog. The local Apps build passed 3,011 static checks and 53 existing tests. The earlier ten-build test totals and HUD release receipt do not validate the four new cars. Record final catalog checks, model review, test/build totals and deployment separately when completed.

@@ -5,9 +5,21 @@ import { PAINT_KEY, loadPaint, savePaint, getPaint, applyPaint } from '../src/pa
 import { VEHICLES } from '../src/vehicles.js';
 const memory = () => { const data = new Map(); return {getItem:k=>data.get(k),setItem:(k,v)=>data.set(k,v)}; };
 
-test('all ten builds begin with their own factory colour and safe gloss finish', () => {
-  const state = loadPaint(memory()); assert.equal(Object.keys(state).length,10);
+test('all fourteen builds begin with their own factory colour and safe gloss finish', () => {
+  const state = loadPaint(memory()); assert.equal(Object.keys(state).length,14);
   for (const v of VEHICLES) { assert.equal(getPaint(v.id,state[v.id]).color,v.color); assert.equal(state[v.id].finish,'gloss'); }
+});
+test('ten-car paint saves expand without repainting existing cars and new builds remain independent', () => {
+  const storage=memory(); storage.setItem(PAINT_KEY,JSON.stringify({coupe:{color:'teal',finish:'metallic'},spyder:{color:'gold',finish:'satin'}}));
+  const state=loadPaint(storage);
+  assert.deepEqual(state.coupe,{color:'teal',finish:'metallic'});
+  assert.deepEqual(state.spyder,{color:'gold',finish:'satin'});
+  for(const id of ['kestrel','mirage','monoposto','tempest'])assert.deepEqual(state[id],{color:'factory',finish:'gloss'});
+  savePaint(state,'mirage',{color:'pearl',finish:'satin'},storage);
+  const reloaded=loadPaint(storage);
+  assert.deepEqual(reloaded.mirage,{color:'pearl',finish:'satin'});
+  assert.deepEqual(reloaded.tempest,{color:'factory',finish:'gloss'});
+  assert.deepEqual(reloaded.spyder,{color:'gold',finish:'satin'});
 });
 test('colour and finish survive reload per car without modifying another build', () => {
   const storage=memory(), state=loadPaint(storage);

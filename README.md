@@ -1,6 +1,6 @@
 # Blacktop Bay
 
-A free AppsOverFlow browser racer. **Own the corner.** Choose from ten GT, Formula and Prototype race builds, upgrade their performance, and compete against three rivals across five asphalt circuits.
+A free AppsOverFlow browser racer. **Own the corner.** Choose from fourteen GT, Formula and Prototype race builds, upgrade their performance, and compete against three rivals across five asphalt circuits.
 
 [Play Blacktop Bay](https://blacktop-bay.web.app/) · [Driver’s guide](https://blacktop-bay.web.app/guide/) · [Asset credits](https://blacktop-bay.web.app/credits/)
 
@@ -22,6 +22,10 @@ Mira, Jax and Nova use the same physical simulation, with steering, braking, avo
 | Spectre LM-R | Long-tail racing prototype | 180 km/h | 3.3 s |
 | Cinder R | Open-cockpit sports racer | 162 km/h | 3.1 s |
 | Cinder RX | Open-cockpit aero racer | 169 km/h | 3.5 s |
+| Kestrel GT-R | Long-nose GT time attack | 176 km/h | 3.5 s |
+| Mirage LMP | Low-canopy endurance prototype | 184 km/h | 3.6 s |
+| Solstice One | Single-seat open speedster | 166 km/h | 3.0 s |
+| Tempest XR | Extreme aero racing prototype | 180 km/h | 3.8 s |
 
 | Circuit | Length | Character |
 | --- | ---: | --- |
@@ -47,7 +51,7 @@ Garage → Paint offers ten curated colours plus Team original, with Gloss, Meta
 
 ## Graphics and motion
 
-The game renders ten fictional race builds from licensed models and original bodywork. Apex GT, Apex Sprint, Torque R and Torque RS adapt a shared GT source; Vortex P1 and Vortex X adapt a Formula concept. Spectre LM and Spectre LM-R share an original closed-cockpit Prototype body profile; Cinder R and Cinder RX share an original open-cockpit profile. All four Prototype builds reuse credited GT wheel geometry. Liveries, race numbers, aero setups and driving tuning distinguish the builds; these are not ten separately sourced models. The garage supports drag rotation, keyboard-accessible quarter turns, neutral studio lighting and responsive camera framing. Wheels steer/roll, brake lamps respond and nitro uses model-specific exhaust outlets. Body paint, glass, carbon and rubber use separate physical materials. Mobile and race opponents use reduced-detail geometry.
+The game renders fourteen fictional race builds from licensed models and original bodywork. Apex GT, Apex Sprint, Torque R and Torque RS adapt a shared GT source; Vortex P1 and Vortex X adapt a Formula concept. Spectre LM and Spectre LM-R share an original closed-cockpit Prototype body profile; Cinder R and Cinder RX share an original open-cockpit profile. Those four Prototype builds reuse credited GT wheel geometry. Kestrel GT-R adds a long-nose GT time-attack shape; Mirage LMP has a low closed canopy; Solstice One is a single-seat open speedster; Tempest XR uses an extreme-aero prototype profile. These four additional builds combine shared licensed GT parts with newly authored coachwork and aero. Liveries, race numbers, aero setups and driving tuning distinguish the builds; these are not fourteen separately sourced models. The garage supports drag rotation, keyboard-accessible quarter turns, neutral studio lighting and responsive camera framing. Wheels steer/roll, brake lamps respond and nitro uses model-specific exhaust outlets. Body paint, glass, carbon and rubber use separate physical materials. Mobile and race opponents use reduced-detail geometry.
 
 All five circuits have covered spectator stands with static seated and standing crowds behind the barriers. Bay Grand Prix adds a larger permanent grandstand and pit complex. A full-width checkered stripe, four numbered starting bays, branded truss gantry and three twin-lamp countdown columns mark the start/finish area.
 
@@ -85,7 +89,7 @@ Google/Bing verification tags, robots.txt, sitemap.xml and crawlable guide/priva
 
 ## Credits and validation
 
-Original game code, tracks, branding, Prototype body profiles and racing adaptations: AppsOverFlow. Formula source: Qvist_designs, CC BY 4.0. GT source and the wheel geometry reused in Prototype builds: vicent091036 / Three.js Ferrari 458 Italia model, CC BY 4.0. Full source URLs, adaptation notes and licences: `public/credits/` and `public/assets/cars/`. Three.js is MIT. No manufacturer or motorsport affiliation is implied.
+Original game code, tracks, branding, Prototype body profiles and racing adaptations: AppsOverFlow. Formula source: Qvist_designs, CC BY 4.0. GT source and reused geometry in the additional coachwork builds: vicent091036 / Three.js Ferrari 458 Italia model, CC BY 4.0. Full source URLs, adaptation notes and licences: `public/credits/` and `public/assets/cars/`. Three.js is MIT. No manufacturer or motorsport affiliation is implied.
 
 The automated suite covers driving, lap guards, rivals, all circuits, nitro, upgrades, payments, storage and analytics privacy. Current expansion checks and review limits are documented in `reports/expansion-release.md`; `reports/release-checks.md` preserves the earlier release evidence. Phone viewport emulation does not establish performance on every physical phone.
 

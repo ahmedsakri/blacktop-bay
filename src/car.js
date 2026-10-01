@@ -185,8 +185,8 @@ function createFormulaCar({vehicle='rally',ghost=false,color,low=false}={}){
 function createGTRacer({vehicle='coupe',ghost=false,color,low=false}={}){
   const template=gtAssets.get(low?'low':'high')||gtAssets.get('low');
   if(!template)throw new Error('Car assets are not ready. Await prepareCarAssets() before opening the garage.');
-  const endurance=vehicle==='gt'||vehicle==='endurance',sprint=vehicle==='sprint',longRun=vehicle==='endurance',model=getVehicle(vehicle),group=new THREE.Group(),renderRoot=new THREE.Group(),chassis=new THREE.Group();
-  group.name=longRun?'torque-rs-endurance':sprint?'apex-sprint':endurance?'torque-r-endurance':'apex-gt-racer';chassis.name='sprung-body';group.add(renderRoot);renderRoot.add(chassis);
+  const timeAttack=vehicle==='kestrel',endurance=vehicle==='gt'||vehicle==='endurance',sprint=vehicle==='sprint',longRun=vehicle==='endurance',model=getVehicle(vehicle),group=new THREE.Group(),renderRoot=new THREE.Group(),chassis=new THREE.Group();
+  group.name=timeAttack?'kestrel-gt-r':longRun?'torque-rs-endurance':sprint?'apex-sprint':endurance?'torque-r-endurance':'apex-gt-racer';chassis.name='sprung-body';group.add(renderRoot);renderRoot.add(chassis);
   const paint=new THREE.MeshPhysicalMaterial({color:color??model.color,metalness:.45,roughness:.23,clearcoat:1,clearcoatRoughness:.095,envMapIntensity:.85});
   const carbon=new THREE.MeshPhysicalMaterial({color:0x10161c,metalness:.36,roughness:.34,clearcoat:.25,clearcoatRoughness:.20});
   const rubber=new THREE.MeshStandardMaterial({color:0x111418,roughness:.84,metalness:.02});
@@ -269,7 +269,7 @@ function createGTRacer({vehicle='coupe',ghost=false,color,low=false}={}){
   tube([[-.65,.39,-.49],[-.61,.91,-.49],[-.48,1.17,-.45],[0,1.22,-.45],[.48,1.17,-.45],[.61,.91,-.49],[.65,.39,-.49]],.019,cage,32);
   tube([[-.59,.48,-.52],[.48,1.15,-.46]],.014,cage,4);
   tube([[.59,.48,-.52],[-.48,1.15,-.46]],.014,cage,4);
-  const wingHalf=endurance?1.055:sprint?.95:.995,wingY=longRun?1.35:endurance?1.31:sprint?1.10:1.17,wingZ=-2.075,chord=longRun?.335:endurance?.305:sprint?.225:.265;
+  const wingHalf=timeAttack?1.145:endurance?1.055:sprint?.95:.995,wingY=timeAttack?1.36:longRun?1.35:endurance?1.31:sprint?1.10:1.17,wingZ=-2.075,chord=timeAttack?.40:longRun?.335:endurance?.305:sprint?.225:.265;
   for(const lower of [false,true])add(gridGeometry(8,36,(u,v)=>[(u*2-1)*wingHalf,wingY+.032*Math.sin(v*Math.PI)-(lower?.014:0),wingZ+(v-.5)*chord],lower),carbon);
   for(const side of [-1,1]){
     const baseY=deckHeight(side*.52,-1.87);
@@ -280,7 +280,7 @@ function createGTRacer({vehicle='coupe',ghost=false,color,low=false}={}){
       const stay=add(roundedBlock(.025,wingY-baseY,.04,.006),metal);stay.position.set(side*.55,(wingY+baseY)/2,-1.92);stay.rotation.x=.25;
     }
   }
-  if(endurance)for(const lower of [false,true])add(gridGeometry(5,28,(u,v)=>[(u*2-1)*wingHalf*.99,wingY+.079+.012*Math.sin(v*Math.PI)-(lower?.012:0),wingZ-.12+v*.12],lower),carbon);
+  if(endurance||timeAttack)for(const lower of [false,true])add(gridGeometry(5,28,(u,v)=>[(u*2-1)*wingHalf*.99,wingY+.079+.012*Math.sin(v*Math.PI)-(lower?.012:0),wingZ-.12+v*.12],lower),carbon);
   const tip=2.39,half=1.02;
   const outline=[[-half,.177,tip-.24],[-.78,.177,tip-.035],[-.35,.177,tip+.04],[0,.177,tip+.055],[.35,.177,tip+.04],[.78,.177,tip-.035],[half,.177,tip-.24],[.94,.177,tip-.46],[-.94,.177,tip-.46]];
   add(patchGeometry(outline),carbon).material.side=THREE.DoubleSide;tube([...outline,outline[0]],.008,carbon,32);
@@ -288,6 +288,23 @@ function createGTRacer({vehicle='coupe',ghost=false,color,low=false}={}){
     const sill=add(roundedBlock(.068,.057,1.71,.012),carbon);sill.position.set(side*.951,.204,-.08);
     add(patchGeometry([[side*.97,.29,2.03],[side*1.03,.275,2.12],[side*.92,.325,1.89]]),carbon).material.side=THREE.DoubleSide;
     if(endurance)add(patchGeometry([[side*.958,.355,1.98],[side*1.026,.330,2.08],[side*.931,.395,1.88]]),carbon).material.side=THREE.DoubleSide;
+  }
+  if(timeAttack){
+    // Fitted bonnet extraction banks, a deeper splitter and swept dive planes
+    // distinguish the GT-R silhouette before paint or its race number is seen.
+    for(const side of [-1,1]){
+      for(let i=0;i<7;i++){
+        const z=1.06+i*.082,y=deckHeight(side*.36,z)+.013;
+        const vent=add(roundedBlock(.235,.018,.045,.007),carbon);vent.position.set(side*.36,y,z);vent.rotation.y=side*.14;
+      }
+      for(const height of [.36,.50])add(patchGeometry([[side*.92,height,1.79],[side*1.13,height-.07,1.91],[side*1.18,height-.07,1.66],[side*.94,height+.025,1.45]],.010),carbon).material.side=THREE.DoubleSide;
+      add(gridGeometry(14,8,(u,v)=>{
+        const z=-1.91+v*.87,x=side*(.91+.19*Math.sin(v*Math.PI));
+        return [x+side*u*.035,.51+.18*Math.sin(v*Math.PI)-u*.23,z];
+      },side<0),paint);
+      tube([[side*.57,.85,-1.75],[side*.57,1.20,-1.71],[side*.57,1.39,-1.98]],.022,carbon,14);
+    }
+    add(patchGeometry([[-1.12,.18,2.15],[-.93,.18,2.47],[0,.18,2.51],[.93,.18,2.47],[1.12,.18,2.15]]),carbon).material.side=THREE.DoubleSide;
   }
   // New builds share their licensed GT chassis but have immediately distinct
   // original team liveries and wing setups. The stripes follow the real panels.
@@ -318,6 +335,30 @@ function createGTRacer({vehicle='coupe',ghost=false,color,low=false}={}){
   const coreMat=new THREE.MeshBasicMaterial({color:0xb6eaff,transparent:true,opacity:.58,depthWrite:false,blending:THREE.AdditiveBlending,side:THREE.DoubleSide,toneMapped:false});materials.push(coreMat);
   const exhausts=[-.112,0,.112].map(x=>({x,y:.422,z:-2.333}));
   for(const {x,y,z}of exhausts)for(const [radius,length,material]of[[.031,.29,flameMat],[.018,.14,coreMat]]){const geometry=new THREE.ConeGeometry(radius,length,8,1,true);geometry.translate(0,length/2,0);geometry.rotateX(-Math.PI/2);const flame=add(geometry,material,flames);flame.position.set(x,y,z);flame.castShadow=false;flame.receiveShadow=false;}
+  if(timeAttack){
+    // Extend only the overhang ahead of the front tyre and lower the complete
+    // glazed roof assembly together. Each source surface is copied, so shared
+    // wheels, the other GT bodies and cached GLB geometry remain untouched.
+    chassis.traverse(mesh=>{
+      if(!mesh.isMesh||mesh.parent===flames)return;
+      mesh.updateMatrix();const geometry=mesh.geometry.clone();geometry.applyMatrix4(mesh.matrix);
+      const position=geometry.attributes.position,normal=geometry.attributes.normal,transformedNormal=new THREE.Vector3();
+      for(let i=0;i<position.count;i++){
+        const y=position.getY(i),z=position.getZ(i);
+        position.setY(i,y-Math.max(0,y-1.02)*.26);
+        position.setZ(i,z+.36*THREE.MathUtils.smoothstep(z,1.76,2.32));
+        // Preserve the GLB's authored smooth normals and hard-edge splits.
+        // Rebuilding them from the source triangles flips inward-facing seam
+        // normals and fragments the paint. Apply the inverse local deformation
+        // derivative instead, exactly as a normal matrix would for a scale.
+        const t=clamp((z-1.76)/.56,0,1),stretchZ=1+.36*6*t*(1-t)/.56;
+        transformedNormal.set(normal.getX(i),normal.getY(i)/(y>1.02?.74:1),normal.getZ(i)/stretchZ).normalize();
+        normal.setXYZ(i,transformedNormal.x,transformedNormal.y,transformedNormal.z);
+      }
+      geometry.computeBoundingSphere();ownedGeometry.push(geometry);mesh.geometry=geometry;
+      mesh.position.set(0,0,0);mesh.rotation.set(0,0,0);mesh.scale.set(1,1,1);
+    });
+  }
   batchStaticMeshes(chassis);for(const mesh of chassis.children)if(mesh.isMesh)ownedGeometry.push(mesh.geometry);
   for(const wheel of wheels.values()){batchStaticMeshes(wheel.rolling);for(const mesh of wheel.rolling.children)if(mesh.isMesh)ownedGeometry.push(mesh.geometry);}
   if(endurance)renderRoot.scale.set(1.055,1,1.035);
@@ -332,7 +373,7 @@ function createGTRacer({vehicle='coupe',ghost=false,color,low=false}={}){
   const rearPivots=[...template.pivots].filter(([name])=>name.includes('_r')).map(([,position])=>position);
   const rearTyres=template.parts.filter(part=>part.wheel?.includes('_r')&&/^tire/.test(part.name));
   const tyreWidths=rearTyres.map(part=>{part.geometry.computeBoundingBox();return part.geometry.boundingBox.max.x-part.geometry.boundingBox.min.x;});
-  group.userData={kind:'licensed-gt-race-adaptation',vehicle:model.id,dimensions:{length:endurance?5.00:4.82,width:template.dimensions.width*(endurance?1.055:1),height:1.38},source:'vicent091036 / Ferrari 458 Italia, via Three.js',license:'CC BY 4.0',effects:{
+  group.userData={kind:'licensed-gt-race-adaptation',vehicle:model.id,bodyProfile:timeAttack?'long-nose-time-attack':'gt',dimensions:{length:timeAttack?5.24:endurance?5.00:4.82,width:timeAttack?2.36:template.dimensions.width*(endurance?1.055:1),height:1.38},source:'vicent091036 / Ferrari 458 Italia, via Three.js',license:'CC BY 4.0',effects:{
     rearAxle:rearPivots.reduce((sum,p)=>sum+p.z,0)/rearPivots.length*(endurance?1.035:1),
     tyreOffset:rearPivots.reduce((sum,p)=>sum+Math.abs(p.x),0)/rearPivots.length*(endurance?1.055:1),
     tyreWidth:tyreWidths.reduce((sum,value)=>sum+value,0)/tyreWidths.length*(endurance?1.055:1),

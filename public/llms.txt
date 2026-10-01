@@ -1,6 +1,6 @@
 # Blacktop Bay
 
-> Blacktop Bay is a free, single-player 3D browser racing game by AppsOverFlow. Race three computer-controlled rivals across five asphalt circuits in one of ten race builds, earn race credits, and upgrade your car. No account, no install, no purchases.
+> Blacktop Bay is a free, single-player 3D browser racing game by AppsOverFlow. Race three computer-controlled rivals across five asphalt circuits in one of fourteen race builds, earn race credits, and upgrade your car. No account, no install, no purchases.
 
 ## About the game
 
@@ -26,7 +26,7 @@ Blacktop Bay runs directly in a modern web browser (WebGL 2 required) at https:/
 
 ## Race cars
 
-Ten tuned race builds across three families: GT (Apex GT, Apex Sprint, Torque R, Torque RS), Formula (Vortex P1, Vortex X) and Prototype (Spectre LM, Spectre LM-R, Cinder R, Cinder RX). All ten are available from the start. Each car has five upgrade levels for Engine, Tyres, Nitro and Handling, purchased with earned race credits. Car names and handling are fictional.
+Fourteen tuned race builds across three families: five GT builds (Apex GT, Apex Sprint, Torque R, Torque RS, Kestrel GT-R), two Formula builds (Vortex P1, Vortex X) and seven Prototype builds (Spectre LM, Spectre LM-R, Cinder R, Cinder RX, Mirage LMP, Solstice One, Tempest XR). These fictional builds share licensed source geometry and original coachwork rather than representing fourteen independently sourced models. All fourteen are available from the start. Each car has five upgrade levels for Engine, Tyres, Nitro and Handling, purchased with earned race credits. Car names and handling are fictional.
 
 ## Key Facts
 
@@ -34,7 +34,7 @@ Ten tuned race builds across three families: GT (Apex GT, Apex Sprint, Torque R,
 - Free to play; no account, no install and no real-money purchases.
 - Runs in a modern web browser; WebGL 2 and an internet connection are required to load.
 - Single-player only: one human racer versus three AI drivers (Mira, Jax and Nova) in a four-car field over three laps.
-- 10 race builds across three families (GT, Formula, Prototype) and 5 asphalt circuits, all available from the start.
+- 14 race builds across three families (GT, Formula, Prototype) and 5 asphalt circuits, all available from the start.
 - Each car has five upgrade levels for Engine, Tyres, Nitro and Handling, bought with earned race credits.
 - Progress (records, credits, upgrades and paint) is saved locally in the browser; there is no online multiplayer.
 

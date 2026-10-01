@@ -1,4 +1,4 @@
-// Ten fictional race builds: GT, Formula and original Prototype coachwork. Physics units:
+// Fourteen fictional race builds: GT, Formula and original Prototype coachwork. Physics units:
 // m/s², m/s, steering multiplier, boost seconds, charge seconds per driving second.
 export const VEHICLES = Object.freeze([
   Object.freeze({
@@ -50,6 +50,26 @@ export const VEHICLES = Object.freeze([
     id: 'spyder', family: 'prototype', name: 'Cinder RX', number: '72', tagline: 'Turn in early. Leave them behind.', color: '#b2263b',
     specs: Object.freeze({ body: 'Open-cockpit aero racer', speed: '169 km/h', character: 'Attack', boost: '3.5 sec' }),
     handling: Object.freeze({ acceleration: 15.6, topSpeed: 47, handling: 1.06, nitroCapacity: 3.5, recharge: .27 }),
+  }),
+  Object.freeze({
+    id: 'kestrel', family: 'gt', name: 'Kestrel GT-R', number: '46', tagline: 'Long nose. Short lap times.', color: '#628782',
+    specs: Object.freeze({ body: 'Long-nose GT time attack', speed: '176 km/h', character: 'Straight-line power', boost: '3.5 sec' }),
+    handling: Object.freeze({ acceleration: 15, topSpeed: 49, handling: .94, nitroCapacity: 3.5, recharge: .25 }),
+  }),
+  Object.freeze({
+    id: 'mirage', family: 'prototype', name: 'Mirage LMP', number: '08', tagline: 'Low roof. Long-tail precision.', color: '#6774a0',
+    specs: Object.freeze({ body: 'Low-canopy endurance prototype', speed: '184 km/h', character: 'High-speed balance', boost: '3.6 sec' }),
+    handling: Object.freeze({ acceleration: 14.9, topSpeed: 51, handling: .98, nitroCapacity: 3.6, recharge: .24 }),
+  }),
+  Object.freeze({
+    id: 'monoposto', family: 'prototype', name: 'Solstice One', number: '29', tagline: 'One seat. Every apex.', color: '#cf9c51',
+    specs: Object.freeze({ body: 'Single-seat open speedster', speed: '166 km/h', character: 'Agile response', boost: '3.0 sec' }),
+    handling: Object.freeze({ acceleration: 15.8, topSpeed: 46, handling: 1.14, nitroCapacity: 3, recharge: .30 }),
+  }),
+  Object.freeze({
+    id: 'tempest', family: 'prototype', name: 'Tempest XR', number: '99', tagline: 'Downforce with intent.', color: '#6f805c',
+    specs: Object.freeze({ body: 'Extreme aero racing prototype', speed: '180 km/h', character: 'Aero attack', boost: '3.8 sec' }),
+    handling: Object.freeze({ acceleration: 15.5, topSpeed: 50, handling: 1.02, nitroCapacity: 3.8, recharge: .25 }),
   }),
 ]);
 

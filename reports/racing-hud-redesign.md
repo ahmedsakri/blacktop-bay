@@ -39,4 +39,4 @@ This is a HUD redesign, with no planned physics or control changes. Acceleration
 
 ## Completion record
 
-Pending final Hosting release and live file verification.
+The release owner confirmed commit **a680e03** was pushed and deployed to **https://blacktop-bay.web.app/**. The live page references verified JavaScript **index-BA2rLl9j.js** and stylesheet **index-CzxAK_3t.css**. This HUD release passed **134 automated tests**. The later fourteen-build garage expansion is a separate pending release; this receipt does not certify those additional cars.

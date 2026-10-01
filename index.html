@@ -10,13 +10,13 @@
     <meta name="google-site-verification" content="MVksP1BKzZeDBEt2hMa1NDzucJcgohpkwcTVNynpOsU" />
     <meta name="msvalidate.01" content="EF8EF5B503FE7522D9132204FA0D1115" />
     <meta name="theme-color" content="#08121e" />
-    <meta name="description" content="Race three rivals in Blacktop Bay, a free 3D browser racer. Choose ten race builds and five circuits, earn credits, and upgrade engine, tyres, nitro and handling." />
+    <meta name="description" content="Race three rivals in Blacktop Bay, a free 3D browser racer. Choose fourteen race builds and five circuits, earn credits, and upgrade engine, tyres, nitro and handling." />
     <meta name="robots" content="index,follow,max-image-preview:large" />
     <link rel="canonical" href="https://blacktop-bay.web.app/" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Blacktop Bay" />
     <meta property="og:title" content="Blacktop Bay — Own the corner." />
-    <meta property="og:description" content="Choose from ten GT, Formula and Prototype race builds and race three rivals across five circuits. Free 3D browser racing by AppsOverFlow." />
+    <meta property="og:description" content="Choose from fourteen GT, Formula and Prototype race builds and race three rivals across five circuits. Free 3D browser racing by AppsOverFlow." />
     <meta property="og:url" content="https://blacktop-bay.web.app/" />
     <meta
       property="og:image"
@@ -25,7 +25,7 @@
     <meta property="og:image:alt" content="An actual Blacktop Bay waterfront racing gameplay screenshot" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Blacktop Bay — Free 3D Racing Game" />
-    <meta name="twitter:description" content="Ten race builds, five circuits and three rivals. Earn credits and upgrade your car. Free single-player browser racing." />
+    <meta name="twitter:description" content="Fourteen race builds, five circuits and three rivals. Earn credits and upgrade your car. Free single-player browser racing." />
     <meta name="twitter:image" content="https://blacktop-bay.web.app/assets/blacktop-bay-gameplay.png" />
     <script type="application/ld+json">
 {
@@ -34,7 +34,7 @@
   "@id": "https://blacktop-bay.web.app/#game",
   "name": "Blacktop Bay",
   "url": "https://blacktop-bay.web.app/",
-  "description": "Free single-player 3D browser racing from AppsOverFlow: ten GT, Formula and Prototype race builds, five asphalt circuits, three race opponents, three-lap races, nitro, drift scoring and five-level car upgrades bought with earned race credits.",
+  "description": "Free single-player 3D browser racing from AppsOverFlow: fourteen GT, Formula and Prototype race builds, five asphalt circuits, three race opponents, three-lap races, nitro, drift scoring and five-level car upgrades bought with earned race credits.",
   "image": "https://blacktop-bay.web.app/assets/blacktop-bay-gameplay.png",
   "screenshot": "https://blacktop-bay.web.app/assets/blacktop-bay-gameplay.png",
   "genre": [
@@ -53,7 +53,7 @@
     "maxValue": 1
   },
   "featureList": [
-    "10 race builds: Apex GT, Apex Sprint, Torque R, Torque RS, Vortex P1, Vortex X, Spectre LM, Spectre LM-R, Cinder R and Cinder RX",
+    "14 race builds: Apex GT, Apex Sprint, Torque R, Torque RS, Vortex P1, Vortex X, Spectre LM, Spectre LM-R, Cinder R, Cinder RX, Kestrel GT-R, Mirage LMP, Solstice One and Tempest XR",
     "5 circuits: Harbor Flow, Dockyard Technical, Coast Run, Summit Switchback and Bay Grand Prix",
     "3 race opponents and 3 laps per race",
     "Keyboard and touch controls",
@@ -211,86 +211,40 @@
     <main>
       <section id="menu" class="menu panel-show" aria-labelledby="menu-title">
         <div class="menu-copy">
-          <p class="eyebrow">
-            <span class="status-dot"></span> THE WATERFRONT CIRCUIT
-          </p>
-          <h1 id="menu-title">
-            Chase the night.<br /><em>Own the corner.</em>
-          </h1>
-          <p class="intro">
-            Ten race builds. Five circuits. One finish line.<br />Outdrive the
-            rivals. Make the coast yours.
-          </p>
-          <div class="track-facts">
-            <span><b>04</b> RACERS</span><span><b>03</b> LAPS</span
-            ><span><b id="track-km">1.2</b> KM</span>
+          <p class="eyebrow"><span class="status-dot"></span> BLACKTOP BAY / RACE HQ</p>
+          <h1 id="menu-title">Built to<br /><em>break away.</em></h1>
+          <p class="intro">Fourteen race builds. Five circuits.<br />Find your line. Leave your mark.</p>
+          <button class="text-button" id="how">How to race <span aria-hidden="true">→</span></button>
+        </div>
+        <div class="race-entry">
+          <div id="circuit-art" class="circuit-art" aria-hidden="true"></div>
+          <div class="race-entry-copy">
+            <label class="circuit-picker" for="circuit-select"><span>01 / CHOOSE YOUR CIRCUIT</span><select id="circuit-select" aria-label="Choose circuit"></select></label>
+            <p id="circuit-description"></p>
+            <div class="track-facts"><span><b>04</b> RACERS</span><span><b>03</b> LAPS</span><span><b id="track-km">1.2</b> KM / LAP</span></div>
           </div>
-          <label class="circuit-picker" for="circuit-select"
-            ><span>YOUR CIRCUIT</span
-            ><select id="circuit-select" aria-label="Choose circuit"></select
-            ><small id="circuit-description"></small
-          ></label>
-          <div class="home-actions">
-            <button id="start" class="button primary">
-              RACE NOW <span aria-hidden="true">↗</span></button
-            ><button id="open-garage" class="button secondary">
-              GARAGE <span aria-hidden="true">⌁</span>
-            </button>
-          </div>
-          <button class="text-button" id="how">
-            How to find your line <span aria-hidden="true">→</span>
-          </button>
-          <p class="best-time" id="menu-best">YOUR FIRST NIGHT STARTS HERE.</p>
+          <div class="home-actions"><button id="start" class="button primary">RACE NOW <span aria-hidden="true">↗</span></button><p class="best-time" id="menu-best">YOUR FIRST NIGHT STARTS HERE.</p></div>
         </div>
         <div class="car-spec">
-          <span class="spec-line"></span>
           <p id="selected-car-type">YOUR CAR · GT CIRCUIT RACER</p>
           <strong id="selected-car-name">Apex GT</strong>
-          <div id="selected-car-tagline">
-            BALANCED. SHARP. READY FOR YOUR LINE.
-          </div>
+          <div id="selected-car-tagline">PRECISION, BUILT FOR THE GRID.</div>
+          <button id="open-garage" class="button secondary">GARAGE <span>14 CARS ↗</span></button>
         </div>
-        <footer>
-          <a href="https://appsoverflow.web.app/" target="_blank" rel="noopener"
-            >AppsOverFlow ↗</a
-          ><span><a href="/guide/">Game guide</a> · <a href="/credits/">Credits</a></span
-          ><button id="privacy-link">Privacy</button>
-        </footer>
+        <footer><a href="https://appsoverflow.web.app/" target="_blank" rel="noopener">AppsOverFlow ↗</a><span><a href="/guide/">Game guide</a> · <a href="/credits/">Credits</a></span><button id="privacy-link">Privacy</button></footer>
       </section>
       <section id="garage" class="garage" aria-label="Car collection" hidden>
-        <div class="garage-intro">
-          <p class="eyebrow">THE COLLECTION · 10 RACE BUILDS</p>
-          <h2>Find your <em>edge.</em></h2>
-          <p>Different character. Same hunger for the finish.</p>
-        </div>
+        <div class="garage-intro"><p class="eyebrow">BLACKTOP BAY / THE COLLECTION</p><h2>Your next <em>obsession.</em></h2><p>14 race builds. Every one ready to make your own.</p></div>
         <div class="garage-spec">
-          <span id="garage-class"></span>
-          <h3 id="garage-name" aria-live="polite"></h3>
-          <p id="garage-tagline"></p>
+          <span id="garage-class"></span><h3 id="garage-name" aria-live="polite"></h3><p id="garage-tagline"></p>
           <dl id="garage-specs"></dl>
-          <div class="garage-workshop">
-            <span class="garage-wallet" id="garage-wallet"></span>
-            <button id="open-upgrades" class="button primary">Upgrade car <span aria-hidden="true">↗</span></button>
-            <button id="open-paint" class="button secondary">Paint car <span id="paint-label">Team original</span></button>
-          </div>
+          <div class="garage-workshop"><span class="garage-wallet" id="garage-wallet"></span><button id="open-upgrades" class="button primary">PERFORMANCE <span aria-hidden="true">↗</span></button><button id="open-paint" class="button secondary">PAINT <span id="paint-label">Team original</span></button></div>
         </div>
-        <button id="garage-angle" class="garage-orbit">
-          Drag the car to inspect <span aria-hidden="true">↔</span> · Rotate
-          view
-        </button>
+        <button id="garage-angle" class="garage-orbit" aria-label="Rotate car view"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 10a8 8 0 0 1 14-4l2 3M20 3v6h-6M20 14a8 8 0 0 1-14 4l-2-3M4 21v-6h6" stroke="currentColor" stroke-width="1.5"/></svg><span>ROTATE VIEW</span></button>
         <div class="garage-bottom">
-          <div
-            id="garage-cars"
-            class="garage-cars"
-            role="group"
-            aria-label="Select one of ten race builds. Swipe or use Tab to explore."
-          ></div>
-          <div class="garage-actions">
-            <button id="garage-back" class="button secondary">BACK</button
-            ><button id="garage-race" class="button primary">
-              RACE THIS CAR ↗
-            </button>
-          </div>
+          <div class="collection-toolbar"><div class="collection-filters" role="group" aria-label="Filter cars by family"><button data-family="all" aria-pressed="true">ALL <span>14</span></button><button data-family="gt" aria-pressed="false">GT</button><button data-family="formula" aria-pressed="false">FORMULA</button><button data-family="prototype" aria-pressed="false">PROTOTYPE</button></div><span id="collection-count" role="status">14 / 14 CARS</span><div class="collection-arrows"><button id="cars-previous" aria-label="Scroll to previous cars">←</button><button id="cars-next" aria-label="Scroll to next cars">→</button></div></div>
+          <div id="garage-cars" class="garage-cars" role="group" aria-label="Select a race build. Swipe or use Tab to explore."></div>
+          <div class="garage-actions"><button id="garage-back" class="button secondary">← RACE HQ</button><span class="collection-help">Drag the car to inspect. Swipe the collection to explore.</span><button id="garage-race" class="button primary">RACE THIS CAR ↗</button></div>
         </div>
       </section>
       <section id="hud" aria-label="Race information" hidden>

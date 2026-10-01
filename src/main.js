@@ -1,7 +1,11 @@
 import { PAINT_COLORS, PAINT_FINISHES, loadPaint, savePaint, getPaint, applyPaint } from './paint.js';
 import "./style.css";
 import "./racing.css";
+import "./collection.css";
+import "./workshop.css";
 import "./mobile-hud.css";
+import { renderCarPortraits } from "./car-portraits.js";
+import { garageStatsMarkup, circuitMapMarkup } from "./collection-ui.js";
 import { createDrivingInputs, resolveDriveControls } from "./driving-controls.js";
 import { createDragSteering } from "./drag-steering.js";
 import { getRaceProgress, getDriftDisplay } from "./race-presentation.js";
@@ -141,6 +145,7 @@ sound.setMuted(!records.sound);
 updateSound();
 updateMenu();
 let renderer, world, player, effects, camera, composer, carFill, garageStudio, renderPass, bloomPass;
+let garageFrame = null;
 let garageYaw = -.75,
   garageDrag = null;
 let rivalModels = [],
@@ -439,6 +444,7 @@ function addHeadlights(model) {
   }
 }
 function updateGarageCopy() {
+  garageFrame = null;
   const v = getVehicle(preferences.vehicle);
   const stats = getUpgradeStats(v.id, progression.cars[v.id]);
   $("selected-car-type").textContent =
@@ -448,14 +454,13 @@ function updateGarageCopy() {
   $("garage-class").textContent = v.specs.body.toUpperCase();
   $("garage-name").textContent = v.name;
   $("garage-tagline").textContent = v.tagline;
-  $("garage-specs").innerHTML =
-    `<dt>Top speed</dt><dd>${speedLabel(stats)}</dd><dt>Character</dt><dd>${v.specs.character}</dd><dt>Nitro tank</dt><dd>${stats.nitroCapacity.toFixed(1)} sec</dd>`;
+  $("garage-specs").innerHTML = garageStatsMarkup(stats);
   $("paint-label").textContent = getPaint(v.id, paintChoices[v.id]).name;
   $("garage-wallet").textContent = `${progression.credits.toLocaleString()} CR · RACE CREDITS`;
   for (const b of document.querySelectorAll("[data-vehicle]")) {
     b.setAttribute("aria-pressed", String(b.dataset.vehicle === v.id));
     const spec = getUpgradeStats(b.dataset.vehicle, progression.cars[b.dataset.vehicle]);
-    b.querySelector("span").textContent = `${speedLabel(spec)} · ${spec.nitroCapacity.toFixed(1)} sec boost`;
+    b.querySelector(".car-choice-stats").textContent = `${speedLabel(spec)} · ${spec.nitroCapacity.toFixed(1)}s NITRO`;
   }
 }
 function showUpgrades(focusComponent) {
@@ -469,7 +474,7 @@ function showUpgrades(focusComponent) {
       race = newRace();
       updateGarageCopy();
       showUpgrades(component);
-      toast(result.persisted ? `Level ${result.level} installed. Ready for the road.` : "Upgrade active. Browser storage is unavailable, so it will last for this session.");
+      $("upgrade-status").textContent = result.persisted ? `Level ${result.level} installed. Ready for the road.` : "Upgrade active for this session. Browser storage is unavailable.";
     };
   }
   if (focusComponent) document.querySelector(`[data-upgrade="${focusComponent}"]:not(:disabled)`)?.focus();
@@ -519,6 +524,10 @@ function openGarage() {
   updateGarageCopy();
   document.querySelector(".car-choice[aria-pressed=\"true\"]")?.scrollIntoView({block:"nearest",inline:"nearest",behavior:"instant"});
   $("garage-back").focus({ preventScroll: true });
+  void renderCarPortraits(VEHICLES, (id, url) => {
+    const img = document.querySelector(`[data-vehicle="${id}"] img`);
+    if (img) { img.src = url; img.classList.add("ready"); }
+  });
   event("garage_open");
 }
 function start() {
@@ -646,7 +655,7 @@ function how() {
     kind: "how",
     eyebrow: "FIND YOUR LINE",
     title: "Find your line.<br><em>Feel the drift.</em>",
-    html: `<p>The car accelerates automatically. Drag left or right on the road to steer; lift your finger to center the steering. Turn sharply at high speed to slide through a corner, then ease back into line. Hold NITRO on a clear straight for a burst of speed.</p><div class="controls-guide"><div><b>Steer</b><span>Drag left / right</span></div><div><b>Drift</b><span>Turn at high speed</span></div><div><b>Nitro boost</b><span>Hold NITRO / Shift</span></div><div><b>Keyboard steering</b><span>← / → or A / D</span></div><div><b>Optional keyboard brake</b><span>↓ / S · Space handbrake</span></div><div><b>Reset / pause</b><span>Pause menu · R / Esc</span></div></div><p>On a phone, rotate to landscape. Nitro is the only driving button; acceleration and drifting happen automatically as you drive. Turning upright pauses the race. Race three laps against three rivals. Release Nitro to recharge while driving and drifting. Finish first to take the win. Best times are saved separately for each car and circuit on this device. Earn race credits at the finish, then use Garage → Upgrade car to improve each car’s engine, tyres, nitro and handling. Keep a drift clean to build your multiplier; hitting a barrier loses unbanked points.</p>`,
+    html: `<p>The car accelerates automatically. Drag left or right on the road to steer; lift your finger to center the steering. Turn sharply at high speed to slide through a corner, then ease back into line. Hold NITRO on a clear straight for a burst of speed.</p><div class="controls-guide"><div><b>Steer</b><span>Drag left / right</span></div><div><b>Drift</b><span>Turn at high speed</span></div><div><b>Nitro boost</b><span>Hold NITRO / Shift</span></div><div><b>Keyboard steering</b><span>← / → or A / D</span></div><div><b>Optional keyboard brake</b><span>↓ / S · Space handbrake</span></div><div><b>Reset / pause</b><span>Pause menu · R / Esc</span></div></div><p>On a phone, rotate to landscape. Nitro is the only driving button; acceleration and drifting happen automatically as you drive. Turning upright pauses the race. Race three laps against three rivals. Release Nitro to recharge while driving and drifting. Finish first to take the win. Best times are saved separately for each car and circuit on this device. Earn race credits at the finish, then use Garage → Performance to improve each car’s engine, tyres, nitro and handling. Keep a drift clean to build your multiplier; hitting a barrier loses unbanked points.</p>`,
     actions: [
       { label: "GOT IT", primary: true, action: closeDialog },
       { label: "LET’S DRIVE", action: start },
@@ -795,6 +804,7 @@ $("circuit-select").replaceChildren(
 );
 $("circuit-select").value = preferences.track;
 $("circuit-description").textContent = TRACK.description;
+$("circuit-art").innerHTML = circuitMapMarkup(TRACK);
 $("circuit-select").onchange = () => {
   preferences.track = $("circuit-select").value;
   saveChoices();
@@ -810,11 +820,25 @@ $("garage-cars").replaceChildren(
     b.dataset.vehicle = v.id;
     b.style.setProperty("--car-color", v.color);
     b.setAttribute("aria-pressed", String(v.id === preferences.vehicle));
-    b.innerHTML = `<small>${String(i + 1).padStart(2, "0")} / ${v.specs.character.toUpperCase()}</small><strong>${v.name}</strong><span>${v.specs.speed} · ${v.specs.boost} boost</span>`;
+    b.innerHTML = `<small><b>${v.family.toUpperCase()}</b><span>${String(i + 1).padStart(2, "0")}</span></small><img width="320" height="160" alt="" /><strong>${v.name}</strong><span class="car-choice-stats">${v.specs.speed} · ${v.specs.boost} NITRO</span>`;
     b.onclick = () => { chooseVehicle(v.id); b.scrollIntoView({block:"nearest",inline:"nearest",behavior:reduced ? "instant" : "smooth"}); };
     return b;
   }),
 );
+for (const button of document.querySelectorAll("[data-family]")) {
+  button.onclick = () => {
+    const family = button.dataset.family;
+    let shown = 0;
+    for (const card of document.querySelectorAll("[data-vehicle]")) {
+      card.hidden = family !== "all" && getVehicle(card.dataset.vehicle).family !== family;
+      if (!card.hidden) shown++;
+    }
+    for (const option of document.querySelectorAll("[data-family]")) option.setAttribute("aria-pressed", String(option === button));
+    $("collection-count").textContent = `${shown} / ${VEHICLES.length} CARS`;
+    $("garage-cars").scrollTo({left:0,behavior:reduced ? "instant" : "smooth"});
+  };
+}
+for (const [id, direction] of [["cars-previous",-1],["cars-next",1]]) $(id).onclick = () => $("garage-cars").scrollBy({left:direction * $("garage-cars").clientWidth * .8,behavior:reduced ? "instant" : "smooth"});
 $("open-garage").onclick = openGarage;
 $("open-upgrades").onclick = () => showUpgrades();
 $("open-paint").onclick = showPaint;
@@ -988,6 +1012,7 @@ $("dialog").addEventListener("keydown", (e) => {
   }
 });
 window.addEventListener("resize", () => {
+  garageFrame = null;
   if (!renderer) return;
   camera.aspect = innerWidth / innerHeight;
   camera.updateProjectionMatrix();
@@ -1013,15 +1038,27 @@ function updateCamera(dt, instant = false) {
       (mode === "garage" ? garageYaw : 2.8) +
       (reduced ? 0 : Math.sin(time * 0.17) * 0.22);
     const narrowGarage = innerWidth < 600;
+    if (mode === "garage" && narrowGarage && !garageFrame) {
+      const intro = document.querySelector('.garage-intro').getBoundingClientRect();
+      const panel = document.querySelector('.garage-spec').getBoundingClientRect();
+      garageFrame = { y:(intro.bottom+panel.top)/2, height:Math.max(80,panel.top-intro.bottom-20) };
+    }
+    const compactGarage = innerHeight < 520 && !narrowGarage;
     const distance = narrowGarage
-      ? Math.max(9.5, 6.4 / (2 * Math.tan(THREE.MathUtils.degToRad(51 / 2)) * camera.aspect))
-      : 8.3;
+      ? Math.max(9.5, 6.4 / (2 * Math.tan(THREE.MathUtils.degToRad(51 / 2)) * camera.aspect), mode === "garage" ? 2.3 * innerHeight / (2 * Math.tan(THREE.MathUtils.degToRad(51 / 2)) * garageFrame.height) : 0)
+      : (compactGarage ? 9.0 : 9.0);
     camTarget.set(
       c.x + Math.sin(angle) * distance,
       narrowGarage ? distance * .28 : 2.9,
       c.z + Math.cos(angle) * distance,
     );
-    lookTarget.set(c.x, mode === "garage" ? (narrowGarage ? (innerHeight < 700 ? -.1 : .8) : -.05) : .64, c.z);
+    lookTarget.set(c.x, mode === "garage" ? (narrowGarage ? .65 : (innerHeight < 360 ? .7 : -.3)) : .64, c.z);
+    if (mode === "garage" && !narrowGarage) {
+      // Shift the car away from its performance panel while keeping its whole body visible.
+      const shift = compactGarage ? -1.2 : 1.1;
+      lookTarget.x += Math.cos(angle) * shift;
+      lookTarget.z -= Math.sin(angle) * shift;
+    }
     camera.fov = innerWidth < 600 ? 51 : 43;
   } else if (mode === "menu") {
     const narrow = innerWidth < 600;
@@ -1087,6 +1124,8 @@ function updateCamera(dt, instant = false) {
   carFill.position.copy(camera.position);
   carFill.position.y += 3;
   carFill.target.position.set(c.x, 0.6, c.z);
+  if (mode === "garage" && innerWidth < 600 && garageFrame) camera.setViewOffset(innerWidth,innerHeight,0,innerHeight/2-garageFrame.y,innerWidth,innerHeight);
+  else if (camera.view?.enabled) camera.clearViewOffset();
   camera.updateProjectionMatrix();
 }
 function updateRivals() {

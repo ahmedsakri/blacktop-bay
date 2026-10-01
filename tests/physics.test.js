@@ -438,7 +438,7 @@ test('nitro upgrades hold more charge and recharge faster without creating free 
   assert.equal(nitro.upgrades.nitro, 5);
 });
 
-for (const vehicle of ['sprint', 'endurance', 'formula', 'prototype', 'hyper', 'barchetta', 'spyder']) {
+for (const vehicle of ['sprint', 'endurance', 'formula', 'prototype', 'hyper', 'barchetta', 'spyder', 'kestrel', 'mirage', 'monoposto', 'tempest']) {
   for (const track of ['harbor', 'dockyard', 'coast', 'summit', 'grandprix']) {
     test(`${vehicle} completes ${track} at both stock and maximum upgrade levels`, () => {
       const times = [];

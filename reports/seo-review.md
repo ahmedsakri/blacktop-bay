@@ -1,10 +1,10 @@
 # Blacktop Bay search and structured-data review
 
-Updated 1 October 2026. Canonical site: `https://blacktop-bay.web.app/`. Current source facts and earlier account observations are distinguished below. Local UI checks are recorded separately; this document is not a deployment or visual-approval receipt.
+Updated 1 October 2026. Canonical site: `https://blacktop-bay.web.app/`. Current source facts and earlier account observations are distinguished below. The fourteen-build content revision is prepared for the next release; its final game validation and deployment are pending. Local UI checks are recorded separately; this document is not a deployment or visual-approval receipt.
 
 ## Current source and content
 
-- The garage contains **ten fictional race builds** across GT, Formula and Prototype families. Four GT and two Formula builds adapt credited CC BY 4.0 sources. Spectre LM / LM-R and Cinder R / RX use original shared closed/open Prototype body profiles with credited GT wheel geometry. No claim of ten independently sourced models is made.
+- The garage contains **fourteen fictional race builds** across GT, Formula and Prototype families. Four GT and two Formula builds adapt credited CC BY 4.0 sources. Spectre LM / LM-R and Cinder R / RX use original shared closed/open Prototype body profiles with credited GT wheel geometry. Kestrel GT-R, Mirage LMP, Solstice One and Tempest XR add newly authored coachwork/aero around shared licensed GT parts. No claim of fourteen independently sourced models is made.
 - The **five circuits** are Harbor Flow, Dockyard Technical, Coast Run, Summit Switchback and Bay Grand Prix. Every race has three laps, one human player and three computer-controlled opponents; the schema’s human player count remains one.
 - The crawlable guide contains **13 visible FAQs and six HowTo steps**, mirrored in JSON-LD. The revised control contract is automatic acceleration on every device, drag steering with release to center, automatic drifts from sharp turns at speed, and Nitro as the only on-screen driving button. Keyboard steering, optional brake/handbrake and Shift boost remain. Phones require landscape; turning upright pauses.
 - Every build offers free paint: **ten curated colours plus Team original**, and **Gloss, Metallic or Satin** finishes. Choices are local to each car and fall back to the current page session when browser storage is unavailable. Guide, README and privacy text describe these limits.

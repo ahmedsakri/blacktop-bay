@@ -18,7 +18,7 @@ test('a new garage starts with 1200 credits and independent zero-level cars', ()
   assert.equal(state.credits, 1200);
   assert.equal(state.version, 1);
   assert.deepEqual(state.awardedRaces, []);
-  assert.deepEqual(Object.keys(state.cars), ['coupe', 'sprint', 'gt', 'endurance', 'rally', 'formula', 'prototype', 'hyper', 'barchetta', 'spyder']);
+  assert.deepEqual(Object.keys(state.cars), ['coupe', 'sprint', 'gt', 'endurance', 'rally', 'formula', 'prototype', 'hyper', 'barchetta', 'spyder', 'kestrel', 'mirage', 'monoposto', 'tempest']);
   assert.deepEqual(state.cars.coupe, { engine: 0, tyres: 0, nitro: 0, handling: 0 });
   state.cars.coupe.engine = 2;
   assert.equal(state.cars.gt.engine, 0);
@@ -154,4 +154,22 @@ test('six-car saves expand with independent prototype upgrades while preserving 
   for (const id of Object.keys(oldCars)) assert.deepEqual(state.cars[id], oldCars[id]);
   const reload = loadProgression(store);
   for (const id of ['prototype', 'hyper', 'barchetta', 'spyder']) assert.equal(reload.cars[id].engine, 1);
+});
+
+test('ten-car saves retain every level and credit while four new builds upgrade independently', () => {
+  const store = memoryStorage(), oldIds = ['coupe', 'sprint', 'gt', 'endurance', 'rally', 'formula', 'prototype', 'hyper', 'barchetta', 'spyder'];
+  const cars = Object.fromEntries(oldIds.map((id, i) => [id, {engine: i % 6, tyres: (i + 1) % 6, nitro: (i + 2) % 6, handling: (i + 3) % 6}]));
+  store.setItem(PROGRESSION_KEY, JSON.stringify({version: 1, credits: 2700, cars, awardedRaces: ['paid-before-fourteen-cars']}));
+  const state = loadProgression(store), newIds = ['kestrel', 'mirage', 'monoposto', 'tempest'];
+  assert.equal(state.credits, 2700);
+  assert.deepEqual(state.awardedRaces, ['paid-before-fourteen-cars']);
+  for (const id of oldIds) assert.deepEqual(state.cars[id], cars[id]);
+  for (const id of newIds) assert.deepEqual(state.cars[id], {engine: 0, tyres: 0, nitro: 0, handling: 0});
+  for (const [i, id] of newIds.entries()) assert.equal(buyUpgrade(state, id, UPGRADE_COMPONENTS[i], store).ok, true);
+  assert.equal(state.credits, 1900);
+  const reloaded = loadProgression(store);
+  assert.deepEqual(reloaded, state);
+  for (const id of oldIds) assert.deepEqual(reloaded.cars[id], cars[id]);
+  for (const [i, id] of newIds.entries()) for (const component of UPGRADE_COMPONENTS)
+    assert.equal(reloaded.cars[id][component], component === UPGRADE_COMPONENTS[i] ? 1 : 0);
 });
