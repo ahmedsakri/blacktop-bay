@@ -6,7 +6,7 @@ Updated 1 October 2026. Canonical site: `https://blacktop-bay.web.app/`. Current
 
 - The garage contains **ten fictional race builds** across GT, Formula and Prototype families. Four GT and two Formula builds adapt credited CC BY 4.0 sources. Spectre LM / LM-R and Cinder R / RX use original shared closed/open Prototype body profiles with credited GT wheel geometry. No claim of ten independently sourced models is made.
 - The **five circuits** are Harbor Flow, Dockyard Technical, Coast Run, Summit Switchback and Bay Grand Prix. Every race has three laps, one human player and three computer-controlled opponents; the schema’s human player count remains one.
-- The crawlable guide contains **13 visible FAQs and six HowTo steps**, mirrored in JSON-LD. Current controls follow the visible input mode: when driving pads are shown, hold Gas or Up/W and release to coast; without pads, acceleration is automatic. Nitro accelerates and boosts together, and Brake overrides both. Phones require landscape; turning upright pauses.
+- The crawlable guide contains **13 visible FAQs and six HowTo steps**, mirrored in JSON-LD. The revised control contract is automatic acceleration on every device, drag steering with release to center, automatic drifts from sharp turns at speed, and Nitro as the only on-screen driving button. Keyboard steering, optional brake/handbrake and Shift boost remain. Phones require landscape; turning upright pauses.
 - Every build offers free paint: **ten curated colours plus Team original**, and **Gloss, Metallic or Satin** finishes. Choices are local to each car and fall back to the current page session when browser storage is unavailable. Guide, README and privacy text describe these limits.
 - Five upgrade levels each for Engine, Tyres, Nitro and Handling use earned race credits. Stock figures and local persistence are qualified; no real-money purchase, invented rating, multiplayer or universal performance claim is made.
 - Canonicals and sitemap entries cover `/`, `/guide/`, `/privacy/` and `/credits/`. Public robots rules permit crawling. Existing ownership tags and credited assets are preserved.
@@ -14,7 +14,7 @@ Updated 1 October 2026. Canonical site: `https://blacktop-bay.web.app/`. Current
 
 ## Consistency validation
 
-The documentation pass compares all 13 visible FAQ question/answer pairs and six step names/text with their structured versions. Vehicle count/specs and all five circuit names/rounded lengths were checked against the source catalog. Controls were checked against `src/driving-controls.js` and the current runtime help, including manual throttle on touch-capable laptops or narrow windows when driving pads are visible. Paint options and finishes were checked against `src/paint.js`.
+The documentation pass compares all 13 visible FAQ question/answer pairs and six step names/text with their structured versions. Vehicle count/specs and all five circuit names/rounded lengths were checked against the source catalog. The current documentation follows the revised automatic-acceleration and drag-steering contract. Runtime input tests, UI validation and the replacement deployment receipt remain the release owner’s responsibility; the earlier driving-control review is superseded. Paint options and finishes were checked against `src/paint.js`.
 
 These are local source/content checks. They do not substitute for a remote validator, search-engine indexing evidence or real-device gameplay testing. The final game test/build totals and deployment receipt belong in the completed release record.
 

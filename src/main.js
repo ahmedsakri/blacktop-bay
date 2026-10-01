@@ -3,6 +3,7 @@ import "./style.css";
 import "./racing.css";
 import "./mobile-hud.css";
 import { createDrivingInputs, resolveDriveControls } from "./driving-controls.js";
+import { createDragSteering } from "./drag-steering.js";
 import * as THREE from "three";
 import WebGL from "three/addons/capabilities/WebGL.js";
 import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
@@ -124,9 +125,9 @@ const input = {
     brake: false,
     drift: false,
     nitro: false,
-    throttle: false,
   },
   pointerInputs = createDrivingInputs(),
+  dragSteering = createDragSteering(),
   heldKeys = new Set(),
   heldPads = new Set(),
   reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -196,11 +197,24 @@ async function initGame() {
     renderer.domElement.addEventListener("pointerup", stopGarageDrag);
     renderer.domElement.addEventListener("pointercancel", stopGarageDrag);
     renderer.domElement.addEventListener("lostpointercapture", stopGarageDrag);
+    renderer.domElement.addEventListener("pointerdown", (e) => {
+      if (!["racing", "countdown"].includes(mode) || e.button !== 0) return;
+      if (!dragSteering.start(e.pointerId, e.clientX, innerWidth)) return;
+      e.preventDefault();
+      renderer.domElement.setPointerCapture(e.pointerId);
+    });
+    renderer.domElement.addEventListener("pointermove", (e) => {
+      if (["racing", "countdown"].includes(mode)) dragSteering.move(e.pointerId, e.clientX);
+    });
+    const stopSteering = (e) => dragSteering.release(e.pointerId);
+    renderer.domElement.addEventListener("pointerup", stopSteering);
+    renderer.domElement.addEventListener("pointercancel", stopSteering);
+    renderer.domElement.addEventListener("lostpointercapture", stopSteering);
 
     renderer.domElement.tabIndex = 0;
     renderer.domElement.setAttribute(
       "aria-label",
-      "Race canvas. With driving pads, hold Gas or W or Up to accelerate, or Nitro to accelerate and boost. Without driving pads, acceleration is automatic. Arrow keys or A and D steer, Space drifts, Down or S brakes, Shift boosts, R resets, and Escape pauses.",
+      "Race canvas. Acceleration is automatic. Drag left or right to steer; lift to center. Turn sharply at high speed to drift. Hold Nitro to boost. Keyboard: Arrow keys or A and D steer, Down or S brakes, Space is an optional handbrake, Shift boosts, R resets, and Escape pauses.",
     );
     camera = new THREE.PerspectiveCamera(
       55,
@@ -356,6 +370,7 @@ function syncInput() {
 function clearInput() {
   heldKeys.clear();
   heldPads.clear();
+  dragSteering.clear();
   for (const key in input) input[key] = false;
   pointerInputs.clear();
   for (const el of document.querySelectorAll("[data-input]")) {
@@ -603,6 +618,11 @@ function pauseGame() {
           sound.unlock();
         },
       },
+      { label: "RESET TO ROAD", action() {
+        resetCar(race); effects.clear(); clearInput(); closeDialog();
+        mode = was; updateTouchControls(); last = performance.now();
+        renderer.domElement.focus({ preventScroll: true });
+      } },
       { label: "RESTART", action: start },
       { label: "BACK TO HOME", action: menu },
     ],
@@ -612,8 +632,8 @@ function how() {
   dialog({
     kind: "how",
     eyebrow: "FIND YOUR LINE",
-    title: "Brake. Turn.<br><em>Let it slide.</em>",
-    html: `<p>When driving pads are visible, hold GAS (or W / ↑) to drive and release it to coast. Without driving pads, acceleration is automatic; hold NITRO to accelerate and boost together. The brake always takes priority. Steer into each corner, hold drift briefly to loosen the rear, then release it and steer gently back into line.</p><div class="controls-guide"><div><b>Steer</b><span>← / → or A / D</span></div><div><b>Drift / handbrake</b><span>Hold Space</span></div><div><b>Brake</b><span>↓ or S</span></div><div><b>Nitro boost</b><span>Hold Shift</span></div><div><b>Reset / pause</b><span>R / Esc</span></div></div><p>On a phone, rotate to landscape to race with the driving pads: steer on the left and use GAS, BRAKE or NITRO on the right. DRIFT sits beside BRAKE: lift off GAS and hold DRIFT while steering into a corner. Turning upright pauses the race. Race three laps against three rivals. Hold Shift or the NITRO pad for extra speed; release it to recharge while driving and drifting. Finish first to take the win. Best times are saved separately for each car and circuit on this device. Earn race credits at the finish, then use Garage → Upgrade car to improve each car’s engine, tyres, nitro and handling. Keep a drift clean to build your multiplier; hitting a barrier loses unbanked points.</p>`,
+    title: "Find your line.<br><em>Feel the drift.</em>",
+    html: `<p>The car accelerates automatically. Drag left or right on the road to steer; lift your finger to center the steering. Turn sharply at high speed to slide through a corner, then ease back into line. Hold NITRO on a clear straight for a burst of speed.</p><div class="controls-guide"><div><b>Steer</b><span>Drag left / right</span></div><div><b>Drift</b><span>Turn at high speed</span></div><div><b>Nitro boost</b><span>Hold NITRO / Shift</span></div><div><b>Keyboard steering</b><span>← / → or A / D</span></div><div><b>Optional keyboard brake</b><span>↓ / S · Space handbrake</span></div><div><b>Reset / pause</b><span>Pause menu · R / Esc</span></div></div><p>On a phone, rotate to landscape. Nitro is the only driving button; acceleration and drifting happen automatically as you drive. Turning upright pauses the race. Race three laps against three rivals. Release Nitro to recharge while driving and drifting. Finish first to take the win. Best times are saved separately for each car and circuit on this device. Earn race credits at the finish, then use Garage → Upgrade car to improve each car’s engine, tyres, nitro and handling. Keep a drift clean to build your multiplier; hitting a barrier loses unbanked points.</p>`,
     actions: [
       { label: "GOT IT", primary: true, action: closeDialog },
       { label: "LET’S DRIVE", action: start },
@@ -839,8 +859,6 @@ const keyMap = {
   KeyA: "left",
   ArrowRight: "right",
   KeyD: "right",
-  ArrowUp: "throttle",
-  KeyW: "throttle",
   ArrowDown: "brake",
   KeyS: "brake",
   Space: "drift",
@@ -1114,7 +1132,10 @@ function updateHud() {
   $("nitro-fill").style.width = `${charge * 100}%`;
   $("pad-nitro-fill").style.transform = `scaleX(${charge})`;
   $("nitro-pad-label").textContent = race.nitro.locked ? "RELEASE" : race.nitro.active ? "BOOST" : "NITRO";
-  $("pedal-hint").hidden = !usesTouchControls() || race.car.speed > 1 || input.throttle || input.nitro;
+  $("touch-steer-dot").style.transform = `translateX(${race.car.steering * 50}px)`;
+  $("touch-steer-label").textContent = race.car.drifting ? "HOLD THAT DRIFT" : "DRAG TO STEER";
+  $("touch-steer-cue").classList.toggle("engaged", dragSteering.active());
+  $("nitro-pad-amount").textContent = `${Math.round(charge * 100)}%`;
   $("nitro-amount").textContent = `${Math.round(charge * 100)}%`;
   $("nitro-status").textContent = race.nitro.active
     ? "NITRO ACTIVE"
@@ -1175,7 +1196,7 @@ function updateHud() {
 }
 function tick(now) {
   const wasFinished = mode === "finished";
-  const driveControls = resolveDriveControls(input, {manualThrottle: usesTouchControls()});
+  const driveControls = resolveDriveControls({...input, steer: dragSteering.read()});
   const dt = Math.min((now - last) / 1000, 0.05);
   last = now;
   time += dt;
@@ -1287,7 +1308,7 @@ if (import.meta.env.DEV) {
   window.__blacktopBayQA = Object.freeze({
     snapshot: () => ({
       mode,
-      input: {...input},
+      input: {...input, steer: dragSteering.read()},
       car: { ...race.car },
       elapsed: race.elapsed,
       nitro: { ...race.nitro },

@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { TRACK, projectOnTrack, sampleTrack } from '../src/track.js';
 import { createRace, startRace, stepRace, resetCar, getUpgradeStats, setTrack } from '../src/physics.js';
 import { createCompletedRaceFixture } from '../scripts/qa-race-fixture.js';
+import { VEHICLES } from '../src/vehicles.js';
 
 const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 const wrapAngle = (angle) => Math.atan2(Math.sin(angle), Math.cos(angle));
@@ -108,16 +109,106 @@ test('a short steering tap changes direction and settles after release without c
   }
 });
 
-test('handbrake produces real lateral slip and grip steering produces far less', () => {
+test('optional handbrake produces a stronger slide than progressive steering drift', () => {
   const grip = raceAt(110, 28), drift = raceAt(110, 28);
   advance(grip, { throttle: 1, steer: -0.75 }, 0.6);
   advance(drift, { throttle: 1, steer: -0.75, handbrake: true }, 0.6);
-  assert.ok(Math.abs(drift.car.lateralSpeed) > Math.abs(grip.car.lateralSpeed) * 2);
+  assert.ok(Math.abs(drift.car.slipAngle) > Math.abs(grip.car.slipAngle) * 1.25);
   assert.ok(Math.abs(drift.car.slipAngle) > 0.2);
   assert.equal(drift.car.drifting, true);
   assert.equal(grip.car.drifting, false);
   assert.ok(drift.driftPoints > 0);
   assert.equal(drift.score, 0, 'a running drift is not banked immediately');
+});
+
+test('sustained fast steering progressively drifts and scores on either corner direction', () => {
+  for (const [s, steer] of [[350, .75], [500, -.75]]) {
+    const race = raceAt(s, 28); race.rivals = [];
+    const yaw = race.car.yaw;
+    advance(race, { throttle: 1, steer }, .15);
+    assert.equal(race.car.drifting, false, 'turn-in must not cause an immediate slide');
+    assert.ok(Math.abs(race.car.slipAngle) < .08);
+    advance(race, { throttle: 1, steer }, .65);
+    assert.equal(race.car.drifting, true, 'ordinary steering must activate the existing smoke/scoring signal');
+    assert.ok(Math.abs(race.car.slipAngle) > .17 && Math.abs(race.car.slipAngle) < .34);
+    assert.ok(Math.abs(race.car.lateralSpeed) > 5, 'slide must use real sideways velocity');
+    assert.ok(race.driftPoints > 4);
+    assert.ok(Math.abs(wrapAngle(race.car.yaw - yaw)) < .6, 'steering must stay controllable without a spin');
+    assert.equal(race.collision, false);
+    advance(race, { steer: 0, brake: true }, 1.5);
+    assert.ok(race.score >= 4, 'catching the slide banks its points');
+    assert.equal(race.driftPoints, 0);
+    assert.equal(race.car.drifting, false);
+    assert.equal(race.collision, false);
+    assert.ok(Math.abs(race.car.slipAngle) < .05);
+  }
+});
+
+test('slow turns, straight driving and brief fast corrections do not start automatic drifts', () => {
+  for (const steer of [-1, 1]) {
+    const slow = raceAt(110, 12); slow.rivals = [];
+    advance(slow, { steer, throttle: 0 }, 1);
+    assert.ok(slow.car.speed < 18);
+    assert.equal(slow.car.drifting, false);
+    assert.equal(slow.score + slow.driftPoints, 0);
+    assert.ok(Math.abs(slow.car.slipAngle) < .17);
+    const tap = raceAt(110, 28); tap.rivals = [];
+    advance(tap, { steer, throttle: 1 }, .15);
+    advance(tap, { throttle: 1 }, .4);
+    assert.equal(tap.car.drifting, false);
+    assert.equal(tap.score + tap.driftPoints, 0);
+    assert.ok(Math.abs(tap.car.slipAngle) < .025);
+  }
+  for (const steer of [0, .2, -.2]) {
+    const race = raceAt(110, 35); race.rivals = [];
+    advance(race, { steer, throttle: 1 }, .75);
+    assert.equal(race.car.drifting, false);
+    assert.equal(race.score + race.driftPoints, 0);
+    assert.equal(race.collision, false);
+  }
+});
+
+test('all vehicle builds retain controllable automatic slides at stock and upgraded grip', () => {
+  for (const vehicle of VEHICLES) for (const level of [0, 5]) {
+    const race = createRace({ vehicle: vehicle.id, track: 'harbor', upgrades: { engine: level, tyres: level, nitro: level, handling: level } });
+    startRace(race); race.rivals = [];
+    const point = sampleTrack(350);
+    Object.assign(race.car, { x: point.x, z: point.z, yaw: Math.atan2(point.tx, point.tz), vx: point.tx * 28, vz: point.tz * 28, speed: 28, forwardSpeed: 28 });
+    race._lastTrackS = race._safeS = point.s; race._trackIndex = point.index;
+    advance(race, { throttle: 1, steer: .8 }, .85);
+    assert.equal(race.car.drifting, true, `${vehicle.id} level ${level} must drift without handbrake`);
+    assert.ok(race.driftPoints > 0);
+    assert.ok(Math.abs(race.car.slipAngle) < .36);
+    assert.equal(race.collision, false);
+  }
+});
+
+test('automatic drift permits nitro and recovery removes residual rear slip', () => {
+  const race = raceAt(350, 28); race.rivals = [];
+  advance(race, { throttle: 1, steer: .75, nitro: true }, .8);
+  assert.equal(race.car.drifting, true);
+  assert.equal(race.nitro.active, true);
+  assert.ok(race.nitro.charge < race.nitro.capacity - .75);
+  assert.ok(race.driftPoints > 0);
+  assert.equal(race.collision, false);
+  resetCar(race);
+  advance(race, { throttle: 1, steer: .75 }, .2);
+  assert.equal(race.car.drifting, false);
+  assert.equal(race.driftPoints, 0);
+  assert.ok(Math.abs(race.car.slipAngle) < .05);
+});
+
+test('automatic drift is identical across 30, 60 and 120 Hz callers', () => {
+  const races = [30, 60, 120].map(hz => {
+    const race = raceAt(350, 28); race.rivals = [];
+    advance(race, { throttle: 1, steer: .75 }, .8, hz);
+    assert.equal(race.car.drifting, true);
+    return race;
+  });
+  for (const race of races.slice(1)) {
+    for (const key of ['x', 'z', 'vx', 'vz', 'yaw', 'slipAngle']) assert.ok(Math.abs(race.car[key] - races[0].car[key]) < 1e-10);
+    assert.equal(race.driftPoints, races[0].driftPoints);
+  }
 });
 
 test('controlled drift points bank after straightening and braking', () => {

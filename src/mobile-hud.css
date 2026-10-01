@@ -8,7 +8,6 @@
 .mini-map canvas { width:180px; height:112px; }
 .recover { display:flex; align-items:center; gap:6px; }
 .recover svg { width:18px; height:18px; }
-.pedal-hint { display:none; }
 .pad-charge { display:block; height:3px; background:#fff2; overflow:hidden; border-radius:4px; }
 .pad-charge i { display:block; height:100%; width:100%; background:#62dcf6; transform-origin:left center; }
 
@@ -54,28 +53,23 @@ body.touch-mode.in-race .nitro-gauge,body.touch-mode.in-race .steer-feedback,bod
 body.touch-mode.in-race .recover { top:calc(var(--hud-top) + 70px); left:var(--hud-left); bottom:auto; right:auto; min-width:76px; min-height:44px; padding:8px 10px; border:1px solid #c6deeb26; border-radius:12px; background:#101a24c9; font:700 9px Manrope,sans-serif; color:#c5d8e4; }
 
 body.touch-mode.in-race .touch-controls { inset:0; z-index:6; }
-body.touch-mode.in-race .touch-controls .steering,
-body.touch-mode.in-race .touch-controls .pedals { position:absolute; bottom:var(--hud-bottom); margin:0; }
-body.touch-mode.in-race .touch-controls .steering { left:var(--hud-left); gap:10px; display:grid; grid-template-columns:66px 66px; }
-body.touch-mode.in-race .touch-controls .pedals { right:var(--hud-right); display:grid; grid-template-columns:68px 76px 70px; grid-template-rows:58px 64px; gap:10px; }
-body.touch-mode.in-race .touch-controls button { margin:0; min-width:0; min-height:0; width:100%; height:100%; padding:7px; border:1px solid #cfdeea57; border-bottom-width:3px; border-radius:17px; box-shadow:inset 0 1px 0 #fff1,0 5px 15px #0004; background:linear-gradient(145deg,#2d3b49ed,#111e2bec); color:#f1f5f7; backdrop-filter:blur(8px); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; font-family:Manrope,sans-serif; }
-body.touch-mode.in-race .touch-controls small { font:800 8px Manrope,sans-serif; letter-spacing:1px; }
-body.touch-mode.in-race .touch-controls svg { width:33px; height:33px; margin:0; flex-shrink:0; stroke-width:2; }
-body.touch-mode.in-race .touch-controls .steer-pad { width:66px; height:66px; border-radius:20px; }
-body.touch-mode.in-race .touch-controls .drift-pedal { position:static; grid-column:1; grid-row:2; width:68px; height:64px; color:#efdb9b; border-color:#cdb87c80; }
-body.touch-mode.in-race .touch-controls .drift-pedal svg { width:33px; height:26px; }
-body.touch-mode.in-race .touch-controls .brake-pedal { grid-column:2; grid-row:2; color:#ffe7e0; border-color:#dca39980; background:linear-gradient(145deg,#51302def,#271c20ed); }
-body.touch-mode.in-race .touch-controls .brake-pedal svg { width:40px; height:30px; }
-body.touch-mode.in-race .touch-controls .gas-pedal { grid-column:3; grid-row:1/3; color:#c7fff0; border-color:#75c8ac99; background:linear-gradient(145deg,#285148eb,#122b28f5); }
-body.touch-mode.in-race .touch-controls .gas-pedal svg { width:37px; height:65px; stroke-width:1.65; }
-body.touch-mode.in-race .touch-controls .nitro-pedal { grid-column:2; grid-row:1; color:#bbf4ff; border-color:#79c9e499; background:linear-gradient(145deg,#234756ed,#122633ed); position:relative; gap:1px; padding:5px 9px 10px; }
-body.touch-mode.in-race .touch-controls .nitro-pedal svg { width:30px; height:30px; }
+body.touch-mode.in-race .touch-controls .pedals { position:absolute; bottom:var(--hud-bottom); right:var(--hud-right); margin:0; display:block; }
+body.touch-mode.in-race .touch-controls .nitro-pedal { position:relative; margin:0; width:94px; height:100px; min-height:0; padding:9px 10px 15px; border:1px solid #9be6fa9c; border-bottom:3px solid #4a9aaa; border-radius:26px; box-shadow:inset 0 1px 0 #ffffff2b,0 6px 22px #0005; background:linear-gradient(150deg,#234451f2,#0c1b29f2); color:#d2f7ff; backdrop-filter:blur(8px); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; font-family:Manrope,sans-serif; }
+body.touch-mode.in-race .touch-controls small { font:800 10px Manrope,sans-serif; letter-spacing:1.8px; }
+body.touch-mode.in-race .touch-controls .nitro-pedal svg { width:31px; height:31px; margin:0; flex-shrink:0; stroke-width:1.8; }
 body.touch-mode.in-race .nitro-bolt { fill:currentColor; stroke:none; }
-body.touch-mode.in-race .touch-controls .pad-charge { position:absolute; left:12px; right:12px; bottom:5px; font-size:0; }
-body.touch-mode.in-race .touch-controls button.pressed { background:#d3f7f5; color:#082d34; border-color:white; box-shadow:0 0 0 2px #bcf6ef66,inset 0 2px 8px #0002; }
-body.touch-mode.in-race .touch-controls .brake-pedal.pressed { background:#ffc7b9; color:#451810; }
-body.touch-mode.in-race .touch-controls .nitro-pedal.unavailable { opacity:.55; }
-body.touch-mode.in-race .pedal-hint { display:block; position:absolute; left:50%; transform:translateX(-50%); bottom:var(--hud-bottom); margin:0; border-radius:20px; background:#0c1721d9; padding:7px 10px; font:600 10px Manrope,sans-serif; color:#c2dedb; white-space:nowrap; }
+body.touch-mode.in-race #nitro-pad-amount { color:#8fbbcb; font:600 10px Oxanium,monospace; }
+body.touch-mode.in-race .touch-controls .pad-charge { position:absolute; left:19px; right:19px; bottom:9px; font-size:0; height:3px; }
+body.touch-mode.in-race .touch-controls button.pressed { background:linear-gradient(150deg,#adf5ff,#43bacd); color:#092630; border-color:#d5fcff; box-shadow:0 0 0 3px #80efff33,0 4px 24px #2cd9ff4d; }
+body.touch-mode.in-race .touch-controls button.pressed #nitro-pad-amount { color:#205966; }
+body.touch-mode.in-race .touch-controls .nitro-pedal.unavailable { opacity:.6; }
+body.touch-mode.in-race .touch-steer-cue { position:absolute; bottom:calc(var(--hud-bottom) + 8px); left:var(--hud-left); width:160px; padding:12px 14px; border:1px solid #b9d3e21a; border-radius:18px; background:#0c1923b3; backdrop-filter:blur(8px); color:#bbcbd5; text-align:center; pointer-events:none; }
+body.touch-mode.in-race #touch-steer-label { display:block; font:700 8px Manrope,sans-serif; letter-spacing:1.6px; }
+body.touch-mode.in-race .touch-steer-track { position:relative; height:24px; margin-top:6px; display:flex; justify-content:space-between; align-items:center; font:400 23px Manrope,sans-serif; color:#8fa8b7; }
+body.touch-mode.in-race .touch-steer-track:before { content:""; position:absolute; height:1px; left:17px; right:17px; background:#a3bec33d; }
+body.touch-mode.in-race .touch-steer-track i { position:absolute; left:calc(50% - 4px); width:8px; height:8px; background:#a0d9dd; border:2px solid #173641; border-radius:50%; box-shadow:0 0 0 3px #8ce2eb20; }
+body.touch-mode.in-race .touch-steer-cue.engaged { border-color:#9de7e751; color:#e0f8f7; }
+body.touch-mode.in-race .recover { display:none; }
 body.touch-mode.in-race .toast { top:calc(var(--hud-top) + 65px); bottom:auto; left:50%; transform:translateX(-50%); max-width:40%; font-size:11px; }
 body.touch-mode.in-race .countdown { font-size:82px; }
 
@@ -86,10 +80,8 @@ body.touch-mode.in-race .countdown { font-size:82px; }
   body.touch-mode.in-race .drift-score { display:none; }
   body.touch-mode.in-race .mini-map { width:124px; height:96px; }
   body.touch-mode.in-race .mini-map canvas { width:108px; height:67.5px; }
-  body.touch-mode.in-race .touch-controls .steering { grid-template-columns:60px 60px; gap:8px; }
-  body.touch-mode.in-race .touch-controls .steer-pad { width:60px; height:60px; }
-  body.touch-mode.in-race .touch-controls .drift-pedal { width:60px; height:60px; }
-  body.touch-mode.in-race .touch-controls .pedals { grid-template-columns:60px 64px 62px; grid-template-rows:52px 60px; gap:8px; }
+  body.touch-mode.in-race .touch-controls .nitro-pedal { width:78px; height:88px; border-radius:22px; }
+  body.touch-mode.in-race .touch-steer-cue { width:148px; padding:9px 12px; }
   body.touch-mode.in-race .speedo { left:calc(var(--hud-left) + 194px); width:90px; }
   body.touch-mode.in-race .recover { min-width:68px; }
 }

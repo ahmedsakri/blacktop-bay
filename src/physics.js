@@ -39,6 +39,7 @@ const MAX_SPEED = 45;
 const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
 const finite = (value, fallback = 0) => Number.isFinite(value) ? value : fallback;
 const angleWrap = (angle) => Math.atan2(Math.sin(angle), Math.cos(angle));
+const smoothRange = (value, min, max) => { const t = clamp((value - min) / (max - min), 0, 1); return t * t * (3 - 2 * t); };
 
 function createRacer(vehicle, track, grid = null, upgrades = {}) {
   const levels = normalizeUpgrades(upgrades), specs = getUpgradeStats(vehicle, levels);
@@ -56,7 +57,7 @@ function createRacer(vehicle, track, grid = null, upgrades = {}) {
     lapTimes: [], state: 'ready', collision: false, progress: 0, raceProgress: 0,
     recoveries: 0,
     _accumulator: 0, _collisionTimer: 0, _collisionCooldown: 0,
-    _driftTime: 0, _straightTime: 0, _lastTrackS: spawn.s, _trackIndex: spawn.index,
+    _driftTime: 0, _straightTime: 0, _autoDrift: 0, _lastTrackS: spawn.s, _trackIndex: spawn.index,
     _lapDistance: grid?.s || 0, _nextCheckpoint: 1, _safeS: spawn.s,
     _baseLane: lane, _lane: lane, _pace: grid?.pace || 1,
   };
@@ -102,6 +103,7 @@ export function resetCar(race) {
   race._lastTrackS = location.s;
   race._trackIndex = location.index;
   race._collisionTimer = 0; race._collisionCooldown = 0; race.collision = false;
+  race._autoDrift = 0;
   race.recoveries++;
   race.nitro.active = false;
   clearDrift(race);
@@ -171,7 +173,18 @@ function simulate(race, input, dt) {
   const drive = input.brake ? 0 : input.throttle * specs.acceleration * (input.handbrake ? 0.45 : 1) + (race.nitro.active ? specs.nitroAcceleration : 0);
   const resistance = 0.65 + specs.drag * speed * speed + (input.brake ? specs.braking : 0) + (input.handbrake ? 4 : 0);
   forward = Math.max(0, forward + (drive - resistance) * dt);
-  lateral *= Math.exp(-(input.handbrake ? 1.8 : specs.grip) * dt);
+  // Sustained fast steering progressively loosens the rear tyres. The heading
+  // still follows ordinary steering: slip comes from planar velocity lagging
+  // behind the body, without a spin impulse or a separate mobile drift button.
+  const slideTarget = !input.brake && !input.handbrake && race._collisionTimer === 0
+    ? smoothRange(speed, 18, 23) * smoothRange(Math.abs(car.steering), .26, .58) : 0;
+  race._autoDrift += (slideTarget - race._autoDrift) * (1 - Math.exp(-dt * (slideTarget > race._autoDrift ? 4.5 : 9)));
+  const slideGrip = 2.7 * (specs.grip / 9.5) ** .35;
+  let grip = input.brake ? specs.grip : specs.grip + (slideGrip - specs.grip) * race._autoDrift;
+  // A large slip angle restores some grip, keeping automatic slides catchable.
+  const slipBeforeGrip = Math.abs(Math.atan2(lateral, Math.max(.01, forward)));
+  grip += smoothRange(slipBeforeGrip, .34, .65) * 4;
+  lateral *= Math.exp(-(input.handbrake ? 1.8 : grip) * dt);
   car.vx = fx * forward + rx * lateral;
   car.vz = fz * forward + rz * lateral;
   const newSpeed = Math.hypot(car.vx, car.vz);

@@ -1,7 +1,7 @@
 // Pointer ownership is independent of keyboard state. The DOM adapter can OR
 // this snapshot with held keys/pads without a touch release clearing a key.
 export const DRIVING_ACTIONS = Object.freeze([
-  'left', 'right', 'throttle', 'brake', 'drift', 'nitro',
+  'left', 'right', 'brake', 'drift', 'nitro',
 ]);
 const actions = new Set(DRIVING_ACTIONS);
 const validPointer = id => Number.isSafeInteger(id) && id >= 0;
@@ -31,15 +31,16 @@ export function createDrivingInputs() {
   };
 }
 
-// The same rule drives physics and pedal feedback. Braking has priority over
-// both accelerator and boost; releasing the brake restores still-held inputs.
-export function resolveDriveControls(input = {}, { manualThrottle = false } = {}) {
+// Drag steering and keyboard arrows share a bounded steering value. Racing
+// always auto-accelerates; the optional keyboard brake overrides gas and boost.
+export function resolveDriveControls(input = {}) {
   const held = action => input?.[action] === true;
   const brake = held('brake');
   const nitro = !brake && held('nitro');
+  const analog = Number.isFinite(input?.steer) ? Math.max(-1, Math.min(1, input.steer)) : 0;
   return {
-    steer: Number(held('right')) - Number(held('left')),
-    throttle: brake ? 0 : (!manualThrottle || held('throttle') || nitro ? 1 : 0),
+    steer: Math.max(-1, Math.min(1, analog + Number(held('right')) - Number(held('left')))),
+    throttle: brake ? 0 : 1,
     brake,
     handbrake: held('drift'),
     nitro,

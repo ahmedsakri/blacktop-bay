@@ -343,7 +343,7 @@
           <span id="steer-right">▶</span>
         </div>
         <div class="drive-hint">
-          <kbd>←</kbd><kbd>→</kbd> STEER <span>·</span> <kbd>SPACE</kbd> DRIFT
+          <kbd>←</kbd><kbd>→</kbd> STEER <span>·</span> FAST TURNS DRIFT
           <span>·</span> <kbd>↓</kbd> BRAKE <span>·</span>
           <kbd>SHIFT</kbd> NITRO
         </div>
@@ -354,18 +354,13 @@
       <div id="countdown" class="countdown" aria-live="assertive" hidden></div>
       <div id="toast" class="toast" role="status"></div>
       <div class="touch-controls" id="touch" hidden>
-        <div class="steering" role="group" aria-label="Steering">
-          <button data-input="left" class="steer-pad" aria-label="Steer left"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="m19 7-9 9 9 9M10 16h14"/></svg><small>LEFT</small></button>
-          <button data-input="right" class="steer-pad" aria-label="Steer right"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="m13 7 9 9-9 9M22 16H8"/></svg><small>RIGHT</small></button>
-
+        <div class="touch-steer-cue" id="touch-steer-cue" aria-hidden="true">
+          <span id="touch-steer-label">DRAG TO STEER</span>
+          <div class="touch-steer-track"><span>‹</span><i id="touch-steer-dot"></i><span>›</span></div>
         </div>
-        <div class="pedals" role="group" aria-label="Accelerator, brake nitro and drift">
-          <button data-input="drift" class="drift-pedal" aria-label="Hold to drift"><svg viewBox="0 0 40 32" aria-hidden="true"><g transform="rotate(18 25 13)"><path d="m18 5-3 7v9h20v-9l-3-7ZM17 12h16M15 17h20M19 5l-1 7m13-7 1 7M18 21v3m14-3v3"/></g><path d="M16 25c-2 4-9-1-11 4M12 21c-3 3-8-1-10 2"/></svg><small>DRIFT</small></button>
-          <button data-input="nitro" class="nitro-pedal" aria-label="Hold for nitro boost and acceleration"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M16 3h8m-4 0v6m-5 0h10v5c4 2 5 5 5 9v9a4 4 0 0 1-4 4H14a4 4 0 0 1-4-4v-9c0-4 1-7 5-9Z"/><path class="nitro-bolt" d="m22 17-7 10h5l-2 7 8-11h-5Z"/></svg><small id="nitro-pad-label">NITRO</small><span class="pad-charge" aria-hidden="true"><i id="pad-nitro-fill"></i></span></button>
-          <button data-input="brake" class="brake-pedal" aria-label="Hold brake"><svg viewBox="0 0 48 36" aria-hidden="true"><path d="M21 6V2h6v4M8 7h32l3 19H5Zm-2 23h24"/><path d="m12 11-1 11m7-11-.5 11m6-11v11m6-11 .5 11m6-11 1 11"/></svg><small>BRAKE</small></button>
-          <button data-input="throttle" class="gas-pedal" aria-label="Hold accelerator"><svg viewBox="0 0 36 60" aria-hidden="true"><path d="M12 4h13l3 41c.3 5-3 9-8 9H9L7 13c-.2-5 1-9 5-9Z"/><path d="m12 13 2 31m3-31 2 31m3-31 2 31M10 48h15"/></svg><small>GAS</small></button>
+        <div class="pedals" role="group" aria-label="Nitro boost">
+          <button data-input="nitro" class="nitro-pedal" aria-label="Hold for nitro boost"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M16 3h8m-4 0v6m-5 0h10v5c4 2 5 5 5 9v9a4 4 0 0 1-4 4H14a4 4 0 0 1-4-4v-9c0-4 1-7 5-9Z"/><path class="nitro-bolt" d="m22 17-7 10h5l-2 7 8-11h-5Z"/></svg><small id="nitro-pad-label">NITRO</small><span id="nitro-pad-amount">100%</span><span class="pad-charge" aria-hidden="true"><i id="pad-nitro-fill"></i></span></button>
         </div>
-        <p class="pedal-hint" id="pedal-hint">Hold GAS to drive</p>
       </div>
       <div id="modal-backdrop" class="modal-backdrop" hidden>
         <section
