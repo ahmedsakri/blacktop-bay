@@ -34,7 +34,7 @@ test('all 34 circuits retain their own real route shape, measured distances and 
 });
 
 test('circuit cards distinguish original/current/bonus layouts without inventing events or results', () => {
-  assert.equal(circuitSeriesLabel(getTrack('harbor')), 'BLACKTOP ORIGINAL');
+  assert.equal(circuitSeriesLabel(getTrack('harbor')), 'CAMBER ORIGINAL');
   assert.equal(circuitSeriesLabel(getTrack('suzuka')), '2026 VENUE');
   assert.equal(circuitSeriesLabel(getTrack('sakhir')), 'BONUS VENUE');
   const markup = circuitRouteCards(TRACKS, 'harbor') + circuitPreviewMarkup(getTrack('harbor'));

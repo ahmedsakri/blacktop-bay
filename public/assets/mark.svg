@@ -1,17 +1,17 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 240"><defs>
- <linearGradient id="chrome" x1="0" y1="0" x2="0.15" y2="1" gradientUnits="objectBoundingBox"><stop stop-color="#FFFFFF"/><stop offset=".3" stop-color="#F6F3FF"/><stop offset=".48" stop-color="#8A8295"/><stop offset=".5" stop-color="#FFFFFF"/><stop offset=".78" stop-color="#DCD7E5"/><stop offset="1" stop-color="#FFFFFF"/></linearGradient>
- <linearGradient id="cyan" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#DCD7E5"/><stop offset=".36" stop-color="#9246FF"/><stop offset="1" stop-color="#9246FF"/></linearGradient>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 240" role="img" aria-label="Camber Reign racing emblem"><title>Camber Reign CR racing emblem</title><defs>
+ <linearGradient id="chrome" x1="0" y1="0" x2="0.15" y2="1"><stop stop-color="#FFFFFF"/><stop offset=".30" stop-color="#F6F3FF"/><stop offset=".48" stop-color="#8A8295"/><stop offset=".50" stop-color="#FFFFFF"/><stop offset=".78" stop-color="#DCD7E5"/><stop offset="1" stop-color="#FFFFFF"/></linearGradient>
+ <linearGradient id="violet" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#D6BDFF"/><stop offset=".36" stop-color="#9246FF"/><stop offset="1" stop-color="#7430D3"/></linearGradient>
  <linearGradient id="dark" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#021439"/><stop offset=".5" stop-color="#110017"/><stop offset="1" stop-color="#021439"/></linearGradient>
  <linearGradient id="edge" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#FFFFFF"/><stop offset=".27" stop-color="#9246FF"/><stop offset=".5" stop-color="#110017"/><stop offset=".8" stop-color="#FFF71E"/><stop offset="1" stop-color="#9246FF"/></linearGradient>
  <pattern id="check" width="28" height="28" patternUnits="userSpaceOnUse"><path d="M0 0h14v14H0zm14 14h14v14H14z" fill="#FFFFFF"/><path d="M14 0h14v14H14zM0 14h14v14H0z" fill="#021439"/></pattern>
- <filter id="glow"><feGaussianBlur stdDeviation="3"/></filter>
  </defs><g class="emblem" transform="translate(10 8)">
- <path d="M30 26 180 26 194 53 156 168 92 209 28 177 8 76Z" fill="#110017" opacity=".8" transform="translate(0 6)"/>
- <path class="shield" d="M30 26 180 26 194 53 156 168 92 209 28 177 8 76Z" fill="url(#dark)" stroke="url(#edge)" stroke-width="4"/>
- <path d="m37 37 134 0 8 19-34 104-54 35-52-27-18-90Z" fill="#110017" stroke="#9246FF" stroke-opacity=".36"/>
+ <path d="M30 26H180l14 27-38 115-64 41-64-32L8 76Z" fill="#110017" opacity=".8" transform="translate(0 6)"/>
+ <path class="shield" d="M30 26H180l14 27-38 115-64 41-64-32L8 76Z" fill="url(#dark)" stroke="url(#edge)" stroke-width="4"/>
+ <path d="M37 37H171l8 19-34 104-54 35-52-27-18-90Z" fill="#110017" stroke="#9246FF" stroke-opacity=".55"/>
  <path d="M39 39h128l6 16H28Z" fill="url(#check)"/>
- <path d="M52 65 153 65 143 87 98 87 105 75 78 75 58 130 84 130 96 102 137 102 130 123 106 123 102 136 147 136 136 157 49 157 33 137Z" fill="url(#chrome)"/>
- <path class="apex" d="m105 88 29-16-13 32-41 76 0-22 25-70Z" fill="url(#cyan)"/>
- <path d="m27 109 20-7-10 28-22 7Zm132-24 20-7-9 28-20 7Z" fill="#9246FF"/>
+ <g class="monogram-c" fill="url(#chrome)" transform="translate(34,157) scale(0.1189358372456964,-0.1189358372456964)"><path transform="translate(0,0)" d="M564 54Q539 42 512.5 30.5Q486 19 456.0 10.5Q426 2 390.5 -3.0Q355 -8 313 -8Q179 -8 106.5 52.0Q34 112 34 252Q34 333 59.0 404.5Q84 476 133.0 529.5Q182 583 254.0 614.0Q326 645 419 645Q463 645 499.5 639.0Q536 633 565.5 623.5Q595 614 618.5 603.0Q642 592 661 582L625 396H445Q446 406 447.5 422.0Q449 438 450.0 454.5Q451 471 452.0 487.0Q453 503 453 514Q453 522 452.0 532.5Q451 543 447.0 553.0Q443 563 434.5 569.5Q426 576 412 576Q386 576 364.5 554.5Q343 533 326.0 497.5Q309 462 296.0 417.0Q283 372 274.5 325.5Q266 279 261.5 234.0Q257 189 257 155Q257 145 258.0 130.0Q259 115 264.0 101.0Q269 87 279.5 77.0Q290 67 308 67Q339 67 368.0 105.5Q397 144 419 243H604Z"/></g>
+ <g class="monogram-r" fill="url(#violet)" transform="translate(99,157) scale(0.11532385466034756,-0.11532385466034756)"><path transform="translate(0,0)" d="M623 484Q623 425 590.0 375.0Q557 325 481 299L597 0H374L286 277H275L216 0H0L135 635H398Q444 635 485.0 629.5Q526 624 556.5 607.5Q587 591 605.0 561.5Q623 532 623 484ZM335 341Q361 341 379.5 358.5Q398 376 409.5 401.0Q421 426 426.0 454.5Q431 483 431 504Q431 530 422.0 548.5Q413 567 383 567H338L288 341Z"/></g>
+ <path class="apex" d="m58 171 80-5-7 9-77 4Z" fill="#FFF71E"/>
+ <path d="m27 109 14-5-10 28-16 5Zm139-24 13-7-9 28-13 7Z" fill="#9246FF"/>
  <path class="road-trace" d="M26 76 45 43h116l11 16-34 94-48 34-43-25-14-25" fill="none" stroke="#FFF71E" stroke-width="2"/>
  </g></svg>

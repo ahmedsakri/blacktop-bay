@@ -6,7 +6,7 @@ import { VEHICLES } from './src/vehicles.js';
 import { renderCircuitPage, renderCarPage, renderCircuitSitemap } from './scripts/circuit-pages.mjs';
 
 export default defineConfig({
-  build: {rollupOptions: {input: {game: 'index.html', circuits: 'circuits/index.html', cars: 'cars/index.html'}}},
+  build: {rollupOptions: {input: {game: 'index.html', circuits: 'circuits/index.html', cars: 'cars/index.html', migration: 'move-progress/index.html'}}},
   plugins: [{
     name: 'circuit-pages', enforce: 'post',
     generateBundle(_, bundle) {

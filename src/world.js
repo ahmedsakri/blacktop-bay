@@ -352,7 +352,7 @@ export function createWorld(renderer, { low = false, reducedMotion = false } = {
  const finishArt=canvasTexture(2048,256,(c,w,h)=>{
   c.fillStyle='#07121b';c.fillRect(0,0,w,h);
   c.fillStyle='#65e3f1';c.fillRect(0,0,w,5);c.fillRect(0,h-5,w,5);
-  c.font='92px "Racing Sans One", Arial';c.textAlign='center';c.fillStyle='#eef8ff';c.fillText('BLACKTOP BAY',w/2,107);
+  c.font='92px "Racing Sans One", Arial';c.textAlign='center';c.fillStyle='#eef8ff';c.fillText('CAMBER REIGN',w/2,107);
   c.font='700 37px Arial';c.fillStyle='#61ddeb';c.fillText('START / FINISH  ·  '+TRACK.name.toUpperCase(),w/2,180);
   for(const start of [26,w-282])for(let y=0;y<4;y++)for(let x=0;x<5;x++){c.fillStyle=(x+y)%2?'#152a38':'#d5e4e8';c.fillRect(start+x*46,36+y*46,46,46);}
  });finishArt.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());
@@ -398,7 +398,7 @@ export function createWorld(renderer, { low = false, reducedMotion = false } = {
  instances(scene, box, metal, standRails);
  const raceBanner = canvasTexture(1024, 128, (c, w, h) => {
   c.fillStyle = '#122631'; c.fillRect(0, 0, w, h); c.fillStyle = '#46c3d3'; c.fillRect(0, h - 6, w, 6);
-  c.fillStyle = '#f0f5ef'; c.font = '58px "Racing Sans One", Arial'; c.textAlign = 'center'; c.fillText('BLACKTOP BAY', w / 2, 69);
+  c.fillStyle = '#f0f5ef'; c.font = '58px "Racing Sans One", Arial'; c.textAlign = 'center'; c.fillText('CAMBER REIGN', w / 2, 69);
   c.font = '700 22px Arial'; c.fillStyle = '#8fc8d1'; c.fillText(TRACK.name.toUpperCase(), w / 2, 103);
  });
  const raceBanners = [];

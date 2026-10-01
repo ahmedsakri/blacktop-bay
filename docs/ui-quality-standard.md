@@ -1,6 +1,6 @@
 # Mandatory UI quality standard
 
-This standard records the user's requirements for Blacktop Bay. Apply it to the title screen, garage, collection, circuit selection, workshop, paint, race HUD, pause, help, results, loading, privacy, and information pages. A polished screen does not excuse a broken action or unreadable state elsewhere.
+This standard records the user's requirements for Camber Reign. Apply it to the title screen, garage, collection, circuit selection, workshop, paint, race HUD, pause, help, results, loading, privacy, and information pages. A polished screen does not excuse a broken action or unreadable state elsewhere.
 
 ## Approved visual direction
 

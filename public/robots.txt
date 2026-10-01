@@ -3,4 +3,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://blacktop-bay.web.app/sitemap.xml
+Sitemap: https://camber-reign.web.app/sitemap.xml

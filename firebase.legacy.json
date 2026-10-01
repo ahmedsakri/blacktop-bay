@@ -1,0 +1,134 @@
+{
+  "hosting": {
+    "site": "blacktop-bay",
+    "public": "legacy-host",
+    "ignore": [
+      "firebase*.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "headers": [
+      {
+        "source": "**",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public,max-age=0,must-revalidate"
+          },
+          {
+            "key": "X-Content-Type-Options",
+            "value": "nosniff"
+          },
+          {
+            "key": "Referrer-Policy",
+            "value": "no-referrer"
+          },
+          {
+            "key": "X-Frame-Options",
+            "value": "DENY"
+          },
+          {
+            "key": "Content-Security-Policy",
+            "value": "default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
+          }
+        ]
+      },
+      {
+        "source": "/save-transfer/**",
+        "headers": [
+          {
+            "key": "X-Robots-Tag",
+            "value": "noindex, nofollow"
+          }
+        ]
+      }
+    ],
+    "redirects": [
+      {
+        "source": "/",
+        "destination": "https://camber-reign.web.app/",
+        "type": 301
+      },
+      {
+        "source": "/index.html",
+        "destination": "https://camber-reign.web.app/",
+        "type": 301
+      },
+      {
+        "source": "/cars",
+        "destination": "https://camber-reign.web.app/cars/",
+        "type": 301
+      },
+      {
+        "source": "/cars/:path*",
+        "destination": "https://camber-reign.web.app/cars/:path",
+        "type": 301
+      },
+      {
+        "source": "/circuits",
+        "destination": "https://camber-reign.web.app/circuits/",
+        "type": 301
+      },
+      {
+        "source": "/circuits/:path*",
+        "destination": "https://camber-reign.web.app/circuits/:path",
+        "type": 301
+      },
+      {
+        "source": "/guide",
+        "destination": "https://camber-reign.web.app/guide/",
+        "type": 301
+      },
+      {
+        "source": "/guide/:path*",
+        "destination": "https://camber-reign.web.app/guide/:path",
+        "type": 301
+      },
+      {
+        "source": "/privacy",
+        "destination": "https://camber-reign.web.app/privacy/",
+        "type": 301
+      },
+      {
+        "source": "/privacy/:path*",
+        "destination": "https://camber-reign.web.app/privacy/:path",
+        "type": 301
+      },
+      {
+        "source": "/credits",
+        "destination": "https://camber-reign.web.app/credits/",
+        "type": 301
+      },
+      {
+        "source": "/credits/:path*",
+        "destination": "https://camber-reign.web.app/credits/:path",
+        "type": 301
+      },
+      {
+        "source": "/sitemap.xml",
+        "destination": "https://camber-reign.web.app/sitemap.xml",
+        "type": 301
+      },
+      {
+        "source": "/robots.txt",
+        "destination": "https://camber-reign.web.app/robots.txt",
+        "type": 301
+      },
+      {
+        "source": "/llms.txt",
+        "destination": "https://camber-reign.web.app/llms.txt",
+        "type": 301
+      },
+      {
+        "source": "/ads.txt",
+        "destination": "https://camber-reign.web.app/ads.txt",
+        "type": 301
+      },
+      {
+        "source": "/assets/:path*",
+        "destination": "https://camber-reign.web.app/assets/:path",
+        "type": 301
+      }
+    ]
+  }
+}

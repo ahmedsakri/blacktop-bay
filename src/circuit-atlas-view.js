@@ -11,7 +11,7 @@ export function circuitScene(track) {
 }
 
 export function circuitSeriesLabel(track) {
-  return track.series === 'original' ? 'BLACKTOP ORIGINAL' : track.calendarStatus === 'current' ? '2026 VENUE' : 'BONUS VENUE';
+  return track.series === 'original' ? 'CAMBER ORIGINAL' : track.calendarStatus === 'current' ? '2026 VENUE' : 'BONUS VENUE';
 }
 
 export function circuitCharacter(track) {

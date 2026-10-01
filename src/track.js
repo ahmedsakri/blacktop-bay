@@ -87,7 +87,7 @@ function buildTrack({ id, name, description, points, width = 16, ...metadata }) 
     sample.nz = -sample.tx;
   });
   return {
-    series: 'original', region: 'Blacktop Bay', layoutKind: 'original',
+    series: 'original', region: 'Camber Reign', layoutKind: 'original',
     ...metadata, id, name, description, samples, length, width,
     spawn: { x: samples[0].x, z: samples[0].z, yaw: Math.atan2(samples[0].tx, samples[0].tz) },
   };

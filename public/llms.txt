@@ -1,15 +1,15 @@
-# Blacktop Bay
+# Camber Reign
 
-> Blacktop Bay is a free, single-player 3D browser racing game by AppsOverFlow. Race seven computer-controlled rivals across thirty-four asphalt circuits in one of 33 cars, earn race credits, and upgrade your car. No account, no install, no purchases.
+> Camber Reign is a free, single-player 3D browser racing game by AppsOverFlow. Race seven computer-controlled rivals across thirty-four asphalt circuits in one of 33 cars, earn race credits, and upgrade your car. No account, no install, no purchases.
 
 ## About the game
 
-Blacktop Bay runs directly in a modern web browser (WebGL 2 required) at https://blacktop-bay.web.app/. A single human player races seven computer-controlled opponents — Mira, Jax, Nova, Ren, Kai, Aria and Leo — in an eight-car field over three laps. Gameplay centres on drifting for score, a rechargeable nitro boost, and earning race credits to install permanent, per-car upgrades. Progress is saved locally in the browser; there is no online multiplayer and no real-money payment.
+Camber Reign runs directly in a modern web browser (WebGL 2 required) at https://camber-reign.web.app/. A single human player races seven computer-controlled opponents — Mira, Jax, Nova, Ren, Kai, Aria and Leo — in an eight-car field over three laps. Gameplay centres on drifting for score, a rechargeable nitro boost, and earning race credits to install permanent, per-car upgrades. Progress is saved locally in the browser; there is no online multiplayer and no real-money payment.
 
 ## How to play
 
-- Choose a race car in the Garage and, optionally, spend earned credits on upgrades.
-- Pick one of thirty-four circuits on the home screen, then start the race.
+- Choose Cars in Race HQ, preview a car and select Open garage. Use Upgrades to spend earned credits on performance, or Paint for free colours and finishes.
+- Choose Circuits, preview one of thirty-four routes and select that circuit to return to Race HQ. Choose Circuit race, Time attack or Three-race tour, then Race Now to start.
 - Acceleration is automatic. Hold the left or right side of the steering thumbpad, or drag it for fine control; release to center. You can also drag across the race view or use Left/Right or A/D on a keyboard. On a compatible phone, open Pause → Steering → Enable tilt, allow motion access if asked, and use Recenter tilt in your comfortable holding position. Touch steering always overrides tilt, and unavailable or stale sensor data falls back to touch. Turn sharply at speed to drift automatically. Hold Nitro or Shift to boost; release to recharge. Nitro is the only on-screen pedal. Down/S is an optional keyboard brake and Space holds the optional handbrake.
 - Ease the steering back into line after an automatic drift to bank clean drift points; Space is an optional keyboard handbrake.
 - Hold Shift (or the Nitro button) for a boost on clear straights; release to recharge.
@@ -19,7 +19,7 @@ Blacktop Bay runs directly in a modern web browser (WebGL 2 required) at https:/
 
 ## Circuits
 
-The 34-course collection combines nine original Blacktop Bay circuits, compact adaptations of all 23 venues on the official 2026 calendar checked on 1 October 2026, and Sakhir and Jeddah as original-calendar bonuses. Playable arcade laps are shorter than the real venues, with widened turns and flattened elevation. Suzuka is explicitly unrolled into a non-crossing course; its real overpass is not reproduced.
+The 34-course collection combines nine original Camber Reign circuits, compact adaptations of all 23 venues on the official 2026 calendar checked on 1 October 2026, and Sakhir and Jeddah as original-calendar bonuses. Playable arcade laps are shorter than the real venues, with widened turns and flattened elevation. Suzuka is explicitly unrolled into a non-crossing course; its real overpass is not reproduced.
 
 - Harbor Flow — about 1.22 km per lap; beginner-friendly waterfront sweepers.
 - Dockyard Technical — about 1.53 km; a tight sequence of dockside turns.
@@ -33,7 +33,7 @@ The 34-course collection combines nine original Blacktop Bay circuits, compact a
 
 Current-calendar adaptations: Albert Park, Shanghai, Suzuka, Miami, Gilles Villeneuve, Monaco, Barcelona-Catalunya, Red Bull Ring, Silverstone, Spa-Francorchamps, Hungaroring, Zandvoort, Monza, Madring, Baku City, Sepang, Marina Bay, Circuit of the Americas, Hermanos Rodríguez, Interlagos, Las Vegas Strip, Lusail, Yas Marina.
 Original-calendar bonus adaptations: Bahrain International, Jeddah Corniche.
-Venue outline data: Tomislav Bacinger / f1-circuits, MIT, with compact arcade modifications. Sources and notices: https://blacktop-bay.web.app/credits/#circuit-data
+Venue outline data: Tomislav Bacinger / f1-circuits, MIT, with compact arcade modifications. Sources and notices: https://camber-reign.web.app/credits/#circuit-data
 
 ## Race cars
 
@@ -63,11 +63,12 @@ After a valid lap, a short notice shows the last lap time and the next lap numbe
 
 ## Links
 
-- Game: https://blacktop-bay.web.app/
-- Circuit atlas: https://blacktop-bay.web.app/circuits/
-- Guide (controls, cars, circuits, upgrades, FAQ): https://blacktop-bay.web.app/guide/
-- Credits & licenses: https://blacktop-bay.web.app/credits/
-- Privacy notice: https://blacktop-bay.web.app/privacy/
+- Game: https://camber-reign.web.app/
+- Car collection: https://camber-reign.web.app/cars/
+- Circuit collection: https://camber-reign.web.app/circuits/
+- Guide (controls, cars, circuits, upgrades, FAQ): https://camber-reign.web.app/guide/
+- Credits & licenses: https://camber-reign.web.app/credits/
+- Privacy notice: https://camber-reign.web.app/privacy/
 - Publisher (AppsOverFlow): https://appsoverflow.web.app/
 
 ## Contact

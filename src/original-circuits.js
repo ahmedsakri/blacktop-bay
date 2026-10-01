@@ -1,4 +1,4 @@
-// Authored for Blacktop Bay. These are original flat arcade circuits, not
+// Authored for Camber Reign. These are original flat arcade circuits, not
 // surveyed real-world venues; every route is validated with the actual physics.
 // Start at the second collinear point so the grid sits on a true straight.
 export const ORIGINAL_CIRCUITS = [

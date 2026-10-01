@@ -6,7 +6,7 @@ let importNumber = 0;
 
 // Deliberately no browser/network implementation: inserting a script is recorded,
 // never fetched. Every case restores globals and imports a fresh consent state.
-async function withBrowser({ hostname = 'blacktop-bay.web.app', consent, cookies = {}, blockedStorage = false } = {}, run) {
+async function withBrowser({ hostname = 'camber-reign.web.app', consent, cookies = {}, blockedStorage = false } = {}, run) {
   const keys = ['window', 'document', 'location', 'localStorage'];
   const original = new Map(keys.map(key => [key, Object.getOwnPropertyDescriptor(globalThis, key)]));
   const storage = new Map(consent === undefined ? [] : [[CONSENT_KEY, consent]]);
@@ -64,7 +64,7 @@ test('event boundary accepts useful race facts but strips identifiers, URLs and 
       coordinates: { lat: 19.1, lng: 72.9 }, input: 'private chat text', event: 'custom_event',
     });
     assert.deepEqual(result, {
-      event: 'race_complete', game_name: 'Blacktop Bay', circuit: 'dockyard', vehicle: 'rimac-nevera',
+      event: 'race_complete', game_name: 'Camber Reign', circuit: 'dockyard', vehicle: 'rimac-nevera',
       position: 2, duration_seconds: 139, drift_score: 1280, resets: 1, lap: 3,
     });
     for (const name of ['page_view', 'purchase', 'private@example.test', '', null, {}, '__proto__'])
@@ -74,7 +74,7 @@ test('event boundary accepts useful race facts but strips identifiers, URLs and 
 
 test('unsafe enum and numeric values never cross the event boundary', async () => {
   await withBrowser({}, ({ analytics }) => {
-    const minimal = { event: 'lap_complete', game_name: 'Blacktop Bay' };
+    const minimal = { event: 'lap_complete', game_name: 'Camber Reign' };
     for (const vehicle of ['coupe', 'prototype', 'vector'])
       assert.deepEqual(analytics.sanitizeGameEvent('lap_complete', { vehicle }), minimal);
     const unsafeNumbers = [NaN, Infinity, -Infinity, '2', null, {}, [], true, -1, 1_000_000_001];
@@ -94,7 +94,7 @@ test('unsafe enum and numeric values never cross the event boundary', async () =
 test('eight-car and solo events preserve only allowlisted mode and difficulty facts and clear stale values', async () => {
   await withBrowser({consent: 'granted'}, ({analytics, window}) => {
     const result = analytics.sanitizeGameEvent('race_complete', {position: 8, race_mode: 'championship', difficulty: 'pro'});
-    assert.deepEqual(result, {event: 'race_complete', game_name: 'Blacktop Bay', position: 8, race_mode: 'championship', difficulty: 'pro'});
+    assert.deepEqual(result, {event: 'race_complete', game_name: 'Camber Reign', position: 8, race_mode: 'championship', difficulty: 'pro'});
     for (const value of ['email@example.test', '<script>', '__proto__', null, {}]) {
       const invalid = analytics.sanitizeGameEvent('race_complete', {race_mode: value, difficulty: value});
       assert.equal(invalid.race_mode, undefined); assert.equal(invalid.difficulty, undefined);
@@ -147,14 +147,14 @@ test('granting consent loads the configured container once with advertising stil
       assert.equal(consent.ad_personalization, 'denied');
     }
     const page = window.dataLayer.find(entry => entry.page_location);
-    assert.equal(page.page_location, 'https://blacktop-bay.web.app/');
-    assert.equal(page.page_title, 'Blacktop Bay');
+    assert.equal(page.page_location, 'https://camber-reign.web.app/');
+    assert.equal(page.page_title, 'Camber Reign');
     assert.ok(!JSON.stringify(window.dataLayer).includes('private'));
   });
 });
 
 test('local, preview and lookalike hosts never load Google or accept analytics events, even after consent', async () => {
-  for (const hostname of ['localhost', '127.0.0.1', 'blacktop-bay--preview.web.app', 'blacktop-bay.web.app.evil.test']) {
+  for (const hostname of ['localhost', '127.0.0.1', 'blacktop-bay.web.app', 'camber-reign--preview.web.app', 'camber-reign.web.app.evil.test']) {
     await withBrowser({ hostname, consent: 'granted' }, ({ analytics, window, scripts }) => {
       analytics.initializeAnalytics();
       analytics.setAnalyticsConsent(true);
@@ -175,7 +175,7 @@ test('previously granted consent restores measurement and unapproved events rema
     assert.equal(analytics.trackEvent('private@example.test', { email: 'private@example.test' }), false);
     assert.equal(window.dataLayer.length, count);
     assert.deepEqual(measuredEvents(window).at(-1), {
-      event: 'nitro_use', game_name: 'Blacktop Bay', circuit: 'harbor', vehicle: 'rimac-nevera',
+      event: 'nitro_use', game_name: 'Camber Reign', circuit: 'harbor', vehicle: 'rimac-nevera',
     });
   });
 });
@@ -199,8 +199,8 @@ test('revocation disables measurement, clears only GA cookies and cannot queue f
     assert.equal(cookieJar.get('_gaNotAnalytics'), 'keep-this');
     assert.equal(cookieJar.get('session'), 'keep-this-too');
     assert.ok(cookieWrites.every(cookie => /^_ga(?:_|=)/.test(cookie) && /Max-Age=0/.test(cookie)));
-    assert.ok(cookieWrites.some(cookie => /domain=blacktop-bay\.web\.app/.test(cookie)));
-    assert.ok(cookieWrites.some(cookie => /domain=\.blacktop-bay\.web\.app/.test(cookie)));
+    assert.ok(cookieWrites.some(cookie => /domain=camber-reign\.web\.app/.test(cookie)));
+    assert.ok(cookieWrites.some(cookie => /domain=\.camber-reign\.web\.app/.test(cookie)));
     for (const name of analytics.ANALYTICS_EVENTS) assert.equal(analytics.trackEvent(name, { circuit: 'coast' }), false);
     analytics.initializeAnalytics();
     assert.equal(measuredEvents(window).length, before);

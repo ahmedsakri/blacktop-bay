@@ -1,8 +1,14 @@
-# Blacktop Bay
+# Camber Reign
 
 A free AppsOverFlow browser racer. **Own the corner.** Choose from 33 individually sourced manufacturer car representations across 16 brands, upgrade their performance, and compete against seven rivals across thirty-four asphalt circuits.
 
-[Play Blacktop Bay](https://blacktop-bay.web.app/) · [Driver’s guide](https://blacktop-bay.web.app/guide/) · [Asset credits](https://blacktop-bay.web.app/credits/)
+[Play Camber Reign](https://camber-reign.web.app/) · [Driver’s guide](https://camber-reign.web.app/guide/) · [Asset credits](https://camber-reign.web.app/credits/)
+
+## Bring existing progress to the new address
+
+Camber Reign uses a new Firebase Hosting address. Browser saves belong to their original domain, so they do not move automatically. Choose **Bring your saved progress** in Race HQ or either collection to open `/move-progress/`. It opens the former site's `/save-transfer/` page as a separate window. In the same browser and profile, choose **Send saved progress** to copy only this game's recognised settings, credits, upgrades, paint, favourites, race records and career data.
+
+The receiver verifies the old origin, exact popup, one-use random nonce, recognised keys and bounded JSON data. It asks before replacing existing earned progress and saves a local backup before writing. A failed write attempts to restore the current save; if the browser blocks that restoration, the page exposes a backup download. The old save remains untouched. Analytics consent is excluded and must be chosen separately on the new address. Save contents never appear in a URL and are not uploaded to a server. All existing gameplay storage keys remain unchanged for compatibility.
 
 ## Find your next race
 
@@ -92,7 +98,7 @@ Search the collection by car, manufacturer or style. Accents, spaces and punctua
 | Cedar Ridge | 2.41 km | Find a rhythm through cedar-lined bends, open the throttle on the forest straight, and sweep past timber lodges under the ridgeline. |
 | Neon Freight | 2.26 km | A floodlit freight district with a long loading-yard straight, generous ninety-degree turns and a fast return past container stacks. |
 
-The 34-course collection combines nine original Blacktop Bay circuits, compact adaptations of all 23 venues on the official 2026 calendar checked on 1 October 2026, and Sakhir and Jeddah as original-calendar bonuses. Playable arcade laps are shorter than the real venues, with widened turns and flattened elevation. Suzuka is explicitly unrolled into a non-crossing course; its real overpass is not reproduced.
+The 34-course collection combines nine original Camber Reign circuits, compact adaptations of all 23 venues on the official 2026 calendar checked on 1 October 2026, and Sakhir and Jeddah as original-calendar bonuses. Playable arcade laps are shorter than the real venues, with widened turns and flattened elevation. Suzuka is explicitly unrolled into a non-crossing course; its real overpass is not reproduced.
 
 | Grand Prix venue | Category | Arcade lap | Official venue length |
 | --- | --- | ---: | ---: |
@@ -122,7 +128,7 @@ The 34-course collection combines nine original Blacktop Bay circuits, compact a
 | [Bahrain International](https://www.formula1.com/en/racing/2025/bahrain) | Original-calendar bonus | 2.36 km | 5.412 km |
 | [Jeddah Corniche](https://www.formula1.com/en/racing/2025/saudi-arabia) | Original-calendar bonus | 2.61 km | 6.174 km |
 
-Open the [circuit collection](https://blacktop-bay.web.app/circuits/) from Race HQ’s Circuits navigation or selected circuit name. Search by name or country, or filter by region and calendar category. Choose a route to preview it, then Select circuit to return to Race HQ. Geography and metadata are researched; the game does not reproduce every historical Formula 1 venue or claim a surveyed simulation. See [research and validation](reports/grand-prix-circuit-research.md).
+Open the [circuit collection](https://camber-reign.web.app/circuits/) from Race HQ’s Circuits navigation or selected circuit name. Search by name or country, or filter by region and calendar category. Choose a route to preview it, then Select circuit to return to Race HQ. Geography and metadata are researched; the game does not reproduce every historical Formula 1 venue or claim a surveyed simulation. See [research and validation](reports/grand-prix-circuit-research.md).
 
 Speed ratings describe arcade tuning, not real-world manufacturer specifications or a guarantee of cornering speed.
 
@@ -179,6 +185,8 @@ Local: http://127.0.0.1:4180/. Production output: `dist/`.
 - `src/world.js`, `src/effects.js`, `src/race-feedback.js`: environment, bounded tyre/impact effects and event-based collision, lap and recovery feedback.
 - `src/audio.js`, `src/driving-sound.js`, `src/lobby-music.js`: bounded synthesized driving voices, Nitro layers and the Liquid Lines lobby soundtrack.
 - `src/storage.js`: validated race records with graceful storage failure.
+- `src/domain-migration.js`, `src/domain-migration-ui.js`: explicit old-origin save transfer, exact sender validation, confirmation and backup/rollback.
+- `legacy-host/save-transfer/`: former-origin first-party storage bridge and shared bounded transfer protocol; only this bridge stays on the old Hosting site.
 - `src/race-options.js`, `src/race-career.js`: difficulty, solo/circuit/tour modes, three-lap medal targets and receipt-gated local tour history.
 - `src/opponent-fleet.js`: rotating seven-car manufacturer fields with explicit geometry and download budgets.
 - `src/car-atlas.js`, `src/car-atlas-view.js`, `src/car-routes.js`: searchable car collection, current-versus-preview state and individual garage links.
@@ -201,7 +209,7 @@ Original game code, nine original tracks, branding and racing adaptations: AppsO
 
 The automated suite covers driving, lap guards, rivals, all circuits, nitro, upgrades, payments, storage and analytics privacy. The earlier 36-car/34-circuit update, crash/recovery checks and physical-device limitations are documented in `reports/manufacturer-circuits-controls-release.md`. Earlier expansion checks and review limits are documented in `reports/expansion-release.md`; `reports/release-checks.md` preserves the earlier release evidence. Phone viewport emulation does not establish performance on every physical phone.
 
-Deployment targets only Firebase Hosting site `blacktop-bay` in project `echo-heist`, never other shared-project sites.
+Deployment targets only Firebase Hosting site `camber-reign` in project `echo-heist`, never other shared-project sites.
 
 ## Manufacturer collection and expressive crowd
 

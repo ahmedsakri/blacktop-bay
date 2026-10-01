@@ -52,7 +52,7 @@ test('circuit collection counts reflect the supplied routes in both copy and fil
   for (const tracks of [TRACKS, TRACKS.filter(track => ['suzuka', 'sakhir', 'breakwater', 'cedar-ridge'].includes(track.id))]) {
     const markup = circuitLibraryMarkup(tracks);
     const counts = ['current', 'bonus', 'original'].map(series => findCircuits(tracks, { series }).length);
-    assert.ok(markup.includes(`${counts[0]} current Grand Prix venues, ${counts[1]} bonus venues and ${counts[2]} Blacktop Bay originals`));
+    assert.ok(markup.includes(`${counts[0]} current Grand Prix venues, ${counts[1]} bonus venues and ${counts[2]} Camber Reign originals`));
     for (const [index, series] of ['all', 'current', 'bonus', 'original'].entries()) {
       const count = index === 0 ? tracks.length : counts[index - 1];
       assert.match(markup, new RegExp(`data-circuit-series="${series}"[^>]*>[^<]*<span>${count}</span>`));

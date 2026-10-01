@@ -1,4 +1,4 @@
-# Blacktop Bay
+# Camber Reign
 
 For every interface or visual change, follow [the mandatory UI quality standard](docs/ui-quality-standard.md). The user explicitly requires a consistent futuristic racing interface, illustrated icons, the approved palette, and usable desktop and mobile screens throughout the game.
 

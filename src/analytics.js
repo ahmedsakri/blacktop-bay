@@ -24,7 +24,7 @@ let currentConsent = null,
   loaded = false;
 export function sanitizeGameEvent(name, values = {}) {
   if (!ANALYTICS_EVENTS.includes(name)) return null;
-  const result = { event: name, game_name: "Blacktop Bay" };
+  const result = { event: name, game_name: "Camber Reign" };
   if (TRACKS.some(track => track.id === values.circuit))
     result.circuit = values.circuit;
   if (VEHICLES.some(vehicle => vehicle.id === values.vehicle))
@@ -63,7 +63,7 @@ function command() {
   window.dataLayer.push(arguments);
 }
 function production() {
-  return location.hostname === "blacktop-bay.web.app";
+  return location.hostname === "camber-reign.web.app";
 }
 function loadContainer() {
   if (
@@ -83,8 +83,8 @@ function loadContainer() {
     analytics_consent: "granted",
     page_referrer: referrer,
     page_location: location.origin + location.pathname,
-    page_title: "Blacktop Bay",
-    game_name: "Blacktop Bay",
+    page_title: "Camber Reign",
+    game_name: "Camber Reign",
   });
   window.dataLayer.push({ "gtm.start": Date.now(), event: "gtm.js" });
   const script = document.createElement("script");
