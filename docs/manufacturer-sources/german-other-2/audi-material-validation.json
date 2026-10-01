@@ -1,0 +1,57 @@
+{
+  "verifiedAt": "2026-10-01",
+  "sourceUid": "10ad6b7608474ec8aac778934723c151",
+  "sourceSha256": "5e46c2fe5fd2540ead340ff8e0d540749355d59280d1a5ba7dc418485fe7d5e7",
+  "originalEmbeddedTextures": 0,
+  "correction": "Assigned PBR colors to the archive’s untextured named materials and intact connected wheel components. No livery or texture was invented.",
+  "sourceWheelComponents": {
+    "tyre": 4,
+    "rim": 4,
+    "disc": 4,
+    "hub": 4,
+    "nuts": 20,
+    "caliper": 4,
+    "axle": 4
+  },
+  "checks": [
+    "four nonempty canonical wheels",
+    "dark high-roughness nonmetal tyres",
+    "separate metallic rims",
+    "static calipers and axles",
+    "body paint excludes wheel materials",
+    "no unlit extension",
+    "source and prepared files contain no texture maps",
+    "finite geometry and manifest hashes verified separately"
+  ],
+  "variants": [
+    {
+      "level": "high",
+      "triangles": 129162,
+      "bytes": 994776,
+      "sha256": "38b7335bfd8e09fd565178ed747bc4d2e2e95fd7d4d59674d03da133742eebe5",
+      "sourceTriangles": 129162,
+      "primitives": 32,
+      "wheels": 4,
+      "tyreMaterial": "audi-wheel-tyre",
+      "rimMaterial": "audi-wheel-rim",
+      "staticCalipersAndAxles": true,
+      "paintMaterial": "body-paint-UV_Set_1_Body",
+      "textureCount": 0
+    },
+    {
+      "level": "low",
+      "triangles": 129162,
+      "bytes": 994772,
+      "sha256": "3345d812ef3be7bac5d8ab5fb547e593fb496c8ba21bb8622f27a7760dbb147b",
+      "sourceTriangles": 129162,
+      "primitives": 32,
+      "wheels": 4,
+      "tyreMaterial": "audi-wheel-tyre",
+      "rimMaterial": "audi-wheel-rim",
+      "staticCalipersAndAxles": true,
+      "paintMaterial": "body-paint-UV_Set_1_Body",
+      "textureCount": 0
+    }
+  ],
+  "visualReview": "Pending root runtime render review after integration; automated checks are not visual acceptance."
+}

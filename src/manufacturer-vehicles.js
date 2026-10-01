@@ -35,4 +35,10 @@ export const MANUFACTURER_VEHICLES = Object.freeze([
   car('ferrari-testarossa', 'Ferrari', 'Ferrari Testarossa', 'Classic flat-12 sports car', 'An icon in full stride.', '#c92020', 15.0, 47.5, 1.04, 3.4, .27),
   car('mercedes-amg-gt', 'Mercedes-Benz', 'Mercedes-AMG GT', 'V8 sports car', 'Composure through the corner.', '#189b9e', 15.4, 49, 1.08, 3.5, .27),
   car('nissan-gt-r-2018', 'Nissan', 'Nissan GT-R 2018', 'Twin-turbo sports car', 'Turn traction into momentum.', '#bec2c7', 15.8, 49.5, 1.09, 3.6, .26),
+  car('mclaren-650s-gt3', 'McLaren', 'McLaren 650S GT3', 'GT3 racing car', 'Every apex. Engineered intent.', '#e24522', 15.6, 49.5, 1.15, 3.5, .28),
+  car('bmw-m3-e46', 'BMW', 'BMW M3 E46 Coupé', 'Straight-six sports coupe', 'Balance you can feel. Lines you can own.', '#9dabb4', 15.0, 47, 1.13, 3.3, .29),
+  car('audi-quattro-rally', 'Audi', 'Audi Quattro Rally', 'Classic rally car', 'Find grip. Chase the next turn.', '#e4e3d8', 15.3, 46.5, 1.17, 3.2, .30),
+  car('lamborghini-countach-lp500s', 'Lamborghini', 'Lamborghini Countach LP500S', 'Classic V12 supercar', 'A sharp silhouette. An unmistakable drive.', '#e3c93c', 14.9, 48, 1.04, 3.5, .27),
+  car('ferrari-enzo', 'Ferrari', 'Ferrari Enzo', 'V12 hypercar', 'Purpose in every curve.', '#cc2426', 15.6, 51, 1.10, 3.7, .26),
+  car('porsche-919-hybrid', 'Porsche', 'Porsche 919 Hybrid', '2017 endurance racing prototype', 'Built for the long game.', '#e8e8e5', 16.0, 51.5, 1.16, 3.8, .27, 'hybrid'),
 ]);

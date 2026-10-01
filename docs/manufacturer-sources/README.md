@@ -25,5 +25,7 @@ The isolated output includes `manifest.json` and both GLB variants. Review the a
 - [BMW](bmw/README.md): i8 and F22 Eurofighter.
 - [Mercedes-Benz](mercedes/README.md): AMG GT.
 - [Nissan](nissan/README.md): GT-R 2018.
+- [Second German / McLaren pack](german-other-2/README.md): 650S GT3, M3 E46 Coupé and Quattro Rally. Use `--pack german-other-2` to fetch these sources.
+- [Second Italian / Porsche pack](italian-porsche-2/README.md): Countach LP500S, Enzo and 919 Hybrid. Use `--pack italian-porsche-2` to fetch these sources. The Enzo listing is no longer live; its archived metadata and original embedded attribution are preserved.
 
 Source attribution and transformation notes are also embedded in each shipping GLB and retained in its manifest entry. Vehicle handling figures are game balancing values and are separate from the measured rendering dimensions used here.

@@ -75,3 +75,49 @@ test('the real manual reset produces one message without changing progress or in
   assert.deepEqual(race, snapshot, 'presentation is read-only');
   assert.equal(feedback.read(race, {now: 200}).announcement, '');
 });
+
+test('validated laps give a timed final-lap notice and honest comparisons', () => {
+  const feedback = createRaceFeedback(), race = {...raceFixture(), totalLaps: 3, completedLaps: 0, lapTimes: [], elapsed: 0};
+  feedback.read(race);
+  Object.assign(race, {completedLaps: 1, lapTimes: [65.2], elapsed: 65.2});
+  const first = feedback.read(race);
+  assert.equal(first.title, 'Lap 2 of 3');
+  assert.equal(first.detail, 'Last lap 01:05.20 · Set the pace');
+  assert.equal(first.kind, 'lap'); assert.ok(first.announcement);
+  assert.equal(feedback.read(race).announcement, '');
+  assert.equal(feedback.read(race, {active: false}).kind, 'none');
+  assert.equal(feedback.read(race).kind, 'lap', 'pause preserves remaining race-time duration');
+  race.elapsed += 4.1; assert.equal(feedback.read(race).kind, 'none');
+  Object.assign(race, {completedLaps: 2, lapTimes: [65.2, 62.8], elapsed: 128});
+  const snapshot = structuredClone(race), final = feedback.read(race, {reducedMotion: true});
+  assert.equal(final.title, 'Final lap');
+  assert.equal(final.detail, 'Last lap 01:02.80 · 2.40s faster');
+  assert.equal(final.flash, 0); assert.equal(final.kick, 0);
+  assert.deepEqual(race, snapshot, 'feedback never changes engine or times');
+  race.state = 'finished'; assert.equal(feedback.read(race).kind, 'none');
+});
+
+test('lap comparisons distinguish slower and equal laps, and impacts take priority', () => {
+  for (const [last, expected] of [[67.6, '2.40s off your best'], [65.2, 'Matched your best']]) {
+    const feedback = createRaceFeedback(), race = {...raceFixture(), totalLaps: 3, completedLaps: 2, lapTimes: [65.2, last], elapsed: 65.2 + last};
+    race.impact = {id: 1, kind: 'crash', source: 'barrier', remaining: .5, strength: .5};
+    assert.equal(feedback.read(race).kind, 'crash');
+    race.impact.remaining = 0;
+    const result = feedback.read(race);
+    assert.ok(result.detail.endsWith(expected)); assert.ok(result.announcement);
+    race.raceId = 'new-race'; race.completedLaps = 0; race.lapTimes = []; race.elapsed = 0;
+    assert.equal(feedback.read(race).kind, 'none', 'restart removes a previous lap banner');
+  }
+});
+
+test('invalid or incomplete lap records never produce lap feedback', () => {
+  for (const lapTimes of [[], [NaN], [-5], [Infinity], [20, 30]]) {
+    const feedback = createRaceFeedback();
+    assert.equal(feedback.read({...raceFixture(), totalLaps: 3, completedLaps: 1, lapTimes, elapsed: 40}).kind, 'none');
+  }
+});
+
+test('lap clocks round through minute boundaries without showing sixty seconds', () => {
+  const result = createRaceFeedback().read({...raceFixture(), totalLaps: 3, completedLaps: 1, lapTimes: [59.999], elapsed: 60});
+  assert.match(result.detail, /01:00.00/);
+});

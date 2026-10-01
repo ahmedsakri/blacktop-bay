@@ -248,6 +248,132 @@
         "title": "Nissan GTR 2018"
       },
       "additionalCredits": []
+    },
+    {
+      "pack": "german-other-2",
+      "id": "mclaren-650s-gt3",
+      "uid": "2d0dcf63909f40b0b4546726606414e7",
+      "brand": "McLaren",
+      "model": "650S GT3",
+      "author": "bukhtawer.durrani",
+      "source": "https://sketchfab.com/3d-models/mc-laren-650s-gt3-2d0dcf63909f40b0b4546726606414e7",
+      "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-019/2d0dcf63909f40b0b4546726606414e7.glb",
+      "license": "CC-BY-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "sourceSha256": "4ddd657137df74d7356be13be9dcdaa697d0d7e7c9aa7197f84cd65609ffc03e",
+      "metadata": "german-other-2/2d0dcf63909f40b0b4546726606414e7.json",
+      "sourceAsset": {
+        "author": "bukhtawer.durrani (https://sketchfab.com/bukhtawer.durrani)",
+        "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+        "source": "https://sketchfab.com/3d-models/mc-laren-650s-gt3-2d0dcf63909f40b0b4546726606414e7",
+        "title": "Mc Laren 650S GT3"
+      },
+      "additionalCredits": []
+    },
+    {
+      "pack": "german-other-2",
+      "id": "bmw-m3-e46",
+      "uid": "f1b00ff37d504629b10031da32bc7497",
+      "brand": "BMW",
+      "model": "M3 E46 Coupé",
+      "author": "MMC Works (Márcio Meireles)",
+      "source": "https://sketchfab.com/3d-models/bmw-m3-e46-f1b00ff37d504629b10031da32bc7497",
+      "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-119/f1b00ff37d504629b10031da32bc7497.glb",
+      "license": "CC-BY-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "sourceSha256": "6c4a9cb801f74323a1b8f4d0532da7359765b8e25b9f63e8f04672f1862fb7c0",
+      "metadata": "german-other-2/f1b00ff37d504629b10031da32bc7497.json",
+      "sourceAsset": {
+        "author": "Márcio Meireles (https://sketchfab.com/marciomeireles)",
+        "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+        "source": "https://sketchfab.com/3d-models/bmw-m3-e46-f1b00ff37d504629b10031da32bc7497",
+        "title": "BMW M3 E46"
+      },
+      "additionalCredits": []
+    },
+    {
+      "pack": "german-other-2",
+      "id": "audi-quattro-rally",
+      "uid": "10ad6b7608474ec8aac778934723c151",
+      "brand": "Audi",
+      "model": "Quattro Rally",
+      "author": "Matthew Hirst",
+      "source": "https://sketchfab.com/3d-models/audi-quattro-rally-10ad6b7608474ec8aac778934723c151",
+      "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-154/10ad6b7608474ec8aac778934723c151.glb",
+      "license": "CC-BY-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "sourceSha256": "5e46c2fe5fd2540ead340ff8e0d540749355d59280d1a5ba7dc418485fe7d5e7",
+      "metadata": "german-other-2/10ad6b7608474ec8aac778934723c151.json",
+      "sourceAsset": {
+        "author": "Matthew Hirst (https://sketchfab.com/Mrhirsty98)",
+        "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+        "source": "https://sketchfab.com/3d-models/audi-quattro-rally-10ad6b7608474ec8aac778934723c151",
+        "title": "Audi Quattro Rally"
+      },
+      "additionalCredits": []
+    },
+    {
+      "pack": "italian-porsche-2",
+      "id": "lamborghini-countach-lp500s",
+      "uid": "32e9ee8d129e4c2992e1753b4fc3094c",
+      "brand": "Lamborghini",
+      "model": "Countach LP500S",
+      "author": "SDC PERFORMANCE™️",
+      "source": "https://sketchfab.com/3d-models/lamborghini-countach-lp500s-special-500k-views-32e9ee8d129e4c2992e1753b4fc3094c",
+      "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-055/32e9ee8d129e4c2992e1753b4fc3094c.glb",
+      "license": "CC-BY-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "sourceSha256": "5bec6166b32127f6867a48b04c403788bbb9809d388d3d2283a3ad731737e05a",
+      "metadata": "italian-porsche-2/32e9ee8d129e4c2992e1753b4fc3094c.json",
+      "sourceAsset": {
+        "author": "SDC PERFORMANCE™️ (https://sketchfab.com/3Duae)",
+        "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+        "source": "https://sketchfab.com/3d-models/lamborghini-countach-lp500s-special-500k-views-32e9ee8d129e4c2992e1753b4fc3094c",
+        "title": "Lamborghini Countach lp500s - Special 500k views"
+      },
+      "additionalCredits": []
+    },
+    {
+      "pack": "italian-porsche-2",
+      "id": "ferrari-enzo",
+      "uid": "96c16ea6d7704ad397a8f02bf0250bff",
+      "brand": "Ferrari",
+      "model": "Enzo",
+      "author": "Carlos.Maciel",
+      "source": "https://sketchfab.com/3d-models/96c16ea6d7704ad397a8f02bf0250bff",
+      "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-029/96c16ea6d7704ad397a8f02bf0250bff.glb",
+      "license": "CC-BY-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "sourceSha256": "1f714b68f631e8ecd032406f8a372490bb252399ad80a21fb41c1fbf0007d0ad",
+      "metadata": "italian-porsche-2/96c16ea6d7704ad397a8f02bf0250bff.json",
+      "sourceAsset": {
+        "author": "Carlos.Maciel (https://sketchfab.com/Carlos.Maciel)",
+        "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+        "source": "https://sketchfab.com/3d-models/ferrari-enzo-96c16ea6d7704ad397a8f02bf0250bff",
+        "title": "Ferrari Enzo"
+      },
+      "additionalCredits": []
+    },
+    {
+      "pack": "italian-porsche-2",
+      "id": "porsche-919-hybrid",
+      "uid": "b4ca76b4b83e4d84b1e1a994e79140f3",
+      "brand": "Porsche",
+      "model": "919 Hybrid · 2017",
+      "author": "mudkipz321",
+      "source": "https://sketchfab.com/3d-models/porsche-919-hybrid-2017-b4ca76b4b83e4d84b1e1a994e79140f3",
+      "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-061/b4ca76b4b83e4d84b1e1a994e79140f3.glb",
+      "license": "CC-BY-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "sourceSha256": "990c5dd15ca15a8bd5ceac14094ef962171f9ad3f052430938be75035cb6fb24",
+      "metadata": "italian-porsche-2/b4ca76b4b83e4d84b1e1a994e79140f3.json",
+      "sourceAsset": {
+        "author": "mudkipz321 (https://sketchfab.com/mudkipz321)",
+        "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+        "source": "https://sketchfab.com/3d-models/porsche-919-hybrid-2017-b4ca76b4b83e4d84b1e1a994e79140f3",
+        "title": "Porsche 919 Hybrid 2017"
+      },
+      "additionalCredits": []
     }
   ]
 }

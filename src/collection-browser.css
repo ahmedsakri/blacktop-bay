@@ -194,3 +194,29 @@ body:not(.in-race) .icon-button{width:44px;height:44px;min-width:44px;min-height
  .garage-workshop{grid-column:2;grid-row:2;margin:0;align-self:end}
  .garage-workshop .button{font-size:8px}
 }
+
+/* Keep the collection's decisions readable on narrow cards. */
+.library-summary-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+#clear-car-filters{min-width:44px;min-height:44px;padding:8px 12px;border:1px solid #ffffff55;border-radius:4px;background:#021439;color:#fff;font:700 11px Manrope,sans-serif;cursor:pointer}
+#clear-car-filters:disabled{opacity:.5;cursor:default}
+.library-ratings{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 8px;font-size:10px;letter-spacing:0}
+.library-ratings>span{min-width:0}
+.library-ratings>span>span{display:block;margin-bottom:4px;color:#dfe3ec;font:600 10px/1.35 Manrope,sans-serif}
+.library-ratings b{font-size:24px;padding-right:2px}
+.library-ratings small{font:600 9px/1.3 Manrope,sans-serif;white-space:nowrap}
+.library-comparison{display:grid;gap:6px;font:600 10px/1.4 Manrope,sans-serif;color:#dfe3ec}
+.library-comparison>strong{font-size:9px;letter-spacing:.6px;color:#fff;padding-bottom:2px}
+.library-comparison>span{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.library-comparison b{font-weight:700;color:#fff}
+@media(max-width:700px){
+ .library-summary-actions{width:100%;justify-content:space-between;gap:4px 10px}
+ .library-ratings{gap:10px 6px}.library-ratings b{font-size:22px}
+ .library-ratings>span>span{font-size:9px}.library-ratings small{font-size:9px}
+ .library-comparison{font-size:10px}.library-comparison>span{gap:2px 7px}
+}
+@media(max-width:360px) and (orientation:portrait){
+ .car-library-grid{grid-template-columns:minmax(0,1fr)}
+ .library-inspect img{height:110px}.library-card-head{font-size:8px}
+ .dialog .library-inspect p{font-size:10px;min-height:0}
+ .library-ratings>span>span{font-size:10px}.library-inspect-label{font-size:9px}
+}

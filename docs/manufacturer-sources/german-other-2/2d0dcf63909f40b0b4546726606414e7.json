@@ -1,0 +1,203 @@
+{
+  "animationCount": 0,
+  "categories": [
+    {
+      "uid": "22a2f677efad4d7bbca5ad45f9b5868e",
+      "name": "Cars & Vehicles",
+      "slug": "cars-vehicles",
+      "uri": "https://api.sketchfab.com/v3/categories/22a2f677efad4d7bbca5ad45f9b5868e",
+      "icon": "https://static.sketchfab.com/static/builds/web/dist/static/assets/images/icons/categories/45dd0cc0860ac57fcd63bde1cc3f2b7c-v2.svg",
+      "thumbnails": [
+        {
+          "width": "512",
+          "height": "288",
+          "url": "https://static.sketchfab.com/categories/22a2f677efad4d7bbca5ad45f9b5868e/512x288.png"
+        },
+        {
+          "width": "800",
+          "height": "450",
+          "url": "https://static.sketchfab.com/categories/22a2f677efad4d7bbca5ad45f9b5868e/800x450.png"
+        }
+      ]
+    }
+  ],
+  "commentCount": 0,
+  "createdAt": "2022-03-14T18:05:32.497046",
+  "embedUrl": "https://sketchfab.com/models/2d0dcf63909f40b0b4546726606414e7/embed",
+  "faceCount": 1254338,
+  "isAgeRestricted": false,
+  "license": {
+    "uri": "https://api.sketchfab.com/v3/licenses/322a749bcfa841b29dff1e8a1bb74b0b",
+    "label": "CC Attribution",
+    "fullName": "Creative Commons Attribution",
+    "requirements": "Author must be credited. Commercial use is allowed.",
+    "url": "http://creativecommons.org/licenses/by/4.0/",
+    "slug": "by"
+  },
+  "likeCount": 15,
+  "name": "Mc Laren 650S GT3",
+  "publishedAt": "2022-03-14T18:08:25.477754",
+  "soundCount": 0,
+  "staffpickedAt": null,
+  "tags": [
+    {
+      "name": "cars",
+      "slug": "cars",
+      "uri": "https://api.sketchfab.com/v3/tags/cars"
+    },
+    {
+      "name": "new",
+      "slug": "new",
+      "uri": "https://api.sketchfab.com/v3/tags/new"
+    },
+    {
+      "name": "sports",
+      "slug": "sports",
+      "uri": "https://api.sketchfab.com/v3/tags/sports"
+    },
+    {
+      "name": "blender3dmodel",
+      "slug": "blender3dmodel",
+      "uri": "https://api.sketchfab.com/v3/tags/blender3dmodel"
+    },
+    {
+      "name": "rigging-animation-3d",
+      "slug": "rigging-animation-3d",
+      "uri": "https://api.sketchfab.com/v3/tags/rigging-animation-3d"
+    },
+    {
+      "name": "blender",
+      "slug": "blender",
+      "uri": "https://api.sketchfab.com/v3/tags/blender"
+    },
+    {
+      "name": "3dmodel",
+      "slug": "3dmodel",
+      "uri": "https://api.sketchfab.com/v3/tags/3dmodel"
+    },
+    {
+      "name": "fullyrigged",
+      "slug": "fullyrigged",
+      "uri": "https://api.sketchfab.com/v3/tags/fullyrigged"
+    },
+    {
+      "name": "2022car",
+      "slug": "2022car",
+      "uri": "https://api.sketchfab.com/v3/tags/2022car"
+    }
+  ],
+  "thumbnails": {
+    "images": [
+      {
+        "uid": "684d24e1fc204338aba2bf6f33c71d88",
+        "width": 1920,
+        "height": 1080,
+        "size": 160113,
+        "url": "https://media.sketchfab.com/models/2d0dcf63909f40b0b4546726606414e7/thumbnails/29f077d60ce34f62b3e7388da7f2edb4/cc65bacafb894a7e8c0a7c4130416b34.jpeg"
+      },
+      {
+        "uid": "6a3d0cf515284948a799b0131769ad72",
+        "width": 1024,
+        "height": 576,
+        "size": 52899,
+        "url": "https://media.sketchfab.com/models/2d0dcf63909f40b0b4546726606414e7/thumbnails/29f077d60ce34f62b3e7388da7f2edb4/21fc5729afe24ddf9e7baf828bd428e9.jpeg"
+      },
+      {
+        "uid": "8eaa10fe29f24e3b802ddf5d77a95b97",
+        "width": 720,
+        "height": 405,
+        "size": 30543,
+        "url": "https://media.sketchfab.com/models/2d0dcf63909f40b0b4546726606414e7/thumbnails/29f077d60ce34f62b3e7388da7f2edb4/ff1254da00c645ed907e14dce1d7964e.jpeg"
+      },
+      {
+        "uid": "5d1315b8b1714b55adbb6c1dd32e66df",
+        "width": 256,
+        "height": 144,
+        "size": 6447,
+        "url": "https://media.sketchfab.com/models/2d0dcf63909f40b0b4546726606414e7/thumbnails/29f077d60ce34f62b3e7388da7f2edb4/601dcae11c0945e3b790c4774bd22d22.jpeg"
+      },
+      {
+        "uid": "8ec1ed23988f4f56b85bdc8999b46a44",
+        "width": 64,
+        "height": 36,
+        "size": 1291,
+        "url": "https://media.sketchfab.com/models/2d0dcf63909f40b0b4546726606414e7/thumbnails/29f077d60ce34f62b3e7388da7f2edb4/14a14038fe4343699d856d7473484131.jpeg"
+      }
+    ]
+  },
+  "uid": "2d0dcf63909f40b0b4546726606414e7",
+  "uri": "https://api.sketchfab.com/v3/models/2d0dcf63909f40b0b4546726606414e7",
+  "user": {
+    "uid": "2a25457b1a0540308aadf9187c15a3be",
+    "username": "bukhtawer.durrani",
+    "displayName": "bukhtawer.durrani",
+    "account": "basic",
+    "profileUrl": "https://sketchfab.com/bukhtawer.durrani",
+    "avatar": {
+      "uid": "9b1439648f8f4cf097d44fd599c60a58",
+      "uri": "https://api.sketchfab.com/v3/avatars/9b1439648f8f4cf097d44fd599c60a58",
+      "images": [
+        {
+          "width": 32,
+          "height": 32,
+          "size": 1133,
+          "url": "https://media.sketchfab.com/avatars/9b1439648f8f4cf097d44fd599c60a58/192b11b1c91540938809a6eb003e3c19.jpeg"
+        },
+        {
+          "width": 48,
+          "height": 48,
+          "size": 1657,
+          "url": "https://media.sketchfab.com/avatars/9b1439648f8f4cf097d44fd599c60a58/a77f9548a14c4f6f93f7b8dad54b278e.jpeg"
+        },
+        {
+          "width": 90,
+          "height": 90,
+          "size": 3712,
+          "url": "https://media.sketchfab.com/avatars/9b1439648f8f4cf097d44fd599c60a58/64f7ee3f5d794203bee08c89701b5a45.jpeg"
+        },
+        {
+          "width": 100,
+          "height": 100,
+          "size": 4286,
+          "url": "https://media.sketchfab.com/avatars/9b1439648f8f4cf097d44fd599c60a58/e129d50e39fc4a219d44087fbe30ef66.jpeg"
+        }
+      ]
+    },
+    "uri": "https://api.sketchfab.com/v3/users/2a25457b1a0540308aadf9187c15a3be"
+  },
+  "vertexCount": 640235,
+  "viewCount": 835,
+  "viewerUrl": "https://sketchfab.com/3d-models/mc-laren-650s-gt3-2d0dcf63909f40b0b4546726606414e7",
+  "isDownloadable": true,
+  "isProtected": false,
+  "description": "",
+  "price": null,
+  "downloadCount": 190,
+  "editorUrl": "https://sketchfab.com/models/2d0dcf63909f40b0b4546726606414e7/edit",
+  "status": {
+    "warning": {},
+    "processing": "SUCCEEDED"
+  },
+  "source": "website",
+  "hasCommentsDisabled": false,
+  "updatedAt": "2024-02-02T13:50:35.699067",
+  "pbrType": null,
+  "textureCount": 2,
+  "materialCount": 18,
+  "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-019/2d0dcf63909f40b0b4546726606414e7.glb",
+  "sourceSha256": "4ddd657137df74d7356be13be9dcdaa697d0d7e7c9aa7197f84cd65609ffc03e",
+  "sourceBytes": 46886076,
+  "sourceAsset": {
+    "extras": {
+      "author": "bukhtawer.durrani (https://sketchfab.com/bukhtawer.durrani)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/mc-laren-650s-gt3-2d0dcf63909f40b0b4546726606414e7",
+      "title": "Mc Laren 650S GT3"
+    },
+    "generator": "Sketchfab-12.70.0",
+    "version": "2.0"
+  },
+  "verifiedAt": "2026-10-01",
+  "verifiedMetadataUrl": "https://api.sketchfab.com/v3/models/2d0dcf63909f40b0b4546726606414e7",
+  "licenseVerification": "Current Sketchfab API reports CC Attribution / by / 4.0. Original archived GLB embeds matching CC-BY-4.0 source attribution."
+}

@@ -1,0 +1,32 @@
+[
+  {
+    "uid": "2d0dcf63909f40b0b4546726606414e7",
+    "name": "Mc Laren 650S GT3",
+    "metadataFile": "2d0dcf63909f40b0b4546726606414e7.json",
+    "source": "https://sketchfab.com/3d-models/mc-laren-650s-gt3-2d0dcf63909f40b0b4546726606414e7",
+    "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-019/2d0dcf63909f40b0b4546726606414e7.glb",
+    "sourceSha256": "4ddd657137df74d7356be13be9dcdaa697d0d7e7c9aa7197f84cd65609ffc03e",
+    "license": "CC-BY-4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/"
+  },
+  {
+    "uid": "f1b00ff37d504629b10031da32bc7497",
+    "name": "BMW M3 E46",
+    "metadataFile": "f1b00ff37d504629b10031da32bc7497.json",
+    "source": "https://sketchfab.com/3d-models/bmw-m3-e46-f1b00ff37d504629b10031da32bc7497",
+    "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-119/f1b00ff37d504629b10031da32bc7497.glb",
+    "sourceSha256": "6c4a9cb801f74323a1b8f4d0532da7359765b8e25b9f63e8f04672f1862fb7c0",
+    "license": "CC-BY-4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/"
+  },
+  {
+    "uid": "10ad6b7608474ec8aac778934723c151",
+    "name": "Audi Quattro Rally",
+    "metadataFile": "10ad6b7608474ec8aac778934723c151.json",
+    "source": "https://sketchfab.com/3d-models/audi-quattro-rally-10ad6b7608474ec8aac778934723c151",
+    "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-154/10ad6b7608474ec8aac778934723c151.glb",
+    "sourceSha256": "5e46c2fe5fd2540ead340ff8e0d540749355d59280d1a5ba7dc418485fe7d5e7",
+    "license": "CC-BY-4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/"
+  }
+]

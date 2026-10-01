@@ -2298,5 +2298,581 @@
     ],
     "low": "/assets/cars/manufacturers/nissan-gt-r-2018-low.glb",
     "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-111/e595ef868dd94f77b83c332f9d5c6f5d.glb"
+  },
+  "mclaren-650s-gt3": {
+    "id": "mclaren-650s-gt3",
+    "brand": "McLaren",
+    "model": "650S GT3",
+    "uid": "2d0dcf63909f40b0b4546726606414e7",
+    "length": 4.65,
+    "author": "bukhtawer.durrani",
+    "source": "https://sketchfab.com/3d-models/mc-laren-650s-gt3-2d0dcf63909f40b0b4546726606414e7",
+    "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-019/2d0dcf63909f40b0b4546726606414e7.glb",
+    "license": "CC-BY-4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "sourceSha256": "4ddd657137df74d7356be13be9dcdaa697d0d7e7c9aa7197f84cd65609ffc03e",
+    "sourceAsset": {
+      "author": "bukhtawer.durrani (https://sketchfab.com/bukhtawer.durrani)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/mc-laren-650s-gt3-2d0dcf63909f40b0b4546726606414e7",
+      "title": "Mc Laren 650S GT3"
+    },
+    "additionalCredits": [],
+    "paintMaterialNames": [
+      "body-paint-carpaint"
+    ],
+    "paintable": true,
+    "brakeLightMaterialNames": [
+      "redglass"
+    ],
+    "wheelNames": [
+      "wheel_front_left",
+      "wheel_front_right",
+      "wheel_rear_left",
+      "wheel_rear_right"
+    ],
+    "factoryPaintPreservesTexture": true,
+    "changes": "Removed staging/people where present. Baked world transforms, normalized scale and +Z forward/+Y up coordinates. Preserved authored normals/UVs; separated whole wheel components into articulated pivots. Conservatively simplified secondary geometry with normals/UV weights, merged compatible material batches without changing vertex data, corrected named material roles where archived viewport shading was unsuitable for PBR, resized embedded textures and Meshopt-compressed for delivery. Retained the four individually authored wheel assemblies and source livery; corrected archived glass, paint, tire, metal and interior material roles for the game renderer.",
+    "variants": {
+      "high": {
+        "triangles": 358389,
+        "bytes": 3736200,
+        "sha256": "34baa3e325c31cfcf6c58f494d47a51c2550c929a840e33a5fd4c5af23ca576c",
+        "sourceTriangles": 1254338,
+        "primitives": 38
+      },
+      "low": {
+        "triangles": 133697,
+        "bytes": 1591988,
+        "sha256": "5974038476d9880ee01f8de69e291aef0872187fd5313c23d489c358c2adae80",
+        "sourceTriangles": 1254338,
+        "primitives": 38
+      }
+    },
+    "high": "/assets/cars/manufacturers/mclaren-650s-gt3-high.glb",
+    "wheelRadius": {
+      "wheel_front_left": 0.34304738650098443,
+      "wheel_front_right": 0.34305554354796186,
+      "wheel_rear_left": 0.34304730568146624,
+      "wheel_rear_right": 0.3430992364883423
+    },
+    "wheelPositions": {
+      "wheel_front_left": [
+        0.868217259645462,
+        0.34304738650098443,
+        1.1434261202812195
+      ],
+      "wheel_front_right": [
+        -0.8682173788547516,
+        0.34305554354796186,
+        1.1434261798858643
+      ],
+      "wheel_rear_left": [
+        0.8384864926338196,
+        0.34304730568146624,
+        -1.5355809926986694
+      ],
+      "wheel_rear_right": [
+        -0.8384865522384644,
+        0.3430992364883423,
+        -1.535580813884735
+      ]
+    },
+    "width": 2.0928336051548047,
+    "height": 1.141366262597289,
+    "removedNodes": [],
+    "low": "/assets/cars/manufacturers/mclaren-650s-gt3-low.glb"
+  },
+  "bmw-m3-e46": {
+    "id": "bmw-m3-e46",
+    "brand": "BMW",
+    "model": "M3 E46 Coupé",
+    "uid": "f1b00ff37d504629b10031da32bc7497",
+    "length": 4.492,
+    "author": "MMC Works (Márcio Meireles)",
+    "source": "https://sketchfab.com/3d-models/bmw-m3-e46-f1b00ff37d504629b10031da32bc7497",
+    "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-119/f1b00ff37d504629b10031da32bc7497.glb",
+    "license": "CC-BY-4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "sourceSha256": "6c4a9cb801f74323a1b8f4d0532da7359765b8e25b9f63e8f04672f1862fb7c0",
+    "sourceAsset": {
+      "author": "Márcio Meireles (https://sketchfab.com/marciomeireles)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/bmw-m3-e46-f1b00ff37d504629b10031da32bc7497",
+      "title": "BMW M3 E46"
+    },
+    "additionalCredits": [],
+    "paintMaterialNames": [
+      "body-paint-Car_Paint_-_All_Colors"
+    ],
+    "paintable": true,
+    "brakeLightMaterialNames": [
+      "Glass_-_Red_-_Bump"
+    ],
+    "wheelNames": [
+      "wheel_front_left",
+      "wheel_front_right",
+      "wheel_rear_left",
+      "wheel_rear_right"
+    ],
+    "factoryPaintPreservesTexture": true,
+    "changes": "Removed staging/people where present. Baked world transforms, normalized scale and +Z forward/+Y up coordinates. Preserved authored normals/UVs; separated whole wheel components into articulated pivots. Conservatively simplified secondary geometry with normals/UV weights, merged compatible material batches without changing vertex data, corrected named material roles where archived viewport shading was unsuitable for PBR, resized embedded textures and Meshopt-compressed for delivery. Preserved the author’s M3 E46 coupe identity and surfaces. Neutralized the source’s 20-degree front wheel steering before animation; isolated paint from calipers, trim and glass.",
+    "variants": {
+      "high": {
+        "triangles": 396528,
+        "bytes": 3196188,
+        "sha256": "bb0f9c1345a03ebe801eccf59caa6148a050494f51e93c5ea23e298fad3c519d",
+        "sourceTriangles": 846922,
+        "primitives": 48
+      },
+      "low": {
+        "triangles": 154061,
+        "bytes": 1421372,
+        "sha256": "d5c702fea7a07eb24000f5c582cc88a292cc548f8865b58e0e785cafaf2446b7",
+        "sourceTriangles": 846922,
+        "primitives": 48
+      }
+    },
+    "high": "/assets/cars/manufacturers/bmw-m3-e46-high.glb",
+    "wheelRadius": {
+      "wheel_front_left": 0.32026068345294334,
+      "wheel_front_right": 0.32026069739367813,
+      "wheel_rear_left": 0.3202607035636902,
+      "wheel_rear_right": 0.3202607035636902
+    },
+    "wheelPositions": {
+      "wheel_front_left": [
+        0.7297892272472382,
+        0.32026068345294334,
+        1.4544501304626465
+      ],
+      "wheel_front_right": [
+        -0.7226328700780869,
+        0.32026069739367813,
+        1.4832287430763245
+      ],
+      "wheel_rear_left": [
+        0.7341070771217346,
+        0.3202607035636902,
+        -1.2489660680294037
+      ],
+      "wheel_rear_right": [
+        -0.7443194687366486,
+        0.3202607035636902,
+        -1.2489658892154694
+      ]
+    },
+    "width": 1.9074723344768885,
+    "height": 1.368754821327899,
+    "removedNodes": [],
+    "low": "/assets/cars/manufacturers/bmw-m3-e46-low.glb"
+  },
+  "audi-quattro-rally": {
+    "id": "audi-quattro-rally",
+    "brand": "Audi",
+    "model": "Quattro Rally",
+    "uid": "10ad6b7608474ec8aac778934723c151",
+    "length": 4.404,
+    "author": "Matthew Hirst",
+    "source": "https://sketchfab.com/3d-models/audi-quattro-rally-10ad6b7608474ec8aac778934723c151",
+    "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-154/10ad6b7608474ec8aac778934723c151.glb",
+    "license": "CC-BY-4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "sourceSha256": "5e46c2fe5fd2540ead340ff8e0d540749355d59280d1a5ba7dc418485fe7d5e7",
+    "sourceAsset": {
+      "author": "Matthew Hirst (https://sketchfab.com/Mrhirsty98)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/audi-quattro-rally-10ad6b7608474ec8aac778934723c151",
+      "title": "Audi Quattro Rally"
+    },
+    "additionalCredits": [],
+    "paintMaterialNames": [
+      "body-paint-UV_Set_1_Body"
+    ],
+    "paintable": true,
+    "brakeLightMaterialNames": [
+      "Brake_Light"
+    ],
+    "wheelNames": [
+      "wheel_front_left",
+      "wheel_front_right",
+      "wheel_rear_left",
+      "wheel_rear_right"
+    ],
+    "factoryPaintPreservesTexture": true,
+    "changes": "Removed staging/people where present. Baked world transforms, normalized scale and +Z forward/+Y up coordinates. Preserved authored normals/UVs; separated whole wheel components into articulated pivots. Conservatively simplified secondary geometry with normals/UV weights, merged compatible material batches without changing vertex data, corrected named material roles where archived viewport shading was unsuitable for PBR, resized embedded textures and Meshopt-compressed for delivery. The archived original contains no embedded textures or livery maps. Retained the complete rally body, auxiliary lights and cabin; assigned material colors to named trim, lamps, rubber and metal. Separated each complete tyre, rim, disc, hub and wheel-nut component for articulation, keeping calipers and axles static. Both detail levels retain the complete source geometry because it is already within the mobile budget.",
+    "variants": {
+      "high": {
+        "triangles": 129162,
+        "bytes": 994776,
+        "sha256": "38b7335bfd8e09fd565178ed747bc4d2e2e95fd7d4d59674d03da133742eebe5",
+        "sourceTriangles": 129162,
+        "primitives": 32
+      },
+      "low": {
+        "triangles": 129162,
+        "bytes": 994772,
+        "sha256": "3345d812ef3be7bac5d8ab5fb547e593fb496c8ba21bb8622f27a7760dbb147b",
+        "sourceTriangles": 129162,
+        "primitives": 32
+      }
+    },
+    "high": "/assets/cars/manufacturers/audi-quattro-rally-high.glb",
+    "wheelRadius": {
+      "wheel_front_left": 0.31141261823358946,
+      "wheel_front_right": 0.31141261823358946,
+      "wheel_rear_left": 0.3118968235390511,
+      "wheel_rear_right": 0.3118968605995178
+    },
+    "wheelPositions": {
+      "wheel_front_left": [
+        0.7042399644851685,
+        0.31141261823358946,
+        1.2217987179756165
+      ],
+      "wheel_front_right": [
+        -0.7042400240898132,
+        0.31141261823358946,
+        1.2217987179756165
+      ],
+      "wheel_rear_left": [
+        0.7342815101146698,
+        0.3118968235390511,
+        -1.2726637423038483
+      ],
+      "wheel_rear_right": [
+        -0.7342813909053802,
+        0.3118968605995178,
+        -1.2726637423038483
+      ]
+    },
+    "width": 1.8016344364920587,
+    "height": 1.3263554742080352,
+    "removedNodes": [],
+    "low": "/assets/cars/manufacturers/audi-quattro-rally-low.glb"
+  },
+  "lamborghini-countach-lp500s": {
+    "id": "lamborghini-countach-lp500s",
+    "brand": "Lamborghini",
+    "model": "Countach LP500S",
+    "uid": "32e9ee8d129e4c2992e1753b4fc3094c",
+    "length": 4.14,
+    "author": "SDC PERFORMANCE™️",
+    "source": "https://sketchfab.com/3d-models/lamborghini-countach-lp500s-special-500k-views-32e9ee8d129e4c2992e1753b4fc3094c",
+    "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-055/32e9ee8d129e4c2992e1753b4fc3094c.glb",
+    "license": "CC-BY-4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "sourceSha256": "5bec6166b32127f6867a48b04c403788bbb9809d388d3d2283a3ad731737e05a",
+    "sourceAsset": {
+      "author": "SDC PERFORMANCE™️ (https://sketchfab.com/3Duae)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/lamborghini-countach-lp500s-special-500k-views-32e9ee8d129e4c2992e1753b4fc3094c",
+      "title": "Lamborghini Countach lp500s - Special 500k views"
+    },
+    "additionalCredits": [],
+    "paintMaterialNames": [
+      "body-paint-CARO"
+    ],
+    "paintable": true,
+    "brakeLightMaterialNames": [
+      "Material.001",
+      "Material.004"
+    ],
+    "wheelNames": [
+      "wheel_front_left",
+      "wheel_front_right",
+      "wheel_rear_left",
+      "wheel_rear_right"
+    ],
+    "factoryPaintPreservesTexture": true,
+    "changes": "Removed staging/people where present. Baked world transforms, normalized scale and +Z forward/+Y up coordinates. Preserved authored normals/UVs; separated whole wheel components into articulated pivots. Conservatively simplified secondary geometry with normals/UV weights, merged compatible material batches without changing vertex data, corrected named material roles where archived viewport shading was unsuitable for PBR, resized embedded textures and Meshopt-compressed for delivery. Source credits the rim contribution to Lexyc16 (https://sketchfab.com/Lexyc16). Preserved the authored complete model and rim geometry, isolated four wheels, restored paint/rubber/alloy/glass roles, and aligned tyre contact.",
+    "variants": {
+      "high": {
+        "triangles": 208002,
+        "bytes": 1546804,
+        "sha256": "3bde545d03a4aa9477be2ff4f5fd059f34177fd872bd1e9fec6f8d2f35a90b39",
+        "sourceTriangles": 208002,
+        "primitives": 33
+      },
+      "low": {
+        "triangles": 176940,
+        "bytes": 1415292,
+        "sha256": "eaf00b78d4d6f5881bbe7c35050750736c7cc906c0826080a3c4838cbe743f9e",
+        "sourceTriangles": 208002,
+        "primitives": 33
+      }
+    },
+    "high": "/assets/cars/manufacturers/lamborghini-countach-lp500s-high.glb",
+    "wheelRadius": {
+      "wheel_front_left": 0.3011026382446289,
+      "wheel_front_right": 0.3011026382446289,
+      "wheel_rear_left": 0.30674877762794495,
+      "wheel_rear_right": 0.30674877762794495
+    },
+    "wheelPositions": {
+      "wheel_front_left": [
+        0.7853198945522308,
+        0.3011026382446289,
+        1.1633769273757935
+      ],
+      "wheel_front_right": [
+        -0.7853198945522308,
+        0.3011026382446289,
+        1.1633769273757935
+      ],
+      "wheel_rear_left": [
+        0.7865804433822632,
+        0.30674877762794495,
+        -1.2954574525356293
+      ],
+      "wheel_rear_right": [
+        -0.7865804433822632,
+        0.30674877762794495,
+        -1.2954574525356293
+      ]
+    },
+    "width": 1.9585095711303564,
+    "height": 1.0724137374496967,
+    "removedNodes": [],
+    "low": "/assets/cars/manufacturers/lamborghini-countach-lp500s-low.glb"
+  },
+  "ferrari-enzo": {
+    "id": "ferrari-enzo",
+    "brand": "Ferrari",
+    "model": "Enzo",
+    "uid": "96c16ea6d7704ad397a8f02bf0250bff",
+    "length": 4.702,
+    "author": "Carlos.Maciel",
+    "source": "https://sketchfab.com/3d-models/96c16ea6d7704ad397a8f02bf0250bff",
+    "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-029/96c16ea6d7704ad397a8f02bf0250bff.glb",
+    "license": "CC-BY-4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "sourceSha256": "1f714b68f631e8ecd032406f8a372490bb252399ad80a21fb41c1fbf0007d0ad",
+    "sourceAsset": {
+      "author": "Carlos.Maciel (https://sketchfab.com/Carlos.Maciel)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/ferrari-enzo-96c16ea6d7704ad397a8f02bf0250bff",
+      "title": "Ferrari Enzo"
+    },
+    "additionalCredits": [],
+    "paintMaterialNames": [
+      "body-paint-Carpaint_Flakes_Wine_Red"
+    ],
+    "paintable": true,
+    "brakeLightMaterialNames": [
+      "rearlamp",
+      "rearlamp-s"
+    ],
+    "wheelNames": [
+      "wheel_front_left",
+      "wheel_front_right",
+      "wheel_rear_left",
+      "wheel_rear_right"
+    ],
+    "factoryPaintPreservesTexture": true,
+    "changes": "Removed staging/people where present. Baked world transforms, normalized scale and +Z forward/+Y up coordinates. Preserved authored normals/UVs; separated whole wheel components into articulated pivots. Conservatively simplified secondary geometry with normals/UV weights, merged compatible material batches without changing vertex data, corrected named material roles where archived viewport shading was unsuitable for PBR, resized embedded textures and Meshopt-compressed for delivery. Archived creator/license metadata agrees with original embedded CC BY 4.0 attribution; current Sketchfab listing returns 404. Restored paint and glass PBR roles, preserved original maps and separate static brake calipers, articulated all authored wheel assemblies and aligned tyre contact.",
+    "variants": {
+      "high": {
+        "triangles": 420469,
+        "bytes": 2700536,
+        "sha256": "8f735e3a79f938d2610f676059173cff403ba7442a8f17294d7699ada0185721",
+        "sourceTriangles": 472398,
+        "primitives": 46
+      },
+      "low": {
+        "triangles": 154563,
+        "bytes": 1158220,
+        "sha256": "8151697100ec7da8cb93ed5623a5665c26f12d3c74eaec540f919209c9075d9e",
+        "sourceTriangles": 472398,
+        "primitives": 46
+      }
+    },
+    "high": "/assets/cars/manufacturers/ferrari-enzo-high.glb",
+    "wheelRadius": {
+      "wheel_front_left": 0.36514008045196533,
+      "wheel_front_right": 0.3651400136898033,
+      "wheel_rear_left": 0.36514002116139466,
+      "wheel_rear_right": 0.36514002116139466
+    },
+    "wheelPositions": {
+      "wheel_front_left": [
+        0.8208620250225067,
+        0.36514008045196533,
+        1.0922390520572662
+      ],
+      "wheel_front_right": [
+        -0.8153493404388428,
+        0.3651400136898033,
+        1.0922392904758453
+      ],
+      "wheel_rear_left": [
+        0.8068899810314178,
+        0.36514002116139466,
+        -1.5363497138023376
+      ],
+      "wheel_rear_right": [
+        -0.8142182528972626,
+        0.36514002116139466,
+        -1.5363495349884033
+      ]
+    },
+    "width": 2.184537026194414,
+    "height": 1.1510829598230425,
+    "removedNodes": [],
+    "low": "/assets/cars/manufacturers/ferrari-enzo-low.glb"
+  },
+  "porsche-919-hybrid": {
+    "id": "porsche-919-hybrid",
+    "brand": "Porsche",
+    "model": "919 Hybrid · 2017",
+    "uid": "b4ca76b4b83e4d84b1e1a994e79140f3",
+    "length": 4.65,
+    "author": "mudkipz321",
+    "source": "https://sketchfab.com/3d-models/porsche-919-hybrid-2017-b4ca76b4b83e4d84b1e1a994e79140f3",
+    "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-061/b4ca76b4b83e4d84b1e1a994e79140f3.glb",
+    "license": "CC-BY-4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "sourceSha256": "990c5dd15ca15a8bd5ceac14094ef962171f9ad3f052430938be75035cb6fb24",
+    "sourceAsset": {
+      "author": "mudkipz321 (https://sketchfab.com/mudkipz321)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/porsche-919-hybrid-2017-b4ca76b4b83e4d84b1e1a994e79140f3",
+      "title": "Porsche 919 Hybrid 2017"
+    },
+    "additionalCredits": [],
+    "paintMaterialNames": [
+      "body-paint-Rear",
+      "body-paint-Cockpit_IMPROVED",
+      "body-paint-Glossy_Top",
+      "body-paint-Front",
+      "body-paint-White_2",
+      "body-paint-Body",
+      "body-paint-Glossy_White"
+    ],
+    "paintable": true,
+    "brakeLightMaterialNames": [
+      "Rear_Lights"
+    ],
+    "wheelNames": [
+      "wheel_front_left",
+      "wheel_front_right",
+      "wheel_rear_left",
+      "wheel_rear_right"
+    ],
+    "factoryPaintPreservesTexture": true,
+    "changes": "Removed staging/people where present. Baked world transforms, normalized scale and +Z forward/+Y up coordinates. Preserved authored normals/UVs; separated whole wheel components into articulated pivots. Conservatively simplified secondary geometry with normals/UV weights, merged compatible material batches without changing vertex data, corrected named material roles where archived viewport shading was unsuitable for PBR, resized embedded textures and Meshopt-compressed for delivery. Removed the authored studio sweep and zero-opacity decal planes that the author had already disabled. Preserved original visible maps and body surfaces, reduced dense subdivision, articulated whole source wheels while keeping calipers static, and corrected glass/rubber/alloy material roles.",
+    "variants": {
+      "high": {
+        "triangles": 383415,
+        "bytes": 4063212,
+        "sha256": "0ababa4210a2340d3a932e48f76258842de90532dfa9087b39cd6de313dbf000",
+        "sourceTriangles": 3871736,
+        "primitives": 44
+      },
+      "low": {
+        "triangles": 152340,
+        "bytes": 1695236,
+        "sha256": "8ec16b6086a53e282b536e78f6e3c9d24101f88428b3bd6081679c1ed89ec580",
+        "sourceTriangles": 3871736,
+        "primitives": 44
+      }
+    },
+    "high": "/assets/cars/manufacturers/porsche-919-hybrid-high.glb",
+    "wheelRadius": {
+      "wheel_front_left": 0.3485741614167637,
+      "wheel_front_right": 0.3485741902841255,
+      "wheel_rear_left": 0.3485742211341858,
+      "wheel_rear_right": 0.3485742185694012
+    },
+    "wheelPositions": {
+      "wheel_front_left": [
+        0.746461421251297,
+        0.3485741614167637,
+        1.3666751980781555
+      ],
+      "wheel_front_right": [
+        -0.7464612722396851,
+        0.3485741902841255,
+        1.3666751980781555
+      ],
+      "wheel_rear_left": [
+        0.7609219253063202,
+        0.3485742211341858,
+        -1.5887653827667236
+      ],
+      "wheel_rear_right": [
+        -0.7609217464923859,
+        0.3485742185694012,
+        -1.5887653827667236
+      ]
+    },
+    "width": 1.9275583698179732,
+    "height": 1.4305240745164984,
+    "removedNodes": [
+      "Object_6",
+      "Object_8",
+      "Object_10",
+      "Object_12",
+      "Object_14",
+      "Object_16",
+      "Object_18",
+      "Object_20",
+      "Object_53",
+      "Object_55",
+      "Object_57",
+      "Object_59",
+      "Object_61",
+      "Object_63",
+      "Object_65",
+      "Object_67",
+      "Object_69",
+      "Object_71",
+      "Object_73",
+      "Object_88",
+      "Object_90",
+      "Object_96",
+      "Object_98",
+      "Object_100",
+      "Object_102",
+      "Object_106",
+      "Object_131",
+      "Object_133",
+      "Object_135",
+      "Object_137",
+      "Object_139",
+      "Object_156",
+      "Object_158",
+      "Object_160",
+      "Object_162",
+      "Object_164",
+      "Object_166",
+      "Object_168",
+      "Object_170",
+      "Object_172",
+      "Object_174",
+      "Object_176",
+      "Object_178",
+      "Object_182",
+      "Object_184",
+      "Object_186",
+      "Object_188",
+      "Object_190",
+      "Object_192",
+      "Object_194",
+      "Object_198",
+      "Object_200",
+      "Object_202",
+      "Object_204",
+      "Object_206",
+      "Object_208",
+      "Object_227",
+      "Object_229",
+      "Object_237",
+      "Object_239",
+      "Object_259",
+      "Object_261",
+      "Object_265"
+    ],
+    "low": "/assets/cars/manufacturers/porsche-919-hybrid-low.glb"
   }
 }

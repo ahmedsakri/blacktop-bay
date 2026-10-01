@@ -6,6 +6,17 @@ import { VEHICLES } from '../src/vehicles.js';
 import { LEGACY_VEHICLES } from '../src/legacy-vehicles.js';
 const memory = () => { const data = new Map(); return {getItem:k=>data.get(k),setItem:(k,v)=>data.set(k,v)}; };
 const [first, second] = VEHICLES.map(car => car.id);
+// Fixed release IDs keep migration fixtures independent of catalogue order.
+const released16Ids = ['mclaren-570s', 'mclaren-senna', 'mclaren-p1-gtr', 'ferrari-458-italia',
+  'lamborghini-aventador', 'koenigsegg-one-1', 'pagani-zonda-c12', 'bugatti-veyron',
+  'maserati-mc-stradale', 'lotus-elise', 'audi-r8', 'rimac-concept-one',
+  'porsche-930-turbo', 'gma-t50', 'aston-martin-one-77', 'rimac-nevera'];
+const released27Ids = [...released16Ids, 'porsche-911-gt3', 'lamborghini-gallardo',
+  'lamborghini-huracan', 'bmw-i8', 'bmw-f22-eurofighter', 'audi-r8-lms-gt3', 'audi-r18',
+  'ferrari-250-gto', 'ferrari-testarossa', 'mercedes-amg-gt', 'nissan-gt-r-2018'];
+const currentSixIds = ['mclaren-650s-gt3', 'bmw-m3-e46', 'audi-quattro-rally',
+  'lamborghini-countach-lp500s', 'ferrari-enzo', 'porsche-919-hybrid'];
+
 
 test('all available cars begin with their own factory colour and safe gloss finish', () => {
   const state = loadPaint(memory()); assert.equal(Object.keys(state).length, VEHICLES.length);
@@ -27,35 +38,34 @@ test('existing manufacturer and retired paint survives current-car paint changes
   assert.deepEqual(JSON.parse(storage.getItem(PAINT_KEY)), reloaded);
 });
 
-test('released 16-car paint survives expansion and each of the 11 new finishes saves independently', () => {
-  const releasedIds = ['mclaren-570s', 'mclaren-senna', 'mclaren-p1-gtr', 'ferrari-458-italia',
-    'lamborghini-aventador', 'koenigsegg-one-1', 'pagani-zonda-c12', 'bugatti-veyron',
-    'maserati-mc-stradale', 'lotus-elise', 'audi-r8', 'rimac-concept-one',
-    'porsche-930-turbo', 'gma-t50', 'aston-martin-one-77', 'rimac-nevera'];
-  const additions = VEHICLES.map(car => car.id).filter(id => !releasedIds.includes(id));
-  assert.equal(additions.length, 11);
-  const previous = Object.fromEntries(releasedIds.map((id, i) => [id,
-    {color: i % 2 ? 'teal' : 'gold', finish: i % 2 ? 'metallic' : 'satin'},
-  ]));
-  const storage = memory(), saved = JSON.stringify(previous);
-  storage.setItem(PAINT_KEY, saved);
-  const state = loadPaint(storage), factory = {color:'factory',finish:'gloss'};
-  assert.equal(Object.keys(state).length, 27);
-  for (const id of releasedIds) assert.deepEqual(state[id], previous[id]);
-  for (const id of additions) assert.deepEqual(state[id], factory);
-  assert.equal(new Set(Object.values(state)).size, 27, 'every finish is a separate record');
-  assert.equal(storage.getItem(PAINT_KEY), saved, 'loading leaves the released save intact');
+for (const releasedIds of [released16Ids, released27Ids]) {
+  test(`released ${releasedIds.length}-car paint survives expansion and every new finish saves independently`, () => {
+    const additions = VEHICLES.map(car => car.id).filter(id => !releasedIds.includes(id));
+    assert.equal(additions.length, VEHICLES.length - releasedIds.length);
+    if (releasedIds === released27Ids) assert.deepEqual(new Set(additions), new Set(currentSixIds));
+    const previous = Object.fromEntries(releasedIds.map((id, i) => [id,
+      {color: i % 2 ? 'teal' : 'gold', finish: i % 2 ? 'metallic' : 'satin'},
+    ]));
+    const storage = memory(), saved = JSON.stringify(previous);
+    storage.setItem(PAINT_KEY, saved);
+    const state = loadPaint(storage), factory = {color:'factory',finish:'gloss'};
+    assert.equal(Object.keys(state).length, VEHICLES.length);
+    for (const id of releasedIds) assert.deepEqual(state[id], previous[id]);
+    for (const id of additions) assert.deepEqual(state[id], factory);
+    assert.equal(new Set(Object.values(state)).size, VEHICLES.length, 'every finish is a separate record');
+    assert.equal(storage.getItem(PAINT_KEY), saved, 'loading leaves the released save intact');
 
-  const choices = [{color:'blue',finish:'metallic'}, {color:'violet',finish:'satin'}, {color:'pearl',finish:'gloss'}];
-  const expected = {...previous, ...Object.fromEntries(additions.map(id => [id, {...factory}]))};
-  for (const [i, id] of additions.entries()) {
-    const choice = choices[i % choices.length];
-    assert.deepEqual(savePaint(state, id, choice, storage), {ok:true,persisted:true});
-    expected[id] = {...choice};
-    assert.deepEqual(loadPaint(storage), expected, `${id} reloads without changing another old or new finish`);
-  }
-  assert.deepEqual(JSON.parse(storage.getItem(PAINT_KEY)), expected);
-});
+    const choices = [{color:'blue',finish:'metallic'}, {color:'violet',finish:'satin'}, {color:'pearl',finish:'gloss'}];
+    const expected = {...previous, ...Object.fromEntries(additions.map(id => [id, {...factory}]))};
+    for (const [i, id] of additions.entries()) {
+      const choice = choices[i % choices.length];
+      assert.deepEqual(savePaint(state, id, choice, storage), {ok:true,persisted:true});
+      expected[id] = {...choice};
+      assert.deepEqual(loadPaint(storage), expected, `${id} reloads without changing another old or new finish`);
+    }
+    assert.deepEqual(JSON.parse(storage.getItem(PAINT_KEY)), expected);
+  });
+}
 
 test('legacy-only paint saves initialize independent manufacturer finishes and preserve stored legacy choices', () => {
   const storage = memory();

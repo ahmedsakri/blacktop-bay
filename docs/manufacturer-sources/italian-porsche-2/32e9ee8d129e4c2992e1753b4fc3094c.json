@@ -1,0 +1,345 @@
+{
+  "uid": "32e9ee8d129e4c2992e1753b4fc3094c",
+  "metadata": {
+    "animationCount": 0,
+    "categories": [
+      {
+        "uid": "22a2f677efad4d7bbca5ad45f9b5868e",
+        "name": "Cars & Vehicles",
+        "slug": "cars-vehicles",
+        "uri": "https://api.sketchfab.com/v3/categories/22a2f677efad4d7bbca5ad45f9b5868e",
+        "icon": "https://static.sketchfab.com/static/builds/web/dist/static/assets/images/icons/categories/45dd0cc0860ac57fcd63bde1cc3f2b7c-v2.svg",
+        "thumbnails": [
+          {
+            "width": "512",
+            "height": "288",
+            "url": "https://static.sketchfab.com/categories/22a2f677efad4d7bbca5ad45f9b5868e/512x288.png"
+          },
+          {
+            "width": "800",
+            "height": "450",
+            "url": "https://static.sketchfab.com/categories/22a2f677efad4d7bbca5ad45f9b5868e/800x450.png"
+          }
+        ]
+      },
+      {
+        "uid": "86f23935367b4a1f9647c8a20e03d716",
+        "name": "Cultural Heritage & History",
+        "slug": "cultural-heritage-history",
+        "uri": "https://api.sketchfab.com/v3/categories/86f23935367b4a1f9647c8a20e03d716",
+        "icon": "https://static.sketchfab.com/static/builds/web/dist/static/assets/images/icons/categories/bb22d75450272105e64c47756c323f1f-v2.svg",
+        "thumbnails": [
+          {
+            "width": "512",
+            "height": "288",
+            "url": "https://static.sketchfab.com/categories/86f23935367b4a1f9647c8a20e03d716/512x288.png"
+          },
+          {
+            "width": "800",
+            "height": "450",
+            "url": "https://static.sketchfab.com/categories/86f23935367b4a1f9647c8a20e03d716/800x450.png"
+          }
+        ]
+      }
+    ],
+    "commentCount": 20,
+    "createdAt": "2022-05-29T08:29:34.532006",
+    "embedUrl": "https://sketchfab.com/models/32e9ee8d129e4c2992e1753b4fc3094c/embed",
+    "faceCount": 208816,
+    "isAgeRestricted": false,
+    "license": {
+      "uri": "https://api.sketchfab.com/v3/licenses/322a749bcfa841b29dff1e8a1bb74b0b",
+      "label": "CC Attribution",
+      "fullName": "Creative Commons Attribution",
+      "requirements": "Author must be credited. Commercial use is allowed.",
+      "url": "http://creativecommons.org/licenses/by/4.0/",
+      "slug": "by"
+    },
+    "likeCount": 273,
+    "name": "Lamborghini Countach lp500s - Special 500k views",
+    "publishedAt": "2022-05-29T09:04:09.269166",
+    "soundCount": 0,
+    "staffpickedAt": null,
+    "tags": [
+      {
+        "name": "wheels",
+        "slug": "wheels",
+        "uri": "https://api.sketchfab.com/v3/tags/wheels"
+      },
+      {
+        "name": "gaming",
+        "slug": "gaming",
+        "uri": "https://api.sketchfab.com/v3/tags/gaming"
+      },
+      {
+        "name": "high",
+        "slug": "high",
+        "uri": "https://api.sketchfab.com/v3/tags/high"
+      },
+      {
+        "name": "countach",
+        "slug": "countach",
+        "uri": "https://api.sketchfab.com/v3/tags/countach"
+      },
+      {
+        "name": "lamborghini",
+        "slug": "lamborghini",
+        "uri": "https://api.sketchfab.com/v3/tags/lamborghini"
+      },
+      {
+        "name": "aventador",
+        "slug": "aventador",
+        "uri": "https://api.sketchfab.com/v3/tags/aventador"
+      },
+      {
+        "name": "vintage",
+        "slug": "vintage",
+        "uri": "https://api.sketchfab.com/v3/tags/vintage"
+      },
+      {
+        "name": "detail",
+        "slug": "detail",
+        "uri": "https://api.sketchfab.com/v3/tags/detail"
+      },
+      {
+        "name": "new",
+        "slug": "new",
+        "uri": "https://api.sketchfab.com/v3/tags/new"
+      },
+      {
+        "name": "classic",
+        "slug": "classic",
+        "uri": "https://api.sketchfab.com/v3/tags/classic"
+      },
+      {
+        "name": "detailed",
+        "slug": "detailed",
+        "uri": "https://api.sketchfab.com/v3/tags/detailed"
+      },
+      {
+        "name": "fast",
+        "slug": "fast",
+        "uri": "https://api.sketchfab.com/v3/tags/fast"
+      },
+      {
+        "name": "supercar",
+        "slug": "supercar",
+        "uri": "https://api.sketchfab.com/v3/tags/supercar"
+      },
+      {
+        "name": "italian",
+        "slug": "italian",
+        "uri": "https://api.sketchfab.com/v3/tags/italian"
+      },
+      {
+        "name": "rims",
+        "slug": "rims",
+        "uri": "https://api.sketchfab.com/v3/tags/rims"
+      },
+      {
+        "name": "tuning",
+        "slug": "tuning",
+        "uri": "https://api.sketchfab.com/v3/tags/tuning"
+      },
+      {
+        "name": "lambo",
+        "slug": "lambo",
+        "uri": "https://api.sketchfab.com/v3/tags/lambo"
+      },
+      {
+        "name": "hypercar",
+        "slug": "hypercar",
+        "uri": "https://api.sketchfab.com/v3/tags/hypercar"
+      },
+      {
+        "name": "huracan",
+        "slug": "huracan",
+        "uri": "https://api.sketchfab.com/v3/tags/huracan"
+      },
+      {
+        "name": "pop-up",
+        "slug": "pop-up",
+        "uri": "https://api.sketchfab.com/v3/tags/pop-up"
+      },
+      {
+        "name": "sdc",
+        "slug": "sdc",
+        "uri": "https://api.sketchfab.com/v3/tags/sdc"
+      },
+      {
+        "name": "render",
+        "slug": "render",
+        "uri": "https://api.sketchfab.com/v3/tags/render"
+      },
+      {
+        "name": "game",
+        "slug": "game",
+        "uri": "https://api.sketchfab.com/v3/tags/game"
+      },
+      {
+        "name": "blender",
+        "slug": "blender",
+        "uri": "https://api.sketchfab.com/v3/tags/blender"
+      },
+      {
+        "name": "vehicle",
+        "slug": "vehicle",
+        "uri": "https://api.sketchfab.com/v3/tags/vehicle"
+      },
+      {
+        "name": "low",
+        "slug": "low",
+        "uri": "https://api.sketchfab.com/v3/tags/low"
+      },
+      {
+        "name": "poly",
+        "slug": "poly",
+        "uri": "https://api.sketchfab.com/v3/tags/poly"
+      },
+      {
+        "name": "design",
+        "slug": "design",
+        "uri": "https://api.sketchfab.com/v3/tags/design"
+      },
+      {
+        "name": "racing",
+        "slug": "racing",
+        "uri": "https://api.sketchfab.com/v3/tags/racing"
+      },
+      {
+        "name": "car",
+        "slug": "car",
+        "uri": "https://api.sketchfab.com/v3/tags/car"
+      },
+      {
+        "name": "free",
+        "slug": "free",
+        "uri": "https://api.sketchfab.com/v3/tags/free"
+      },
+      {
+        "name": "concept",
+        "slug": "concept",
+        "uri": "https://api.sketchfab.com/v3/tags/concept"
+      },
+      {
+        "name": "race",
+        "slug": "race",
+        "uri": "https://api.sketchfab.com/v3/tags/race"
+      },
+      {
+        "name": "2022",
+        "slug": "2022",
+        "uri": "https://api.sketchfab.com/v3/tags/2022"
+      }
+    ],
+    "thumbnails": {
+      "images": [
+        {
+          "uid": "1c0e9e8046c44d3dbb1de83a4a24d80d",
+          "width": 1920,
+          "height": 1080,
+          "size": 404549,
+          "url": "https://media.sketchfab.com/models/32e9ee8d129e4c2992e1753b4fc3094c/thumbnails/7e69e8001af24b63a6f6d2e5d7d3c92c/a28c073c8cc14f349489df7f095ff4f8.jpeg"
+        },
+        {
+          "uid": "cf7ab6abe63541bf969be79b87abf1bc",
+          "width": 1024,
+          "height": 576,
+          "size": 67355,
+          "url": "https://media.sketchfab.com/models/32e9ee8d129e4c2992e1753b4fc3094c/thumbnails/7e69e8001af24b63a6f6d2e5d7d3c92c/84b182169e3b4de38d2930ec20079e27.jpeg"
+        },
+        {
+          "uid": "597bb050b8914f339c19c5da6912d64d",
+          "width": 720,
+          "height": 405,
+          "size": 33769,
+          "url": "https://media.sketchfab.com/models/32e9ee8d129e4c2992e1753b4fc3094c/thumbnails/7e69e8001af24b63a6f6d2e5d7d3c92c/bfbce3fe909f425c87109fdb2a768a1c.jpeg"
+        },
+        {
+          "uid": "684c464020af481ca28107e3350609dc",
+          "width": 256,
+          "height": 144,
+          "size": 6032,
+          "url": "https://media.sketchfab.com/models/32e9ee8d129e4c2992e1753b4fc3094c/thumbnails/7e69e8001af24b63a6f6d2e5d7d3c92c/54b259f835d14ab99e9fa0abe58d19b2.jpeg"
+        },
+        {
+          "uid": "722423ad3d7a454aa621eeb2ef90fc5f",
+          "width": 64,
+          "height": 36,
+          "size": 1295,
+          "url": "https://media.sketchfab.com/models/32e9ee8d129e4c2992e1753b4fc3094c/thumbnails/7e69e8001af24b63a6f6d2e5d7d3c92c/3fbbc4f67e9d4a72a22676177daca9bc.jpeg"
+        }
+      ]
+    },
+    "uid": "32e9ee8d129e4c2992e1753b4fc3094c",
+    "uri": "https://api.sketchfab.com/v3/models/32e9ee8d129e4c2992e1753b4fc3094c",
+    "user": {
+      "uid": "0eac470f764b42dca8e90f95d9a1d5e0",
+      "username": "Lambo_SC04",
+      "displayName": "SDC PERFORMANCE™️",
+      "account": "basic",
+      "profileUrl": "https://sketchfab.com/Lambo_SC04",
+      "avatar": {
+        "uid": "b1ea2f74ae18478793b561f11d30fe9d",
+        "uri": "https://api.sketchfab.com/v3/avatars/b1ea2f74ae18478793b561f11d30fe9d",
+        "images": [
+          {
+            "width": 32,
+            "height": 32,
+            "size": 970,
+            "url": "https://media.sketchfab.com/avatars/b1ea2f74ae18478793b561f11d30fe9d/752f2c4f6ebc49f4bc4c461b0d56ee8f.png"
+          },
+          {
+            "width": 48,
+            "height": 48,
+            "size": 1431,
+            "url": "https://media.sketchfab.com/avatars/b1ea2f74ae18478793b561f11d30fe9d/8dc15fd51e784ecf921fb282d544426d.png"
+          },
+          {
+            "width": 90,
+            "height": 90,
+            "size": 2532,
+            "url": "https://media.sketchfab.com/avatars/b1ea2f74ae18478793b561f11d30fe9d/dc6011f09ee641eab3be2a285252a1ec.png"
+          },
+          {
+            "width": 100,
+            "height": 100,
+            "size": 2801,
+            "url": "https://media.sketchfab.com/avatars/b1ea2f74ae18478793b561f11d30fe9d/79536a6667dd47f68dee71f0874cc72e.png"
+          }
+        ]
+      },
+      "uri": "https://api.sketchfab.com/v3/users/0eac470f764b42dca8e90f95d9a1d5e0"
+    },
+    "vertexCount": 114357,
+    "viewCount": 14408,
+    "viewerUrl": "https://sketchfab.com/3d-models/lamborghini-countach-lp500s-special-500k-views-32e9ee8d129e4c2992e1753b4fc3094c",
+    "isDownloadable": true,
+    "isProtected": false,
+    "description": "**Lamborghini Countach**\n\nThe Lamborghini Countach was made as a reaction to the Lamborghini \nJarama, which engineer Paolo Stanzani considered a mistake because it was too wise for Lamborghini. Paolo Stanzani then asked Marcello Gandini to design the most extravagant car possible1.\n\nThe Lamborghini Countach is, along with the Ferrari 512 Berlinetta Boxer, the most important model on the sports car market of the 1970s.\n\nAt the Geneva International Motor Show in March 1971, Lamborghini presented a concept study named \"LP500\". A mass production of the vehicle was not sensitive, but the study is popular, so much so that Lamborghini decides to produce and market a model resembling it. However, many details are changed. The 5-liter V12 engine of the LP500 prototype became in 1974, with the LP400, a 4-liter that was not to become famous. The name “LP” stands for “Longitudinale Posteriore” in reference to the position of the engine\n\nBlender 3.0 - By SDC - Rims realised by Lexyc16",
+    "price": null,
+    "downloadCount": 3375,
+    "editorUrl": "https://sketchfab.com/models/32e9ee8d129e4c2992e1753b4fc3094c/edit",
+    "status": {
+      "warning": {},
+      "processing": "SUCCEEDED"
+    },
+    "source": "website",
+    "hasCommentsDisabled": false,
+    "updatedAt": "2023-07-25T05:41:08.865035",
+    "pbrType": null,
+    "textureCount": 0,
+    "materialCount": 19
+  },
+  "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-055/32e9ee8d129e4c2992e1753b4fc3094c.glb",
+  "sourceSha256": "5bec6166b32127f6867a48b04c403788bbb9809d388d3d2283a3ad731737e05a",
+  "evidence": "Current API and original GLB attribution",
+  "embeddedAttribution": {
+    "author": "SDC PERFORMANCE™️ (https://sketchfab.com/3Duae)",
+    "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "source": "https://sketchfab.com/3d-models/lamborghini-countach-lp500s-special-500k-views-32e9ee8d129e4c2992e1753b4fc3094c",
+    "title": "Lamborghini Countach lp500s - Special 500k views"
+  },
+  "reviewedAt": "2026-10-01",
+  "liveStatus": 200
+}

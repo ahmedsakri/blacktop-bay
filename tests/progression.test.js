@@ -8,6 +8,17 @@ import {
 } from '../src/progression.js';
 
 const [first, second, third] = VEHICLES.map(car => car.id);
+// Fixed release IDs keep migration fixtures independent of catalogue order.
+const released16Ids = ['mclaren-570s', 'mclaren-senna', 'mclaren-p1-gtr', 'ferrari-458-italia',
+  'lamborghini-aventador', 'koenigsegg-one-1', 'pagani-zonda-c12', 'bugatti-veyron',
+  'maserati-mc-stradale', 'lotus-elise', 'audi-r8', 'rimac-concept-one',
+  'porsche-930-turbo', 'gma-t50', 'aston-martin-one-77', 'rimac-nevera'];
+const released27Ids = [...released16Ids, 'porsche-911-gt3', 'lamborghini-gallardo',
+  'lamborghini-huracan', 'bmw-i8', 'bmw-f22-eurofighter', 'audi-r8-lms-gt3', 'audi-r18',
+  'ferrari-250-gto', 'ferrari-testarossa', 'mercedes-amg-gt', 'nissan-gt-r-2018'];
+const currentSixIds = ['mclaren-650s-gt3', 'bmw-m3-e46', 'audi-quattro-rally',
+  'lamborghini-countach-lp500s', 'ferrari-enzo', 'porsche-919-hybrid'];
+
 const zero = () => ({ engine: 0, tyres: 0, nitro: 0, handling: 0 });
 const memoryStorage = () => {
   const data = new Map();
@@ -22,7 +33,6 @@ test('a new garage starts with 1200 credits and only independent manufacturer ca
   assert.equal(state.credits, 1200);
   assert.equal(state.version, 1);
   assert.deepEqual(state.awardedRaces, []);
-  assert.equal(VEHICLES.length, 27);
   assert.deepEqual(Object.keys(state.cars), VEHICLES.map(car => car.id));
   assert.deepEqual(state.cars[first], zero());
   state.cars[first].engine = 2;
@@ -68,44 +78,50 @@ test('all manufacturer upgrades survive the catalogue change and race reward per
   assert.equal(reloaded.awardedRaces[0], 'previous-paid-race');
 });
 
-test('released 16-car saves keep earned progress while all 11 additions can upgrade and reload independently', () => {
-  // Fixed release IDs keep this migration fixture independent of catalogue order.
-  const releasedIds = ['mclaren-570s', 'mclaren-senna', 'mclaren-p1-gtr', 'ferrari-458-italia',
-    'lamborghini-aventador', 'koenigsegg-one-1', 'pagani-zonda-c12', 'bugatti-veyron',
-    'maserati-mc-stradale', 'lotus-elise', 'audi-r8', 'rimac-concept-one',
-    'porsche-930-turbo', 'gma-t50', 'aston-martin-one-77', 'rimac-nevera'];
-  const additions = VEHICLES.map(car => car.id).filter(id => !releasedIds.includes(id));
-  assert.equal(additions.length, 11);
-  const cars = Object.fromEntries(releasedIds.map((id, i) => [id, {
-    engine: i % 6, tyres: (i + 1) % 6, nitro: (i + 2) % 6, handling: (i + 3) % 6,
-  }]));
-  const receipts = ['released16-first-finish', 'released16-second-finish'];
-  const store = memoryStorage(), saved = JSON.stringify({version: 1, credits: 8750, cars, awardedRaces: receipts});
-  store.setItem(PROGRESSION_KEY, saved);
-  const state = loadProgression(store);
-  assert.equal(state.credits, 8750);
-  assert.deepEqual(state.awardedRaces, receipts);
-  assert.equal(Object.keys(state.cars).length, 27);
-  for (const id of releasedIds) assert.deepEqual(state.cars[id], cars[id]);
-  for (const id of additions) assert.deepEqual(state.cars[id], zero());
-  assert.equal(new Set(Object.values(state.cars)).size, 27, 'every old and new build has its own levels');
-  assert.equal(store.getItem(PROGRESSION_KEY), saved, 'loading the expansion does not rewrite a valid old save');
+for (const releasedIds of [released16Ids, released27Ids]) {
+  test(`released ${releasedIds.length}-car saves preserve wallet, builds and receipts while additions upgrade independently`, () => {
+    const additions = VEHICLES.map(car => car.id).filter(id => !releasedIds.includes(id));
+    assert.equal(additions.length, VEHICLES.length - releasedIds.length);
+    if (releasedIds === released27Ids) assert.deepEqual(new Set(additions), new Set(currentSixIds));
+    const cars = Object.fromEntries(releasedIds.map((id, i) => [id, {
+      engine: i % 6, tyres: (i + 1) % 6, nitro: (i + 2) % 6, handling: (i + 3) % 6,
+    }]));
+    const receipts = [`released${releasedIds.length}-first-finish`, `released${releasedIds.length}-second-finish`];
+    const initialCredits = 8750;
+    const store = memoryStorage(), saved = JSON.stringify({version: 1, credits: initialCredits, cars, awardedRaces: receipts});
+    store.setItem(PROGRESSION_KEY, saved);
+    const state = loadProgression(store);
+    assert.equal(state.credits, initialCredits);
+    assert.deepEqual(state.awardedRaces, receipts);
+    assert.equal(Object.keys(state.cars).length, VEHICLES.length);
+    for (const id of releasedIds) assert.deepEqual(state.cars[id], cars[id]);
+    for (const id of additions) assert.deepEqual(state.cars[id], zero());
+    assert.equal(new Set(Object.values(state.cars)).size, VEHICLES.length, 'every old and new build has its own levels');
+    assert.equal(store.getItem(PROGRESSION_KEY), saved, 'loading the expansion does not rewrite a valid old save');
+    assert.equal(awardRaceCredits(state, result({raceId: receipts[0]}), store).awarded, false,
+      'an old receipt still prevents awarding the same finish twice');
+    assert.equal(state.credits, initialCredits);
 
-  for (const [i, id] of additions.entries()) {
-    const component = UPGRADE_COMPONENTS[i % UPGRADE_COMPONENTS.length];
-    const purchase = buyUpgrade(state, id, component, store);
-    assert.equal(purchase.ok, true, `${id} accepts its first upgrade`);
-    assert.equal(purchase.persisted, true);
+    const expectedCars = {...cars, ...Object.fromEntries(additions.map(id => [id, zero()]))};
+    for (const [i, id] of additions.entries()) {
+      const component = UPGRADE_COMPONENTS[i % UPGRADE_COMPONENTS.length];
+      const purchase = buyUpgrade(state, id, component, store);
+      assert.equal(purchase.ok, true, `${id} accepts its first upgrade`);
+      assert.equal(purchase.persisted, true);
+      assert.equal(purchase.cost, UPGRADE_COSTS[0]);
+      expectedCars[id] = {...zero(), [component]: 1};
+      const reload = loadProgression(store);
+      assert.deepEqual(reload.cars, expectedCars, `${id} persists without changing any other old or new build`);
+      assert.equal(reload.credits, initialCredits - (i + 1) * UPGRADE_COSTS[0]);
+      assert.deepEqual(reload.awardedRaces, receipts);
+    }
     const reload = loadProgression(store);
-    assert.deepEqual(reload.cars[id], {...zero(), [component]: 1});
-    for (const untouched of additions.slice(i + 1)) assert.deepEqual(reload.cars[untouched], zero());
-    for (const old of releasedIds) assert.deepEqual(reload.cars[old], cars[old]);
-  }
-  const reload = loadProgression(store);
-  assert.equal(reload.credits, 6550, 'eleven first-tier upgrades spend exactly 2200 existing credits');
-  assert.deepEqual(reload.awardedRaces, receipts);
-  assert.deepEqual(reload, state);
-});
+    assert.equal(reload.credits, initialCredits - additions.length * UPGRADE_COSTS[0],
+      'each new first-tier upgrade spends its actual listed cost from the existing wallet');
+    assert.deepEqual(reload.awardedRaces, receipts);
+    assert.deepEqual(reload, state);
+  });
+}
 
 test('retired and unknown car records cannot be upgraded or spend wallet credits', () => {
   const store = memoryStorage();

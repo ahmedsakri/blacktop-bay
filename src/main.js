@@ -10,7 +10,7 @@ import "./button-system.css";
 import "./brand-theme.css";
 import "./steering-controls.css";
 import "./race-feedback.css";
-import { NEW_CARS, loadFavorites, saveFavorites, findCars, carLibraryMarkup, carLibraryCard, circuitLibraryMarkup, circuitLibraryCards, findCircuits } from "./collection-browser.js";
+import { NEW_CARS, loadFavorites, saveFavorites, findCars, hasCarFilters, clearCarFilters, carLibraryMarkup, carLibraryCard, circuitLibraryMarkup, circuitLibraryCards, findCircuits } from "./collection-browser.js";
 import { pausePanel, howToPlayPanel, finishPanel, finishRowsMarkup, finishStatusText } from "./race-dialogs.js";
 import { icon } from './icons.js';
 import { garageStatsMarkup, circuitMapMarkup } from "./collection-ui.js";
@@ -684,6 +684,7 @@ function openCarLibrary() {
     $('library-count').textContent = `${cars.length} / ${VEHICLES.length} cars${view.compare ? ` · compared with ${getVehicle(preferences.vehicle).name}` : ''}`;
     $('car-library-grid').innerHTML = cars.map(car => carLibraryCard(car,{selected:preferences.vehicle,favorites:favoriteCars,progression,compare:view.compare})).join('');
     $('library-empty').hidden = cars.length !== 0;
+    $('clear-car-filters').disabled = !hasCarFilters(view);
     for(const button of document.querySelectorAll('[data-library-car]')) button.onclick = async () => {
       closeDialog(); await chooseVehicle(button.dataset.libraryCar);
       for(const filter of document.querySelectorAll('[data-family]')) filter.setAttribute('aria-pressed',String(filter.dataset.family === 'all'));
@@ -712,12 +713,14 @@ function openCarLibrary() {
     for(const other of document.querySelectorAll('[data-library-family]')) other.setAttribute('aria-pressed',String(other === button));
     refresh();
   };
-  $('reset-car-search').onclick = () => {
-    Object.assign(view,{query:'',family:'all',brand:'all',favoritesOnly:false}); $('car-search').value = ''; $('car-brand').value = 'all';
+  const resetFilters = () => {
+    Object.assign(view, clearCarFilters(view)); $('car-search').value = ''; $('car-brand').value = 'all';
     $('favorites-only').setAttribute('aria-pressed','false');
     for(const button of document.querySelectorAll('[data-library-family]')) button.setAttribute('aria-pressed',String(button.dataset.libraryFamily === 'all'));
-    refresh(); $('car-search').focus();
+    refresh(); $('car-search').focus({preventScroll:true});
   };
+  $('reset-car-search').onclick = resetFilters;
+  $('clear-car-filters').onclick = resetFilters;
   refresh();
 }
 function start() {
@@ -1512,7 +1515,6 @@ function tick(now) {
       nextFrame += 0.1;
     }
     if (race.completedLaps > lastLap && race.state !== "finished") {
-      toast(`Lap ${race.completedLaps} · ${format(race.lastLap)}`);
       event("lap_complete", {
         lap: race.completedLaps,
         duration_seconds: Math.round(race.lastLap),
@@ -1550,7 +1552,7 @@ function tick(now) {
   statusElement.hidden = status.kind === 'none';
   if (statusElement.dataset.kind !== status.kind) {
     statusElement.dataset.kind = status.kind;
-    const symbol = status.kind === 'crash' ? 'steering' : status.kind === 'recovered' ? 'check' : 'restart';
+    const symbol = status.kind === 'lap' ? 'flag' : status.kind === 'crash' ? 'steering' : status.kind === 'recovered' ? 'check' : 'restart';
     $('race-feedback-icon').setAttribute('href', `/assets/ui/race-icons.svg#${symbol}`);
   }
   if ($('race-feedback-title').textContent !== status.title) $('race-feedback-title').textContent = status.title;

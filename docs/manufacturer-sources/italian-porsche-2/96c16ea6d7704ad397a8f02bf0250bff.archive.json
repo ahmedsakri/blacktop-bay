@@ -1,0 +1,169 @@
+{
+  "uri": "https://api.sketchfab.com/v3/models/96c16ea6d7704ad397a8f02bf0250bff",
+  "uid": "96c16ea6d7704ad397a8f02bf0250bff",
+  "name": "Ferrari Enzo",
+  "staffpickedAt": null,
+  "viewCount": 881,
+  "likeCount": 14,
+  "animationCount": 1,
+  "viewerUrl": "https://sketchfab.com/3d-models/96c16ea6d7704ad397a8f02bf0250bff",
+  "embedUrl": "https://sketchfab.com/models/96c16ea6d7704ad397a8f02bf0250bff/embed",
+  "commentCount": 0,
+  "isDownloadable": true,
+  "publishedAt": "2022-02-17T11:35:28.103417",
+  "tags": [
+    {
+      "name": "ferrari",
+      "slug": "ferrari",
+      "uri": "https://api.sketchfab.com/v3/tags/ferrari"
+    },
+    {
+      "name": "sports",
+      "slug": "sports",
+      "uri": "https://api.sketchfab.com/v3/tags/sports"
+    },
+    {
+      "name": "italy",
+      "slug": "italy",
+      "uri": "https://api.sketchfab.com/v3/tags/italy"
+    },
+    {
+      "name": "enzo",
+      "slug": "enzo",
+      "uri": "https://api.sketchfab.com/v3/tags/enzo"
+    },
+    {
+      "name": "maranello",
+      "slug": "maranello",
+      "uri": "https://api.sketchfab.com/v3/tags/maranello"
+    },
+    {
+      "name": "car",
+      "slug": "car",
+      "uri": "https://api.sketchfab.com/v3/tags/car"
+    }
+  ],
+  "categories": [
+    {
+      "name": "cars-vehicles"
+    }
+  ],
+  "thumbnails": {
+    "images": [
+      {
+        "uid": "d3dd67bdfafe47d68c7d4a8ad8553d22",
+        "size": 254593,
+        "width": 1920,
+        "url": "https://media.sketchfab.com/models/96c16ea6d7704ad397a8f02bf0250bff/thumbnails/c920c5e7891243a493381e257b98bea5/c9d9acaf86474ad0b6907e88b9f8c967.jpeg",
+        "height": 1080
+      },
+      {
+        "uid": "204ddb29a720431d9d72602de5d7d81c",
+        "size": 49893,
+        "width": 1024,
+        "url": "https://media.sketchfab.com/models/96c16ea6d7704ad397a8f02bf0250bff/thumbnails/c920c5e7891243a493381e257b98bea5/9db2c56f130542eb9ae51132044636ee.jpeg",
+        "height": 576
+      },
+      {
+        "uid": "32687ebd180f4c489d8632cf66fb16c7",
+        "size": 27676,
+        "width": 720,
+        "url": "https://media.sketchfab.com/models/96c16ea6d7704ad397a8f02bf0250bff/thumbnails/c920c5e7891243a493381e257b98bea5/29f348da964e4a8c8c89fdaadf451c80.jpeg",
+        "height": 405
+      },
+      {
+        "uid": "b731c869ecaa4588a44a5d07dd4276a7",
+        "size": 6063,
+        "width": 256,
+        "url": "https://media.sketchfab.com/models/96c16ea6d7704ad397a8f02bf0250bff/thumbnails/c920c5e7891243a493381e257b98bea5/5feef7a1e033487ba327879b1210f44f.jpeg",
+        "height": 144
+      },
+      {
+        "uid": "17b1f1f8599c4f1ea9583c4d50eb60cb",
+        "size": 1328,
+        "width": 64,
+        "url": "https://media.sketchfab.com/models/96c16ea6d7704ad397a8f02bf0250bff/thumbnails/c920c5e7891243a493381e257b98bea5/c3588753b9884de49d8bec055edcf51f.jpeg",
+        "height": 36
+      }
+    ]
+  },
+  "user": {
+    "uid": "97720a52c2e342a396cdebd3ab9a508c",
+    "username": "Carlos.Maciel",
+    "displayName": "Carlos.Maciel",
+    "profileUrl": "https://sketchfab.com/Carlos.Maciel",
+    "account": "basic",
+    "avatar": {
+      "uri": "https://api.sketchfab.com/v3/avatars/3631ed484a0b4ab69d7580bb4c9f84ea",
+      "images": [
+        {
+          "size": 629,
+          "width": 32,
+          "url": "https://media.sketchfab.com/avatars/3631ed484a0b4ab69d7580bb4c9f84ea/69447fd64b83400d80d23cec9af3d45b.jpeg",
+          "height": 32
+        },
+        {
+          "size": 1038,
+          "width": 48,
+          "url": "https://media.sketchfab.com/avatars/3631ed484a0b4ab69d7580bb4c9f84ea/8f5a164a8d2d43719afe714619d520f3.jpeg",
+          "height": 48
+        },
+        {
+          "size": 2775,
+          "width": 90,
+          "url": "https://media.sketchfab.com/avatars/3631ed484a0b4ab69d7580bb4c9f84ea/370213212bd34a8e8c85e9b6d86c7517.jpeg",
+          "height": 90
+        },
+        {
+          "size": 3226,
+          "width": 100,
+          "url": "https://media.sketchfab.com/avatars/3631ed484a0b4ab69d7580bb4c9f84ea/e07b2d12316b4223bf63d71a9d864b89.jpeg",
+          "height": 100
+        }
+      ]
+    },
+    "uri": "https://api.sketchfab.com/v3/users/97720a52c2e342a396cdebd3ab9a508c"
+  },
+  "description": "Blender and Photoshop",
+  "faceCount": 472400,
+  "createdAt": "2022-02-17T11:23:17.053737",
+  "vertexCount": 238349,
+  "isAgeRestricted": false,
+  "archives": {
+    "glb": {
+      "textureCount": 6,
+      "size": 14257652,
+      "type": "glb",
+      "textureMaxResolution": 256,
+      "faceCount": 472398,
+      "vertexCount": 301831
+    },
+    "gltf": {
+      "textureCount": 6,
+      "size": 7078800,
+      "type": "gltf",
+      "textureMaxResolution": 256,
+      "faceCount": 472398,
+      "vertexCount": 301831
+    },
+    "source": {
+      "textureCount": null,
+      "size": 11748470,
+      "type": "source",
+      "textureMaxResolution": null,
+      "faceCount": null,
+      "vertexCount": null
+    },
+    "usdz": {
+      "textureCount": null,
+      "size": 8398210,
+      "type": "usdz",
+      "textureMaxResolution": null,
+      "faceCount": null,
+      "vertexCount": null
+    }
+  },
+  "license": "by",
+  "archiveMetadataUrl": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/metadata/000-029.json.gz",
+  "downloadUrl": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-029/96c16ea6d7704ad397a8f02bf0250bff.glb"
+}

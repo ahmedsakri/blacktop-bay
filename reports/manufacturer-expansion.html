@@ -7,7 +7,7 @@ import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
 import {prepareManufacturerCar,createManufacturerCar} from '/src/manufacturer-car.js';
 import {MANUFACTURER_VEHICLES} from '/src/manufacturer-vehicles.js';
 import {applyPaint} from '/src/paint.js';
-const cars=MANUFACTURER_VEHICLES.slice(16),q=new URLSearchParams(location.search),selected=cars.findIndex(c=>c.id===q.get('id')),index=Math.max(0,selected),status=document.querySelector('#status');
+const q=new URLSearchParams(location.search),start=Math.max(0,Math.min(MANUFACTURER_VEHICLES.length-1,Number(q.get('start')??16)||0)),cars=MANUFACTURER_VEHICLES.slice(start),selected=cars.findIndex(c=>c.id===q.get('id')),index=Math.max(0,selected),status=document.querySelector('#status');
 document.querySelector('#next').onclick=()=>location.href='?id='+cars[(index+1)%cars.length].id;
 const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true,preserveDrawingBuffer:true});renderer.setPixelRatio(1);renderer.setSize(q.has('thumbs')?2000:1000,q.has('thumbs')?1120:560);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.08;renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;document.querySelector('#stage').append(renderer.domElement);
 const scene=new THREE.Scene();scene.background=new THREE.Color('#191824');const room=new RoomEnvironment(),pmrem=new THREE.PMREMGenerator(renderer);scene.environment=pmrem.fromScene(room,.04).texture;room.dispose();pmrem.dispose();scene.add(new THREE.HemisphereLight('#edf2ff','#403344',.8));

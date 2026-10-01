@@ -1,6 +1,6 @@
 # Blacktop Bay
 
-> Blacktop Bay is a free, single-player 3D browser racing game by AppsOverFlow. Race three computer-controlled rivals across thirty-four asphalt circuits in one of 27 cars, earn race credits, and upgrade your car. No account, no install, no purchases.
+> Blacktop Bay is a free, single-player 3D browser racing game by AppsOverFlow. Race three computer-controlled rivals across thirty-four asphalt circuits in one of 33 cars, earn race credits, and upgrade your car. No account, no install, no purchases.
 
 ## About the game
 
@@ -37,7 +37,11 @@ Venue outline data: Tomislav Bacinger / f1-circuits, MIT, with compact arcade mo
 
 ## Race cars
 
-The garage contains 27 artist-made manufacturer models across 16 brands. All are available from the start and retain their actual model names, including labelled artist interpretations. Each car has five upgrade levels for Engine, Tyres, Nitro and Handling, purchased with earned race credits. Road cars, classics, grand tourers and track-focused models use arcade tuning rather than real-world performance specifications.
+The garage contains 33 artist-made manufacturer models across 16 brands. All are available from the start and retain their actual model names, including labelled artist interpretations. Each car has five upgrade levels for Engine, Tyres, Nitro and Handling, purchased with earned race credits. Road cars, classics, grand tourers and track-focused models use arcade tuning rather than real-world performance specifications.
+
+Search the collection by car, manufacturer or style. Accents, spaces and punctuation do not need to match exactly: “Huracan” finds Huracán and “GTR” finds GT-R. Filter by manufacturer or favourites, sort by latest arrivals, speed, handling or name, and use Clear filters to reset the view. Compare with your car shows top speed, acceleration, handling and Nitro differences, including each car’s saved upgrades.
+
+After a valid lap, a short notice shows the last lap time and the next lap number. From the second completed lap, it compares that time with your previous best in the current race; the third lap is marked Final lap.
 
 ## Key Facts
 
@@ -45,7 +49,7 @@ The garage contains 27 artist-made manufacturer models across 16 brands. All are
 - Free to play; no account, no install and no real-money purchases.
 - Runs in a modern web browser; WebGL 2 and an internet connection are required to load.
 - Single-player only: one human racer versus three computer-controlled opponents (Mira, Jax and Nova) in a four-car field over three laps.
-- 27 cars: individually sourced manufacturer representations across 16 brands; 34 asphalt circuits, all available from the start.
+- 33 cars: individually sourced manufacturer representations across 16 brands; 34 asphalt circuits, all available from the start.
 - Each car has five upgrade levels for Engine, Tyres, Nitro and Handling, bought with earned race credits.
 - Progress (records, credits, upgrades and paint) is saved locally in the browser; there is no online multiplayer.
 
@@ -64,6 +68,6 @@ The garage contains 27 artist-made manufacturer models across 16 brands. All are
 
 ## Real-car collection
 
-Choose from 27 independently sourced manufacturer representations across 16 brands. Real cars include McLaren 570S Coupé, McLaren Senna, McLaren P1 GTR, Ferrari 458 Spider, Lamborghini Aventador, Koenigsegg One:1, Pagani Zonda C12, Bugatti Veyron, Maserati GranTurismo MC Stradale, Lotus Elise, Audi R8 Custom, Rimac Concept One, Porsche 911 (930) Turbo, GMA T.50 Custom, Aston Martin One-77, Rimac Nevera, Porsche 911 GT3, Lamborghini Gallardo 2004, Lamborghini Huracán, BMW i8, BMW F22 Eurofighter, Audi R8 LMS GT3, Audi R18, Ferrari 250 GTO, Ferrari Testarossa, Mercedes-AMG GT, Nissan GT-R 2018. Each car has its own game tuning and saved upgrades. Speed, handling and Nitro ratings describe the arcade game, not manufacturer specifications. Paint changes are free on supported body materials.
+Choose from 33 independently sourced manufacturer representations across 16 brands. Real cars include McLaren 570S Coupé, McLaren Senna, McLaren P1 GTR, Ferrari 458 Spider, Lamborghini Aventador, Koenigsegg One:1, Pagani Zonda C12, Bugatti Veyron, Maserati GranTurismo MC Stradale, Lotus Elise, Audi R8 Custom, Rimac Concept One, Porsche 911 (930) Turbo, GMA T.50 Custom, Aston Martin One-77, Rimac Nevera, Porsche 911 GT3, Lamborghini Gallardo 2004, Lamborghini Huracán, BMW i8, BMW F22 Eurofighter, Audi R8 LMS GT3, Audi R18, Ferrari 250 GTO, Ferrari Testarossa, Mercedes-AMG GT, Nissan GT-R 2018, McLaren 650S GT3, BMW M3 E46 Coupé, Audi Quattro Rally, Lamborghini Countach LP500S, Ferrari Enzo, Porsche 919 Hybrid. Each car has its own game tuning and saved upgrades. Speed, handling and Nitro ratings describe the arcade game, not manufacturer specifications. Paint changes are free on supported body materials.
 
 New manufacturer models load only when selected; the catalogue uses lightweight rendered previews. Original model finishes and source credits are retained. The crowd uses individually posed animated 3D spectators with waves, claps, cheering and filming; it is not photoreal video.

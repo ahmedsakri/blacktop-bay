@@ -1,0 +1,245 @@
+{
+  "animationCount": 0,
+  "categories": [
+    {
+      "uid": "22a2f677efad4d7bbca5ad45f9b5868e",
+      "name": "Cars & Vehicles",
+      "slug": "cars-vehicles",
+      "uri": "https://api.sketchfab.com/v3/categories/22a2f677efad4d7bbca5ad45f9b5868e",
+      "icon": "https://static.sketchfab.com/static/builds/web/dist/static/assets/images/icons/categories/45dd0cc0860ac57fcd63bde1cc3f2b7c-v2.svg",
+      "thumbnails": [
+        {
+          "width": "512",
+          "height": "288",
+          "url": "https://static.sketchfab.com/categories/22a2f677efad4d7bbca5ad45f9b5868e/512x288.png"
+        },
+        {
+          "width": "800",
+          "height": "450",
+          "url": "https://static.sketchfab.com/categories/22a2f677efad4d7bbca5ad45f9b5868e/800x450.png"
+        }
+      ]
+    }
+  ],
+  "commentCount": 8,
+  "createdAt": "2021-07-09T19:42:06.590571",
+  "embedUrl": "https://sketchfab.com/models/f1b00ff37d504629b10031da32bc7497/embed",
+  "faceCount": 846922,
+  "isAgeRestricted": false,
+  "license": {
+    "uri": "https://api.sketchfab.com/v3/licenses/322a749bcfa841b29dff1e8a1bb74b0b",
+    "label": "CC Attribution",
+    "fullName": "Creative Commons Attribution",
+    "requirements": "Author must be credited. Commercial use is allowed.",
+    "url": "http://creativecommons.org/licenses/by/4.0/",
+    "slug": "by"
+  },
+  "likeCount": 143,
+  "name": "BMW M3 E46",
+  "publishedAt": "2021-07-19T19:46:21.789076",
+  "soundCount": 0,
+  "staffpickedAt": null,
+  "tags": [
+    {
+      "name": "automobile",
+      "slug": "automobile",
+      "uri": "https://api.sketchfab.com/v3/tags/automobile"
+    },
+    {
+      "name": "vehicles",
+      "slug": "vehicles",
+      "uri": "https://api.sketchfab.com/v3/tags/vehicles"
+    },
+    {
+      "name": "bmw",
+      "slug": "bmw",
+      "uri": "https://api.sketchfab.com/v3/tags/bmw"
+    },
+    {
+      "name": "m3",
+      "slug": "m3",
+      "uri": "https://api.sketchfab.com/v3/tags/m3"
+    },
+    {
+      "name": "classic",
+      "slug": "classic",
+      "uri": "https://api.sketchfab.com/v3/tags/classic"
+    },
+    {
+      "name": "automotive",
+      "slug": "automotive",
+      "uri": "https://api.sketchfab.com/v3/tags/automotive"
+    },
+    {
+      "name": "sportscar",
+      "slug": "sportscar",
+      "uri": "https://api.sketchfab.com/v3/tags/sportscar"
+    },
+    {
+      "name": "eevee",
+      "slug": "eevee",
+      "uri": "https://api.sketchfab.com/v3/tags/eevee"
+    },
+    {
+      "name": "cardesign",
+      "slug": "cardesign",
+      "uri": "https://api.sketchfab.com/v3/tags/cardesign"
+    },
+    {
+      "name": "Blender-3D",
+      "slug": "blender-3d",
+      "uri": "https://api.sketchfab.com/v3/tags/blender-3d"
+    },
+    {
+      "name": "e46",
+      "slug": "e46",
+      "uri": "https://api.sketchfab.com/v3/tags/e46"
+    },
+    {
+      "name": "blender",
+      "slug": "blender",
+      "uri": "https://api.sketchfab.com/v3/tags/blender"
+    },
+    {
+      "name": "blender3d",
+      "slug": "blender3d",
+      "uri": "https://api.sketchfab.com/v3/tags/blender3d"
+    },
+    {
+      "name": "car",
+      "slug": "car",
+      "uri": "https://api.sketchfab.com/v3/tags/car"
+    },
+    {
+      "name": "cycles",
+      "slug": "cycles",
+      "uri": "https://api.sketchfab.com/v3/tags/cycles"
+    },
+    {
+      "name": "bmw-m3",
+      "slug": "bmw-m3",
+      "uri": "https://api.sketchfab.com/v3/tags/bmw-m3"
+    },
+    {
+      "name": "noai",
+      "slug": "noai",
+      "uri": "https://api.sketchfab.com/v3/tags/noai"
+    }
+  ],
+  "thumbnails": {
+    "images": [
+      {
+        "uid": "47426cf445ef438ca705dea7c9d2dd93",
+        "width": 1920,
+        "height": 1080,
+        "size": 137299,
+        "url": "https://media.sketchfab.com/models/f1b00ff37d504629b10031da32bc7497/thumbnails/86b9a473c8384661b94f1c5ffe464464/4c9a4335867c4787a8115ec68f1d4b57.jpeg"
+      },
+      {
+        "uid": "92230ae39f704aaf8cc504bf50d848f1",
+        "width": 1024,
+        "height": 576,
+        "size": 44261,
+        "url": "https://media.sketchfab.com/models/f1b00ff37d504629b10031da32bc7497/thumbnails/86b9a473c8384661b94f1c5ffe464464/7ee2c91394e8474497c7cc5f133f522c.jpeg"
+      },
+      {
+        "uid": "a544b1985eea4ff19224622fe2c5953c",
+        "width": 720,
+        "height": 405,
+        "size": 24975,
+        "url": "https://media.sketchfab.com/models/f1b00ff37d504629b10031da32bc7497/thumbnails/86b9a473c8384661b94f1c5ffe464464/c8c79a753a7c473981cd2d86ff200605.jpeg"
+      },
+      {
+        "uid": "9347687fe1a74f6a872ed7b772e78d4e",
+        "width": 256,
+        "height": 144,
+        "size": 4966,
+        "url": "https://media.sketchfab.com/models/f1b00ff37d504629b10031da32bc7497/thumbnails/86b9a473c8384661b94f1c5ffe464464/893093ba05644edfafb2818f29926bd3.jpeg"
+      },
+      {
+        "uid": "1d8b565e428a491da7363ddc1bcd0556",
+        "width": 64,
+        "height": 36,
+        "size": 1164,
+        "url": "https://media.sketchfab.com/models/f1b00ff37d504629b10031da32bc7497/thumbnails/86b9a473c8384661b94f1c5ffe464464/589bd17db5694134b8db84cf54dd640a.jpeg"
+      }
+    ]
+  },
+  "uid": "f1b00ff37d504629b10031da32bc7497",
+  "uri": "https://api.sketchfab.com/v3/models/f1b00ff37d504629b10031da32bc7497",
+  "user": {
+    "uid": "6bb5913465904a198331095cb6a9d9a6",
+    "username": "mmcworks",
+    "displayName": "MMC Works",
+    "account": "basic",
+    "profileUrl": "https://sketchfab.com/mmcworks",
+    "avatar": {
+      "uid": "def65c5d74324dd98797718e2502711d",
+      "uri": "https://api.sketchfab.com/v3/avatars/def65c5d74324dd98797718e2502711d",
+      "images": [
+        {
+          "width": 32,
+          "height": 32,
+          "size": 817,
+          "url": "https://media.sketchfab.com/avatars/def65c5d74324dd98797718e2502711d/57a4fa3d569d410cbe94eb24946f5c42.png"
+        },
+        {
+          "width": 48,
+          "height": 48,
+          "size": 1263,
+          "url": "https://media.sketchfab.com/avatars/def65c5d74324dd98797718e2502711d/4bfb8b9a372d4066ae8f78f95ea62cac.png"
+        },
+        {
+          "width": 90,
+          "height": 90,
+          "size": 2665,
+          "url": "https://media.sketchfab.com/avatars/def65c5d74324dd98797718e2502711d/611d10632181484b80cec4d962a9857a.png"
+        },
+        {
+          "width": 100,
+          "height": 100,
+          "size": 2977,
+          "url": "https://media.sketchfab.com/avatars/def65c5d74324dd98797718e2502711d/f72535907f694598b3c30fb46988bd4d.png"
+        }
+      ]
+    },
+    "uri": "https://api.sketchfab.com/v3/users/6bb5913465904a198331095cb6a9d9a6"
+  },
+  "vertexCount": 442401,
+  "viewCount": 38295,
+  "viewerUrl": "https://sketchfab.com/3d-models/bmw-m3-e46-f1b00ff37d504629b10031da32bc7497",
+  "isDownloadable": true,
+  "isProtected": false,
+  "description": "Bmw M3 E46 - 3D modeled using Blender 3D just for practicing and personal improvement on automotive design\n\nHigh poly - No modifiers applied\n\nRough interior\n\nSimple materials\n\nFile contains UV unwrapped textures (on the tires) with packed image texture\n\n3D modeling timelapse [HERE](https://www.youtube.com/watch?v=2mN-LFPnS7w)",
+  "price": null,
+  "downloadCount": 7208,
+  "editorUrl": "https://sketchfab.com/models/f1b00ff37d504629b10031da32bc7497/edit",
+  "status": {
+    "warning": {},
+    "processing": "SUCCEEDED"
+  },
+  "source": "website",
+  "hasCommentsDisabled": false,
+  "updatedAt": "2023-06-12T16:55:03.520227",
+  "pbrType": "metalness",
+  "textureCount": 7,
+  "materialCount": 39,
+  "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-119/f1b00ff37d504629b10031da32bc7497.glb",
+  "sourceSha256": "6c4a9cb801f74323a1b8f4d0532da7359765b8e25b9f63e8f04672f1862fb7c0",
+  "sourceBytes": 31047936,
+  "sourceAsset": {
+    "extras": {
+      "author": "Márcio Meireles (https://sketchfab.com/marciomeireles)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/bmw-m3-e46-f1b00ff37d504629b10031da32bc7497",
+      "title": "BMW M3 E46"
+    },
+    "generator": "Sketchfab-14.1.2",
+    "version": "2.0"
+  },
+  "verifiedAt": "2026-10-01",
+  "verifiedMetadataUrl": "https://api.sketchfab.com/v3/models/f1b00ff37d504629b10031da32bc7497",
+  "licenseVerification": "Current Sketchfab API reports CC Attribution / by / 4.0. Original archived GLB embeds matching CC-BY-4.0 source attribution.",
+  "author": "MMC Works (Márcio Meireles)",
+  "authorAttributionNote": "Current profile display name is MMC Works; original GLB embeds Márcio Meireles and the marciomeireles profile URL. Both names retained for attribution."
+}

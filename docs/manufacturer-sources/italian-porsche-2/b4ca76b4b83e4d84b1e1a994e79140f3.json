@@ -1,0 +1,181 @@
+{
+  "uid": "b4ca76b4b83e4d84b1e1a994e79140f3",
+  "metadata": {
+    "animationCount": 0,
+    "categories": [
+      {
+        "uid": "22a2f677efad4d7bbca5ad45f9b5868e",
+        "name": "Cars & Vehicles",
+        "slug": "cars-vehicles",
+        "uri": "https://api.sketchfab.com/v3/categories/22a2f677efad4d7bbca5ad45f9b5868e",
+        "icon": "https://static.sketchfab.com/static/builds/web/dist/static/assets/images/icons/categories/45dd0cc0860ac57fcd63bde1cc3f2b7c-v2.svg",
+        "thumbnails": [
+          {
+            "width": "512",
+            "height": "288",
+            "url": "https://static.sketchfab.com/categories/22a2f677efad4d7bbca5ad45f9b5868e/512x288.png"
+          },
+          {
+            "width": "800",
+            "height": "450",
+            "url": "https://static.sketchfab.com/categories/22a2f677efad4d7bbca5ad45f9b5868e/800x450.png"
+          }
+        ]
+      }
+    ],
+    "commentCount": 1,
+    "createdAt": "2021-02-22T19:21:32.494849",
+    "embedUrl": "https://sketchfab.com/models/b4ca76b4b83e4d84b1e1a994e79140f3/embed",
+    "faceCount": 3970146,
+    "isAgeRestricted": false,
+    "license": {
+      "uri": "https://api.sketchfab.com/v3/licenses/322a749bcfa841b29dff1e8a1bb74b0b",
+      "label": "CC Attribution",
+      "fullName": "Creative Commons Attribution",
+      "requirements": "Author must be credited. Commercial use is allowed.",
+      "url": "http://creativecommons.org/licenses/by/4.0/",
+      "slug": "by"
+    },
+    "likeCount": 45,
+    "name": "Porsche 919 Hybrid 2017",
+    "publishedAt": "2021-02-22T20:20:36.155826",
+    "soundCount": 0,
+    "staffpickedAt": null,
+    "tags": [
+      {
+        "name": "porsche",
+        "slug": "porsche",
+        "uri": "https://api.sketchfab.com/v3/tags/porsche"
+      },
+      {
+        "name": "hybrid",
+        "slug": "hybrid",
+        "uri": "https://api.sketchfab.com/v3/tags/hybrid"
+      },
+      {
+        "name": "lemans",
+        "slug": "lemans",
+        "uri": "https://api.sketchfab.com/v3/tags/lemans"
+      },
+      {
+        "name": "919",
+        "slug": "919",
+        "uri": "https://api.sketchfab.com/v3/tags/919"
+      },
+      {
+        "name": "blender",
+        "slug": "blender",
+        "uri": "https://api.sketchfab.com/v3/tags/blender"
+      }
+    ],
+    "thumbnails": {
+      "images": [
+        {
+          "uid": "140fcd130ed64b39bc984cbfc9b608f4",
+          "width": 1920,
+          "height": 1080,
+          "size": 121406,
+          "url": "https://media.sketchfab.com/models/b4ca76b4b83e4d84b1e1a994e79140f3/thumbnails/54239d7765b9468eba8473386a9cf5a9/21c460b824e94262a3e544bb54905362.jpeg"
+        },
+        {
+          "uid": "8261c82a5d72493d9df6015bd80cd98f",
+          "width": 1024,
+          "height": 576,
+          "size": 39219,
+          "url": "https://media.sketchfab.com/models/b4ca76b4b83e4d84b1e1a994e79140f3/thumbnails/54239d7765b9468eba8473386a9cf5a9/c9430597d8eb4a28978e35a25dc11dc7.jpeg"
+        },
+        {
+          "uid": "8f6d81fcf23149e287117e720722b270",
+          "width": 720,
+          "height": 405,
+          "size": 23050,
+          "url": "https://media.sketchfab.com/models/b4ca76b4b83e4d84b1e1a994e79140f3/thumbnails/54239d7765b9468eba8473386a9cf5a9/7b3e2a52ef08407ba8fa87e3fb47f96c.jpeg"
+        },
+        {
+          "uid": "7dc0577cc75b42d787ab445a0b6165fb",
+          "width": 256,
+          "height": 144,
+          "size": 5181,
+          "url": "https://media.sketchfab.com/models/b4ca76b4b83e4d84b1e1a994e79140f3/thumbnails/54239d7765b9468eba8473386a9cf5a9/9ba86755e67c443482d49ae6a3d2261a.jpeg"
+        },
+        {
+          "uid": "197dfea51d784c688835059462374ce6",
+          "width": 64,
+          "height": 36,
+          "size": 1213,
+          "url": "https://media.sketchfab.com/models/b4ca76b4b83e4d84b1e1a994e79140f3/thumbnails/54239d7765b9468eba8473386a9cf5a9/0ecfb066332446eb918cb99397d04a33.jpeg"
+        }
+      ]
+    },
+    "uid": "b4ca76b4b83e4d84b1e1a994e79140f3",
+    "uri": "https://api.sketchfab.com/v3/models/b4ca76b4b83e4d84b1e1a994e79140f3",
+    "user": {
+      "uid": "81aa3eea67374e719e821fa791b5665f",
+      "username": "mudkipz321",
+      "displayName": "mudkipz321",
+      "account": "basic",
+      "profileUrl": "https://sketchfab.com/mudkipz321",
+      "avatar": {
+        "uid": "8bc966e7853c45cb9db8fd3b2de34a1e",
+        "uri": "https://api.sketchfab.com/v3/avatars/8bc966e7853c45cb9db8fd3b2de34a1e",
+        "images": [
+          {
+            "width": 32,
+            "height": 32,
+            "size": 794,
+            "url": "https://media.sketchfab.com/avatars/8bc966e7853c45cb9db8fd3b2de34a1e/d872c76be67044038c4913411fc01915.jpeg"
+          },
+          {
+            "width": 48,
+            "height": 48,
+            "size": 1257,
+            "url": "https://media.sketchfab.com/avatars/8bc966e7853c45cb9db8fd3b2de34a1e/2bd0ddead0904fb0aa2d9ec99b61515a.jpeg"
+          },
+          {
+            "width": 90,
+            "height": 90,
+            "size": 2974,
+            "url": "https://media.sketchfab.com/avatars/8bc966e7853c45cb9db8fd3b2de34a1e/c0962473c7284fa6a6470ae768728c4d.jpeg"
+          },
+          {
+            "width": 100,
+            "height": 100,
+            "size": 3518,
+            "url": "https://media.sketchfab.com/avatars/8bc966e7853c45cb9db8fd3b2de34a1e/0640dea58be94dbb8d402775f890b619.jpeg"
+          }
+        ]
+      },
+      "uri": "https://api.sketchfab.com/v3/users/81aa3eea67374e719e821fa791b5665f"
+    },
+    "vertexCount": 1996197,
+    "viewCount": 5162,
+    "viewerUrl": "https://sketchfab.com/3d-models/porsche-919-hybrid-2017-b4ca76b4b83e4d84b1e1a994e79140f3",
+    "isDownloadable": true,
+    "isProtected": false,
+    "description": "This was my first project in blender without tutorials! Tell me what you think!\n\nSketchfab has an issue with transparent .png files, so to keep the model clean, I have stripped all the decals away. If you're interested in the .blend file with proper decals applied, please visit me email.\n\nCreated in blender\n\nAny questions please email me at joshuatylerwhiting@gmail.com",
+    "price": null,
+    "downloadCount": 766,
+    "editorUrl": "https://sketchfab.com/models/b4ca76b4b83e4d84b1e1a994e79140f3/edit",
+    "status": {
+      "warning": {},
+      "processing": "SUCCEEDED"
+    },
+    "source": "website",
+    "hasCommentsDisabled": false,
+    "updatedAt": "2022-07-19T11:10:01.313364",
+    "pbrType": null,
+    "textureCount": 24,
+    "materialCount": 58
+  },
+  "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-061/b4ca76b4b83e4d84b1e1a994e79140f3.glb",
+  "sourceSha256": "990c5dd15ca15a8bd5ceac14094ef962171f9ad3f052430938be75035cb6fb24",
+  "evidence": "Current API and original GLB attribution",
+  "embeddedAttribution": {
+    "author": "mudkipz321 (https://sketchfab.com/mudkipz321)",
+    "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+    "source": "https://sketchfab.com/3d-models/porsche-919-hybrid-2017-b4ca76b4b83e4d84b1e1a994e79140f3",
+    "title": "Porsche 919 Hybrid 2017"
+  },
+  "reviewedAt": "2026-10-01",
+  "liveStatus": 200
+}
