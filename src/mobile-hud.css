@@ -1,93 +1,163 @@
-/* Driving controls use their own layout; garage and menus keep the editorial UI. */
-.touch-controls svg,.recover svg { fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
-.touch-controls button { -webkit-touch-callout:none; transition:background .12s,border-color .12s,box-shadow .12s,transform .12s; }
-.touch-controls button.pressed { transform:translateY(2px); }
-.map-heading { display:flex; justify-content:space-between; gap:6px; padding:0 8px; color:#d8e6ec; font:600 9px Manrope,sans-serif; }
-.map-heading span { font:inherit; text-transform:uppercase; letter-spacing:.8px; }
-.map-heading i { font-style:normal; color:#9aadba; }
-.mini-map canvas { width:180px; height:112px; }
-.recover { display:flex; align-items:center; gap:6px; }
-.recover svg { width:18px; height:18px; }
-.pad-charge { display:block; height:3px; background:#fff2; overflow:hidden; border-radius:4px; }
-.pad-charge i { display:block; height:100%; width:100%; background:#62dcf6; transform-origin:left center; }
-
-body.touch-mode.in-race { --hud-left:max(16px,env(safe-area-inset-left)); --hud-right:max(16px,env(safe-area-inset-right)); --hud-top:max(12px,env(safe-area-inset-top)); --hud-bottom:max(16px,env(safe-area-inset-bottom)); }
-body.touch-mode.in-race .topbar { top:var(--hud-top); right:var(--hud-right); left:auto; }
-body.touch-mode.in-race .wordmark { display:none; }
-body.touch-mode.in-race .top-actions { gap:6px; }
-body.touch-mode.in-race .icon-button { background:#101923df; border-color:#64778566; border-radius:14px; width:44px; height:44px; }
-body.touch-mode.in-race .icon-button svg { width:19px; height:19px; }
-
-body.touch-mode.in-race .race-position,
-body.touch-mode.in-race .race-clock,
-body.touch-mode.in-race .mini-map,
-body.touch-mode.in-race .speedo { background:linear-gradient(145deg,#16222de8,#09121ddd); border:1px solid #b9d3e226; border-radius:14px; box-shadow:0 4px 18px #0002; backdrop-filter:blur(8px); }
-body.touch-mode.in-race .race-position { top:var(--hud-top); left:var(--hud-left); width:82px; height:60px; padding:8px 12px; }
-body.touch-mode.in-race .race-position>span { font:700 8px Manrope,sans-serif; letter-spacing:1px; color:#bfd0db; }
-body.touch-mode.in-race .race-position>div { gap:5px; line-height:1; margin-top:1px; }
-body.touch-mode.in-race .race-position strong { font-size:29px; }
-body.touch-mode.in-race .race-position small { font-size:13px; }
-body.touch-mode.in-race .race-position ol { display:none; }
-body.touch-mode.in-race .race-clock { top:var(--hud-top); left:calc(var(--hud-left) + 90px); right:auto; width:124px; height:60px; padding:8px 12px; text-align:left; font-style:normal; }
-body.touch-mode.in-race .race-clock>div { gap:5px; justify-content:flex-start; line-height:1; }
-body.touch-mode.in-race .race-clock>div span { font:700 8px Manrope,sans-serif; letter-spacing:1px; color:#bfd0db; margin-right:3px; }
-body.touch-mode.in-race .race-clock b,body.touch-mode.in-race .race-clock small { font:700 11px Manrope,sans-serif; }
-body.touch-mode.in-race .race-clock time { font:600 17px Oxanium,monospace; letter-spacing:0; margin-top:5px; }
-body.touch-mode.in-race .race-clock p { display:none; }
-body.touch-mode.in-race .drift-score { top:calc(var(--hud-top) + 4px); left:50%!important; right:auto!important; transform:translateX(-50%); text-align:center!important; min-width:80px; width:auto; }
-body.touch-mode.in-race .drift-score>span,body.touch-mode.in-race .combo-meter { display:none; }
-body.touch-mode.in-race .drift-score strong { font-size:16px!important; }
-body.touch-mode.in-race .drift-score b { font:700 11px Oxanium,monospace; margin-top:4px; }
-body.touch-mode.in-race .mini-map { top:calc(var(--hud-top) + 54px); right:var(--hud-right); bottom:auto; left:auto; width:144px; height:110px; padding:9px 7px 6px; }
-body.touch-mode.in-race .map-heading { padding:0 2px; }
-body.touch-mode.in-race .map-heading span { overflow:hidden; white-space:nowrap; text-overflow:ellipsis; font-size:8px; letter-spacing:.3px; }
-body.touch-mode.in-race .mini-map canvas { display:block; width:128px; height:80px; margin:0; }
-body.touch-mode.in-race .mini-map #ghost-label { display:none; }
-body.touch-mode.in-race .speedo { bottom:auto; top:var(--hud-top); right:auto; left:calc(var(--hud-left) + 222px); transform:none; width:106px; height:60px; }
-body.touch-mode.in-race .speedo>svg { display:none; }
-body.touch-mode.in-race .speedo>div { inset:0; display:grid; grid-template-columns:auto 28px; grid-template-rows:38px 14px; place-content:center; gap:0 5px; padding:5px 9px; }
-body.touch-mode.in-race .speedo b { font-size:34px; line-height:1; align-self:center; grid-row:1; grid-column:1; }
-body.touch-mode.in-race .speedo span { font:700 8px Manrope,sans-serif; letter-spacing:0; align-self:end; padding-bottom:7px; grid-row:1; grid-column:2; }
-body.touch-mode.in-race .speedo small { font:600 9px Oxanium,monospace; color:#92c9d8; letter-spacing:1px; grid-row:2; grid-column:1/-1; }
-body.touch-mode.in-race .nitro-gauge,body.touch-mode.in-race .steer-feedback,body.touch-mode.in-race .drive-hint { display:none; }
-body.touch-mode.in-race .recover { top:calc(var(--hud-top) + 70px); left:var(--hud-left); bottom:auto; right:auto; min-width:76px; min-height:44px; padding:8px 10px; border:1px solid #c6deeb26; border-radius:12px; background:#101a24c9; font:700 9px Manrope,sans-serif; color:#c5d8e4; }
-
-body.touch-mode.in-race .touch-controls { inset:0; z-index:6; }
-body.touch-mode.in-race .touch-controls .pedals { position:absolute; bottom:var(--hud-bottom); right:var(--hud-right); margin:0; display:block; }
-body.touch-mode.in-race .touch-controls .nitro-pedal { position:relative; margin:0; width:94px; height:100px; min-height:0; padding:9px 10px 15px; border:1px solid #9be6fa9c; border-bottom:3px solid #4a9aaa; border-radius:26px; box-shadow:inset 0 1px 0 #ffffff2b,0 6px 22px #0005; background:linear-gradient(150deg,#234451f2,#0c1b29f2); color:#d2f7ff; backdrop-filter:blur(8px); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; font-family:Manrope,sans-serif; }
-body.touch-mode.in-race .touch-controls small { font:800 10px Manrope,sans-serif; letter-spacing:1.8px; }
-body.touch-mode.in-race .touch-controls .nitro-pedal svg { width:31px; height:31px; margin:0; flex-shrink:0; stroke-width:1.8; }
-body.touch-mode.in-race .nitro-bolt { fill:currentColor; stroke:none; }
-body.touch-mode.in-race #nitro-pad-amount { color:#8fbbcb; font:600 10px Oxanium,monospace; }
-body.touch-mode.in-race .touch-controls .pad-charge { position:absolute; left:19px; right:19px; bottom:9px; font-size:0; height:3px; }
-body.touch-mode.in-race .touch-controls button.pressed { background:linear-gradient(150deg,#adf5ff,#43bacd); color:#092630; border-color:#d5fcff; box-shadow:0 0 0 3px #80efff33,0 4px 24px #2cd9ff4d; }
-body.touch-mode.in-race .touch-controls button.pressed #nitro-pad-amount { color:#205966; }
-body.touch-mode.in-race .touch-controls .nitro-pedal.unavailable { opacity:.6; }
-body.touch-mode.in-race .touch-steer-cue { position:absolute; bottom:calc(var(--hud-bottom) + 8px); left:var(--hud-left); width:160px; padding:12px 14px; border:1px solid #b9d3e21a; border-radius:18px; background:#0c1923b3; backdrop-filter:blur(8px); color:#bbcbd5; text-align:center; pointer-events:none; }
-body.touch-mode.in-race #touch-steer-label { display:block; font:700 8px Manrope,sans-serif; letter-spacing:1.6px; }
-body.touch-mode.in-race .touch-steer-track { position:relative; height:24px; margin-top:6px; display:flex; justify-content:space-between; align-items:center; font:400 23px Manrope,sans-serif; color:#8fa8b7; }
-body.touch-mode.in-race .touch-steer-track:before { content:""; position:absolute; height:1px; left:17px; right:17px; background:#a3bec33d; }
-body.touch-mode.in-race .touch-steer-track i { position:absolute; left:calc(50% - 4px); width:8px; height:8px; background:#a0d9dd; border:2px solid #173641; border-radius:50%; box-shadow:0 0 0 3px #8ce2eb20; }
-body.touch-mode.in-race .touch-steer-cue.engaged { border-color:#9de7e751; color:#e0f8f7; }
-body.touch-mode.in-race .recover { display:none; }
-body.touch-mode.in-race .toast { top:calc(var(--hud-top) + 65px); bottom:auto; left:50%; transform:translateX(-50%); max-width:40%; font-size:11px; }
-body.touch-mode.in-race .countdown { font-size:82px; }
-
-@media (max-width:700px) and (orientation:landscape) {
-  body.touch-mode.in-race { --hud-left:max(12px,env(safe-area-inset-left)); --hud-right:max(12px,env(safe-area-inset-right)); --hud-top:max(8px,env(safe-area-inset-top)); --hud-bottom:max(10px,env(safe-area-inset-bottom)); }
-  body.touch-mode.in-race .race-position { width:68px; padding:8px; }
-  body.touch-mode.in-race .race-clock { left:calc(var(--hud-left) + 76px); width:110px; padding:8px; }
-  body.touch-mode.in-race .drift-score { display:none; }
-  body.touch-mode.in-race .mini-map { width:124px; height:96px; }
-  body.touch-mode.in-race .mini-map canvas { width:108px; height:67.5px; }
-  body.touch-mode.in-race .touch-controls .nitro-pedal { width:78px; height:88px; border-radius:22px; }
-  body.touch-mode.in-race .touch-steer-cue { width:148px; padding:9px 12px; }
-  body.touch-mode.in-race .speedo { left:calc(var(--hud-left) + 194px); width:90px; }
-  body.touch-mode.in-race .recover { min-width:68px; }
+/* Race-only presentation. Menus and garage retain their own layout. */
+body.in-race {
+  --race-left:max(28px,env(safe-area-inset-left));
+  --race-right:max(28px,env(safe-area-inset-right));
+  --race-top:max(24px,env(safe-area-inset-top));
+  --race-bottom:max(28px,env(safe-area-inset-bottom));
+  --race-speed-size:96px;
+  --race-map-width:188px;
+  --race-boost-width:300px;
+  --race-nitro-size:94px;
 }
-@media (prefers-reduced-motion:reduce) { .touch-controls button { transition:none; } }
+body.in-race #hud { z-index:3; pointer-events:none; }
+body.in-race #hud::before { content:""; position:absolute; inset:0 0 auto; height:180px; background:linear-gradient(#040a12b3,transparent); pointer-events:none; }
+body.in-race .topbar { inset:var(--race-top) auto auto var(--race-left); z-index:7; }
+body.in-race .wordmark,body.in-race .top-actions #sound,body.in-race .top-actions #fullscreen { display:none; }
+body.in-race .top-actions { gap:0; }
+body.in-race #pause { width:48px; height:48px; border:1px solid #ffffff9c; border-radius:2px; background:#07101e66; box-shadow:none; backdrop-filter:none; color:white; }
+body.in-race #pause svg { width:24px; height:24px; }
+body.in-race .race-position,
+body.in-race .race-clock,
+body.in-race .speedo,
+body.in-race .mini-map { border:0; border-radius:0; box-shadow:none; backdrop-filter:none; background:none; }
+body.in-race .race-position { inset:var(--race-top) auto auto calc(var(--race-left) + 64px); width:138px; height:auto; padding:0; text-shadow:0 2px 8px #000b; }
+body.in-race .race-position>div { display:flex; align-items:baseline; justify-content:flex-start; line-height:1; gap:4px; margin:0 0 4px; }
+body.in-race .race-position span { width:40px; color:#eff3f7; font:700 italic 16px "Barlow Condensed",sans-serif; letter-spacing:.5px; }
+body.in-race .race-position strong { font:800 italic 34px/.8 "Barlow Condensed",sans-serif; color:#ecf9ff; letter-spacing:-.5px; }
+body.in-race .race-position small { font:700 italic 21px/.9 "Barlow Condensed",sans-serif; color:#dbe0e8; }
+body.in-race .race-position b { font:800 italic 25px/1 "Barlow Condensed",sans-serif; color:#f4f7fa; }
+body.in-race .race-position .lap-line { margin-top:8px; gap:4px; }
+body.in-race .race-position .lap-line span { font-size:11px; color:#bac7d3; }
+body.in-race .race-position .lap-line b,body.in-race .race-position .lap-line small { font-size:15px; color:#bac7d3; }
+body.in-race .race-position ol { display:none; }
 
-/* First-visit choices must not cover the race button on a short phone screen. */
+body.in-race .nitro-gauge { display:flex; flex-direction:column; inset:calc(var(--race-top) + 8px) auto auto 50%; width:var(--race-boost-width); transform:translateX(-50%); filter:none; }
+body.in-race .nitro-gauge>div:first-child { order:2; display:flex; justify-content:space-between; align-items:center; margin:8px 3px 0; }
+body.in-race .nitro-gauge strong { font:800 9px Manrope,sans-serif; letter-spacing:1.8px; color:#dddfe4; text-shadow:0 2px 5px #000; }
+body.in-race .nitro-gauge span { font:600 10px Oxanium,monospace; color:#e2e5eb; text-shadow:0 2px 5px #000; }
+body.in-race .nitro-gauge small { display:none; }
+body.in-race .nitro-track { position:relative; height:12px; transform:skewX(-18deg); border:1px solid #ffffff55; background:#060e1aa6; overflow:hidden; }
+body.in-race .nitro-track::after { content:""; position:absolute; inset:0; background:repeating-linear-gradient(90deg,transparent 0,transparent calc(25% - 1px),#0c152766 calc(25% - 1px),#0c152766 25%); }
+body.in-race .nitro-track i { background:linear-gradient(90deg,#e1ac55,#fff1bf); transition:width .08s linear; }
+body.in-race.nitro-active .nitro-gauge { filter:drop-shadow(0 0 8px #53dce870); }
+body.in-race.nitro-active .nitro-track i { background:linear-gradient(90deg,#17a5cf,#b5faff); }
+body.in-race.nitro-active .nitro-gauge strong { color:#a8f6ff; }
+
+body.in-race .speedo { inset:calc(var(--race-top) - 15px) var(--race-right) auto auto; width:194px; height:92px; transform:none; filter:none; }
+body.in-race .speedo>svg,body.in-race .speedo small { display:none; }
+body.in-race .speedo>div { inset:0; display:flex; flex-direction:row; justify-content:flex-end; align-items:flex-start; padding:0; gap:7px; text-shadow:0 3px 12px #000a; }
+body.in-race .speedo b { order:2; color:white; font:800 italic var(--race-speed-size)/1 "Barlow Condensed",sans-serif; letter-spacing:-3px; }
+body.in-race .speedo span { order:1; font:600 italic 15px/1 "Barlow Condensed",sans-serif; color:#eff3f7; letter-spacing:.5px; padding-top:19px; }
+body.in-race .race-clock { inset:calc(var(--race-top) + 84px) var(--race-right) auto auto; width:162px; height:34px; display:flex; justify-content:center; align-items:center; gap:7px; padding:3px 10px; background:#d04e3c; clip-path:polygon(4% 0,100% 0,96% 100%,0 100%); }
+body.in-race .race-clock time { font:800 italic 25px/1 "Barlow Condensed",sans-serif; letter-spacing:.1px; font-variant-numeric:tabular-nums; color:white; margin:0; }
+body.in-race .race-clock svg { width:18px; height:18px; fill:none; stroke:white; stroke-width:1.8; stroke-linecap:round; }
+body.in-race .race-clock p { display:none; }
+
+body.in-race .mini-map { inset:calc(var(--race-top) + 112px) auto auto var(--race-left); width:var(--race-map-width); height:auto; padding:0; transform:none; }
+body.in-race .mini-map canvas { display:block; width:100%; height:auto; aspect-ratio:8/5; opacity:.94; filter:drop-shadow(0 2px 4px #0008); }
+body.in-race .map-heading { display:flex; justify-content:space-between; padding:0 4px 6px; gap:6px; color:#c8d4df; }
+body.in-race .map-heading span { font:700 8px Manrope,sans-serif; letter-spacing:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; text-transform:uppercase; }
+body.in-race .map-heading i,body.in-race #ghost-label { display:none; }
+
+body.in-race .drift-score { display:flex; flex-direction:column; align-items:flex-end; inset:calc(var(--race-top) + 180px) var(--race-right) auto auto!important; width:190px; min-width:0; transform:translateX(16px); text-align:right; opacity:0; transition:opacity .2s ease,transform .2s ease; text-shadow:0 2px 9px #000b; }
+body.in-race.has-drift-points .drift-score,body.in-race.drift-active .drift-score { opacity:1; transform:translateX(0); }
+body.in-race .drift-score>span { order:3; font:800 9px Manrope,sans-serif; letter-spacing:1px; color:#d5e4ed; margin:5px 0 0; }
+body.in-race .drift-score strong { font:800 italic 30px/1 "Barlow Condensed",sans-serif!important; color:white; }
+body.in-race .drift-score strong em { color:#f3d17b; }
+body.in-race .drift-score b { font:800 italic 29px/1 "Barlow Condensed",sans-serif!important; color:white; margin-top:5px; }
+body.in-race .drift-score b::after { content:" PTS"; font-size:11px; color:#b9cad8; }
+body.in-race .combo-meter,body.in-race .recover,body.in-race .steer-feedback { display:none; }
+body.in-race .drive-hint { inset:auto auto var(--race-bottom) 50%; transform:translateX(-50%); font-size:8px; letter-spacing:1.3px; color:#a8b9c9; }
+body.in-race .drive-hint kbd { font-size:9px; }
+body.in-race.touch-mode .drive-hint { display:none; }
+body.in-race .toast { top:calc(var(--race-top) + 58px); bottom:auto; left:50%; max-width:36%; transform:translateX(-50%); font-size:11px; padding:7px 10px; }
+body.in-race .countdown { font:800 italic 118px/1 "Barlow Condensed",sans-serif; text-shadow:0 4px 32px #07122288; color:white; }
+
+body.in-race .touch-controls { inset:0; z-index:6; pointer-events:none; }
+body.in-race .touch-controls .pedals { position:absolute; inset:auto var(--race-right) var(--race-bottom) auto; display:block; margin:0; }
+body.in-race .touch-controls .nitro-pedal { position:relative; width:var(--race-nitro-size); height:var(--race-nitro-size); min-width:0; min-height:0; margin:0; padding:0; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:2px; border:0; border-radius:50%; background:radial-gradient(circle,#193244bf 0,#0713218c 64%,transparent 66%); box-shadow:none; backdrop-filter:none; color:#fff5d0; pointer-events:auto; touch-action:none; -webkit-user-select:none; user-select:none; -webkit-touch-callout:none; transition:transform .12s,color .12s,background .12s; }
+body.in-race .nitro-pedal svg { fill:none; stroke:currentColor; stroke-linecap:round; stroke-linejoin:round; }
+body.in-race .nitro-pedal .nitro-ring { position:absolute; inset:0; width:100%; height:100%; margin:0; transform:rotate(-90deg); pointer-events:none; }
+body.in-race .ring-track { stroke:#e5f1f340; stroke-width:2; }
+body.in-race #nitro-ring-fill { stroke:#f3d17b; stroke-width:3; stroke-dasharray:100; transition:stroke-dashoffset .08s linear,stroke .15s; }
+body.in-race .nitro-pedal .nitro-symbol { width:34px; height:34px; margin:0; stroke-width:1.9; transform:rotate(13deg); pointer-events:none; }
+body.in-race .nitro-bolt { fill:currentColor; stroke:none; }
+body.in-race .nitro-pedal small { font:800 9px Manrope,sans-serif; letter-spacing:1.3px; color:inherit; }
+body.in-race #nitro-pad-amount,body.in-race .pad-charge { display:none; }
+body.in-race .nitro-pedal.pressed { transform:scale(.95); background:radial-gradient(circle,#5ee5ff75,#0e425461 65%,transparent 66%); color:white; box-shadow:0 0 24px #5be1ff30; }
+body.in-race.nitro-active #nitro-ring-fill { stroke:#a1f5ff; }
+body.in-race .nitro-pedal.unavailable { color:#c5d0d9; opacity:.62; }
+body.in-race .nitro-pedal:focus-visible,body.in-race #pause:focus-visible { outline:3px solid #fff; outline-offset:4px; }
+body.in-race .touch-steer-cue { position:absolute; inset:auto auto calc(var(--race-bottom) + 10px) var(--race-left); width:154px; padding:0; border:0; background:none; box-shadow:none; color:#e2e9ed; text-align:center; pointer-events:none; opacity:.7; transition:opacity .5s; }
+body.in-race .touch-steer-cue.subtle { opacity:0; }
+body.in-race .touch-steer-cue.engaged { opacity:.7; }
+body.in-race #touch-steer-label { display:block; font:700 8px Manrope,sans-serif; letter-spacing:1.4px; text-shadow:0 2px 5px #000; }
+body.in-race .touch-steer-track { position:relative; height:20px; margin-top:7px; display:flex; justify-content:space-between; align-items:center; font:400 22px Manrope,sans-serif; color:#e5eaf0aa; }
+body.in-race .touch-steer-track::before { content:""; position:absolute; left:17px; right:17px; height:1px; background:#cce1e355; }
+body.in-race .touch-steer-track i { position:absolute; left:calc(50% - 3px); width:6px; height:6px; background:#edfaff; border-radius:50%; }
+
+@media (max-width:1000px) and (orientation:landscape) {
+  body.in-race { --race-left:max(16px,env(safe-area-inset-left)); --race-right:max(18px,env(safe-area-inset-right)); --race-top:max(14px,env(safe-area-inset-top)); --race-bottom:max(18px,env(safe-area-inset-bottom)); --race-speed-size:72px; --race-boost-width:220px; --race-map-width:142px; --race-nitro-size:86px; }
+  body.in-race #hud::before { height:140px; }
+  body.in-race #pause { width:44px; height:44px; }
+  body.in-race .race-position { left:calc(var(--race-left) + 56px); width:106px; }
+  body.in-race .race-position span { font-size:13px; width:30px; }
+  body.in-race .race-position strong { font-size:28px; }
+  body.in-race .race-position small { font-size:19px; }
+  body.in-race .race-position b { font-size:21px; }
+  body.in-race .race-position .lap-line { margin-top:5px; }
+  body.in-race .race-position .lap-line b,body.in-race .race-position .lap-line small { font-size:13px; }
+  body.in-race .race-position .lap-line span { font-size:10px; }
+  body.in-race .speedo { top:calc(var(--race-top) - 12px); width:151px; height:74px; }
+  body.in-race .speedo span { font-size:12px; padding-top:15px; }
+  body.in-race .race-clock { top:calc(var(--race-top) + 61px); width:134px; height:28px; padding:3px 8px; }
+  body.in-race .race-clock time { font-size:22px; }
+  body.in-race .race-clock svg { width:16px; height:16px; }
+  body.in-race .nitro-track { height:9px; }
+  body.in-race .nitro-gauge strong { font-size:8px; letter-spacing:1.3px; }
+  body.in-race .nitro-gauge span { font-size:9px; }
+  body.in-race .mini-map { top:calc(var(--race-top) + 82px); }
+  body.in-race .map-heading span { font-size:7px; letter-spacing:.7px; }
+  body.in-race .drift-score { top:calc(var(--race-top) + 118px)!important; width:145px; }
+  body.in-race .drift-score strong { font-size:25px!important; }
+  body.in-race .drift-score b { font-size:23px!important; }
+  body.in-race .drift-score>span { font-size:8px; }
+  body.in-race .touch-steer-cue { width:142px; }
+  body.in-race .countdown { font-size:88px; }
+}
+@media (max-width:700px) and (orientation:landscape) {
+  body.in-race { --race-left:max(12px,env(safe-area-inset-left)); --race-right:max(12px,env(safe-area-inset-right)); --race-top:max(10px,env(safe-area-inset-top)); --race-bottom:max(12px,env(safe-area-inset-bottom)); --race-speed-size:58px; --race-boost-width:144px; --race-map-width:114px; --race-nitro-size:74px; }
+  body.in-race .race-position { left:calc(var(--race-left) + 54px); width:90px; }
+  body.in-race .race-position span { font-size:12px; width:28px; }
+  body.in-race .race-position strong { font-size:25px; }
+  body.in-race .race-position b { font-size:19px; }
+  body.in-race .race-position small { font-size:17px; }
+  body.in-race .race-position .lap-line { margin-top:3px; }
+  body.in-race .race-position .lap-line b,body.in-race .race-position .lap-line small { font-size:12px; }
+  body.in-race .speedo { top:calc(var(--race-top) - 8px); width:119px; height:58px; }
+  body.in-race .speedo b { letter-spacing:-1.5px; }
+  body.in-race .speedo span { font-size:10px; padding-top:12px; }
+  body.in-race .race-clock { top:calc(var(--race-top) + 50px); width:116px; height:26px; }
+  body.in-race .race-clock time { font-size:19px; }
+  body.in-race .race-clock svg { width:13px; height:13px; }
+  body.in-race .mini-map { top:calc(var(--race-top) + 78px); }
+  body.in-race .nitro-gauge { top:calc(var(--race-top) + 8px); }
+  body.in-race .nitro-gauge strong { font-size:7px; letter-spacing:.8px; }
+  body.in-race .nitro-track { height:7px; }
+  body.in-race .drift-score { top:calc(var(--race-top) + 100px)!important; width:124px; }
+  body.in-race .drift-score strong { font-size:22px!important; }
+  body.in-race .drift-score b { font-size:21px!important; }
+  body.in-race .drift-score>span { max-width:120px; font-size:7px; }
+  body.in-race .nitro-pedal .nitro-symbol { width:29px; height:29px; }
+  body.in-race .nitro-pedal small { font-size:8px; }
+  body.in-race .touch-steer-cue { width:122px; }
+  body.in-race #touch-steer-label { font-size:7px; letter-spacing:.8px; }
+  body.in-race .countdown { font-size:74px; }
+}
+@media (prefers-reduced-motion:reduce) {
+  body.in-race .nitro-pedal,body.in-race .touch-steer-cue,body.in-race .drift-score,body.in-race #nitro-ring-fill,body.in-race .nitro-track i { transition:none; }
+}
+/* Privacy choices leave the initial race action reachable on short screens. */
 @media (max-height:540px) and (orientation:landscape) {
   .consent-banner { left:auto; right:max(16px,env(safe-area-inset-right)); bottom:max(16px,env(safe-area-inset-bottom)); width:min(350px,44vw); padding:15px; display:block; }
   .consent-banner strong { display:block; font-size:18px; }
@@ -95,3 +165,9 @@ body.touch-mode.in-race .countdown { font-size:82px; }
   .consent-actions { display:grid; grid-template-columns:1fr 1fr; gap:7px; min-width:0; }
   .consent-actions .button { padding:8px 5px; min-height:44px; font-size:9px; letter-spacing:.3px; white-space:normal; }
 }
+body.in-race .drift-score { text-align:right!important; }
+body.in-race .drift-score>span { display:block; }
+.pause-settings { display:flex; gap:10px; margin:18px 0 6px; }
+.pause-settings button { min-height:44px; border:1px solid #ffffff3b; border-radius:4px; background:#122535; color:#dcecf1; padding:9px 16px; font:700 12px Manrope,sans-serif; }
+.pause-settings button:focus-visible { outline:3px solid #c8f4ff; outline-offset:3px; }
+#pause-screen-status { margin:10px 0 0; font-size:12px; line-height:1.5; color:#c7dce8; }

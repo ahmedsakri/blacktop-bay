@@ -4,6 +4,7 @@ import "./racing.css";
 import "./mobile-hud.css";
 import { createDrivingInputs, resolveDriveControls } from "./driving-controls.js";
 import { createDragSteering } from "./drag-steering.js";
+import { getRaceProgress, getDriftDisplay } from "./race-presentation.js";
 import * as THREE from "three";
 import WebGL from "three/addons/capabilities/WebGL.js";
 import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
@@ -118,6 +119,7 @@ let records = loadRecords(recordStore),
   countdownTimer = 0,
   pendingLandscapeStart = false,
   orientationFocus = null;
+let driftSnapshot = null, driftBankUntil = 0, lastBankedPoints = 0;
 const coarsePointer = matchMedia("(any-pointer:coarse)");
 const input = {
     left: false,
@@ -539,6 +541,7 @@ function start() {
   sound.unlock();
   race = newRace();
   frames = [];
+  driftSnapshot = null; driftBankUntil = 0; lastBankedPoints = 0;
   nextFrame = 0;
   effects.clear();
   count = 3;
@@ -602,7 +605,7 @@ function pauseGame() {
     kind: "pause",
     eyebrow: "TAKE A BREATHER",
     title: "The coast can <em>wait.</em>",
-    html: "<p>Your race is paused. Pick up exactly where you left off.</p>",
+    html: `<p>Your race is paused. Pick up exactly where you left off.</p><div class="pause-settings"><button id="pause-sound" type="button">Sound ${records.sound ? "on" : "off"}</button><button id="pause-fullscreen" type="button">${document.fullscreenElement ? "Exit fullscreen" : "Fullscreen"}</button></div><p id="pause-screen-status" role="status" hidden></p>`,
     actions: [
       {
         label: "KEEP DRIVING",
@@ -627,6 +630,16 @@ function pauseGame() {
       { label: "BACK TO HOME", action: menu },
     ],
   });
+  $("pause-sound").onclick = () => {
+    $("sound").click();
+    $("pause-sound").textContent = `Sound ${records.sound ? "on" : "off"}`;
+  };
+  $("pause-fullscreen").onclick = async () => {
+    const message = await $("fullscreen").onclick();
+    $("pause-fullscreen").textContent = document.fullscreenElement ? "Exit fullscreen" : "Fullscreen";
+    $("pause-screen-status").hidden = !message;
+    $("pause-screen-status").textContent = message || "";
+  };
 }
 function how() {
   dialog({
@@ -833,14 +846,17 @@ $("sound").onclick = () => {
   updateSound();
 };
 $("fullscreen").onclick = async () => {
+  let message = "";
   try {
     if (document.fullscreenElement) await document.exitFullscreen();
     else if (document.documentElement.requestFullscreen)
       await document.documentElement.requestFullscreen();
-    else toast("Use landscape for the widest view on this device.");
+    else message = "Use landscape for the widest view on this device.";
   } catch {
-    toast("Fullscreen is not available in this browser.");
+    message = "Fullscreen is not available in this browser.";
   }
+  if (message) toast(message);
+  return message;
 };
 document.addEventListener("fullscreenchange", () =>
   $("fullscreen").setAttribute(
@@ -1047,12 +1063,12 @@ function updateCamera(dt, instant = false) {
     );
     cameraSpeed += (c.speed - cameraSpeed) * (1 - Math.exp(-dt * 4));
     const phoneChase = usesTouchControls();
-    camTarget.copy(pos).addScaledVector(forward, -(phoneChase ? 7.4 : 8.5) - cameraSpeed * (phoneChase ? 0.025 : 0.048));
-    camTarget.y = 3.5 + cameraSpeed * 0.012;
-    lookTarget.copy(pos).addScaledVector(forward, 5.5);
-    lookTarget.y = 1.05;
+    camTarget.copy(pos).addScaledVector(forward, -(phoneChase ? 6.1 : 7.0) - cameraSpeed * 0.014);
+    camTarget.y = 2.35 + cameraSpeed * 0.006;
+    lookTarget.copy(pos).addScaledVector(forward, 4.0);
+    lookTarget.y = 0.8;
     camera.fov =
-      (phoneChase ? 52 : 56) + cameraSpeed * (phoneChase ? 0.12 : 0.22) + (race.nitro.active && !reduced ? 4 : 0);
+      (phoneChase ? 48 : 50) + cameraSpeed * 0.08 + (race.nitro.active && !reduced ? 3 : 0);
   }
   const blend = instant ? 1 : 1 - Math.exp(-dt * (mode === "menu" ? 2 : 7));
   camera.position.lerp(camTarget, blend);
@@ -1122,6 +1138,7 @@ function drawMap() {
 
 function updateHud() {
   $("position").textContent = race.position;
+  $("race-progress").textContent = getRaceProgress(race).label;
   $("rival-order").innerHTML = race.leaderboard
     .map(
       (r) =>
@@ -1131,10 +1148,12 @@ function updateHud() {
   const charge = race.nitro.charge / race.nitro.capacity;
   $("nitro-fill").style.width = `${charge * 100}%`;
   $("pad-nitro-fill").style.transform = `scaleX(${charge})`;
+  $("nitro-ring-fill").style.strokeDashoffset = String((1 - charge) * 100);
   $("nitro-pad-label").textContent = race.nitro.locked ? "RELEASE" : race.nitro.active ? "BOOST" : "NITRO";
   $("touch-steer-dot").style.transform = `translateX(${race.car.steering * 50}px)`;
-  $("touch-steer-label").textContent = race.car.drifting ? "HOLD THAT DRIFT" : "DRAG TO STEER";
+  $("touch-steer-label").textContent = "DRAG LEFT OR RIGHT";
   $("touch-steer-cue").classList.toggle("engaged", dragSteering.active());
+  $("touch-steer-cue").classList.toggle("subtle", race.elapsed > 6);
   $("nitro-pad-amount").textContent = `${Math.round(charge * 100)}%`;
   $("nitro-amount").textContent = `${Math.round(charge * 100)}%`;
   $("nitro-status").textContent = race.nitro.active
@@ -1161,17 +1180,16 @@ function updateHud() {
     `${clamp(race.car.speed / 45, 0, 1) * 320} 430`;
   $("timer").textContent = format(race.elapsed);
   $("lap").textContent = race.lap;
-  $("score").textContent = Math.floor(
-    race.score + race.driftPoints,
-  ).toLocaleString();
-  $("combo").innerHTML = `DRIFT <em>×${race.combo}</em>`;
-  $("drift-label").textContent = race.collision
-    ? "STAY OFF THE BARRIER"
-    : race.car.drifting
-      ? "HOLD THAT LINE"
-      : race.driftPoints > 0
-        ? "BRING IT HOME"
-        : "FIND YOUR FLOW";
+  const feedback = getDriftDisplay(race, driftSnapshot);
+  driftSnapshot = feedback.snapshot;
+  if (feedback.bankedPoints > 0) { lastBankedPoints = feedback.bankedPoints; driftBankUntil = time + 1.6; }
+  if (feedback.state === "collision") driftBankUntil = 0;
+  const banked = time < driftBankUntil && !race.car.drifting && feedback.pendingPoints === 0;
+  $("score").textContent = (banked ? lastBankedPoints : feedback.pendingPoints).toLocaleString();
+  $("combo").innerHTML = banked ? "DRIFT BANKED" : `DRIFT <em>×${feedback.combo}</em>`;
+  $("drift-label").textContent = banked ? "CLEAN LINE. POINTS EARNED." : "HOLD YOUR LINE";
+  document.body.classList.toggle("has-drift-points", feedback.pendingPoints > 0 || banked);
+  document.querySelector(".drift-score").setAttribute("aria-hidden", String(!race.car.drifting && feedback.pendingPoints === 0 && !banked));
   $("combo-fill").style.width =
     `${race.car.drifting ? (race.combo / 5) * 100 : 0}%`;
   $("lap-time").textContent = race.bestLap
