@@ -95,8 +95,8 @@ export function prepareCarAssets({low=false,baseURL,onProgress}={}){
     gtAssets.set(level,{parts,pivots,dimensions:{length:4.65,width:size.x*scale,height:size.y*scale}});
   };
   carAssetPromise=(async()=>{
-    await Promise.all([load('low','/assets/cars/vortex-p1-low.glb'),loadGT('low','/assets/cars/gt-base-low.glb')]);
-    if(!low)await Promise.all([load('high','/assets/cars/vortex-p1.glb'),loadGT('high','/assets/cars/gt-base.glb')]);
+    await Promise.all([load('low','/assets/cars/vortex-p1-low.glb'),loadGT('low','/assets/cars/gt-base-low.glb?v=original-surfaces-2')]);
+    if(!low)await Promise.all([load('high','/assets/cars/vortex-p1.glb'),loadGT('high','/assets/cars/gt-base.glb?v=original-surfaces-2')]);
   })().catch(error=>{carAssetPromise=null;throw error;});
   return carAssetPromise;
 }
@@ -298,10 +298,6 @@ function createGTRacer({vehicle='coupe',ghost=false,color,low=false}={}){
         const vent=add(roundedBlock(.235,.018,.045,.007),carbon);vent.position.set(side*.36,y,z);vent.rotation.y=side*.14;
       }
       for(const height of [.36,.50])add(patchGeometry([[side*.92,height,1.79],[side*1.13,height-.07,1.91],[side*1.18,height-.07,1.66],[side*.94,height+.025,1.45]],.010),carbon).material.side=THREE.DoubleSide;
-      add(gridGeometry(14,8,(u,v)=>{
-        const z=-1.91+v*.87,x=side*(.91+.19*Math.sin(v*Math.PI));
-        return [x+side*u*.035,.51+.18*Math.sin(v*Math.PI)-u*.23,z];
-      },side<0),paint);
       tube([[side*.57,.85,-1.75],[side*.57,1.20,-1.71],[side*.57,1.39,-1.98]],.022,carbon,14);
     }
     add(patchGeometry([[-1.12,.18,2.15],[-.93,.18,2.47],[0,.18,2.51],[.93,.18,2.47],[1.12,.18,2.15]]),carbon).material.side=THREE.DoubleSide;
@@ -347,10 +343,9 @@ function createGTRacer({vehicle='coupe',ghost=false,color,low=false}={}){
         const y=position.getY(i),z=position.getZ(i);
         position.setY(i,y-Math.max(0,y-1.02)*.26);
         position.setZ(i,z+.36*THREE.MathUtils.smoothstep(z,1.76,2.32));
-        // Preserve the GLB's authored smooth normals and hard-edge splits.
-        // Rebuilding them from the source triangles flips inward-facing seam
-        // normals and fragments the paint. Apply the inverse local deformation
-        // derivative instead, exactly as a normal matrix would for a scale.
+        // Carry the source's smooth normals and deliberate hard-edge splits
+        // through this warp. Its inverse local derivative is the normal matrix
+        // for the varying roof/nose scale; rebuilding would lose those splits.
         const t=clamp((z-1.76)/.56,0,1),stretchZ=1+.36*6*t*(1-t)/.56;
         transformedNormal.set(normal.getX(i),normal.getY(i)/(y>1.02?.74:1),normal.getZ(i)/stretchZ).normalize();
         normal.setXYZ(i,transformedNormal.x,transformedNormal.y,transformedNormal.z);

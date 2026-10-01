@@ -22,13 +22,25 @@ https://github.com/mrdoob/three.js/blob/dev/examples/models/gltf/ferrari.glb
 
 Distributed adaptations: gt-base.glb and gt-base-low.glb
 Adapted for Blacktop Bay by AppsOverFlow, 2026.
-The Three.js Draco edition was decoded; geometry was welded and simplified
-with glTF Transform and meshoptimizer into two browser-oriented detail levels.
-The approximately 150,332- and 63,781-triangle editions retain named nodes,
-source materials and surface normals. The files require no runtime decoder.
-The original model contained no image textures.
+The Three.js Draco edition was decoded into two browser-oriented detail levels.
+The painted body, glazing, chrome and articulated wheels, rims, tyres and wheel
+brakes retain their original visible geometry and surface normals. Only secondary
+interior/detail surfaces are welded and meshoptimizer-simplified. This preserves
+the source's smooth coachwork and recognizable wheel spokes; the earlier broad
+permissive simplification distorted those reflective surfaces and was replaced.
+The high-detail asset has 251,076 triangles (6,942,760 bytes); the mobile asset
+has 209,180 triangles (5,727,276 bytes). Both retain 179,926 protected triangles,
+named nodes and source materials. Runtime roofs, aero and liveries add geometry.
+The files require no runtime decoder. The original model contained no image textures.
 
-The Apex GT, Apex Sprint, Torque R and Torque RS in-game builds further adjust scale, orientation and materials, animate
+Reproduction: scripts/rebuild-gt-assets.mjs accepts the original licensed source
+path and documents pinned offline tool dependencies. It does not fetch assets.
+Original source SHA-256:
+cafe3f48da6797aa9bde75ca768bc5b57db366575fd233e90df186ae988a876e
+Secondary-detail simplification uses ratios 0.4 (high) / 0.17 (mobile), errors
+0.003 / 0.008, and normal weights 0.05, while all protected surfaces remain intact.
+
+The Apex GT, Apex Sprint, Torque R, Torque RS and Kestrel GT-R in-game builds further adjust scale, orientation and materials, animate
 wheel assemblies, and add original fixed racing roofs, roll cages, aero and liveries. These game
 variants, their names and handling are fictional. They are based on the
 credited Ferrari 458 Italia mesh, not claimed to be wholly original models.

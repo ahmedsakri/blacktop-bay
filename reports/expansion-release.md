@@ -1,6 +1,6 @@
 # Blacktop Bay expansion — development evidence
 
-Recorded 1 October 2026. The ten-build expansion and superseding controls below are historical release evidence. A later HUD release is recorded in [racing-hud-redesign.md](./racing-hud-redesign.md). The new fourteen-build garage revision is pending final game validation and deployment.
+Recorded 1 October 2026. The ten-build expansion and superseding controls below are historical release evidence. A later HUD release is recorded in [racing-hud-redesign.md](./racing-hud-redesign.md). The initial fourteen-build garage release is deployed, as recorded below and in [collection-fourteen-release.md](./collection-fourteen-release.md). A separate GT surface QA patch remains pending.
 
 ## Scope implemented
 
@@ -46,8 +46,10 @@ Released 01 October 2026 at 12:15 IST. Both repositories were pushed to GitHub a
 The automatic-drift/one-button design supersedes the earlier manual-pedal checkpoint. The current production release has no Gas, Brake, Drift or steering buttons on the mobile driving surface. Optional keyboard braking remains supported; touch reset is in Pause.
 
 
-## Fourteen-build garage follow-up — pending release
+## Fourteen-build garage — initial release completed
 
 Kestrel GT-R (long-nose GT time attack), Mirage LMP (low closed-canopy prototype), Solstice One (single-seat open speedster) and Tempest XR (extreme-aero prototype) expand the garage from ten to fourteen fictional race builds. They combine shared licensed GT parts with newly authored coachwork and aero. All fourteen support their own free paint and performance upgrades. Five circuits, three laps, three opponents and the automatic-acceleration/drag-steering controls remain unchanged.
 
-Guide, metadata, credits and AppsOverFlow copy now describe the expanded catalog. The local Apps build passed 3,011 static checks and 53 existing tests. The earlier ten-build test totals and HUD release receipt do not validate the four new cars. Record final catalog checks, model review, test/build totals and deployment separately when completed.
+Guide, metadata, credits and AppsOverFlow copy describe the expanded catalog. Blacktop Bay commit **3fb0af9** was pushed and deployed to **https://blacktop-bay.web.app/** with **186/186 automated tests passing**. AppsOverFlow commit **4cb2b7e** was pushed and deployed to **https://appsoverflow.web.app/**; its validation passed **3,011 static checks and 53 tests**, plus the deployment's mocked contact checks. See [the fourteen-car collection release receipt](./collection-fourteen-release.md) for model/browser checks, live asset verification and the exact release scope.
+
+**Pending follow-up:** a separate GT surface QA patch is in progress after the initial fourteen-build release. Its final visual review, test/build results, commit and deployment are not covered by the receipts above and must be recorded when completed. The initial release's browser checks do not establish physical-device performance.

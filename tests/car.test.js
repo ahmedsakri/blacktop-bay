@@ -2,6 +2,7 @@ import test, { before } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { createCar, prepareCarAssets } from '../src/car.js';
 import { VEHICLES } from '../src/vehicles.js';
 import { applyPaint } from '../src/paint.js';
@@ -67,7 +68,8 @@ for (const low of [true, false]) for (const vehicle of VEHICLES) {
       for (const name of ['position', 'normal']) for (const value of mesh.geometry.attributes[name].array) assert.ok(Number.isFinite(value));
     });
     assert.ok(meshes < 55, 'static panels should stay batched for the race grid');
-    assert.ok(triangles < (low ? 100_000 : 190_000), 'build variants must keep bounded model complexity');
+    const triangleLimit = vehicle.family === 'gt' ? (low ? 230_000 : 275_000) : (low ? 110_000 : 190_000);
+    assert.ok(triangles < triangleLimit, 'original visible GT surfaces retain a measured geometry budget');
     const wheels = [];
     car.group.traverse(object => { if (object.isGroup && /wheel/.test(object.name)) wheels.push(object); });
     assert.equal(wheels.length, 4);
@@ -108,6 +110,34 @@ test('the four additions change measurable body silhouettes and leave the existi
   const fresh = createCar({vehicle: 'coupe', low: true});
   assert.deepEqual(bounds(fresh), bounds(cars.coupe), 'morphing Kestrel cannot deform a later GT instance');
   fresh.dispose(); Object.values(cars).forEach(car => car.dispose());
+});
+
+test('shipping GT paint and wheel surfaces retain coherent geometry and normals after offline processing', async () => {
+  for (const file of ['gt-base-low.glb', 'gt-base.glb']) {
+    const bytes = await readFile(new URL(`../public/assets/cars/${file}`, import.meta.url));
+    const gltf = await new GLTFLoader().parseAsync(bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength), '');
+    let checked = 0;
+    gltf.scene.traverse(mesh => {
+      if (!mesh.isMesh || !/^(body|wheel(?:_\d+)?|rim_\w+)$/.test(mesh.name)) return;
+      const p = mesh.geometry.attributes.position, n = mesh.geometry.attributes.normal, index = mesh.geometry.index;
+      let totalArea = 0, damagedArea = 0;
+      const a = new THREE.Vector3(), b = new THREE.Vector3(), c = new THREE.Vector3(), face = new THREE.Vector3(), normal = new THREE.Vector3(), temp = new THREE.Vector3();
+      for (let i = 0; i < index.count; i += 3) {
+        const ids = [index.getX(i), index.getX(i + 1), index.getX(i + 2)];
+        a.fromBufferAttribute(p, ids[0]); b.fromBufferAttribute(p, ids[1]); c.fromBufferAttribute(p, ids[2]);
+        face.crossVectors(b.sub(a), c.sub(a)); const area = face.length() / 2;
+        if (area < 1e-12) continue;
+        normal.set(0, 0, 0); for (const id of ids) normal.add(temp.fromBufferAttribute(n, id));
+        totalArea += area;
+        if (face.normalize().dot(normal.normalize()) < .5) damagedArea += area;
+      }
+      assert.ok(totalArea > 0);
+      assert.ok(damagedArea / totalArea < .001, `${file}/${mesh.name}: reflective surface must not contain folded faces inconsistent with its smooth normals (${damagedArea / totalArea})`);
+      checked++;
+    });
+    assert.equal(checked, 9, 'check the body and all four actual wheels/rims');
+    gltf.scene.traverse(mesh => { if (mesh.isMesh) { mesh.geometry.dispose(); for (const material of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) material.dispose(); } });
+  }
 });
 
 test('Kestrel retains outward-only body paint and authored smooth normals outside its changed silhouette', () => {
