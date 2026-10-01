@@ -4,6 +4,13 @@ import "./racing.css";
 import "./collection.css";
 import "./workshop.css";
 import "./mobile-hud.css";
+import "./collection-browser.css";
+import "./race-dialogs.css";
+import "./button-system.css";
+import "./brand-theme.css";
+import { NEW_CARS, loadFavorites, saveFavorites, findCars, carLibraryMarkup, carLibraryCard, circuitLibraryMarkup, circuitLibraryCards, findCircuits } from "./collection-browser.js";
+import { pausePanel, howToPlayPanel, finishPanel, finishRowsMarkup, finishStatusText } from "./race-dialogs.js";
+import { icon } from './icons.js';
 import { renderCarPortraits } from "./car-portraits.js";
 import { garageStatsMarkup, circuitMapMarkup } from "./collection-ui.js";
 import { createDrivingInputs, resolveDriveControls } from "./driving-controls.js";
@@ -95,6 +102,7 @@ function saveChoices() {
 }
 const progression = loadProgression();
 const paintChoices = loadPaint();
+const favoriteCars = loadFavorites();
 const playerColor = () => getPaint(preferences.vehicle, paintChoices[preferences.vehicle]).color;
 function createPlayerCar(){const car=createCar({vehicle:preferences.vehicle,low:mobile});applyPaint(car,preferences.vehicle,paintChoices[preferences.vehicle]);return car;}
 const newRace = () =>
@@ -143,9 +151,9 @@ $("track-km").textContent = (TRACK.length / 1000).toFixed(2);
 if (typeof preferences.sound === "boolean") records.sound = preferences.sound;
 sound.setMuted(!records.sound);
 updateSound();
-updateMenu();
 let renderer, world, player, effects, camera, composer, carFill, garageStudio, renderPass, bloomPass;
 let garageFrame = null;
+updateMenu();
 let garageYaw = -.75,
   garageDrag = null;
 let rivalModels = [],
@@ -227,9 +235,9 @@ async function initGame() {
       55,
       innerWidth / innerHeight,
       0.2,
-      1900,
+      2600,
     );
-    loadProgress(26, "BUILDING THE WATERFRONT");
+    loadProgress(26, "BUILDING YOUR CIRCUIT");
     await nextPaint();
     // Track signage is rasterized once; load its typeface before painting it.
     if(document.fonts) await document.fonts.load('32px "Racing Sans One"').catch(()=>{});
@@ -392,6 +400,7 @@ function updateMenu() {
     : "YOUR FIRST NIGHT STARTS HERE.";
 }
 function updateSound() {
+  $("sound").innerHTML = icon(records.sound ? 'volume' : 'volume-off');
   $("sound").setAttribute(
     "aria-label",
     records.sound ? "Turn sound off" : "Turn sound on",
@@ -424,8 +433,10 @@ function dialog({ kind, title, eyebrow, html, actions }) {
   $("dialog-actions").replaceChildren();
   for (const a of actions) {
     const b = document.createElement("button");
-    b.className = `button ${a.primary ? "primary" : "secondary"}`;
-    b.textContent = a.label;
+    b.className = `button ${a.primary ? "primary" : "secondary"}${a.danger ? " danger" : ""}`;
+    const actionIcon = /BACK|HOME|GOT IT/.test(a.label) ? 'arrow-left' : /GARAGE/.test(a.label) ? 'garage' : /RESTART|RESET|CLEAR/.test(a.label) ? 'restart' : /RACE|DRIV/.test(a.label) ? 'play' : 'check';
+    b.innerHTML = icon(actionIcon);
+    const label = document.createElement('span'); label.textContent = a.label; b.append(label);
     b.onclick = a.action;
     $("dialog-actions").append(b);
   }
@@ -524,11 +535,58 @@ function openGarage() {
   updateGarageCopy();
   document.querySelector(".car-choice[aria-pressed=\"true\"]")?.scrollIntoView({block:"nearest",inline:"nearest",behavior:"instant"});
   $("garage-back").focus({ preventScroll: true });
-  void renderCarPortraits(VEHICLES, (id, url) => {
-    const img = document.querySelector(`[data-vehicle="${id}"] img`);
-    if (img) { img.src = url; img.classList.add("ready"); }
-  });
+  loadCarPortraits();
   event("garage_open");
+}
+function loadCarPortraits() {
+  void renderCarPortraits(VEHICLES, (id, url) => {
+    for(const image of document.querySelectorAll(`[data-car-portrait="${id}"]`)) {
+      image.src = url; image.classList.add('ready');
+    }
+  });
+}
+function openCarLibrary() {
+  const view = {query:'',family:'all',sort:'latest',favoritesOnly:false,compare:false};
+  dialog({kind:'collection',eyebrow:`THE COLLECTION / ${VEHICLES.length} RACE CARS`,title:'Find your <em>next drive.</em>',html:carLibraryMarkup(),actions:[{label:'BACK TO GARAGE',primary:true,action:closeDialog}]});
+  const refresh = () => {
+    const cars = findCars({...view,favorites:favoriteCars,progression});
+    $('library-count').textContent = `${cars.length} / ${VEHICLES.length} cars${view.compare ? ` · compared with ${getVehicle(preferences.vehicle).name}` : ''}`;
+    $('car-library-grid').innerHTML = cars.map(car => carLibraryCard(car,{selected:preferences.vehicle,favorites:favoriteCars,progression,compare:view.compare})).join('');
+    $('library-empty').hidden = cars.length !== 0;
+    for(const button of document.querySelectorAll('[data-library-car]')) button.onclick = () => {
+      closeDialog(); chooseVehicle(button.dataset.libraryCar);
+      for(const filter of document.querySelectorAll('[data-family]')) filter.setAttribute('aria-pressed',String(filter.dataset.family === 'all'));
+      for(const card of document.querySelectorAll('[data-vehicle]')) card.hidden = false;
+      $('collection-count').textContent = `${VEHICLES.length} / ${VEHICLES.length} CARS`;
+      document.querySelector(`[data-vehicle="${preferences.vehicle}"]`)?.scrollIntoView({block:'nearest',inline:'center',behavior:reduced?'instant':'smooth'});
+      $('garage-race').focus({preventScroll:true});
+    };
+    for(const button of document.querySelectorAll('[data-favorite]')) button.onclick = () => {
+      const id = button.dataset.favorite;
+      if(favoriteCars.has(id)) favoriteCars.delete(id); else favoriteCars.add(id);
+      const persisted = saveFavorites(favoriteCars);
+      refresh();
+      (document.querySelector(`[data-favorite="${id}"]`) || $('favorites-only')).focus({preventScroll:true});
+      if(!persisted) $('library-count').textContent += ' · Favourites saved for this session';
+    };
+    loadCarPortraits();
+  };
+  $('car-search').oninput = event => {view.query = event.target.value; refresh();};
+  $('car-sort').onchange = event => {view.sort = event.target.value; refresh();};
+  $('compare-cars').onchange = event => {view.compare = event.target.checked; refresh();};
+  $('favorites-only').onclick = () => {view.favoritesOnly = !view.favoritesOnly; $('favorites-only').setAttribute('aria-pressed',String(view.favoritesOnly)); refresh();};
+  for(const button of document.querySelectorAll('[data-library-family]')) button.onclick = () => {
+    view.family = button.dataset.libraryFamily;
+    for(const other of document.querySelectorAll('[data-library-family]')) other.setAttribute('aria-pressed',String(other === button));
+    refresh();
+  };
+  $('reset-car-search').onclick = () => {
+    Object.assign(view,{query:'',family:'all',favoritesOnly:false}); $('car-search').value = '';
+    $('favorites-only').setAttribute('aria-pressed','false');
+    for(const button of document.querySelectorAll('[data-library-family]')) button.setAttribute('aria-pressed',String(button.dataset.libraryFamily === 'all'));
+    refresh(); $('car-search').focus();
+  };
+  refresh();
 }
 function start() {
   // Preserve the initial tap activation before a physical rotation starts the race.
@@ -613,8 +671,8 @@ function pauseGame() {
   dialog({
     kind: "pause",
     eyebrow: "TAKE A BREATHER",
-    title: "The coast can <em>wait.</em>",
-    html: `<p>Your race is paused. Pick up exactly where you left off.</p><div class="pause-settings"><button id="pause-sound" type="button">Sound ${records.sound ? "on" : "off"}</button><button id="pause-fullscreen" type="button">${document.fullscreenElement ? "Exit fullscreen" : "Fullscreen"}</button></div><p id="pause-screen-status" role="status" hidden></p>`,
+    title: "Race <em>paused.</em>",
+    html: pausePanel({race,track:TRACK,sound:records.sound,fullscreen:Boolean(document.fullscreenElement),countdown:was === "countdown"}),
     actions: [
       {
         label: "KEEP DRIVING",
@@ -641,11 +699,12 @@ function pauseGame() {
   });
   $("pause-sound").onclick = () => {
     $("sound").click();
-    $("pause-sound").textContent = `Sound ${records.sound ? "on" : "off"}`;
+    $("pause-sound").innerHTML = `${icon(records.sound ? 'volume' : 'volume-off')}<span>Sound ${records.sound ? "on" : "off"}</span>`;
+    $("pause-sound").setAttribute('aria-pressed',String(records.sound));
   };
   $("pause-fullscreen").onclick = async () => {
     const message = await $("fullscreen").onclick();
-    $("pause-fullscreen").textContent = document.fullscreenElement ? "Exit fullscreen" : "Fullscreen";
+    $("pause-fullscreen").innerHTML = `${icon('fullscreen')}<span>${document.fullscreenElement ? "Exit fullscreen" : "Fullscreen"}</span>`;
     $("pause-screen-status").hidden = !message;
     $("pause-screen-status").textContent = message || "";
   };
@@ -654,8 +713,8 @@ function how() {
   dialog({
     kind: "how",
     eyebrow: "FIND YOUR LINE",
-    title: "Find your line.<br><em>Feel the drift.</em>",
-    html: `<p>The car accelerates automatically. Drag left or right on the road to steer; lift your finger to center the steering. Turn sharply at high speed to slide through a corner, then ease back into line. Hold NITRO on a clear straight for a burst of speed.</p><div class="controls-guide"><div><b>Steer</b><span>Drag left / right</span></div><div><b>Drift</b><span>Turn at high speed</span></div><div><b>Nitro boost</b><span>Hold NITRO / Shift</span></div><div><b>Keyboard steering</b><span>← / → or A / D</span></div><div><b>Optional keyboard brake</b><span>↓ / S · Space handbrake</span></div><div><b>Reset / pause</b><span>Pause menu · R / Esc</span></div></div><p>On a phone, rotate to landscape. Nitro is the only driving button; acceleration and drifting happen automatically as you drive. Turning upright pauses the race. Race three laps against three rivals. Release Nitro to recharge while driving and drifting. Finish first to take the win. Best times are saved separately for each car and circuit on this device. Earn race credits at the finish, then use Garage → Performance to improve each car’s engine, tyres, nitro and handling. Keep a drift clean to build your multiplier; hitting a barrier loses unbanked points.</p>`,
+    title: "Find your <em>line.</em>",
+    html: howToPlayPanel({touch:usesTouchControls()}),
     actions: [
       { label: "GOT IT", primary: true, action: closeDialog },
       { label: "LET’S DRIVE", action: start },
@@ -667,27 +726,13 @@ function privacy() {
     kind: "privacy",
     eyebrow: "YOUR RACE. YOUR CHOICE.",
     title: "You’re in <em>control.</em>",
-    html: `<p>Your car and circuit choices, per-car paint colours and finishes, best times, sound setting, upgrade levels and race-credit balance stay in this browser. Clearing race records keeps your workshop progress. Clearing this website’s browser data removes all of them. Gameplay analytics is ${getAnalyticsConsent() === "granted" ? "enabled" : "off"}. When allowed, Google Analytics receives game events such as circuit selection and race completion, without your name, email address or recorded keystrokes.</p><p>Read the <a href="/privacy/">full privacy notice</a> for hosting, Google services and advertising details.</p><div class="privacy-controls"><button id="privacy-enable">Allow analytics</button><button id="privacy-disable">Turn analytics off</button></div>`,
+    html: `<p>Your car and circuit choices, favourite cars, per-car paint colours and finishes, best times, sound setting, upgrade levels and race-credit balance stay in this browser. Clearing race records keeps your workshop progress. Clearing this website’s browser data removes all of them. Gameplay analytics is ${getAnalyticsConsent() === "granted" ? "enabled" : "off"}. When allowed, Google Analytics receives game events such as circuit selection and race completion, without your name, email address or recorded keystrokes.</p><p>Read the <a href="/privacy/">full privacy notice</a> for hosting, Google services and advertising details.</p><div class="privacy-controls"><button id="privacy-enable" class="button secondary">${icon('check')}<span>Allow analytics</span></button><button id="privacy-disable" class="button secondary">${icon('close')}<span>Turn analytics off</span></button></div>`,
     actions: [
       { label: "CLOSE", primary: true, action: closeDialog },
       {
-        label: "CLEAR RACE RECORDS",
+        label: "CLEAR RACE RECORDS", danger: true,
         action() {
-          try {
-            Object.keys(localStorage)
-              .filter((k) => k.startsWith(STORAGE_KEY))
-              .forEach((k) => localStorage.removeItem(k));
-          } catch {}
-          const enabled = records.sound;
-          records = clearRecords(recordStore);
-          records.sound = enabled;
-          setSound(enabled, recordStore);
-          preferences.sound = enabled;
-          saveChoices();
-          updateSound();
-          updateMenu();
-          closeDialog();
-          toast("Race records cleared on this device.");
+          dialog({kind:"privacy",eyebrow:"YOUR SAVED RACES",title:"Clear your <em>race records?</em>",html:"<p>This removes your saved best times and race replays from this browser. Your cars, upgrades, credits, paint and favourites stay. This cannot be undone.</p>",actions:[{label:"KEEP MY RECORDS",primary:true,action:privacy},{label:"CLEAR RACE RECORDS",danger:true,action:clearRaceRecords}]});
         },
       },
     ],
@@ -703,14 +748,24 @@ function privacy() {
     toast("Gameplay analytics turned off.");
   };
 }
-function finishRows() {
-  return race.leaderboard
-    .map(
-      (r) =>
-        `<li class="${r.isPlayer ? "you" : ""}"><b>${r.position}</b><div><strong>${r.isPlayer ? "YOU" : r.name}</strong><small>${getVehicle(r.vehicle).name}</small></div><time>${r.finished ? format(r.finishTime) : `LAP ${Math.min(3, r.completedLaps + 1)}`}</time></li>`,
-    )
-    .join("");
+function clearRaceRecords() {
+          try {
+            Object.keys(localStorage)
+              .filter((k) => k.startsWith(STORAGE_KEY))
+              .forEach((k) => localStorage.removeItem(k));
+          } catch {}
+          const enabled = records.sound;
+          records = clearRecords(recordStore);
+          records.sound = enabled;
+          setSound(enabled, recordStore);
+          preferences.sound = enabled;
+          saveChoices();
+          updateSound();
+          updateMenu();
+          closeDialog();
+          toast("Race records cleared on this device.");
 }
+function finishRows() { return finishRowsMarkup(race); }
 function updateFinish() {
   if (modalKind !== "result") return;
   const list = $("finish-order");
@@ -720,9 +775,7 @@ function updateFinish() {
   }
   const status = $("finish-status");
   if (status)
-    status.textContent = race.allFinished
-      ? "All four drivers classified. Ready for a rematch?"
-      : "The remaining drivers are still racing. Times update at the finish.";
+    status.textContent = finishStatusText(race);
 }
 function finish() {
   clearTimeout(countdownTimer);
@@ -746,22 +799,14 @@ function finish() {
     drift_score: race.score,
     resets: race.recoveries,
   });
-  const suffix =
-    race.position === 1
-      ? "ST"
-      : race.position === 2
-        ? "ND"
-        : race.position === 3
-          ? "RD"
-          : "TH";
   dialog({
     kind: "result",
     eyebrow: `${TRACK.name.toUpperCase()} · CLASSIFIED`,
     title:
       race.position === 1
-        ? "You owned the <em>coast.</em>"
-        : "Every finish. A new <em>beginning.</em>",
-    html: `<div class="finish-checkers"></div><div class="finish-hero"><div><div class="finish-rank"><b>${race.position}</b><span>${suffix} / 4</span></div><p>${race.position === 1 ? "RACE WINNER" : race.position <= 3 ? "PODIUM FINISH" : "RACE COMPLETE"}</p></div><div class="finish-clock"><strong>${format(race.elapsed)}</strong><span>${best ? "NEW PERSONAL BEST" : "YOUR RACE TIME"}</span></div></div><ol class="finish-order" id="finish-order">${finishRows()}</ol><div class="finish-stats"><div><span>BEST LAP</span><strong>${format(race.bestLap)}</strong></div><div><span>DRIFT POINTS</span><strong>${race.score.toLocaleString()}</strong></div><div><span>CAR RESETS</span><strong>${race.recoveries}</strong></div></div><p class="finish-status" id="finish-status"></p>`,
+        ? "Take the <em>flag.</em>"
+        : "Finish <em>strong.</em>",
+    html: finishPanel({race,track:TRACK,isBest:best,previousBest:previous,bestTime:records.bestTime,reward,credits:progression.credits}),
     actions: [
       { label: "RACE AGAIN", primary: true, action: start },
       {
@@ -774,12 +819,6 @@ function finish() {
       { label: "HOME", action: menu },
     ],
   });
-  if (reward.awarded) {
-    const earned = document.createElement("div");
-    earned.className = "finish-reward";
-    earned.innerHTML = `<strong>+${reward.credits.toLocaleString()} CR</strong><span>Race credits earned · ${progression.credits.toLocaleString()} CR available in the workshop</span>`;
-    $("dialog-content").append(earned);
-  }
   updateFinish();
 }
 function initializePrivacyChoice() {
@@ -794,24 +833,32 @@ $("consent-decline").onclick = () => {
   setAnalyticsConsent(false);
   $("consent-banner").hidden = true;
 };
-$("circuit-select").replaceChildren(
-  ...TRACKS.map((t) => {
-    const option = document.createElement("option");
-    option.value = t.id;
-    option.textContent = t.name;
-    return option;
-  }),
-);
-$("circuit-select").value = preferences.track;
+$("circuit-name").textContent = TRACK.name;
 $("circuit-description").textContent = TRACK.description;
 $("circuit-art").innerHTML = circuitMapMarkup(TRACK);
-$("circuit-select").onchange = () => {
-  preferences.track = $("circuit-select").value;
-  saveChoices();
-  event("circuit_select");
-  const url = new URL(location.href);
-  url.searchParams.set("track", preferences.track);
-  location.assign(url);
+$("browse-circuits").onclick = () => {
+  const view = {query:'',series:'all',region:'all'};
+  dialog({kind:"circuits",eyebrow:`WORLD CIRCUIT ATLAS / ${TRACKS.length} ROUTES`,title:"Choose your <em>next line.</em>",html:circuitLibraryMarkup(TRACKS),actions:[{label:"BACK TO RACE HQ",primary:true,action:closeDialog}]});
+  const refresh = () => {
+    const matches = findCircuits(TRACKS,view);
+    $("circuit-library-grid").innerHTML = circuitLibraryCards(matches,preferences.track);
+    $("circuit-count").textContent = `${matches.length} of ${TRACKS.length} circuits`;
+    $("circuit-empty").hidden = matches.length > 0;
+    for(const button of document.querySelectorAll("[data-circuit-series]")) button.setAttribute('aria-pressed',String(button.dataset.circuitSeries === view.series));
+    for(const button of document.querySelectorAll("[data-circuit]")) button.onclick = () => {
+      if(button.dataset.circuit === preferences.track) { closeDialog(); return; }
+      preferences.track = button.dataset.circuit;
+      saveChoices(); event("circuit_select");
+      $("dialog-title").textContent = "Preparing your circuit…";
+      for(const option of document.querySelectorAll("[data-circuit]")) option.disabled = true;
+      const url = new URL(location.href); url.searchParams.set("track",preferences.track); location.assign(url);
+    };
+  };
+  $("circuit-search").oninput = e => { view.query=e.target.value; refresh(); };
+  $("circuit-region").onchange = e => { view.region=e.target.value; refresh(); };
+  for(const button of document.querySelectorAll("[data-circuit-series]")) button.onclick = () => { view.series=button.dataset.circuitSeries; refresh(); };
+  $("reset-circuit-search").onclick = () => { Object.assign(view,{query:'',series:'all',region:'all'}); $("circuit-search").value=''; $("circuit-region").value='all'; refresh(); $("circuit-search").focus(); };
+  refresh();
 };
 $("garage-cars").replaceChildren(
   ...VEHICLES.map((v, i) => {
@@ -820,7 +867,7 @@ $("garage-cars").replaceChildren(
     b.dataset.vehicle = v.id;
     b.style.setProperty("--car-color", v.color);
     b.setAttribute("aria-pressed", String(v.id === preferences.vehicle));
-    b.innerHTML = `<small><b>${v.family.toUpperCase()}</b><span>${String(i + 1).padStart(2, "0")}</span></small><img width="320" height="160" alt="" /><strong>${v.name}</strong><span class="car-choice-stats">${v.specs.speed} · ${v.specs.boost} NITRO</span>`;
+    b.innerHTML = `<small><b>${v.family.toUpperCase()}</b><span>${NEW_CARS.has(v.id) ? "NEW" : String(i + 1).padStart(2, "0")}</span></small><img data-car-portrait="${v.id}" width="320" height="160" alt="" /><strong>${v.name}</strong><span class="car-choice-stats">${v.specs.speed} · ${v.specs.boost} NITRO</span>`;
     b.onclick = () => { chooseVehicle(v.id); b.scrollIntoView({block:"nearest",inline:"nearest",behavior:reduced ? "instant" : "smooth"}); };
     return b;
   }),
@@ -840,6 +887,7 @@ for (const button of document.querySelectorAll("[data-family]")) {
 }
 for (const [id, direction] of [["cars-previous",-1],["cars-next",1]]) $(id).onclick = () => $("garage-cars").scrollBy({left:direction * $("garage-cars").clientWidth * .8,behavior:reduced ? "instant" : "smooth"});
 $("open-garage").onclick = openGarage;
+$("browse-cars").onclick = openCarLibrary;
 $("open-upgrades").onclick = () => showUpgrades();
 $("open-paint").onclick = showPaint;
 $("garage-back").onclick = menu;
@@ -996,8 +1044,8 @@ document.addEventListener("visibilitychange", () => {
 });
 $("dialog").addEventListener("keydown", (e) => {
   if (e.key !== "Tab") return;
-  const focus = [...$("dialog").querySelectorAll("button,a,select")].filter(
-    (el) => !el.disabled,
+  const focus = [...$("dialog").querySelectorAll("button,a[href],select,input,textarea,[tabindex]")].filter(
+    (el) => !el.disabled && el.tabIndex >= 0 && el.getClientRects().length > 0 && !el.closest("[hidden],[inert]"),
   );
   if (
     e.shiftKey &&
@@ -1162,16 +1210,16 @@ function drawMap() {
   map.clearRect(0,0,320,200);
   map.lineCap="round";map.lineJoin="round";
   map.beginPath();a.forEach((p,i)=>{const[x,y]=to(p.x,p.z);i?map.lineTo(x,y):map.moveTo(x,y);});map.closePath();
-  map.strokeStyle="#040b12";map.lineWidth=17;map.stroke();
-  map.strokeStyle="#7998ab";map.lineWidth=9;map.stroke();
-  map.strokeStyle="#d8e9f2";map.lineWidth=2;map.stroke();
+  map.strokeStyle="#110017";map.lineWidth=17;map.stroke();
+  map.strokeStyle="#021439";map.lineWidth=9;map.stroke();
+  map.strokeStyle="#FFFFFF";map.lineWidth=2;map.stroke();
   const start=sampleTrack(0),[sx,sy]=to(start.x,start.z);
   map.save();map.translate(sx,sy);map.rotate(-Math.atan2(start.tx,start.tz));
   for(let row=0;row<2;row++)for(let col=0;col<4;col++){map.fillStyle=(row+col)%2?"#08121b":"#fff";map.fillRect(col*4-8,row*4-4,4,4);}map.restore();
-  for(const rival of race.rivals){const[x,y]=to(rival.car.x,rival.car.z);map.beginPath();map.arc(x,y,5.5,0,Math.PI*2);map.fillStyle="#f6b777";map.fill();map.strokeStyle="#192430";map.lineWidth=2;map.stroke();}
+  for(const rival of race.rivals){const[x,y]=to(rival.car.x,rival.car.z);map.beginPath();map.arc(x,y,5.5,0,Math.PI*2);map.fillStyle="#FFFFFF";map.fill();map.strokeStyle="#110017";map.lineWidth=2;map.stroke();}
   const[x,y]=to(race.car.x,race.car.z);map.save();map.translate(x,y);map.rotate(-race.car.yaw);
   map.beginPath();map.moveTo(0,11);map.lineTo(-8,-8);map.lineTo(0,-4);map.lineTo(8,-8);map.closePath();
-  map.fillStyle="#93ffeb";map.strokeStyle="#092d31";map.lineWidth=3;map.stroke();map.fill();map.restore();
+  map.fillStyle="#FFF71E";map.strokeStyle="#110017";map.lineWidth=3;map.stroke();map.fill();map.restore();
   $("map-track").textContent=TRACK.name;
 }
 
@@ -1274,7 +1322,7 @@ function tick(now) {
       sound.beep(n > 0 ? 440 : 880, 0.12);
       world.startLights.forEach((m, i) =>
         m.material.color.set(
-          n <= 0 ? "#42f9ae" : i < 4 - n ? "#ff674c" : "#452a28",
+          n <= 0 ? "#C3FB13" : i < 4 - n ? "#FF0054" : "#110017",
         ),
       );
     }
@@ -1346,6 +1394,8 @@ function tick(now) {
   sound.update(
     {
       speed: race.car.speed,
+      vehicle: race.vehicle,
+      nitro: race.nitro.active,
       drift: race.car.drifting,
       brake: input.brake,
       running: mode === "racing",

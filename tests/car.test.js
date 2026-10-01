@@ -40,13 +40,13 @@ function resources(car) {
   return {geometry, materials, textures};
 }
 
-function bounds(car, select = () => true) {
+function bounds(car, select = () => true, includePoint = () => true) {
   car.group.updateMatrixWorld(true);
   const box = new THREE.Box3(), point = new THREE.Vector3();
   car.group.traverse(mesh => {
     if (!mesh.isMesh || !select(mesh)) return;
     const position = mesh.geometry.attributes.position;
-    for (let i = 0; i < position.count; i++) box.expandByPoint(point.fromBufferAttribute(position, i).applyMatrix4(mesh.matrixWorld));
+    for (let i = 0; i < position.count; i++) { point.fromBufferAttribute(position, i).applyMatrix4(mesh.matrixWorld); if(includePoint(point))box.expandByPoint(point); }
   });
   return box;
 }
@@ -110,6 +110,31 @@ test('the four additions change measurable body silhouettes and leave the existi
   const fresh = createCar({vehicle: 'coupe', low: true});
   assert.deepEqual(bounds(fresh), bounds(cars.coupe), 'morphing Kestrel cannot deform a later GT instance');
   fresh.dispose(); Object.values(cars).forEach(car => car.dispose());
+});
+
+test('six more builds have distinct cockpit, tail and aero silhouettes without modifying protected GT body panels', () => {
+  const ids=['coupe','rally','prototype','monoposto','corsair','stratus','vector','zenith','vela','aurora'];
+  const cars=Object.fromEntries(ids.map(vehicle=>[vehicle,createCar({vehicle,low:true})]));
+  assert.ok(bounds(cars.corsair).max.y<bounds(cars.coupe).max.y-.025,'open GT cockpit removes the fixed hardtop');
+  assert.ok(bounds(cars.stratus).min.z<bounds(cars.coupe).min.z-.25,'endurance GT has a physically longer tail');
+  assert.ok(bounds(cars.stratus).max.y>bounds(cars.coupe).max.y+.04,'roof scoop changes its upper silhouette');
+  const front=car=>bounds(car,()=>true,p=>p.z>1.65).getSize(new THREE.Vector3()).x;
+  assert.ok(front(cars.vector)>front(cars.rally)+.15,'Formula sprint wing is measurably wider ahead of the tyres');
+  const canopy=bounds(cars.zenith,mesh=>mesh.material.name==='formula-canopy-glass');
+  assert.ok(canopy.max.y>1.04&&canopy.max.z-canopy.min.z>1.2,'enclosed Formula cockpit has full three-dimensional glazing');
+  const canopyMesh=cars.zenith.group.getObjectByName('batched-formula-canopy-glass');
+  assert.equal(canopyMesh.castShadow,false);assert.equal(canopyMesh.receiveShadow,false,'optical canopy remains exempt from thin-shell shadow acne after batching');
+  const offsetGlazing=bounds(cars.vela,mesh=>mesh.material.name==='dark-glass').getCenter(new THREE.Vector3());
+  assert.ok(offsetGlazing.x>.20,'Vela driver and aeroscreen sit on one side of the centreline');
+  assert.ok(bounds(cars.aurora).min.z<bounds(cars.prototype).min.z-.40,'Aurora tail is longer than the base prototype');
+  assert.ok(bounds(cars.aurora).max.y>bounds(cars.prototype).max.y+.10,'Aurora dorsal fin rises above the standard profile');
+  const source=cars.coupe.group.getObjectByName('batched-body-paint').geometry.attributes;
+  for(const id of ['corsair','stratus']){
+    const paint=cars[id].group.getObjectByName('batched-body-paint');assert.equal(paint.material.side,THREE.FrontSide);
+    for(const attribute of ['position','normal'])for(let i=0;i<200_000;i+=37)for(const axis of ['getX','getY','getZ'])
+      assert.equal(paint.geometry.attributes[attribute][axis](i),source[attribute][axis](i),'new GT packages must preserve the original painted source shell');
+  }
+  for(const car of Object.values(cars))car.dispose();
 });
 
 test('shipping GT paint and wheel surfaces retain coherent geometry and normals after offline processing', async () => {

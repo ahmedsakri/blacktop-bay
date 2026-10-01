@@ -1,6 +1,7 @@
 import { getUpgradeStats } from './physics.js';
 import { getUpgradePreview, UPGRADE_COMPONENTS, MAX_LEVEL } from './progression.js';
 import { getVehicle } from './vehicles.js';
+import { icon } from './icons.js';
 
 const components = {
   engine: {
@@ -56,7 +57,7 @@ export function upgradePanel(state, vehicle) {
     const next = getUpgradeStats(car.id, preview.next || preview.current);
     const currentMetrics = spec.metrics(stats, stock), nextMetrics = spec.metrics(next, stock);
     installed += preview.level;
-    const metricRows = currentMetrics.map(([name, unit, value], i) => `<div class="upgrade-metric"><dt>${name}<small>${unit}</small></dt><dd><span class="upgrade-now"><span class="workshop-sr">Current: </span>${value}</span><span class="upgrade-arrow" aria-hidden="true">→</span><strong class="upgrade-next"><span class="workshop-sr">${preview.maxed ? 'Installed' : 'Next level'}: </span>${nextMetrics[i][2]}</strong></dd></div>`).join('');
+    const metricRows = currentMetrics.map(([name, unit, value], i) => `<div class="upgrade-metric"><dt>${name}<small>${unit}</small></dt><dd><span class="upgrade-now"><span class="workshop-sr">Current: </span>${value}</span><span class="upgrade-arrow" aria-hidden="true">${icon('arrow-right')}</span><strong class="upgrade-next"><span class="workshop-sr">${preview.maxed ? 'Installed' : 'Next level'}: </span>${nextMetrics[i][2]}</strong></dd></div>`).join('');
     const shortfall = !preview.maxed && !preview.affordable;
     const status = preview.maxed ? 'All five levels fitted.' : shortfall
       ? `${formatCredits(preview.cost - credits)} more credits needed`
@@ -67,10 +68,10 @@ export function upgradePanel(state, vehicle) {
       <div class="upgrade-levels" aria-label="${spec.name} level ${preview.level} of ${MAX_LEVEL}">${Array.from({ length: MAX_LEVEL }, (_, i) => `<i aria-hidden="true" class="${i < preview.level ? 'filled' : i === preview.level ? 'next' : ''}"></i>`).join('')}</div>
       <p class="upgrade-description">${spec.description}</p>
       <div class="upgrade-gain">${preview.maxed ? 'Maximum level installed' : spec.gain(stats, next)}</div>
-      <div class="upgrade-comparison-heading" aria-hidden="true"><span>PERFORMANCE</span><span>NOW <i>→</i> ${preview.maxed ? 'FITTED' : 'NEXT'}</span></div>
+      <div class="upgrade-comparison-heading" aria-hidden="true"><span>PERFORMANCE</span><span>NOW <i>${icon('arrow-right')}</i> ${preview.maxed ? 'FITTED' : 'NEXT'}</span></div>
       <dl class="upgrade-metrics">${metricRows}</dl>
       <div class="upgrade-speed-gain">${preview.maxed ? `${speedLabel(stats)} current top-speed rating` : `Also +${speedGain} km/h top-speed rating`}</div>
-      <button type="button" class="upgrade-buy" data-upgrade="${component}" aria-describedby="upgrade-${component}-status" aria-label="${preview.maxed ? `${spec.name} fully upgraded` : `Upgrade ${spec.name} to level ${preview.nextLevel} for ${preview.cost} credits`}" ${preview.maxed || !preview.affordable ? 'disabled' : ''}><span>${preview.maxed ? 'Fully upgraded' : `Fit level ${preview.nextLevel}`}</span><strong>${preview.maxed ? '<span aria-hidden="true">✓</span> MAX' : `${formatCredits(preview.cost)} <small>CR</small><span class="upgrade-buy-arrow" aria-hidden="true">↗</span>`}</strong></button>
+      <button type="button" class="upgrade-buy" data-upgrade="${component}" aria-describedby="upgrade-${component}-status" aria-label="${preview.maxed ? `${spec.name} fully upgraded` : `Upgrade ${spec.name} to level ${preview.nextLevel} for ${preview.cost} credits`}" ${preview.maxed || !preview.affordable ? 'disabled' : ''}><span class="upgrade-buy-label">${icon(preview.maxed ? 'check' : 'wrench')}<span>${preview.maxed ? 'Fully upgraded' : `Fit level ${preview.nextLevel}`}</span></span><strong>${preview.maxed ? 'MAX' : `${formatCredits(preview.cost)} <small>CR</small>${icon('arrow-right', 'upgrade-buy-arrow')}`}</strong></button>
       <small id="upgrade-${component}-status" class="upgrade-purchase-note${shortfall ? ' upgrade-shortfall' : ''}">${status}</small>
     </section>`;
   }).join('');

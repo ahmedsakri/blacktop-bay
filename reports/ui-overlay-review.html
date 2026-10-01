@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Local race dialog review — Blacktop Bay</title>
+</head>
+<body>
+  <details class="qa-picker"><summary>Local UI fixture</summary><label>Review state <select id="qa-case"><option value="recorded">Recorded physics result</option><option value="winner">Winner</option><option value="midpack">Mid-pack</option><option value="pending">Rivals pending</option><option value="save-blocked">Saving blocked</option><option value="help">How to play</option><option value="pause">Pause</option></select></label><p>Controlled QA variants. No saves, analytics, or production actions.</p></details>
+  <div id="modal-backdrop" class="modal-backdrop">
+    <section id="dialog" class="dialog" role="dialog" aria-modal="true" aria-labelledby="dialog-title" tabindex="-1">
+      <p class="eyebrow" id="dialog-eyebrow"></p><h2 id="dialog-title"></h2><div id="dialog-content"></div><div id="dialog-actions" class="dialog-actions"></div>
+    </section>
+  </div>
+  <script type="module">
+    import '/src/style.css';
+    import '/src/racing.css';
+    import '/src/collection.css';
+    import '/src/workshop.css';
+    import '/src/mobile-hud.css';
+    import '/src/collection-browser.css';
+    import '/src/race-dialogs.css';
+    import '/src/button-system.css';
+    import '/src/brand-theme.css';
+    import { pausePanel, howToPlayPanel, finishPanel } from '/src/race-dialogs.js';
+    import { icon } from '/src/icons.js';
+    import { createCompletedRaceFixture } from '/scripts/qa-race-fixture.js';
+
+    // The recorded case drives three real laps. Alternate classification states
+    // intentionally adapt that fixture for visual coverage; they never persist.
+    const baseline = createCompletedRaceFixture({ vehicle: 'coupe', track: 'harbor' }).race;
+    const $ = id => document.getElementById(id);
+    function raceFor(state) {
+      const race = structuredClone(baseline);
+      if (state === 'recorded') return race;
+      race.position = state === 'midpack' ? 3 : 1;
+      const self = race.leaderboard.find(row => row.isPlayer);
+      const rivals = race.leaderboard.filter(row => !row.isPlayer);
+      const ordered = [...rivals];
+      ordered.splice(race.position - 1, 0, self);
+      race.leaderboard = ordered.map((row, index) => ({...row,position:index+1,finished:true,completedLaps:3,finishTime:race.elapsed+(index+1-race.position)*1.83}));
+      if (state === 'pending') {
+        race.allFinished = false;
+        race.leaderboard = race.leaderboard.map(row => row.isPlayer ? row : {...row,finished:false,finishTime:null,completedLaps:2});
+      }
+      return race;
+    }
+    function show(state) {
+      const help = state === 'help', pause = state === 'pause';
+      const race = raceFor(state), kind = help ? 'how' : pause ? 'pause' : 'result';
+      $('dialog').dataset.kind = kind;
+      $('dialog-eyebrow').textContent = help ? 'LEARN THE LINE' : pause ? 'TAKE A BREATHER' : 'THE CHEQUERED FLAG';
+      $('dialog-title').innerHTML = help ? 'Own the <em>next corner.</em>' : pause ? 'Your race. <em>On hold.</em>' : 'Every finish. <em>A new start.</em>';
+      const paused = {...race,position:2,state:'racing',completedLaps:1,elapsed:46.29};
+      $('dialog-content').innerHTML = help ? howToPlayPanel({touch:matchMedia('(max-width:900px)').matches}) : pause ? pausePanel({race:paused,sound:false}) : finishPanel({race,isBest:state!=='midpack',previousBest:race.elapsed+2.41,bestTime:state==='midpack'?race.elapsed-1.13:race.elapsed,reward:{awarded:true,credits:420,persisted:state!=='save-blocked'},credits:1620});
+      const actions = help ? [['Ready to race','flag'],['Back','arrow-left']] : pause ? [['Resume race','play'],['Restart race','restart'],['Garage','garage'],['Main menu','grid']] : [['Race again','restart'],['Garage','garage'],['Main menu','grid']];
+      $('dialog-actions').innerHTML = actions.map(([label,sprite],i)=>`<button class="button ${i===0?'primary':'secondary'}" type="button">${icon(sprite)}<span>${label}</span></button>`).join('');
+      $('dialog-content').scrollTop = 0;
+      if (pause) {
+        $('pause-sound').onclick = event => {const button=event.currentTarget,on=button.getAttribute('aria-pressed')!=='true';button.setAttribute('aria-pressed',String(on));button.innerHTML=icon(on?'volume':'volume-off')+`<span>Sound ${on?'on':'off'}</span>`;};
+        $('pause-fullscreen').onclick = () => {$('pause-screen-status').hidden=false;$('pause-screen-status').textContent='Visual fixture: fullscreen is not requested.';};
+      }
+      history.replaceState(null,'',`?case=${encodeURIComponent(state)}`);
+      document.documentElement.dataset.fixtureReady='true';
+    }
+    const allowed=[...$('qa-case').options].map(option=>option.value), requested=new URL(location.href).searchParams.get('case');
+    $('qa-case').value=allowed.includes(requested)?requested:'recorded';
+    $('qa-case').onchange=event=>show(event.target.value);
+    show($('qa-case').value);
+  </script>
+  <style>
+    body{margin:0;background:radial-gradient(ellipse at 75% 35%,#9146ff24,transparent 55%),#110017}
+    .qa-picker{position:fixed;z-index:10000;left:8px;top:6px;max-width:255px;color:#fff;background:#110017ed;border:1px solid #9146ff;padding:5px 8px;font:11px/1.45 sans-serif}
+    .qa-picker summary{cursor:pointer}.qa-picker label{display:block;margin-top:10px}.qa-picker select{display:block;width:100%;padding:8px;margin:5px 0;color:#fff;background:#021439}.qa-picker p{max-width:230px;margin:8px 0 0;color:#d0c8d6}
+  </style>
+</body>
+</html>

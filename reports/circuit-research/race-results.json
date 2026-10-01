@@ -1,0 +1,502 @@
+[
+  {
+    "id": "melbourne",
+    "length": 2497.38529259591,
+    "player": 216.51666666663408,
+    "clock": 232.5083333332862,
+    "finished": true,
+    "laps": 3,
+    "recoveries": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "rivalLaps": [
+      3,
+      3,
+      3
+    ],
+    "maxDistance": 1.5691181523776982
+  },
+  {
+    "id": "shanghai",
+    "length": 2513.436268009919,
+    "player": 248.6249999999382,
+    "clock": 271.0749999999178,
+    "finished": true,
+    "laps": 3,
+    "recoveries": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "rivalLaps": [
+      3,
+      3,
+      3
+    ],
+    "maxDistance": 2.443280174172209
+  },
+  {
+    "id": "suzuka",
+    "length": 2485.6509190507063,
+    "player": 237.41666666661507,
+    "clock": 259.5333333332616,
+    "finished": true,
+    "laps": 3,
+    "recoveries": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "rivalLaps": [
+      3,
+      3,
+      3
+    ],
+    "maxDistance": 2.1320302391779142
+  },
+  {
+    "id": "miami",
+    "length": 2393.431647634961,
+    "player": 221.52499999996286,
+    "clock": 237.2999999999485,
+    "finished": true,
+    "laps": 3,
+    "recoveries": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "rivalLaps": [
+      3,
+      3,
+      3
+    ],
+    "maxDistance": 2.2161793018032374
+  },
+  {
+    "id": "montreal",
+    "length": 2468.2722985201135,
+    "player": 215.10833333330203,
+    "clock": 231.00833333328757,
+    "finished": true,
+    "laps": 3,
+    "recoveries": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "rivalLaps": [
+      3,
+      3,
+      3
+    ],
+    "maxDistance": 2.3180809828289832
+  },
+  {
+    "id": "monaco",
+    "length": 2133.100665156976,
+    "player": 203.8999999999789,
+    "clock": 221.7666666666293,
+    "finished": true,
+    "laps": 3,
+    "recoveries": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "rivalLaps": [
+      3,
+      3,
+      3
+    ],
+    "maxDistance": 2.0864136013787906
+  },
+  {
+    "id": "barcelona",
+    "length": 2383.9317787548384,
+    "player": 226.874999999958,
+    "clock": 247.19166666660618,
+    "finished": true,
+    "laps": 3,
+    "recoveries": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "rivalLaps": [
+      3,
+      3,
+      3
+    ],
+    "maxDistance": 2.4353916983991866
+  },
+  {
+    "id": "spielberg",
+    "length": 2496.451702349715,
+    "player": 224.6416666666267,
+    "clock": 242.7666666666102,
+    "finished": true,
+    "laps": 3,
+    "recoveries": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "rivalLaps": [
+      3,
+      3,
+      3
+    ],
+    "maxDistance": 2.4009350446561157
+  },
+  {
+    "id": "silverstone",
+    "length": 2402.3539164685085,
+    "player": 221.0833333332966,
+    "clock": 239.74166666661296,
+    "finished": true,
+    "laps": 3,
+    "recoveries": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "rivalLaps": [
+      3,
+      3,
+      3
+    ],
+    "maxDistance": 2.687795351540765
+  },
+  {
+    "id": "spa",
+    "length": 2844.3546307151437,
+    "player": 252.72499999993448,
+    "clock": 273.4666666665823,
+    "finished": true,
+    "laps": 3,
+    "recoveries": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "rivalLaps": [
+      3,
+      3,
+      3
+    ],
+    "maxDistance": 2.236408972285108
+  },
+  {
+    "id": "hungaroring",
+    "length": 2364.350948344139,
+    "player": 226.6499999999582,
+    "clock": 245.7749999999408,
+    "finished": true,
+    "laps": 3,
+    "recoveries": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "rivalLaps": [
+      3,
+      3,
+      3
+    ],
+    "maxDistance": 2.5840750034649123
+  },
+  {
+    "id": "zandvoort",
+    "length": 2350.802139251823,
+    "player": 226.95833333329125,
+    "clock": 247.8749999999389,
+    "finished": true,
+    "laps": 3,
+    "recoveries": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "rivalLaps": [
+      3,
+      3,
+      3
+    ],
+    "maxDistance": 2.366786105107174
+  },
+  {
+    "id": "monza",
+    "length": 2575.146441316084,
+    "player": 219.61666666663126,
+    "clock": 235.2583333332837,
+    "finished": true,
+    "laps": 3,
+    "recoveries": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "rivalLaps": [
+      3,
+      3,
+      3
+    ],
+    "maxDistance": 2.2695650769701126
+  },
+  {
+    "id": "madring",
+    "length": 2545.7917280989877,
+    "player": 226.8416666666247,
+    "clock": 247.09166666660627,
+    "finished": true,
+    "laps": 3,
+    "recoveries": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "rivalLaps": [
+      3,
+      3,
+      3
+    ],
+    "maxDistance": 1.2908248055011147
+  },
+  {
+    "id": "baku",
+    "length": 2464.734506913605,
+    "player": 218.30833333329912,
+    "clock": 234.2833333332846,
+    "finished": true,
+    "laps": 3,
+    "recoveries": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "rivalLaps": [
+      3,
+      3,
+      3
+    ],
+    "maxDistance": 1.7492968192211753
+  },
+  {
+    "id": "sepang",
+    "length": 2459.9665752740816,
+    "player": 238.4249999999475,
+    "clock": 259.9166666665946,
+    "finished": true,
+    "laps": 3,
+    "recoveries": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "rivalLaps": [
+      3,
+      3,
+      3
+    ],
+    "maxDistance": 2.43064756340013
+  },
+  {
+    "id": "singapore",
+    "length": 2369.7822767545317,
+    "player": 223.10833333329475,
+    "clock": 241.97499999994426,
+    "finished": true,
+    "laps": 3,
+    "recoveries": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "rivalLaps": [
+      3,
+      3,
+      3
+    ],
+    "maxDistance": 2.3553962923476512
+  },
+  {
+    "id": "austin",
+    "length": 2289.564197109964,
+    "player": 226.19166666662528,
+    "clock": 245.08333333327477,
+    "finished": true,
+    "laps": 3,
+    "recoveries": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "rivalLaps": [
+      3,
+      3,
+      3
+    ],
+    "maxDistance": 2.177445987257612
+  },
+  {
+    "id": "mexico",
+    "length": 2441.479112156913,
+    "player": 218.73333333329873,
+    "clock": 237.20833333328193,
+    "finished": true,
+    "laps": 3,
+    "recoveries": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "rivalLaps": [
+      3,
+      3,
+      3
+    ],
+    "maxDistance": 2.953673336843882
+  },
+  {
+    "id": "interlagos",
+    "length": 2397.022242729897,
+    "player": 225.08333333329296,
+    "clock": 242.53333333327708,
+    "finished": true,
+    "laps": 3,
+    "recoveries": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "rivalLaps": [
+      3,
+      3,
+      3
+    ],
+    "maxDistance": 2.4923896785996305
+  },
+  {
+    "id": "lasvegas",
+    "length": 2466.376465391456,
+    "player": 222.116666666629,
+    "clock": 238.0749999999478,
+    "finished": true,
+    "laps": 3,
+    "recoveries": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "rivalLaps": [
+      3,
+      3,
+      3
+    ],
+    "maxDistance": 2.019067390734516
+  },
+  {
+    "id": "lusail",
+    "length": 2342.246123798217,
+    "player": 229.89999999995524,
+    "clock": 250.84166666660286,
+    "finished": true,
+    "laps": 3,
+    "recoveries": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "rivalLaps": [
+      3,
+      3,
+      3
+    ],
+    "maxDistance": 2.3746025487734452
+  },
+  {
+    "id": "yasmarina",
+    "length": 2382.338379280848,
+    "player": 225.34999999995938,
+    "clock": 241.3749999999448,
+    "finished": true,
+    "laps": 3,
+    "recoveries": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "rivalLaps": [
+      3,
+      3,
+      3
+    ],
+    "maxDistance": 2.4933750283022476
+  },
+  {
+    "id": "sakhir",
+    "length": 2358.9284521063646,
+    "player": 228.58333333328977,
+    "clock": 248.18333333327195,
+    "finished": true,
+    "laps": 3,
+    "recoveries": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "rivalLaps": [
+      3,
+      3,
+      3
+    ],
+    "maxDistance": 2.580512717732735
+  },
+  {
+    "id": "jeddah",
+    "length": 2605.2976957281326,
+    "player": 226.0333333332921,
+    "clock": 245.0333333332748,
+    "finished": true,
+    "laps": 3,
+    "recoveries": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "rivalLaps": [
+      3,
+      3,
+      3
+    ],
+    "maxDistance": 2.2129736868577448
+  }
+]

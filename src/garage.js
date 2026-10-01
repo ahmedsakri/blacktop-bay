@@ -4,8 +4,8 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 // A separate inspection studio: neutral paint reflections and uncluttered silhouettes.
 export function createGarage(renderer, { low = false } = {}) {
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color('#131b24');
-  scene.fog = new THREE.Fog('#131b24', 16, 44);
+  scene.background = new THREE.Color('#110017');
+  scene.fog = new THREE.Fog('#110017', 16, 44);
   const room = new RoomEnvironment();
   const pmrem = new THREE.PMREMGenerator(renderer);
   const environment = pmrem.fromScene(room, 0.04);
@@ -15,16 +15,16 @@ export function createGarage(renderer, { low = false } = {}) {
   pmrem.dispose();
   const anchor = new THREE.Group();
   scene.add(anchor);
-  const floor = new THREE.Mesh(new THREE.PlaneGeometry(140, 140), new THREE.MeshStandardMaterial({ color:'#28303a', roughness:.67, metalness:.16 }));
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(140, 140), new THREE.MeshStandardMaterial({ color:'#110017', roughness:.67, metalness:.16 }));
   floor.rotation.x = -Math.PI / 2;
   floor.position.y = .006;
   floor.receiveShadow = true;
   anchor.add(floor);
-  const platform = new THREE.Mesh(new THREE.CylinderGeometry(4.35,4.4,.035,96),new THREE.MeshStandardMaterial({color:'#414b57',metalness:.32,roughness:.52}));
+  const platform = new THREE.Mesh(new THREE.CylinderGeometry(4.35,4.4,.035,96),new THREE.MeshStandardMaterial({color:'#26212b',metalness:.32,roughness:.52}));
   platform.position.y=.018;
   platform.receiveShadow=true;
   anchor.add(platform);
-  const line = new THREE.Mesh(new THREE.RingGeometry(4.28,4.30,128),new THREE.MeshBasicMaterial({color:'#75808b'}));
+  const line = new THREE.Mesh(new THREE.RingGeometry(4.28,4.30,128),new THREE.MeshBasicMaterial({color:'#9146FF'}));
   line.rotation.x=-Math.PI/2;
   line.position.y=.038;
   anchor.add(line);

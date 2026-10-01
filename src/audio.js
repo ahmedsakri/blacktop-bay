@@ -1,11 +1,20 @@
 // Original, synthesized driving sound. Nothing is constructed or played before unlock().
 // Levels deliberately sit below UI sounds; there are no samples or network requests.
+import { getVehicle } from './vehicles.js';
+
+const VOICES={
+  gt:{gears:6,idle:52,range:88,body:.135,harmonic:.027,sub:.038,cutoff:1100},
+  prototype:{gears:7,idle:76,range:126,body:.118,harmonic:.035,sub:.027,cutoff:1700},
+  formula:{gears:8,idle:118,range:180,body:.096,harmonic:.047,sub:.015,cutoff:2650},
+};
+
 export function createAudio() {
   const doc=globalThis.document;
-  let context=null,master=null,engineGate=null,tyreGain=null,squealGain=null;
-  let engineFilter=null,tyreFilter=null,bodyOsc=null,harmonicOsc=null,subOsc=null,squealOsc=null;
+  let context=null,master=null,engineGate=null,tyreGain=null,squealGain=null,boostGain=null;
+  let engineFilter=null,tyreFilter=null,bodyOsc=null,harmonicOsc=null,subOsc=null,squealOsc=null,boostOsc=null;
+  let bodyGain=null,harmonicGain=null,subGain=null;
   let unlockPromise=null,disposed=false,unlocked=false,muted=false,gear=0;
-  let running=false,speed=0,drift=0,brake=0;
+  let running=false,speed=0,drift=0,brake=0,vehicleId=null,shiftTime=0;
   const sources=new Set(),transients=new Set(),nodes=new Set();
   const finite=(value,fallback=0)=>Number.isFinite(Number(value))?Number(value):fallback;
   const clamp=(value,min,max)=>Math.min(max,Math.max(min,value));
@@ -23,22 +32,23 @@ export function createAudio() {
     if(!audible || !running) {
       target(tyreGain?.gain,0,.045);
       target(squealGain?.gain,0,.045);
+      target(boostGain?.gain,0,.045);
     }
   }
   function makeOscillator(type,frequency,gain,destination) {
     const oscillator=node(context.createOscillator()),amplitude=node(context.createGain());
     oscillator.type=type;oscillator.frequency.value=frequency;amplitude.gain.value=gain;
     oscillator.connect(amplitude);amplitude.connect(destination);
-    oscillator.start();sources.add(oscillator);return oscillator;
+    oscillator.start();sources.add(oscillator);return {oscillator,amplitude};
   }
   function constructGraph() {
     master=node(context.createGain());master.gain.value=0;master.connect(context.destination);
     engineGate=node(context.createGain());engineGate.gain.value=0;engineGate.connect(master);
     engineFilter=node(context.createBiquadFilter());engineFilter.type='lowpass';
     engineFilter.frequency.value=360;engineFilter.Q.value=.48;engineFilter.connect(engineGate);
-    bodyOsc=makeOscillator('triangle',38,.145,engineFilter);
-    harmonicOsc=makeOscillator('sawtooth',76,.028,engineFilter);
-    subOsc=makeOscillator('sine',19,.033,engineFilter);
+    ({oscillator:bodyOsc,amplitude:bodyGain}=makeOscillator('triangle',52,.135,engineFilter));
+    ({oscillator:harmonicOsc,amplitude:harmonicGain}=makeOscillator('sawtooth',104,.027,engineFilter));
+    ({oscillator:subOsc,amplitude:subGain}=makeOscillator('sine',26,.038,engineFilter));
 
     // Slow, shallow detuning prevents a static electronic hum without a harsh buzz.
     const flutter=node(context.createOscillator()),flutterDepth=node(context.createGain());
@@ -59,6 +69,11 @@ export function createAudio() {
     tyreFilter.frequency.value=850;tyreFilter.Q.value=.56;
     tyreGain=node(context.createGain());tyreGain.gain.value=0;
     noise.connect(tyreFilter);tyreFilter.connect(tyreGain);tyreGain.connect(engineGate);
+    const boostFilter=node(context.createBiquadFilter());boostFilter.type='highpass';boostFilter.frequency.value=1700;
+    boostGain=node(context.createGain());boostGain.gain.value=0;boostGain.connect(engineGate);
+    noise.connect(boostFilter);boostFilter.connect(boostGain);
+    // Boost layers filtered air and a quiet rising electrical whine over the engine.
+    ({oscillator:boostOsc}=makeOscillator('sine',900,.065,boostGain));
     noise.start();sources.add(noise);
     squealGain=node(context.createGain());squealGain.gain.value=0;squealGain.connect(engineGate);
     squealOsc=node(context.createOscillator());squealOsc.type='sine';squealOsc.frequency.value=820;
@@ -96,21 +111,37 @@ export function createAudio() {
     drift=clamp(Math.abs(finite(state.drift)),0,1);
     brake=clamp(finite(state.brake),0,1);
     running=Boolean(state.running);
+    const vehicle=getVehicle(state.vehicle),voice=VOICES[vehicle.family]||VOICES.gt;
+    if(vehicleId!==vehicle.id || !running){gear=0;shiftTime=0;vehicleId=vehicle.id;}
     if(!context || !unlocked || context.state!=='running')return;
     updateGates();
     if(!running || muted || !visible())return;
 
-    // Hysteresis prevents gear hunting when speed hovers around a shift point.
-    if(gear<4 && speed>(gear+1)*15+1)gear++;
-    else if(gear>0 && speed<gear*15-2)gear--;
-    const load=clamp((speed-gear*15)/16,0,1);
+    // Distinct six/seven/eight-speed voices follow road speed, with a brief torque
+    // cut and rev drop at shifts. Hysteresis prevents chatter at a shift boundary.
+    const step=clamp(finite(dt,1/60),0,.1),topSpeed=vehicle.handling.topSpeed;
+    const threshold=index=>topSpeed*(.20+.78*index/(voice.gears-1));
+    const oldGear=gear;
+    if(gear<voice.gears-1 && speed>threshold(gear)+.5)gear++;
+    else if(gear>0 && speed<threshold(gear-1)-1.5)gear--;
+    if(gear!==oldGear)shiftTime=.105;
+    else shiftTime=Math.max(0,shiftTime-step);
+    const lower=gear?threshold(gear-1)*.66:0,upper=threshold(gear);
+    const rev=clamp((speed-lower)/(upper-lower),0,1.10);
     const throttle=clamp(finite(state.throttle,1),0,1);
-    const pitch=38+load*42+Math.min(speed,70)*.13+drift*5+throttle*3;
-    const smooth=clamp(finite(dt,1/60)*5,.055,.18);
+    const boost=Boolean(state.nitro)&&throttle>.1&&brake<.1;
+    const cut=1-.26*shiftTime/.105;
+    const pitch=voice.idle+rev*voice.range+drift*voice.range*.06+(boost?6:0);
+    const smooth=clamp(step*3,.035,.12);
     target(bodyOsc.frequency,pitch,smooth);
-    target(harmonicOsc.frequency,pitch*2.006,smooth);
+    target(harmonicOsc.frequency,pitch*(vehicle.family==='formula'?3.003:2.006),smooth);
     target(subOsc.frequency,pitch*.5,smooth);
-    target(engineFilter.frequency,270+load*(throttle?550:240)+speed*5,.11);
+    target(bodyGain.gain,voice.body*(.52+throttle*.48)*cut,.035);
+    target(harmonicGain.gain,voice.harmonic*(.35+throttle*.65)*cut,.035);
+    target(subGain.gain,voice.sub*(.72+throttle*.28),.07);
+    target(engineFilter.frequency,300+voice.cutoff*(.22+rev*.78)*(.48+throttle*.52)+(boost?300:0),.075);
+    target(boostGain.gain,boost?.17:0,boost?.045:.10);
+    target(boostOsc.frequency,880+speed*12+(boost?180:0),.12);
     const moving=clamp((speed-3)/12,0,1);
     const scrub=Math.max(drift,brake*.22)*moving;
     target(tyreGain.gain,Math.pow(scrub,1.35)*.16,.060);

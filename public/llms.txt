@@ -1,15 +1,15 @@
 # Blacktop Bay
 
-> Blacktop Bay is a free, single-player 3D browser racing game by AppsOverFlow. Race three computer-controlled rivals across five asphalt circuits in one of fourteen race builds, earn race credits, and upgrade your car. No account, no install, no purchases.
+> Blacktop Bay is a free, single-player 3D browser racing game by AppsOverFlow. Race three computer-controlled rivals across thirty asphalt circuits in one of twenty race builds, earn race credits, and upgrade your car. No account, no install, no purchases.
 
 ## About the game
 
-Blacktop Bay runs directly in a modern web browser (WebGL 2 required) at https://blacktop-bay.web.app/. A single human player races three AI drivers — Mira, Jax and Nova — in a four-car field over three laps. Gameplay centres on drifting for score, a rechargeable nitro boost, and earning race credits to install permanent, per-car upgrades. Progress is saved locally in the browser; there is no online multiplayer and no real-money payment.
+Blacktop Bay runs directly in a modern web browser (WebGL 2 required) at https://blacktop-bay.web.app/. A single human player races three computer-controlled opponents — Mira, Jax and Nova — in a four-car field over three laps. Gameplay centres on drifting for score, a rechargeable nitro boost, and earning race credits to install permanent, per-car upgrades. Progress is saved locally in the browser; there is no online multiplayer and no real-money payment.
 
 ## How to play
 
 - Choose a race car in the Garage and, optionally, spend earned credits on upgrades.
-- Pick one of five circuits on the home screen, then start the race.
+- Pick one of thirty circuits on the home screen, then start the race.
 - Acceleration is automatic on every device. Drag left/right across the race view to steer and lift to center, or use Left/Right (A/D) on a keyboard. Turn sharply at speed to drift automatically. Nitro is the only on-screen driving button; optional keyboard controls are Down/S to brake and Space for the handbrake.
 - Ease the steering back into line after an automatic drift to bank clean drift points; Space is an optional keyboard handbrake.
 - Hold Shift (or the Nitro button) for a boost on clear straights; release to recharge.
@@ -18,23 +18,29 @@ Blacktop Bay runs directly in a modern web browser (WebGL 2 required) at https:/
 
 ## Circuits
 
+The 30-course collection combines five original Blacktop Bay circuits, compact adaptations of all 23 venues on the official 2026 calendar checked on 1 October 2026, and Sakhir and Jeddah as original-calendar bonuses. Playable arcade laps are shorter than the real venues, with widened turns and flattened elevation. Suzuka is explicitly unrolled into a non-crossing course; its real overpass is not reproduced.
+
 - Harbor Flow — about 1.22 km per lap; beginner-friendly waterfront sweepers.
 - Dockyard Technical — about 1.53 km; a tight sequence of dockside turns.
 - Coast Run — about 1.13 km; open coastal curves for sustained acceleration.
 - Summit Switchback — about 1.66 km; technical pine-lined switchbacks.
 - Bay Grand Prix — about 1.53 km; a wide permanent circuit with flowing chicanes.
 
+Current-calendar adaptations: Albert Park, Shanghai, Suzuka, Miami, Gilles Villeneuve, Monaco, Barcelona-Catalunya, Red Bull Ring, Silverstone, Spa-Francorchamps, Hungaroring, Zandvoort, Monza, Madring, Baku City, Sepang, Marina Bay, Circuit of the Americas, Hermanos Rodríguez, Interlagos, Las Vegas Strip, Lusail, Yas Marina.
+Original-calendar bonus adaptations: Bahrain International, Jeddah Corniche.
+Venue outline data: Tomislav Bacinger / f1-circuits, MIT, with compact arcade modifications. Sources and notices: https://blacktop-bay.web.app/credits/#circuit-data
+
 ## Race cars
 
-Fourteen tuned race builds across three families: five GT builds (Apex GT, Apex Sprint, Torque R, Torque RS, Kestrel GT-R), two Formula builds (Vortex P1, Vortex X) and seven Prototype builds (Spectre LM, Spectre LM-R, Cinder R, Cinder RX, Mirage LMP, Solstice One, Tempest XR). These fictional builds share licensed source geometry and original coachwork rather than representing fourteen independently sourced models. All fourteen are available from the start. Each car has five upgrade levels for Engine, Tyres, Nitro and Handling, purchased with earned race credits. Car names and handling are fictional.
+Twenty tuned race builds across three families: seven GT builds (Apex GT, Apex Sprint, Torque R, Torque RS, Kestrel GT-R, Corsair GTS, Stratus GT3), four Formula builds (Vortex P1, Vortex X, Vector F, Zenith FX) and nine Prototype builds (Spectre LM, Spectre LM-R, Cinder R, Cinder RX, Mirage LMP, Solstice One, Tempest XR, Vela R, Aurora LMX). These fictional builds share licensed source geometry and original coachwork rather than representing twenty independently sourced models. All twenty are available from the start. Each car has five upgrade levels for Engine, Tyres, Nitro and Handling, purchased with earned race credits. Car names and handling are fictional.
 
 ## Key Facts
 
 - Publisher: AppsOverFlow (https://appsoverflow.web.app/).
 - Free to play; no account, no install and no real-money purchases.
 - Runs in a modern web browser; WebGL 2 and an internet connection are required to load.
-- Single-player only: one human racer versus three AI drivers (Mira, Jax and Nova) in a four-car field over three laps.
-- 14 race builds across three families (GT, Formula, Prototype) and 5 asphalt circuits, all available from the start.
+- Single-player only: one human racer versus three computer-controlled opponents (Mira, Jax and Nova) in a four-car field over three laps.
+- 20 race builds across three families (GT, Formula, Prototype) and 30 asphalt circuits, all available from the start.
 - Each car has five upgrade levels for Engine, Tyres, Nitro and Handling, bought with earned race credits.
 - Progress (records, credits, upgrades and paint) is saved locally in the browser; there is no online multiplayer.
 

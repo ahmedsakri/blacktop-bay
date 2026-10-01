@@ -5,9 +5,20 @@ import { PAINT_KEY, loadPaint, savePaint, getPaint, applyPaint } from '../src/pa
 import { VEHICLES } from '../src/vehicles.js';
 const memory = () => { const data = new Map(); return {getItem:k=>data.get(k),setItem:(k,v)=>data.set(k,v)}; };
 
-test('all fourteen builds begin with their own factory colour and safe gloss finish', () => {
-  const state = loadPaint(memory()); assert.equal(Object.keys(state).length,14);
+test('all twenty builds begin with their own factory colour and safe gloss finish', () => {
+  const state = loadPaint(memory()); assert.equal(Object.keys(state).length,20);
   for (const v of VEHICLES) { assert.equal(getPaint(v.id,state[v.id]).color,v.color); assert.equal(state[v.id].finish,'gloss'); }
+});
+test('fourteen-car paint saves add six independent factory finishes without replacing old choices', () => {
+  const storage=memory();storage.setItem(PAINT_KEY,JSON.stringify({kestrel:{color:'red',finish:'satin'},zenith:{color:'invalid',finish:'invalid'}}));
+  const state=loadPaint(storage),ids=['corsair','stratus','vector','zenith','vela','aurora'];
+  for(const id of ids)assert.deepEqual(state[id],{color:'factory',finish:'gloss'});
+  for(const id of ids)assert.equal(savePaint(state,id,{color:id==='zenith'?'teal':'silver',finish:id==='vela'?'satin':'metallic'},storage).ok,true);
+  const loaded=loadPaint(storage);
+  assert.deepEqual(loaded.kestrel,{color:'red',finish:'satin'});
+  assert.deepEqual(loaded.zenith,{color:'teal',finish:'metallic'});
+  assert.deepEqual(loaded.vela,{color:'silver',finish:'satin'});
+  for(const id of ids.filter(id=>id!=='zenith'&&id!=='vela'))assert.deepEqual(loaded[id],{color:'silver',finish:'metallic'});
 });
 test('ten-car paint saves expand without repainting existing cars and new builds remain independent', () => {
   const storage=memory(); storage.setItem(PAINT_KEY,JSON.stringify({coupe:{color:'teal',finish:'metallic'},spyder:{color:'gold',finish:'satin'}}));

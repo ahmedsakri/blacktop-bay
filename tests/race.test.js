@@ -78,10 +78,11 @@ test('vehicle choices preserve their tuning across start and give distinct accel
   assert.equal(createRace({ vehicle: 'invalid' }).vehicle, 'coupe');
 });
 
-test('five track choices are distinct and simulations retain their own layout', () => {
-  assert.deepEqual(TRACKS.map(track => track.id), ['harbor', 'dockyard', 'coast', 'summit', 'grandprix']);
-  assert.equal(new Set(TRACKS.map(track => Math.round(track.length))).size, 5);
-  for (const descriptor of TRACKS) {
+test('the five original track choices remain distinct and simulations retain their own layout', () => {
+  const originals = TRACKS.filter(track => track.series === 'original');
+  assert.deepEqual(originals.map(track => track.id), ['harbor', 'dockyard', 'coast', 'summit', 'grandprix']);
+  assert.equal(new Set(originals.map(track => Math.round(track.length))).size, 5);
+  for (const descriptor of originals) {
     const track = setTrack(descriptor.id), start = sampleTrack(0, track), end = sampleTrack(track.length, track);
     assert.equal(TRACK.id, descriptor.id);
     assert.equal(track.samples.length, 440);
@@ -137,7 +138,7 @@ test('car-to-car contact separates bodies and transfers momentum without awardin
   assert.equal(race.completedLaps, 0);
 });
 
-for (const descriptor of TRACKS) {
+for (const descriptor of TRACKS.filter(track => track.series === 'original')) {
   test(`all AI opponents complete three real laps on ${descriptor.name}, even around a stopped player`, () => {
     const race = createRace({ track: descriptor.id }); startRace(race);
     for (let frame = 0; frame < 120 * 220 && race.rivals.some(rival => rival.state !== 'finished'); frame++) {

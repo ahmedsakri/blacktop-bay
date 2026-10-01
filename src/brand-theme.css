@@ -1,0 +1,90 @@
+/* Approved Blacktop Bay palette. Keep the surface quiet; reserve yellow for action. */
+:root{--brand-yellow:#FFF71E;--brand-violet:#9146FF;--brand-base:#110017;--brand-panel:#021439;--brand-white:#FFFFFF;--brand-danger:#FF0054;--brand-lime:#C3FB13;--brand-gold:#FFD700;--cyan:var(--brand-yellow);--action-cyan:var(--brand-yellow);--race-gold:var(--brand-yellow);--race-ink:var(--brand-base);--ink:var(--brand-base);--surface:var(--brand-panel);--muted:#d0c8d6;--race-button-ink:var(--brand-base);--race-button-focus:var(--brand-yellow);color:var(--brand-white);background:var(--brand-base)}
+body{background:var(--brand-base);color:var(--brand-white)}
+.menu{background:linear-gradient(90deg,#110017f5,#110017ac 30%,transparent 66%),linear-gradient(0deg,#110017 0%,#11001790 30%,transparent 65%)}
+.garage{background:linear-gradient(270deg,#110017f5,#11001778 22%,transparent 46%),linear-gradient(0deg,#110017 0%,#110017eb 24%,transparent 55%)}
+.menu .intro,.menu .eyebrow,.garage-intro>.eyebrow,.garage-intro>p:last-child{color:#FFFFFFcf}
+.menu h1,.garage-intro h2,.garage-spec h3,.car-spec strong{color:var(--brand-white)}
+.menu h1 em,.garage-intro h2 em{color:var(--brand-yellow)}
+.menu .race-entry{background:linear-gradient(110deg,#021439f5,#110017f5);border-color:#9146FF66;border-left-color:var(--brand-yellow)}
+.menu .circuit-picker>span{color:#FFFFFFd1}.menu .track-facts b{color:var(--brand-white)}
+.menu .car-spec p,.garage-spec>span{color:#FFFFFFb3}.menu #how{color:#FFFFFFe0}
+.status-dot{background:var(--brand-yellow);box-shadow:0 0 12px #FFF71E66}
+#browse-circuits{color:var(--brand-white);border-bottom-color:#FFFFFF33}#browse-circuits .ui-icon{color:var(--brand-white)}
+body:not(.in-race) .icon-button,.garage-orbit{color:var(--brand-white);background:#110017d9;border-color:#FFFFFF40}
+body:not(.in-race) .icon-button:hover,.garage-orbit:hover{background:#9146FF44;border-color:var(--brand-violet)}
+.menu .button.primary,.garage .button.primary,.dialog .button.primary,.orientation-card .button.primary,#dialog .dialog-actions .button.primary,#dialog .upgrade-buy:not(:disabled){color:var(--brand-base)}
+#start .ui-icon{fill:var(--brand-base)}
+#dialog .button.secondary,.garage .button.secondary,.menu .button.secondary{color:var(--brand-white)}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline-color:var(--brand-yellow)}
+.dialog .button:focus-visible{outline-color:var(--brand-yellow)}
+.collection-filters button{color:#FFFFFFbf}.collection-filters button[aria-pressed="true"]{color:var(--brand-yellow);border-color:var(--brand-yellow)}
+.collection-filters button span{background:var(--brand-yellow);color:var(--brand-base)}
+.collection-arrows button,.browse-cars{background:var(--brand-panel);border-color:#9146FF8c;color:var(--brand-white)}
+.collection-arrows button:hover,.browse-cars:hover{border-color:var(--brand-violet);background:#9146FF40}
+.car-choice{background:linear-gradient(140deg,#021439,#110017);border-color:#FFFFFF33}
+.car-choice:hover{border-color:var(--brand-violet);background:linear-gradient(140deg,#9146FF33,#110017)}
+.car-choice[aria-pressed="true"]{border-color:var(--brand-yellow);background:linear-gradient(140deg,#9146FF40,#110017);box-shadow:inset 0 0 0 1px #FFF71E}
+.car-choice small>span{color:#FFFFFFd6}.car-choice strong{color:var(--brand-white)}
+.performance-row>i{background:#FFFFFF20}.performance-row>i>b{background:var(--brand-violet);box-shadow:none}
+.garage-wallet{color:var(--brand-gold)}
+.modal-backdrop{background:#110017d9}
+.modal-backdrop:has(.dialog:is([data-kind="collection"],[data-kind="circuits"])){background:#110017d9}
+#dialog{color:var(--brand-white);background:linear-gradient(145deg,#021439,#110017 72%);border-color:#9146FF66;--rd-cyan:var(--brand-yellow);--rd-gold:var(--brand-gold);--rd-ink:var(--brand-white);--rd-muted:#d0c8d6;--rd-line:#FFFFFF26;--workshop-line:#FFFFFF26}
+#dialog h2{color:var(--brand-white)}#dialog h2 em{color:var(--brand-yellow)}
+#dialog:is([data-kind="collection"],[data-kind="circuits"])>.eyebrow{color:#FFFFFFbf}
+#dialog :is(.library-note,.circuit-library-intro,.circuit-count,.library-summary p,.library-summary label){color:#FFFFFFbf}
+.library-tools input,.library-tools select{background-color:var(--brand-base);border-color:#FFFFFF4d;color:var(--brand-white)}
+.library-tools input::placeholder{color:#FFFFFFa8}
+.library-families button,#favorites-only{background:#FFFFFF0d;color:#FFFFFFc9}
+.library-families button[aria-pressed="true"],#favorites-only[aria-pressed="true"]{background:#9146FF33;color:var(--brand-white);border-color:var(--brand-violet);box-shadow:inset 0 -2px var(--brand-yellow)}
+.library-summary input{accent-color:var(--brand-yellow)}
+.library-car{background:linear-gradient(145deg,#021439,#110017);border-color:#FFFFFF30}
+.library-car:hover{background:linear-gradient(145deg,#9146FF26,#110017);border-color:var(--brand-violet)}
+.library-car.is-selected{background:linear-gradient(145deg,#9146FF33,#110017);border-color:var(--brand-yellow)}
+.library-card-head,.library-card-head>span:last-child{color:#FFFFFFc9}
+#dialog .library-inspect h3,.library-ratings b{color:var(--brand-white)}
+#dialog .library-inspect p,.library-ratings{color:#FFFFFFb8}
+.library-inspect-label,.library-comparison{color:var(--brand-white)}
+.library-favorite{background:var(--brand-base);border-color:#FFFFFF33;color:#FFFFFFbf}
+.library-favorite[aria-pressed="true"]{color:var(--brand-gold);border-color:#FFD70080}.library-favorite[aria-pressed="true"] .ui-icon{fill:var(--brand-gold)}
+.circuit-option{background:linear-gradient(130deg,#021439,#110017);border-color:#FFFFFF33;color:var(--brand-white)}
+.circuit-option:hover{border-color:var(--brand-violet)}.circuit-option.is-selected{background:linear-gradient(130deg,#9146FF33,#110017);border-color:var(--brand-yellow)}
+.circuit-option-art{color:var(--brand-white);filter:none}.circuit-option-kicker{color:#FFFFFFbf}#dialog .circuit-option h3{color:var(--brand-white)}#dialog .circuit-option p{color:#FFFFFFbf}.circuit-option-meta,.circuit-option-meta span:last-child{color:var(--brand-white)}
+#dialog .circuit-disclosure{background:#9146FF14;border-color:var(--brand-violet);color:#FFFFFFbf}
+#dialog .dialog-actions{border-color:#FFFFFF26}#dialog[data-kind="upgrades"] .dialog-actions{background:#110017fa}
+#dialog[data-kind="upgrades"] .upgrade-card{background:#FFFFFF03;border-top-color:var(--brand-violet)}
+#dialog[data-kind="upgrades"] .upgrade-icon{color:var(--brand-white)}
+#dialog[data-kind="upgrades"] .upgrade-gain,#dialog[data-kind="upgrades"] .upgrade-next{color:var(--brand-white)}
+#dialog[data-kind="upgrades"] .upgrade-levels i.filled{background:var(--brand-violet);border-color:var(--brand-violet)}
+#dialog[data-kind="upgrades"] .workshop-balance>strong,#dialog[data-kind="upgrades"] .workshop-balance>span{color:var(--brand-gold)}
+#dialog[data-kind="upgrades"] .upgrade-buy:disabled{background:var(--brand-panel);border-color:#FFFFFF33;color:#FFFFFFa3}
+#dialog[data-kind="upgrades"] .is-maxed .upgrade-buy:disabled{background:var(--brand-panel);border-color:#C3FB1366;color:var(--brand-lime)}
+#dialog[data-kind="upgrades"] .upgrade-shortfall{color:#FFFFFFbf}
+#dialog .paint-swatch{background:#FFFFFF05;color:var(--brand-white)}#dialog .paint-swatch[aria-pressed="true"],#dialog .paint-finishes button[aria-pressed="true"]{background:#9146FF26;border-color:var(--brand-yellow);color:var(--brand-white)}
+#dialog .paint-finishes button{background:var(--brand-panel);color:var(--brand-white);border-color:#FFFFFF33}
+#dialog .rd-control-icon,#dialog .rd-rule-icon,#dialog .rd-phone-note>svg{color:var(--brand-white)}
+#dialog .rd-control-card,#dialog .rd-drive-rule,#dialog .rd-race-number{background:#FFFFFF04;border-color:#9146FF55}
+#dialog .rd-control-cue{color:var(--brand-yellow)}
+#dialog .pause-settings button{background:var(--brand-panel);border-color:#9146FF80;color:var(--brand-white)}
+#dialog .rd-you{background:#9146FF24;border-color:var(--brand-violet)}
+#dialog .rd-reward{background:#FFD7000c;border-color:#FFD70040}#dialog .rd-reward strong{color:var(--brand-gold)}
+#dialog .rd-best-badge{background:var(--brand-yellow);color:var(--brand-base)}
+#dialog .rd-record-card strong{color:var(--brand-white)}
+.orientation-gate,#loading{background:radial-gradient(ellipse at 70% 24%,#9146FF26,transparent 55%),linear-gradient(135deg,#021439,#110017 70%)}
+#loading .loader-diagnostics,#loading #loading-percent{color:var(--brand-yellow)}
+.loader-track,.loading-track{background:#FFFFFF20}.loader-track i,.loading-track i{background:var(--brand-yellow)}
+.orientation-gate h2{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-style:italic}.orientation-gate h2 em{color:var(--brand-yellow)}
+body.in-race .race-clock{background:var(--brand-violet)}
+body.in-race .nitro-track i{background:var(--brand-yellow)}
+body.in-race.nitro-active .nitro-track i{background:linear-gradient(90deg,var(--brand-violet),var(--brand-yellow))}
+body.in-race.nitro-active .nitro-gauge{filter:drop-shadow(0 0 8px #9146FF99)}
+body.in-race.nitro-active .nitro-gauge strong{color:var(--brand-yellow)}
+body.in-race .touch-controls .nitro-pedal{background:radial-gradient(circle,#110017d9,#0214398c 64%,transparent 66%);color:var(--brand-yellow)}
+body.in-race #nitro-ring-fill,body.in-race.nitro-active #nitro-ring-fill{stroke:var(--brand-yellow)}
+body.in-race .nitro-pedal.pressed{background:radial-gradient(circle,#9146FF99,#110017aa 65%,transparent 66%);color:var(--brand-white);box-shadow:0 0 24px #9146FF4d}
+body.in-race .drift-score strong em{color:var(--brand-yellow)}
+body.in-race .touch-steer-track i{background:var(--brand-white)}
+.toast{background:var(--brand-panel);border-color:var(--brand-violet);color:var(--brand-white)}
+@media(max-width:700px){.garage{background:linear-gradient(0deg,#110017 0%,#110017f5 42%,transparent 66%)}.menu{background:linear-gradient(180deg,#110017aa,transparent 50%),linear-gradient(0deg,#110017,transparent 58%)}}
+#dialog .dialog-actions .button.danger,#dialog .dialog-actions .button.danger:hover{background:#110017;border:1px solid #FF0054;color:#FFFFFF;box-shadow:inset 3px 0 #FF0054}

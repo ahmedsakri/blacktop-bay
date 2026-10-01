@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Blacktop Bay Grand Prix circuit descriptor",
+  "type": "object",
+  "required": ["id", "name", "venueName", "country", "region", "series", "season", "calendarStatus", "round", "environment", "layoutKind", "adaptationNote", "sourceUrl", "dataSourceUrl", "realLengthKm", "width", "length"],
+  "properties": {
+    "id": {"type": "string", "pattern": "^[a-z]+$"},
+    "name": {"type": "string", "minLength": 1},
+    "venueName": {"type": "string", "minLength": 1},
+    "country": {"type": "string", "minLength": 1},
+    "region": {"enum": ["Asia", "Europe", "Americas", "Oceania", "Middle East"]},
+    "series": {"const": "grand-prix"},
+    "season": {"const": 2026},
+    "calendarStatus": {"enum": ["current", "original-calendar-bonus"]},
+    "round": {"type": ["integer", "null"], "minimum": 1, "maximum": 23},
+    "environment": {"enum": ["coastal", "urban", "desert", "parkland"]},
+    "layoutKind": {"const": "compact-adaptation"},
+    "adaptationNote": {"type": "string", "minLength": 1},
+    "sourceUrl": {"type": "string", "format": "uri"},
+    "dataSourceUrl": {"type": "string", "format": "uri"},
+    "realLengthKm": {"type": "number", "exclusiveMinimum": 3, "exclusiveMaximum": 8},
+    "width": {"type": "number", "minimum": 12},
+    "length": {"type": "number", "exclusiveMinimum": 1900, "exclusiveMaximum": 3100}
+  },
+  "allOf": [{"if": {"properties": {"calendarStatus": {"const": "current"}}}, "then": {"properties": {"round": {"type": "integer"}}}, "else": {"properties": {"round": {"type": "null"}}}}]
+}

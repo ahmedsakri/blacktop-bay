@@ -1,0 +1,130 @@
+/* One button vocabulary, rendered from our local vector sprite sheet. */
+:root{--action-cyan:#67e8f9;--surface:#111c29;--muted:#acbecd}
+.ui-icon{display:inline-block;width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;vertical-align:middle}
+button .ui-icon{pointer-events:none}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #9bf0ff;outline-offset:4px}
+.menu .button,.garage .button,.dialog .button{display:inline-flex;align-items:center;justify-content:center;gap:12px;min-height:48px;min-width:44px;letter-spacing:.5px;font:800 11px/1.35 Manrope,sans-serif;border-radius:5px;box-shadow:none;padding:13px 20px}
+.menu .button.primary,.garage .button.primary,.dialog .button.primary,.upgrade-buy:not(:disabled){color:#08212c;background:linear-gradient(120deg,#99f6ff,#55daef);border:1px solid #b9faff;box-shadow:inset 0 1px #fff8,0 4px 20px #43d5ed18;clip-path:none;text-shadow:none}
+.menu .button.primary:hover,.garage .button.primary:hover,.dialog .button.primary:hover,.upgrade-buy:not(:disabled):hover{background:#b6f8ff;box-shadow:0 5px 22px #58deed2b;transform:translateY(-1px)}
+.menu .button.primary:active,.garage .button.primary:active,.dialog .button.primary:active{transform:translateY(1px);box-shadow:inset 0 2px 8px #07687e30}
+.button:disabled{cursor:not-allowed;opacity:.45;transform:none!important}
+#start{justify-content:space-between;font-size:14px;min-height:60px;padding-inline:22px}
+#start .ui-icon{width:25px;height:25px;fill:#0b2935;stroke-width:1.2}
+#how{display:inline-flex;align-items:center;gap:10px;min-height:44px}
+#browse-circuits{display:flex;justify-content:space-between;align-items:center;gap:14px;min-height:44px;width:100%;padding:4px 0;background:none;border:0;border-bottom:1px solid #adc7d041;color:#eff8fc;text-align:left}
+#browse-circuits strong{font:700 italic 29px/1.2 'Barlow Condensed',sans-serif}
+#browse-circuits .ui-icon{color:var(--action-cyan);width:20px;height:20px}
+.menu .race-entry{border-left-color:var(--action-cyan)}
+.menu .circuit-picker>span{color:#93e8f2}
+body:not(.in-race) .icon-button{width:44px;height:44px;min-width:44px;min-height:44px}
+.collection-toolbar{gap:12px}
+.collection-toolbar button,.collection-arrows button,.garage-orbit{min-height:44px;min-width:44px}
+.browse-cars{display:flex;align-items:center;justify-content:center;gap:8px;padding:9px 12px;background:#233645;border:1px solid #85cbd766;color:#aaf3ff;border-radius:4px;font:800 9px Manrope;white-space:nowrap}
+.browse-cars .ui-icon{width:16px;height:16px}
+.collection-arrows button{display:grid;place-items:center;height:44px}
+.garage-actions .button,.garage-workshop .button{gap:8px}
+.garage-workshop .button .ui-icon{width:16px;height:16px}
+.garage-workshop .button{justify-content:center!important}
+#open-upgrades>span[aria-hidden]{display:none}
+.car-choice small>span{color:var(--action-cyan)}
+/* Full collection: actual model portraits, keyboard-ready controls and no endless swipe. */
+.modal-backdrop:has(.dialog:is([data-kind="collection"],[data-kind="circuits"])){padding:24px;background:#040b13d9;backdrop-filter:blur(16px)}
+.dialog:is([data-kind="collection"],[data-kind="circuits"]){display:flex;flex-direction:column;width:min(1120px,100%);max-width:100%;max-height:calc(100dvh - 48px);padding:28px;border-radius:14px;border:1px solid #718fae4d;background:linear-gradient(135deg,#162334,#0c1622);box-shadow:0 30px 100px #0007;overflow:hidden}
+.dialog:is([data-kind="collection"],[data-kind="circuits"]) h2{font:800 italic clamp(30px,4vw,48px)/1.05 'Barlow Condensed';margin:9px 0 22px;letter-spacing:.1px}
+.dialog:is([data-kind="collection"],[data-kind="circuits"]) h2 em{color:var(--action-cyan);font-style:italic}
+.dialog:is([data-kind="collection"],[data-kind="circuits"])>.eyebrow{font:800 9px Manrope;letter-spacing:1.5px;color:#bed2df}
+.dialog:is([data-kind="collection"],[data-kind="circuits"]) #dialog-content{overflow:auto;min-height:0;padding:2px 5px 12px;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#648595 transparent}
+.dialog:is([data-kind="collection"],[data-kind="circuits"]) .dialog-actions{flex-shrink:0;display:flex;justify-content:flex-end;padding-top:16px;margin-top:8px;border-top:1px solid #7791a631}
+.library-tools{display:grid;grid-template-columns:1fr 220px;gap:16px}
+.library-tools label{display:grid;gap:7px}
+.library-tools label>span{font:800 8px Manrope;letter-spacing:1.2px;color:#a9c0d3}
+.library-tools input,.library-tools select{width:100%;height:48px;min-height:48px;font:600 13px Manrope;color:#eff7fb;border:1px solid #8198ad5c;border-radius:5px;background:#09121e;padding:10px 14px;box-sizing:border-box}
+.library-tools input::placeholder{color:#8ca3b6;opacity:1}
+.library-tools select{appearance:none;padding-right:38px;background-image:url('/assets/ui/chevron.svg');background-position:right 12px center;background-repeat:no-repeat;background-size:16px}
+.library-filter-row{display:flex;gap:12px;align-items:center;justify-content:space-between;margin:16px 0}
+.library-families{display:flex;gap:5px;flex-wrap:wrap}
+.library-families button,#favorites-only{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;font:700 11px Manrope;color:#afc2d1;border:1px solid transparent;background:#21314370;border-radius:4px;padding:10px 13px}
+.library-families button>span{font-size:9px;opacity:.8}
+.library-families button[aria-pressed="true"],#favorites-only[aria-pressed="true"]{background:#67e8f918;color:#a3f2fc;border-color:#67e8f97d}
+#favorites-only .ui-icon{width:17px;height:17px}
+.library-summary{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:4px 0 14px}
+.dialog .library-summary p{font:600 11px Manrope;margin:0;color:#b5c7d7}
+.library-summary label{display:flex;gap:9px;align-items:center;font:600 11px Manrope;color:#b5c7d7;min-height:44px;cursor:pointer}
+.library-summary input{width:18px;height:18px;accent-color:var(--action-cyan);flex:none}
+.car-library-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.library-car{position:relative;background:linear-gradient(145deg,#283849,#142132);border:1px solid #6a849b50;border-top:2px solid var(--car-color);border-radius:7px;overflow:hidden;transition:border-color .2s,background .2s}
+.library-car:hover{border-color:#79d9ed9c;background:linear-gradient(145deg,#344859,#192b3e)}
+.library-car.is-selected{border-color:#8be3f0;background:linear-gradient(145deg,#304953,#172d3a)}
+.library-inspect{background:none;border:0;color:#f2f7fb;width:100%;height:100%;display:flex;align-items:stretch;flex-direction:column;text-align:left;padding:14px;cursor:pointer}
+.library-card-head{display:flex;justify-content:space-between;gap:10px;font:800 8px Manrope;letter-spacing:.8px;color:#bed1de;min-height:12px}
+.library-card-head>span:last-child{color:#8fe8f4}
+.library-inspect img{display:block;width:100%;height:100px;object-fit:contain;opacity:0;transition:opacity .2s}
+.library-inspect img.ready{opacity:1}
+.dialog .library-inspect h3{font:800 italic 28px/1.1 'Barlow Condensed';margin:4px 0 6px;color:#f5f8fb;letter-spacing:.1px}
+.dialog .library-inspect p{font:500 10px/1.5 Manrope;color:#b3c5d4;margin:0 0 14px;min-height:30px}
+.library-ratings{display:flex;justify-content:space-between;gap:5px;padding-bottom:14px;margin-top:auto;border-bottom:1px solid #839db832;font:700 7px Manrope;letter-spacing:.25px;color:#aabecf}
+.library-ratings b{font:700 italic 23px 'Barlow Condensed';color:#f5f8fb;padding-right:3px}
+.library-inspect-label{display:flex;justify-content:space-between;align-items:center;font:800 8px Manrope;letter-spacing:.6px;color:#a2eaf5;min-height:40px;padding-top:9px;margin-right:40px}
+.library-inspect-label .ui-icon{width:15px;height:15px}
+.library-favorite{position:absolute;bottom:9px;right:8px;display:grid;place-items:center;min-height:44px;min-width:44px;padding:10px;background:#0c1b2d;border:1px solid #71899b40;border-radius:5px;color:#b7cbd8}
+.library-favorite[aria-pressed="true"]{color:#ffd880;border-color:#ffd88090}
+.library-favorite[aria-pressed="true"] .ui-icon{fill:#ffd880}
+.library-comparison{display:flex;justify-content:space-between;gap:5px;font:600 9px Manrope;color:#acd8e1;padding-top:10px}
+.dialog .library-note{font:500 10px/1.6 Manrope;color:#9db4c7;margin:18px 0 0}
+.library-empty{text-align:center;padding:36px 12px;border:1px dashed #59748c;border-radius:6px}
+.library-empty[hidden]{display:none}
+.library-empty strong{font:800 italic 28px 'Barlow Condensed'}
+.dialog .library-empty p{font:500 12px/1.6 Manrope;color:#b4c8d7}
+/* Circuit atlas */
+.dialog .circuit-library-intro{font:500 13px/1.7 Manrope;color:#b7c9d9;margin:0 0 20px}
+.circuit-library{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.circuit-option{display:grid;grid-template-columns:112px minmax(0,1fr);align-items:center;gap:16px;padding:20px;text-align:left;border:1px solid #718ca54d;border-radius:7px;background:linear-gradient(120deg,#213246,#122030);color:#e8f3f9;cursor:pointer}
+.circuit-option:hover{border-color:#83e0ed}
+.circuit-option.is-selected{background:#203f49;border-color:#7ae2ef}
+.circuit-option-art{color:#b2e6f0;height:108px;filter:drop-shadow(0 0 12px #54d5ed18)}
+.circuit-option-art svg{width:100%;height:100%}
+.circuit-option-kicker{font:800 8px Manrope;letter-spacing:.7px;color:#8adce9;text-transform:uppercase}
+.dialog .circuit-option h3{font:800 italic 29px/1.1 'Barlow Condensed';margin:7px 0}
+.dialog .circuit-option p{font:500 10px/1.5 Manrope;color:#b4c9d7;margin:0 0 16px}
+.circuit-option-meta{display:flex;justify-content:space-between;gap:8px;font:800 8px Manrope;letter-spacing:.4px;color:#e4f0f6}
+.circuit-option-meta span:last-child{display:flex;align-items:center;gap:5px;color:#8be7f3}
+.circuit-option-meta .ui-icon{height:15px;width:15px}
+/* Paint and workshop share the same typography and action sizing. */
+.dialog[data-kind="paint"]{border-radius:12px;background:linear-gradient(145deg,#1b2b3e,#101e2b);border-color:#83adc249}
+.dialog[data-kind="paint"] h2{font:800 italic 36px/1 'Barlow Condensed';letter-spacing:0}
+.dialog[data-kind="paint"] h2 em{color:var(--action-cyan)}
+.paint-swatch{border-radius:5px;min-height:72px}
+.paint-swatch[aria-pressed="true"]{border-color:#7ce5f3;background:#67e8f918}
+.paint-swatch[aria-pressed="true"] i:after{content:'';width:16px;height:16px;background:url('/assets/ui/check.svg') center/contain no-repeat;margin:6px auto}
+.paint-finishes button{min-height:44px;border-radius:4px}
+@media(max-width:950px){.car-library-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.circuit-option{grid-template-columns:82px 1fr;padding:15px;gap:12px}.circuit-option-art{height:85px}}
+@media(max-width:700px){
+ .modal-backdrop:has(.dialog:is([data-kind="collection"],[data-kind="circuits"])){padding:10px}
+ .dialog:is([data-kind="collection"],[data-kind="circuits"]){padding:19px 15px 14px;border-radius:10px;max-height:calc(100dvh - 20px)}
+ .dialog:is([data-kind="collection"],[data-kind="circuits"]) h2{font-size:33px;margin:8px 0 17px}
+ .library-tools{grid-template-columns:1fr 138px;gap:10px}.library-tools input,.library-tools select{font-size:11px;padding-left:10px}
+ .library-families{gap:3px}.library-families button{font-size:10px;padding:8px;gap:5px}.library-filter-row{flex-wrap:wrap;gap:6px;margin:12px 0}
+ #favorites-only{font-size:10px;padding:8px 10px}.library-summary{align-items:flex-start;flex-direction:column;gap:2px;margin-bottom:8px}.library-summary label{font-size:10px}
+ .car-library-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.library-inspect{padding:11px}.library-card-head{font-size:6px;letter-spacing:.35px}.library-inspect img{height:78px}.dialog .library-inspect h3{font-size:25px}.dialog .library-inspect p{font-size:9px;min-height:27px}.library-ratings{font-size:6px;gap:4px}.library-ratings b{font-size:19px}.library-inspect-label{font-size:7px;margin-right:36px;letter-spacing:0}.library-favorite{right:5px;bottom:7px}.library-comparison{font-size:8px;flex-wrap:wrap}
+ .dialog:is([data-kind="collection"],[data-kind="circuits"]) .dialog-actions{padding-top:11px}.dialog:is([data-kind="collection"],[data-kind="circuits"]) .dialog-actions .button{width:100%}
+ .circuit-library{grid-template-columns:1fr}.circuit-option{grid-template-columns:82px 1fr;padding:13px}.dialog .circuit-option h3{font-size:26px}.circuit-option-kicker{font-size:7px}.circuit-option-meta{font-size:7px}
+ .browse-cars{padding:8px;gap:6px;font-size:8px}.browse-cars .ui-icon{width:15px;height:15px}.collection-toolbar{gap:4px}.collection-filters button{padding-inline:6px}#collection-count{display:none}
+ .garage-workshop .button{padding:10px 8px!important;font-size:9px}.garage-actions .button{padding:10px 12px;min-height:46px;font-size:9px}.garage-actions .ui-icon{width:16px;height:16px}
+}
+@media(max-height:520px) and (orientation:landscape){
+ .dialog:is([data-kind="collection"],[data-kind="circuits"]){padding:17px 22px;max-height:calc(100dvh - 20px)}
+ .modal-backdrop:has(.dialog:is([data-kind="collection"],[data-kind="circuits"])){padding:10px}
+ .dialog:is([data-kind="collection"],[data-kind="circuits"]) h2{font-size:30px;margin:6px 0 12px}
+ .dialog:is([data-kind="collection"],[data-kind="circuits"]) .dialog-actions{padding-top:9px;margin-top:5px}
+ .dialog:is([data-kind="collection"],[data-kind="circuits"]) .dialog-actions .button{width:auto;min-height:44px;padding:10px 16px}
+ .car-library-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.library-tools{grid-template-columns:1fr 190px}.library-summary{flex-direction:row;align-items:center}.library-filter-row{flex-wrap:nowrap}.library-tools label>span{display:none}
+ .circuit-library{grid-template-columns:repeat(2,minmax(0,1fr))}.circuit-option{grid-template-columns:62px 1fr;padding:11px;gap:9px}.circuit-option-art{height:74px}.dialog .circuit-option h3{font-size:24px}.circuit-option-meta{font-size:7px}
+ body:not(.in-race) .icon-button{height:44px;width:44px}.garage-orbit{height:44px;width:44px;top:70px}.collection-filters button{min-height:44px;padding-inline:7px}.collection-arrows{display:none}#collection-count{display:none}
+ #browse-circuits strong{font-size:23px}#start{min-height:48px;font-size:11px;padding-inline:12px}.menu .text-button{min-height:44px}.car-spec #open-garage{min-height:44px}
+ .garage-bottom{grid-template-columns:minmax(0,1fr) 140px}.garage-actions .button{padding:9px 10px;gap:7px;font-size:8px;min-height:44px}.garage-workshop .button{min-height:44px}
+}
+@media(max-width:600px) and (orientation:landscape){.collection-filters{display:none}.collection-toolbar{justify-content:flex-end}.garage-bottom{grid-template-columns:minmax(0,1fr) 128px}.browse-cars{font-size:8px;padding:9px 14px}.car-library-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.circuit-library{grid-template-columns:1fr}.library-tools{grid-template-columns:1fr 155px}.library-families button{font-size:9px;padding:8px}.library-families button>span{display:none}.library-filter-row{gap:4px}.library-summary{flex-direction:column;align-items:flex-start}.menu h1{font-size:36px}#browse-circuits strong{font-size:20px}.race-entry{bottom:42px}.menu-copy{top:66px}.menu .text-button{font-size:8px}}
+@media(prefers-reduced-motion:reduce){.library-car,.library-inspect img{transition:none}.menu .button.primary:hover,.garage .button.primary:hover,.dialog .button.primary:hover{transform:none}}
+
+.dialog .circuit-disclosure{font:500 10px/1.6 Manrope;color:#a9bdcc;margin:8px 0 16px;padding:12px 14px;border-left:2px solid #72dbea;background:#142c3c}
+.dialog .circuit-count{font:700 11px Manrope;color:#b9d3e1;margin:0 0 16px}

@@ -4,6 +4,47 @@ import { TRACK, sampleTrack, projectOnTrack } from './track.js';
 import { RIVAL_GRID } from './rivals.js';
 
 const TAU = Math.PI * 2;
+const ORIGINAL_VENUES = new Set(['harbor', 'dockyard', 'coast', 'summit', 'grandprix']);
+const VENUE_ENVIRONMENTS = {
+ coastal: { water:true, night:false, background:'#263750', fog:'#344052', fogDensity:.00115, sky:'#82a6d4', bounce:'#4a3833', ambient:1, sun:'#ffb679', sunlight:1.35, sunHeight:72, fill:'#88b9ef', fillIntensity:.68, ground:'#192733', horizon:'#2e3d51', horizonScale:1, vegetation:'palms', towers:48, skyStyle:0 },
+ urban: { water:false, night:true, background:'#111e37', fog:'#22344b', fogDensity:.00135, sky:'#769cd0', bounce:'#35404f', ambient:1.05, sun:'#a7c8ed', sunlight:.68, sunHeight:100, fill:'#87bcdb', fillIntensity:.80, ground:'#35434c', horizon:'#263d52', horizonScale:.65, vegetation:'street-trees', towers:105, skyStyle:1 },
+ desert: { water:false, night:false, background:'#b8a88b', fog:'#bba88d', fogDensity:.0008, sky:'#e0dccb', bounce:'#a98561', ambient:1.30, sun:'#ffe0aa', sunlight:1.65, sunHeight:145, fill:'#aabed0', fillIntensity:.45, ground:'#a18a65', horizon:'#8b7861', horizonScale:1.2, vegetation:'desert-rocks', towers:0, skyStyle:2 },
+ parkland: { water:false, night:false, background:'#789cb4', fog:'#9eb3b7', fogDensity:.00085, sky:'#c7dfeb', bounce:'#66755d', ambient:1.25, sun:'#ffedc9', sunlight:1.45, sunHeight:160, fill:'#b3d0e0', fillIntensity:.45, ground:'#506447', horizon:'#60796f', horizonScale:1.1, vegetation:'woodland', towers:0, skyStyle:3 },
+};
+
+// Existing five circuits keep their approved scenery. New routes use metadata,
+// with scenery scaled to their real arcade bounds rather than the original bay.
+export function getVenueProfile(track = TRACK) {
+ const original = ORIGINAL_VENUES.has(track.id);
+ const environment = original ? 'coastal' : Object.hasOwn(VENUE_ENVIRONMENTS, track.environment) ? track.environment : 'parkland';
+ let minX=Infinity,maxX=-Infinity,minZ=Infinity,maxZ=-Infinity;
+ for(const p of track.samples){minX=Math.min(minX,p.x);maxX=Math.max(maxX,p.x);minZ=Math.min(minZ,p.z);maxZ=Math.max(maxZ,p.z);}
+ const centerX=(minX+maxX)/2,centerZ=(minZ+maxZ)/2;
+ let radius=0;for(const p of track.samples)radius=Math.max(radius,Math.hypot(p.x-centerX,p.z-centerZ));
+ return {...VENUE_ENVIRONMENTS[environment],environment,original,centerX,centerZ,radius,
+  horizonRadius:original?990:Math.max(990,radius+480),groundRadius:Math.max(1400,radius+650)};
+}
+
+// Every new tree/rock/building uses a conservative circular footprint tested
+// against the whole circuit, and stays clear of the spectator structures.
+export function venueSceneryLayout(track=TRACK,{low=false}={}) {
+ const profile=getVenueProfile(track);if(profile.original)return [];
+ const seed=[...track.id].reduce((sum,char)=>(Math.imul(sum,31)+char.charCodeAt(0))|0,173),rng=random(seed),stands=grandstandLayout(track),items=[];
+ const count=low?74:118;
+ for(let i=0;i<count;i++){
+  const p=sampleTrack(track.length*(i+.35)/count,track),side=i%2?1:-1;
+  const kind=profile.environment==='desert'?'rock':profile.environment==='urban'?(i%3?'building':'tree'):'tree';
+  const radius=kind==='building'?10+rng()*7:kind==='rock'?4+rng()*8:3+rng()*1.5;
+  const offset=side*(track.width/2+radius+15+rng()*(kind==='building'?35:31));
+  const x=p.x+p.nx*offset,z=p.z+p.nz*offset;
+  if(projectOnTrack(x,z,undefined,track).distance < track.width/2+radius+7)continue;
+  if(stands.some(stand=>Math.hypot(x-stand.x,z-stand.z)<radius+14))continue;
+  if(items.some(item=>Math.hypot(x-item.x,z-item.z)<radius+item.radius+3))continue;
+  items.push({kind,x,z,radius,height:kind==='building'?16+rng()*44:kind==='rock'?radius*(.5+rng()*.6):6+rng()*8,yaw:Math.atan2(p.tx,p.tz),shade:rng()});
+ }
+ return items;
+}
+
 function random(seed = 81) { let s = seed; return () => ((s = Math.imul(1664525, s) + 1013904223) >>> 0) / 4294967296; }
 const box = new THREE.BoxGeometry(1, 1, 1), dummy = new THREE.Object3D();
 function canvasTexture(width, height, draw) {
@@ -142,13 +183,14 @@ function facadeMaterial() {
 }
 
 export function createWorld(renderer, { low = false } = {}) {
- const summit = TRACK.id === 'summit', grandPrix = TRACK.id === 'grandprix';
- const rng = random(), crowdRng = random(124), crowd = createCrowd(), scene = new THREE.Scene(); scene.background = new THREE.Color('#263750'); scene.fog = new THREE.FogExp2('#344052', .00115);
- scene.add(new THREE.HemisphereLight('#82a6d4', '#4a3833', 1.0));
- const sun = new THREE.DirectionalLight('#ffb679', 1.35); sun.position.set(-180, 72, 130); sun.castShadow = true; sun.shadow.mapSize.set(low ? 1024 : 2048, low ? 1024 : 2048); Object.assign(sun.shadow.camera, { left: -20, right: 20, top: 20, bottom: -20, near: 1, far: 360 }); sun.shadow.bias = -.00065; sun.shadow.normalBias = .015; scene.add(sun, sun.target);
- const fill = new THREE.DirectionalLight('#88b9ef', .68); fill.position.set(20, 45, -30); scene.add(fill);
- const sky = new THREE.Mesh(new THREE.SphereGeometry(1800, 48, 24), new THREE.ShaderMaterial({ side: THREE.BackSide, depthWrite: false, uniforms: {}, vertexShader: 'varying vec3 vPosition;void main(){vPosition=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}', fragmentShader: `${noiseGLSL}
- varying vec3 vPosition;
+ const summit = TRACK.id === 'summit', grandPrix = TRACK.id === 'grandprix', venue = getVenueProfile(TRACK);
+ const rng = random(), crowdRng = random(124), crowd = createCrowd(), scene = new THREE.Scene(); scene.background = new THREE.Color(venue.background); scene.fog = new THREE.FogExp2(venue.fog,venue.fogDensity);
+ scene.userData.venueEnvironment={type:venue.environment,original:venue.original,night:venue.night,water:venue.water};
+ scene.add(new THREE.HemisphereLight(venue.sky,venue.bounce,venue.ambient));
+ const sun = new THREE.DirectionalLight(venue.sun,venue.sunlight); sun.position.set(-180,venue.sunHeight,130); sun.castShadow = true; sun.shadow.mapSize.set(low ? 1024 : 2048, low ? 1024 : 2048); Object.assign(sun.shadow.camera, { left: -20, right: 20, top: 20, bottom: -20, near: 1, far: 360 }); sun.shadow.bias = -.00065; sun.shadow.normalBias = .015; scene.add(sun, sun.target);
+ const fill = new THREE.DirectionalLight(venue.fill,venue.fillIntensity); fill.position.set(20, 45, -30); scene.add(fill);
+ const sky = new THREE.Mesh(new THREE.SphereGeometry(1800, 48, 24), new THREE.ShaderMaterial({ side: THREE.BackSide, depthWrite: false, uniforms: {venueStyle:{value:venue.skyStyle}}, vertexShader: 'varying vec3 vPosition;void main(){vPosition=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}', fragmentShader: `${noiseGLSL}
+ varying vec3 vPosition;uniform float venueStyle;
  void main(){
   vec3 d=normalize(vPosition);float y=d.y;float sunset=pow(max(0.,dot(normalize(d.xz),normalize(vec2(-.8,.65)))),3.);
   vec3 horizon=mix(vec3(.19,.105,.15),vec3(.85,.235,.065),sunset*.7+.22);
@@ -162,6 +204,21 @@ export function createWorld(renderer, { low = false } = {}) {
   cover*=smoothstep(.025,.12,y)*(1.-smoothstep(.48,.88,y));
   vec3 cloudColor=mix(vec3(.025,.047,.089),vec3(.14,.075,.096),sunset*(1.-smoothstep(.02,.3,y)));
   col=mix(col,cloudColor,cover*.34);col+=vec3(.16,.074,.048)*sunset*smoothstep(.45,.55,cloud)*(1.-smoothstep(.55,.64,cloud))*(1.-smoothstep(.1,.35,y))*.35;
+  if(venueStyle>.5){
+   if(venueStyle<1.5){
+    col=mix(vec3(.075,.115,.19),vec3(.009,.023,.059),smoothstep(-.02,.75,y));
+    col+=vec3(.10,.12,.16)*pow(max(0.,dot(d,normalize(vec3(-.3,.65,.4)))),28.);
+    col=mix(col,vec3(.035,.053,.091),cover*.25);
+   }else if(venueStyle<2.5){
+    col=mix(vec3(.64,.49,.31),vec3(.20,.36,.48),smoothstep(-.04,.66,y));
+    col+=vec3(.26,.16,.07)*pow(max(0.,dot(d,normalize(vec3(-.8,.46,.65)))),24.);
+    col=mix(col,vec3(.55,.51,.42),cover*.16);
+   }else{
+    col=mix(vec3(.51,.62,.62),vec3(.095,.28,.43),smoothstep(-.05,.82,y));
+    col=mix(col,vec3(.66,.71,.69),cover*.72);
+    col+=vec3(.10,.105,.07)*pow(max(0.,dot(d,normalize(vec3(-.8,.6,.65)))),18.);
+   }
+  }
   gl_FragColor=vec4(col,1.);
   #include <tonemapping_fragment>
   #include <colorspace_fragment>
@@ -184,7 +241,7 @@ export function createWorld(renderer, { low = false } = {}) {
   gl_FragColor=vec4(color,1.);
   #include <tonemapping_fragment>
   #include <colorspace_fragment>
- }` })); sea.rotation.x = -Math.PI / 2; sea.position.y = -.65; scene.add(sea);
+ }` })); sea.rotation.x = -Math.PI / 2; sea.position.y = -.65; sea.visible=venue.water; scene.add(sea);
 
  const asphalt = canvasTexture(low ? 512 : 1024, low ? 512 : 1024, (c, w, h) => {
   c.fillStyle = '#474b50'; c.fillRect(0, 0, w, h);
@@ -193,7 +250,7 @@ export function createWorld(renderer, { low = false } = {}) {
   c.putImageData(pixels, 0, 0);
   for (let i = 0; i < 100; i++) { c.strokeStyle = `rgba(10,17,23,${rng() * .13})`; c.lineWidth = 1 + rng() * 2; c.beginPath(); const x = rng() * w, y = rng() * h; c.moveTo(x, y); c.lineTo(x + rng() * 8 - 4, y + 20 + rng() * 70); c.stroke(); }
  }); asphalt.wrapS = asphalt.wrapT = THREE.RepeatWrapping; asphalt.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
- const base = new THREE.Mesh(roadGeometry(TRACK.width + 11), new THREE.MeshStandardMaterial({ color: '#303a43', roughness: .9 })); base.position.y = -.10; scene.add(base);
+ const base = new THREE.Mesh(roadGeometry(TRACK.width + 11), new THREE.MeshStandardMaterial({ color: venue.environment==='desert'?'#736855':'#303a43', roughness: .9 })); base.position.y = -.10; scene.add(base);
  const road = new THREE.Mesh(roadGeometry(TRACK.width), new THREE.MeshStandardMaterial({ color: '#b5bbc2', map: asphalt, bumpMap: asphalt, bumpScale: .036, roughness: .86, metalness: .015, envMapIntensity: .16 })); road.position.y = .011; road.receiveShadow = true; scene.add(road);
  const wetShader = {
   name: 'RainPolishedAsphalt', uniforms: { color: { value: null }, tDiffuse: { value: null }, textureMatrix: { value: null } },
@@ -204,10 +261,10 @@ export function createWorld(renderer, { low = false } = {}) {
    #include <colorspace_fragment>
   }`
  };
- const reflection = new Reflector(roadGeometry(TRACK.width, true), { textureWidth: low ? 512 : 1024, textureHeight: low ? 512 : 1024, color: 0x708699, multisample: low ? 0 : 2, clipBias: .003, shader: wetShader }); reflection.rotation.x = -Math.PI / 2; reflection.position.y = .026; reflection.material.transparent = true; reflection.material.depthWrite = false; reflection.renderOrder = 0; scene.add(reflection);
+ const reflection = new Reflector(roadGeometry(TRACK.width, true), { textureWidth: low ? 512 : 1024, textureHeight: low ? 512 : 1024, color: 0x708699, multisample: low ? 0 : 2, clipBias: .003, shader: wetShader }); reflection.rotation.x = -Math.PI / 2; reflection.position.y = .026; reflection.material.transparent = true; reflection.material.depthWrite = false; reflection.renderOrder = 0; reflection.visible=venue.environment!=='desert'&&venue.environment!=='parkland'; scene.add(reflection);
  const white = new THREE.MeshBasicMaterial({ color: '#97a7aa' }), cyan = new THREE.MeshBasicMaterial({ color: '#34d8e9', toneMapped: false }), concrete = new THREE.MeshStandardMaterial({ color: '#596571', roughness: .82 }), metal = new THREE.MeshStandardMaterial({ color: '#15212c', metalness: .72, roughness: .35 }), warm = new THREE.MeshBasicMaterial({ color: '#ffd19a', toneMapped: false });
  warm.color.multiplyScalar(2.4); cyan.color.multiplyScalar(1.5);
- const sidewalk = new THREE.MeshStandardMaterial({ color: '#34424b', roughness: .92 });
+ const sidewalk = new THREE.MeshStandardMaterial({ color:venue.environment==='desert'?'#8e7c61':venue.environment==='parkland'?'#586455':'#34424b', roughness: .92 });
  for (const side of [-1, 1]) { scene.add(ribbon(side * (TRACK.width / 2 + 3.1), 4.6, -.02, sidewalk)); scene.add(ribbon(side * (TRACK.width / 2 - .5), .10, .049, white)); scene.add(ribbon(side * (TRACK.width / 2 + .62), .038, 1.06, cyan)); }
  const barriers = [], rails = [], dashes = [], posts = [], bulbs = [], arms = [], chevrons = [], leftChevrons = [], straightMarkers = [], joints = [], railingUprights = [];
  const panelTexture = canvasTexture(256, 128, c => { c.fillStyle = '#091b25'; c.fillRect(0, 0, 256, 128); c.strokeStyle = '#35e1f2'; c.lineWidth = 17; for (let x = 60; x < 200; x += 70) { c.beginPath(); c.moveTo(x, 30); c.lineTo(x + 34, 64); c.lineTo(x, 98); c.stroke(); } });
@@ -351,8 +408,8 @@ export function createWorld(renderer, { low = false } = {}) {
  // Window cells are scaled in metres inside the instanced shader, so tall
  // buildings gain floors rather than stretching the same facade image.
  const towers = [], roofEquipment = [], caps = [], podiums = [], shoreLights = [];
- for (let i = 0; i < (summit ? 18 : low ? 68 : 94); i++) {
-  const a = rng() * TAU, radius = 280 + Math.pow(rng(), .75) * 370, x = Math.sin(a) * radius, z = Math.cos(a) * radius;
+ for (let i = 0; i < (venue.original?(summit ? 18 : low ? 68 : 94):Math.floor(venue.towers*(low?.72:1))); i++) {
+  const a = rng() * TAU, radius = (venue.original?280:venue.radius+55) + Math.pow(rng(), .75) * 370, x = Math.sin(a) * radius+(venue.original?0:venue.centerX), z = Math.cos(a) * radius+(venue.original?0:venue.centerZ);
   if (projectOnTrack(x, z).distance < 40) continue;
   const height = 9 + Math.pow(rng(), 2.5) * 110, width = 12 + rng() * 16, depth = 12 + rng() * 18, rotation = Math.floor(rng() * 4) * Math.PI / 2;
   towers.push({ x, z, y: height / 2 - .3, sx: width, sy: height, sz: depth, ry: rotation });
@@ -365,20 +422,64 @@ export function createWorld(renderer, { low = false } = {}) {
   if (i % 3 === 0) shoreLights.push({ x: x - width * .45, z: z - depth * .51, y: 4.2, sx: .3, sy: .22, sz: .4 });
  }
  instances(scene, box, facadeMaterial(), towers); instances(scene, box, new THREE.MeshStandardMaterial({ color: '#202e3b', roughness: .72 }), podiums); instances(scene, box, metal, roofEquipment); instances(scene, box, new THREE.MeshBasicMaterial({ color: '#527f94' }), caps); instances(scene, box, warm, shoreLights);
- const land = new THREE.Mesh(new THREE.RingGeometry(216, 1400, 100), new THREE.MeshStandardMaterial({ color: '#192733', roughness: 1 })); land.rotation.x = -Math.PI / 2; land.position.y = -.28; scene.add(land);
+ const land = new THREE.Mesh(new THREE.RingGeometry(venue.original?216:venue.radius+30,venue.groundRadius,100), new THREE.MeshStandardMaterial({ color:venue.ground, roughness: 1 })); land.rotation.x = -Math.PI / 2; land.position.set(venue.original?0:venue.centerX,-.28,venue.original?0:venue.centerZ); scene.add(land);
+ if(!venue.original&&!venue.water){
+  // Inland venues have continuous terrain under the whole route: no hidden
+  // waterfront infield or yachts appearing beside a desert/permanent circuit.
+  const terrainNoise=canvasTexture(256,256,(c,w,h)=>{
+   const pixels=c.createImageData(w,h);
+   for(let i=0;i<pixels.data.length;i+=4){const shade=175+rng()*65;pixels.data[i]=shade;pixels.data[i+1]=shade;pixels.data[i+2]=shade;pixels.data[i+3]=255;}
+   c.putImageData(pixels,0,0);
+  });terrainNoise.wrapS=terrainNoise.wrapT=THREE.RepeatWrapping;terrainNoise.repeat.set(110,110);
+  const terrain=new THREE.Mesh(new THREE.CircleGeometry(venue.groundRadius,96),new THREE.MeshStandardMaterial({color:venue.ground,map:terrainNoise,roughness:1}));
+  terrain.name='venue-terrain';terrain.rotation.x=-Math.PI/2;terrain.position.set(venue.centerX,-.16,venue.centerZ);terrain.receiveShadow=true;scene.add(terrain);
+  const foliage=[],treeTrunks=[],rocks=[],cityBlocks=[],cityRoofs=[];
+  const decorations=venueSceneryLayout(TRACK,{low});scene.userData.venueDecorationCount=decorations.length;
+  for(const item of decorations){
+   const {x,z,radius,height,yaw,shade}=item;
+   if(item.kind==='building'){
+    cityBlocks.push({x,z,y:height/2-.16,sx:radius*1.3,sy:height,sz:radius*.8,ry:yaw});
+    cityRoofs.push({x,z,y:height+.1,sx:radius*1.34,sy:.32,sz:radius*.84,ry:yaw,color:shade>.7?'#67a8af':'#354759'});
+   }else if(item.kind==='rock')rocks.push({x,z,y:height*.18-.8,sx:radius*.84,sy:height*.65,sz:radius*.71,ry:yaw,color:shade>.5?'#9a805e':'#76644e'});
+   else{
+    treeTrunks.push({x,z,y:height*.29,sx:.18,sy:height*.58,sz:.18});
+    foliage.push({x,z,y:height*.72,sx:radius*.90,sy:height*.37,sz:radius*.80,ry:yaw,color:shade>.66?'#506346':shade>.33?'#3a5744':'#304b3f'});
+   }
+  }
+  if(foliage.length){
+   instances(scene,new THREE.CylinderGeometry(1,1.1,1,6),new THREE.MeshStandardMaterial({color:'#594d3d',roughness:1}),treeTrunks);
+   instances(scene,new THREE.IcosahedronGeometry(1,2),new THREE.MeshStandardMaterial({color:'white',roughness:1}),foliage);
+  }
+  if(rocks.length)instances(scene,new THREE.DodecahedronGeometry(1,1),new THREE.MeshStandardMaterial({color:'white',roughness:1}),rocks);
+  if(cityBlocks.length){
+   instances(scene,box,facadeMaterial(),cityBlocks);
+   instances(scene,box,new THREE.MeshStandardMaterial({color:'white',roughness:.65,metalness:.35}),cityRoofs);
+  }
+  if(venue.environment==='desert'){
+   const dunes=[];
+   for(let i=0;i<(low?15:24);i++){
+    const a=i/(low?15:24)*TAU,r=venue.radius+130+rng()*100,width=65+rng()*45;
+    const x=venue.centerX+Math.cos(a)*r,z=venue.centerZ+Math.sin(a)*r;
+    if(projectOnTrack(x,z).distance<width+TRACK.width/2+15)continue;
+    dunes.push({x,z,y:-7,sx:width,sy:16+rng()*19,sz:width*.8,ry:a,color:i%2?'#9d8664':'#ad9571'});
+   }
+   instances(scene,new THREE.SphereGeometry(1,16,8),new THREE.MeshStandardMaterial({color:'white',roughness:1}),dunes);
+  }
+ }
  const mountainPositions = [], mountainIndices = [];
  const ridgeSegments = 320;
  for (let i = 0; i <= ridgeSegments; i++) {
   const a = i / ridgeSegments * TAU;
-  const height = (31 + Math.sin(a * 3 + .8) * 16 + Math.sin(a * 7 - .4) * 10 + Math.sin(a * 13) * 5 + Math.sin(a * 29 + .7) * 1.8) * (summit ? 2.8 : 1);
-  mountainPositions.push(Math.cos(a) * 990, -5, Math.sin(a) * 990, Math.cos(a) * 990, height, Math.sin(a) * 990);
+  const height = (31 + Math.sin(a * 3 + .8) * 16 + Math.sin(a * 7 - .4) * 10 + Math.sin(a * 13) * 5 + Math.sin(a * 29 + .7) * 1.8) * (summit ? 2.8 : venue.horizonScale);
+  const x=Math.cos(a)*venue.horizonRadius+(venue.original?0:venue.centerX),z=Math.sin(a)*venue.horizonRadius+(venue.original?0:venue.centerZ);
+  mountainPositions.push(x,-5,z,x,height,z);
   if (i < ridgeSegments) { const j = i * 2; mountainIndices.push(j, j + 1, j + 2, j + 1, j + 3, j + 2); }
  }
- const mountains = new THREE.BufferGeometry(); mountains.setAttribute('position', new THREE.Float32BufferAttribute(mountainPositions, 3)); mountains.setIndex(mountainIndices); scene.add(new THREE.Mesh(mountains, new THREE.MeshBasicMaterial({ color: '#2e3d51', side: THREE.DoubleSide })));
+ const mountains = new THREE.BufferGeometry(); mountains.setAttribute('position', new THREE.Float32BufferAttribute(mountainPositions, 3)); mountains.setIndex(mountainIndices); scene.add(new THREE.Mesh(mountains, new THREE.MeshBasicMaterial({ color:venue.horizon, side: THREE.DoubleSide })));
 
 
  const trunks = [], fronds = [], crowns = [], planters = [];
- for (let s = 16; s < (summit ? 0 : TRACK.length); s += grandPrix ? 72 : low ? 33 : 27) {
+ for (let s = 16; s < (summit || !venue.water ? 0 : TRACK.length); s += grandPrix ? 72 : low ? 33 : 27) {
   const p = sampleTrack(s), sign = p.x * p.nx + p.z * p.nz > 0 ? 1 : -1, o = sign * (TRACK.width / 2 + 3.5 + rng() * .6), x = p.x + p.nx * o, z = p.z + p.nz * o, h = 7.8 + rng() * 4.3, leanX = (rng() - .5) * 1.7, leanZ = (rng() - .5) * 1.7;
   if (standLayouts.some(stand => Math.hypot(x - stand.x, z - stand.z) < 14)) continue;
   for (let j = 0; j < 7; j++) { const a = j / 7, b = (j + 1) / 7; segment(trunks, [x + leanX * a * a, h * a, z + leanZ * a * a], [x + leanX * b * b, h * b, z + leanZ * b * b], .21 - a * .07); }
@@ -394,7 +495,7 @@ export function createWorld(renderer, { low = false } = {}) {
  instances(scene, new THREE.SphereGeometry(.5, 6, 5), new THREE.MeshStandardMaterial({ color: '#344732', roughness: 1 }), crowns); instances(scene, box, concrete, planters);
 
  const cranes = [], craneFeet = [], cableMaterial = new THREE.MeshStandardMaterial({ color: '#223241', roughness: .6, metalness: .5 });
- for (let i = 0; i < (summit ? 0 : 7); i++) { const x = -250 - i * 24, z = -15 + i * 41, h = 29 + i % 3 * 6;
+ for (let i = 0; i < (summit || !venue.original ? 0 : 7); i++) { const x = -250 - i * 24, z = -15 + i * 41, h = 29 + i % 3 * 6;
   for (const dz of [-3, 3]) { segment(cranes, [x - 5, 0, z + dz], [x, h, z + dz], .48); segment(cranes, [x + 5, 0, z + dz], [x, h, z + dz], .48); segment(cranes, [x, h - 7, z + dz], [x + 27, h + 4, z + dz], .48); segment(cranes, [x, h - 7, z + dz], [x - 12, h - 3, z + dz], .35); segment(cranes, [x + 27, h + 4, z + dz], [x + 27, 7, z + dz], .035); }
   segment(cranes, [x, h + 7, z], [x + 27, h + 4, z], .04); segment(cranes, [x, h, z], [x, h + 7, z], .20); craneFeet.push({ x, y: 1, z, sx: 14, sy: 2, sz: 15 });
  }
@@ -411,7 +512,15 @@ export function createWorld(renderer, { low = false } = {}) {
  const boatRails = [], portholes = []; for (let x = -12; x < 11; x += 1.5) for (const side of [-1, 1]) boatRails.push({ x, y: 2.2, z: side * 3.15, sx: .035, sy: .72, sz: .035 });
  for (let x = -10; x < 9; x += 2.6) for (const side of [-1, 1]) portholes.push({ x, y: .65, z: side * 3.25, sx: .36, sy: .25, sz: .06 });
  instances(boat, box, metal, boatRails); instances(boat, box, glass, portholes);
- const mast = new THREE.Mesh(new THREE.CylinderGeometry(.07, .12, 8, 8), boatWhite); mast.position.set(-2, 8.5, 0); boat.add(mast); boat.position.set(-42, -.8, 25); boat.rotation.y = .2; if (!summit && !grandPrix) scene.add(boat);
+ const mast = new THREE.Mesh(new THREE.CylinderGeometry(.07, .12, 8, 8), boatWhite); mast.position.set(-2, 8.5, 0); boat.add(mast); boat.position.set(-42, -.8, 25); boat.rotation.y = .2;
+ if(!venue.original&&venue.water){
+  boat.visible=false;
+  for(let i=0;i<12;i++){
+   const a=i/12*TAU,x=venue.centerX+Math.cos(a)*venue.radius*.47,z=venue.centerZ+Math.sin(a)*venue.radius*.47;
+   if(projectOnTrack(x,z).distance>TRACK.width/2+28){boat.position.set(x,-.8,z);boat.visible=true;break;}
+  }
+ }
+ if (!summit && !grandPrix && venue.water) scene.add(boat);
  // Each added circuit has an identifiable setting while retaining the same
  // flat, physically driven asphalt surface. Terrain stays outside its barriers.
  if (summit || grandPrix) {
@@ -478,5 +587,5 @@ export function createWorld(renderer, { low = false } = {}) {
   }
  }
  crowd.render(scene);
- return { scene, reflection, sun, startLights, update(time, car) { sea.material.uniforms.time.value = time; boat.position.y = -.8 + Math.sin(time * .7) * .065; if (car) { sun.position.set(car.x - 150, 72, car.z + 130); sun.target.position.set(car.x, 0, car.z); } } };
+ return { scene, reflection, sun, startLights, update(time, car) { sea.material.uniforms.time.value = time; boat.position.y = -.8 + Math.sin(time * .7) * .065; if (car) { sun.position.set(car.x - 150,venue.sunHeight,car.z + 130); sun.target.position.set(car.x, 0, car.z); } } };
 }

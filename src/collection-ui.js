@@ -16,5 +16,5 @@ export function circuitMapMarkup(track) {
   const x = p => (90 + (p.x-(minX+maxX)/2)*scale).toFixed(1);
   const y = p => (90 + (p.z-(minZ+maxZ)/2)*scale).toFixed(1);
   const d = points.map((p,i) => `${i ? 'L' : 'M'}${x(p)},${y(p)}`).join(' ')+'Z';
-  return `<svg viewBox="0 0 180 180" fill="none"><path d="${d}" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/><circle cx="${x(points[0])}" cy="${y(points[0])}" r="5" fill="#ffd269" stroke="#101924" stroke-width="2"/></svg>`;
+  return `<svg viewBox="0 0 180 180" fill="none"><path d="${d}" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/><circle cx="${x(points[0])}" cy="${y(points[0])}" r="5" fill="#FFF71E" stroke="#110017" stroke-width="2"/></svg>`;
 }

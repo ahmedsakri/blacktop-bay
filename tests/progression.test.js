@@ -18,7 +18,7 @@ test('a new garage starts with 1200 credits and independent zero-level cars', ()
   assert.equal(state.credits, 1200);
   assert.equal(state.version, 1);
   assert.deepEqual(state.awardedRaces, []);
-  assert.deepEqual(Object.keys(state.cars), ['coupe', 'sprint', 'gt', 'endurance', 'rally', 'formula', 'prototype', 'hyper', 'barchetta', 'spyder', 'kestrel', 'mirage', 'monoposto', 'tempest']);
+  assert.deepEqual(Object.keys(state.cars), ['coupe', 'sprint', 'gt', 'endurance', 'rally', 'formula', 'prototype', 'hyper', 'barchetta', 'spyder', 'kestrel', 'mirage', 'monoposto', 'tempest', 'corsair', 'stratus', 'vector', 'zenith', 'vela', 'aurora']);
   assert.deepEqual(state.cars.coupe, { engine: 0, tyres: 0, nitro: 0, handling: 0 });
   state.cars.coupe.engine = 2;
   assert.equal(state.cars.gt.engine, 0);
@@ -172,4 +172,20 @@ test('ten-car saves retain every level and credit while four new builds upgrade 
   for (const id of oldIds) assert.deepEqual(reloaded.cars[id], cars[id]);
   for (const [i, id] of newIds.entries()) for (const component of UPGRADE_COMPONENTS)
     assert.equal(reloaded.cars[id][component], component === UPGRADE_COMPONENTS[i] ? 1 : 0);
+});
+
+test('fourteen-car progress expands to twenty while six purchases stay independent and preserve reward receipts', () => {
+  const store=memoryStorage(),oldIds=['coupe','sprint','gt','endurance','rally','formula','prototype','hyper','barchetta','spyder','kestrel','mirage','monoposto','tempest'];
+  const cars=Object.fromEntries(oldIds.map((id,i)=>[id,{engine:i%6,tyres:(i+1)%6,nitro:(i+2)%6,handling:(i+3)%6}]));
+  store.setItem(PROGRESSION_KEY,JSON.stringify({version:1,credits:5000,cars,awardedRaces:['twenty-car-upgrade-receipt']}));
+  const state=loadProgression(store),newIds=['corsair','stratus','vector','zenith','vela','aurora'];
+  for(const [i,id]of newIds.entries()){
+    assert.deepEqual(state.cars[id],{engine:0,tyres:0,nitro:0,handling:0});
+    assert.equal(buyUpgrade(state,id,UPGRADE_COMPONENTS[i%4],store).ok,true);
+  }
+  assert.equal(state.credits,3800);
+  const loaded=loadProgression(store);
+  assert.deepEqual(loaded.awardedRaces,['twenty-car-upgrade-receipt']);
+  for(const id of oldIds)assert.deepEqual(loaded.cars[id],cars[id]);
+  for(const [i,id]of newIds.entries())for(const component of UPGRADE_COMPONENTS)assert.equal(loaded.cars[id][component],component===UPGRADE_COMPONENTS[i%4]?1:0);
 });

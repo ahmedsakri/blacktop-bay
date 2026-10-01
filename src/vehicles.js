@@ -1,4 +1,4 @@
-// Fourteen fictional race builds: GT, Formula and original Prototype coachwork. Physics units:
+// Twenty fictional race builds: GT, Formula and original Prototype coachwork. Physics units:
 // m/s², m/s, steering multiplier, boost seconds, charge seconds per driving second.
 export const VEHICLES = Object.freeze([
   Object.freeze({
@@ -70,6 +70,36 @@ export const VEHICLES = Object.freeze([
     id: 'tempest', family: 'prototype', name: 'Tempest XR', number: '99', tagline: 'Downforce with intent.', color: '#6f805c',
     specs: Object.freeze({ body: 'Extreme aero racing prototype', speed: '180 km/h', character: 'Aero attack', boost: '3.8 sec' }),
     handling: Object.freeze({ acceleration: 15.5, topSpeed: 50, handling: 1.02, nitroCapacity: 3.8, recharge: .25 }),
+  }),
+  Object.freeze({
+    id: 'corsair', family: 'gt', name: 'Corsair GTS', number: '18', tagline: 'Open sky. Race-ready resolve.', color: '#2d7891',
+    specs: Object.freeze({ body: 'Open-cockpit GT cup racer', speed: '167 km/h', character: 'Fluid response', boost: '3.2 sec' }),
+    handling: Object.freeze({ acceleration: 14.8, topSpeed: 46.5, handling: 1.05, nitroCapacity: 3.2, recharge: .27 }),
+  }),
+  Object.freeze({
+    id: 'stratus', family: 'gt', name: 'Stratus GT3', number: '52', tagline: 'Built to stay at the front.', color: '#b9bec1',
+    specs: Object.freeze({ body: 'Long-tail endurance GT', speed: '178 km/h', character: 'Sustained pace', boost: '4.0 sec' }),
+    handling: Object.freeze({ acceleration: 15.1, topSpeed: 49.5, handling: .97, nitroCapacity: 4, recharge: .24 }),
+  }),
+  Object.freeze({
+    id: 'vector', family: 'formula', name: 'Vector F', number: '12', tagline: 'Every input. An instant answer.', color: '#f0bd35',
+    specs: Object.freeze({ body: 'Formula sprint aero racer', speed: '167 km/h', character: 'Quick direction', boost: '2.9 sec' }),
+    handling: Object.freeze({ acceleration: 15.4, topSpeed: 46.5, handling: 1.16, nitroCapacity: 2.9, recharge: .30 }),
+  }),
+  Object.freeze({
+    id: 'zenith', family: 'formula', name: 'Zenith FX', number: '04', tagline: 'A clear view of the next apex.', color: '#b7cede',
+    specs: Object.freeze({ body: 'Enclosed-canopy Formula concept', speed: '182 km/h', character: 'Fast and composed', boost: '3.5 sec' }),
+    handling: Object.freeze({ acceleration: 14.6, topSpeed: 50.5, handling: 1.07, nitroCapacity: 3.5, recharge: .26 }),
+  }),
+  Object.freeze({
+    id: 'vela', family: 'prototype', name: 'Vela R', number: '27', tagline: 'A cockpit built around the driver.', color: '#be603a',
+    specs: Object.freeze({ body: 'Offset-cockpit sports racer', speed: '164 km/h', character: 'Corner specialist', boost: '3.3 sec' }),
+    handling: Object.freeze({ acceleration: 15.7, topSpeed: 45.5, handling: 1.17, nitroCapacity: 3.3, recharge: .29 }),
+  }),
+  Object.freeze({
+    id: 'aurora', family: 'prototype', name: 'Aurora LMX', number: '66', tagline: 'Made for the long way home.', color: '#886699',
+    specs: Object.freeze({ body: 'Finned endurance prototype', speed: '187 km/h', character: 'Long-straight pace', boost: '3.9 sec' }),
+    handling: Object.freeze({ acceleration: 15, topSpeed: 52, handling: .96, nitroCapacity: 3.9, recharge: .24 }),
   }),
 ]);
 

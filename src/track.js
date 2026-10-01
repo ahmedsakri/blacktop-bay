@@ -1,3 +1,5 @@
+import { GRAND_PRIX_CIRCUITS } from './grand-prix-circuits.js';
+
 // A closed coastal circuit in the x/z plane. Tangents point in race direction;
 // normals point to +local X (the driver's left). Distances and positions are metres.
 const CONTROL_POINTS = [
@@ -47,7 +49,7 @@ function catmull(p0, p1, p2, p3, t) {
   ));
 }
 
-function buildTrack({ id, name, description, points, width = 16 }) {
+function buildTrack({ id, name, description, points, width = 16, ...metadata }) {
   const dense = [];
   const pointCount = points.length;
   for (let segment = 0; segment < pointCount; segment++) {
@@ -84,13 +86,14 @@ function buildTrack({ id, name, description, points, width = 16 }) {
     sample.nz = -sample.tx;
   });
   return {
-    id, name, description, samples, length, width,
+    series: 'original', region: 'Blacktop Bay', layoutKind: 'original',
+    ...metadata, id, name, description, samples, length, width,
     spawn: { x: samples[0].x, z: samples[0].z, yaw: Math.atan2(samples[0].tx, samples[0].tz) },
   };
 }
 
-const layouts = new Map(CIRCUITS.map((circuit) => [circuit.id, buildTrack(circuit)]));
-export const TRACKS = [...layouts.values()].map(({ id, name, description, length, width }) => ({ id, name, description, length, width }));
+const layouts = new Map([...CIRCUITS, ...GRAND_PRIX_CIRCUITS].map((circuit) => [circuit.id, buildTrack(circuit)]));
+export const TRACKS = [...layouts.values()].map(({ samples, spawn, ...descriptor }) => descriptor);
 export let TRACK = layouts.get('harbor');
 export function getTrack(id = TRACK.id) { return layouts.get(id) || layouts.get('harbor'); }
 export function setTrack(id) { TRACK = getTrack(id); return TRACK; }
