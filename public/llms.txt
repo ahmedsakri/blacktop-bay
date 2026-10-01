@@ -1,0 +1,37 @@
+# Blacktop Bay
+
+> Blacktop Bay is a free, single-player 3D browser racing game by AppsOverFlow. Race three computer-controlled rivals across five asphalt circuits in one of ten race builds, earn race credits, and upgrade your car. No account, no install, no purchases.
+
+## About the game
+
+Blacktop Bay runs directly in a modern web browser (WebGL 2 required) at https://blacktop-bay.web.app/. A single human player races three AI drivers — Mira, Jax and Nova — in a four-car field over three laps. Gameplay centres on drifting for score, a rechargeable nitro boost, and earning race credits to install permanent, per-car upgrades. Progress is saved locally in the browser; there is no online multiplayer and no real-money payment.
+
+## How to play
+
+- Choose a race car in the Garage and, optionally, spend earned credits on upgrades.
+- Pick one of five circuits on the home screen, then start the race.
+- The car accelerates automatically; steer with Left/Right (or A/D), brake with Down (or S).
+- Drift through corners with Space (or the Drift pad) to bank clean drift points.
+- Hold Shift (or the Nitro pad) for a boost on clear straights; release to recharge.
+- Complete three laps through the ordered checkpoints to finish and earn credits.
+- Touch controls and landscape orientation are supported on phones.
+
+## Circuits
+
+- Harbor Flow — about 1.22 km per lap; beginner-friendly waterfront sweepers.
+- Dockyard Technical — about 1.53 km; a tight sequence of dockside turns.
+- Coast Run — about 1.13 km; open coastal curves for sustained acceleration.
+- Summit Switchback — about 1.66 km; technical pine-lined switchbacks.
+- Bay Grand Prix — about 1.53 km; a wide permanent circuit with flowing chicanes.
+
+## Race cars
+
+Ten tuned race builds across three families: GT (Apex GT, Apex Sprint, Torque R, Torque RS), Formula (Vortex P1, Vortex X) and Prototype (Spectre LM, Spectre LM-R, Cinder R, Cinder RX). All ten are available from the start. Each car has five upgrade levels for Engine, Tyres, Nitro and Handling, purchased with earned race credits. Car names and handling are fictional.
+
+## Links
+
+- Game: https://blacktop-bay.web.app/
+- Guide (controls, cars, circuits, upgrades, FAQ): https://blacktop-bay.web.app/guide/
+- Credits & licenses: https://blacktop-bay.web.app/credits/
+- Privacy notice: https://blacktop-bay.web.app/privacy/
+- Publisher (AppsOverFlow): https://appsoverflow.web.app/
