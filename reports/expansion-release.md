@@ -37,4 +37,10 @@ Browser checks of the final control design covered **568×320** and **844×390**
 
 ## Completion record
 
-Pending the release owner’s final test/build receipt and explicitly recorded deployment outcome. Recheck any source changed after the observations above.
+Released 01 October 2026 at 12:15 IST. Both repositories were pushed to GitHub and Firebase Hosting confirmed release completion:
+
+- Blacktop Bay code **584caed**: https://blacktop-bay.web.app/. Predeploy ran **126 tests, all passing**, then the production build. Live HTML exposes exactly one driving input, Nitro. Published JS/CSS bytes match the build. Guide, sitemap and robots each returned HTTP 200.
+- AppsOverFlow code **8ad0f4e**: https://appsoverflow.web.app/projects/blacktop-bay/. The deployment passed **2,780 static checks**, **22 contact backend checks** and **148 contact client checks** (contact services were mocked; no enquiry was sent). The live guide describes automatic acceleration, drag steering and Nitro; no old Gas instruction or AI rivals wording remains.
+- The live game was checked at **844×390**, with no browser warnings/errors. The final screenshot is saved locally as `reports/nitro-only-mobile-live.png` (ignored by Git). The earlier final-build check at **390×844** confirmed rotation pauses the race and presents the landscape gate. Physical-device performance remains unmeasured.
+
+The automatic-drift/one-button design supersedes the earlier manual-pedal checkpoint. The current production release has no Gas, Brake, Drift or steering buttons on the mobile driving surface. Optional keyboard braking remains supported; touch reset is in Pause.
