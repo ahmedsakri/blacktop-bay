@@ -1,4 +1,5 @@
-// Twenty fictional race builds: GT, Formula and original Prototype coachwork. Physics units:
+import { MANUFACTURER_VEHICLES } from './manufacturer-vehicles.js';
+// Preserve the original twenty save IDs alongside independently sourced real cars. Physics units:
 // m/s², m/s, steering multiplier, boost seconds, charge seconds per driving second.
 export const VEHICLES = Object.freeze([
   Object.freeze({
@@ -101,6 +102,7 @@ export const VEHICLES = Object.freeze([
     specs: Object.freeze({ body: 'Finned endurance prototype', speed: '187 km/h', character: 'Long-straight pace', boost: '3.9 sec' }),
     handling: Object.freeze({ acceleration: 15, topSpeed: 52, handling: .96, nitroCapacity: 3.9, recharge: .24 }),
   }),
+  ...MANUFACTURER_VEHICLES,
 ]);
 
 export function getVehicle(id = 'coupe') {

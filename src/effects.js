@@ -216,7 +216,9 @@ export function createEffects(scene, { low = false } = {}) {
       const profile = controls.profile;
       if (profile) {
         rearAxle = profile.rearAxle; tyreOffset = profile.tyreOffset; tyreWidth = profile.tyreWidth;
-        if (profile.exhausts?.length) exhausts = profile.exhausts;
+        // An empty list is intentional for electric cars and models without
+        // verified outlets; never reuse the previous car's exhaust positions.
+        if (Array.isArray(profile.exhausts)) exhausts = profile.exhausts;
       }
       const menu = controls.menu === true && !active;
       // Pauses freeze the plumes and mark age as well as stopping emitters.
@@ -246,11 +248,13 @@ export function createEffects(scene, { low = false } = {}) {
         count = Math.floor(mistDebt); mistDebt -= count;
         for (let i = 0; i < count; i++) { const pose = emissionPose(car, (i + .5) / count); for (const side of [-1, 1]) smokeAt(car, pose, side, wet, true); }
       } else { sprayDebt = mistDebt = 0; }
-      exhaustDebt += (menu ? 2.0 : speed < 3 ? 2.6 : 1.6) * dt;
-      const exhaustCount = Math.floor(exhaustDebt); exhaustDebt -= exhaustCount;
-      for (let i = 0; i < exhaustCount; i++) exhaustAt(car, emissionPose(car, (i + .5) / exhaustCount), menu);
+      if (exhausts.length) {
+        exhaustDebt += (menu ? 2.0 : speed < 3 ? 2.6 : 1.6) * dt;
+        const exhaustCount = Math.floor(exhaustDebt); exhaustDebt -= exhaustCount;
+        for (let i = 0; i < exhaustCount; i++) exhaustAt(car, emissionPose(car, (i + .5) / exhaustCount), menu);
+      } else exhaustDebt = 0;
       const throttle = active ? braking ? 0 : clamp(controls.throttle ?? 1, 0, 1) : 0;
-      if (active && speed > 11 && previousThrottle !== null && previousThrottle > .55 && throttle < .25 && flameCooldown <= 0) liftOff(car);
+      if (exhausts.length && active && speed > 11 && previousThrottle !== null && previousThrottle > .55 && throttle < .25 && flameCooldown <= 0) liftOff(car);
       previousThrottle = throttle;
       const collision = active && Boolean(controls.collision);
       if (collision && !previousCollision && collisionCooldown <= 0 && speed > 1.5) contactBurst(car, controls.collision);

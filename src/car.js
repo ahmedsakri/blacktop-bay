@@ -1,4 +1,5 @@
 import { createPrototypeCar } from './prototype-car.js';
+import { createManufacturerCar } from './manufacturer-car.js';
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
@@ -548,6 +549,7 @@ function batchStaticMeshes(parent) {
 
 export function createCar({ghost=false,vehicle='coupe',color,low=false}={}) {
   const model=getVehicle(vehicle);
+  if(model.assetId)return createManufacturerCar({assetId:model.assetId,vehicle:model.id,color,low,ghost});
   if(model.family==='formula')return createFormulaCar({ghost,vehicle:model.id,color,low});
   if(model.family==='prototype'){
     const template=gtAssets.get(low?'low':'high')||gtAssets.get('low');

@@ -33,7 +33,7 @@ export function savePaint(state, vehicle, choice, storage) {
 }
 export function getPaint(vehicle, choice) {
   const normalized = normalize(choice), option = PAINT_COLORS.find(p => p.id === normalized.color), finish = PAINT_FINISHES.find(p => p.id === normalized.finish);
-  return {color: option.color ?? getVehicle(vehicle).color, name: option.name, finish};
+  return {id: option.id, color: option.color ?? getVehicle(vehicle).color, name: option.name, finish};
 }
 export function applyPaint(car, vehicle, choice) {
   const paint = getPaint(vehicle, choice), seen = new Set();
@@ -41,7 +41,14 @@ export function applyPaint(car, vehicle, choice) {
     if (!object.isMesh) return;
     for (const material of Array.isArray(object.material) ? object.material : [object.material]) {
       if (!material.userData.bodyPaint || seen.has(material)) continue;
-      seen.add(material); material.color.set(paint.color);
+      seen.add(material);
+      if (paint.id === 'factory' && material.userData.factoryColor) {
+        material.color.set(material.userData.factoryColor);
+        const finish = paint.finish.id === 'gloss' ? material.userData.factoryFinish : paint.finish;
+        for (const name of ['metalness', 'roughness', 'clearcoat', 'clearcoatRoughness']) if (finish?.[name] !== undefined) material[name] = finish[name];
+        continue;
+      }
+      material.color.set(paint.color);
       for (const name of ['metalness', 'roughness', 'clearcoat', 'clearcoatRoughness']) material[name] = paint.finish[name];
     }
   });

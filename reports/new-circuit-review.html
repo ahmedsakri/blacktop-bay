@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>New circuit review — local fixture</title>
+<style>
+@font-face{font-family:"Racing Sans One";src:url('/assets/racing-sans-one.woff2') format('woff2');font-display:swap}
+*{box-sizing:border-box}body{margin:0;background:#110017;color:white;font:14px/1.4 system-ui}main{display:grid;grid-template-rows:auto minmax(250px,1fr) auto;height:100dvh}header,footer{padding:10px 16px;background:#110017;position:relative;z-index:2}header{display:flex;align-items:center;gap:8px 12px;flex-wrap:wrap}h1{font-size:16px;margin:0;width:100%}button,select{font:inherit;min-height:44px;padding:8px 12px;border:1px solid #827295;background:#24142f;color:white;border-radius:5px}button{cursor:pointer}button[aria-pressed="true"]{background:#9246ff;border-color:#b98bff}button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid #fff71e;outline-offset:2px}label{display:flex;align-items:center;gap:8px}#position{width:140px;min-height:44px;accent-color:#fff71e}#stage{min-width:0;min-height:0;position:relative}canvas{display:block;width:100%;height:100%}#view-label{position:absolute;left:14px;top:14px;max-width:calc(100% - 28px);padding:8px 12px;background:#110017d9;border-left:3px solid #fff71e;pointer-events:none}footer{font-size:12px;color:#d7ccdf}footer p{margin:2px 0}#status{color:#fff71e}@media(max-width:600px){header{padding:8px;gap:6px}h1{font-size:14px}button,select{padding:8px;font-size:13px}#position{width:90px}footer{padding:6px 8px}}
+</style>
+</head>
+<body><main>
+<header>
+<h1>Local review: four original circuits</h1>
+<label>Circuit <select id="circuit" aria-label="Circuit"></select></label>
+<label>Detail <select id="detail"><option value="high">Desktop</option><option value="low">Mobile</option></select></label>
+<button id="start" aria-pressed="true">Starting grid</button><button id="travel" aria-pressed="false">Travel camera</button><button id="overview" aria-pressed="false">Whole circuit</button><button id="landmark" aria-pressed="false">Next landmark</button><button id="pause" aria-pressed="false">Pause motion</button>
+<label>Lap <input id="position" type="range" min="0" max="100" step=".1" value="0" aria-label="Camera position around lap"></label>
+<span id="status" role="status">Preparing world…</span>
+</header>
+<div id="stage"><div id="view-label"></div></div>
+<footer><p id="metadata"></p><p>Local inspection fixture: shipping world geometry, lighting and scenery updates. Travel camera follows the route without race physics or cars; this is not a completed gameplay test. Not included in the production build.</p></footer>
+</main>
+<script type="module">
+import * as THREE from 'three';
+import {createWorld,getVenueProfile} from '/src/world.js';
+import {setTrack,sampleTrack,projectOnTrack} from '/src/track.js';
+import {ORIGINAL_CIRCUITS} from '/src/original-circuits.js';
+const $=id=>document.getElementById(id), stage=$('stage'), select=$('circuit'), detail=$('detail');
+for(const route of ORIGINAL_CIRCUITS)select.add(new Option(route.name,route.id));
+const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.1;renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFShadowMap;stage.append(renderer.domElement);
+const camera=new THREE.PerspectiveCamera(55,1,.2,2600),reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let world,track,view='start',paused=reduced,distance=0,worldTime=0,previous=performance.now(),labelTime=0,landmarkIndex=-1,landmarks=[];
+$('pause').ariaPressed=String(paused);$('pause').textContent=paused?'Resume motion':'Pause motion';
+function disposeWorld(){
+ if(!world)return;const geometries=new Set(),materials=new Set(),textures=new Set();
+ world.scene.traverse(o=>{if(o.geometry)geometries.add(o.geometry);for(const m of Array.isArray(o.material)?o.material:[o.material])if(m){materials.add(m);for(const v of Object.values(m))if(v?.isTexture)textures.add(v);}if(o.shadow?.map)o.shadow.map.dispose();});
+ world.reflection.getRenderTarget().dispose();if(world.scene.environment)textures.add(world.scene.environment);
+ for(const g of geometries)g.dispose();for(const m of materials)m.dispose();for(const t of textures)t.dispose();world=null;renderer.renderLists.dispose();
+}
+function size(){const w=stage.clientWidth,h=stage.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();}
+function setView(next){view=next;for(const key of ['start','travel','overview','landmark'])$(key).ariaPressed=String(key===next);document.body.dataset.view=next;updateCamera();}
+function updateCamera(){
+ const p=sampleTrack(distance,track),profile=getVenueProfile(track);
+ if(view==='overview'){
+  const r=profile.radius;camera.position.set(profile.centerX+r*.22,r*2.12,profile.centerZ+r*1.06);camera.lookAt(profile.centerX,0,profile.centerZ);
+  $('view-label').textContent=track.name+' · whole circuit';
+ }else if(view==='landmark'&&landmarks.length){
+  const site=landmarks[landmarkIndex],road=projectOnTrack(site.x,site.z,undefined,track),near=sampleTrack(road.s-22,track);
+  camera.position.set(near.x,4.6,near.z);camera.lookAt(site.x,site.kind==='lighthouse'?13:site.kind==='mesa'?11:site.kind==='freight'?10:4,site.z);
+  $('view-label').textContent=track.name+' · '+site.kind+' '+(landmarkIndex+1)+' / '+landmarks.length+' · viewed from asphalt';
+ }else{
+  const ahead=sampleTrack(distance+27,track);camera.position.set(p.x-p.tx*8.5,view==='start'?4.4:2.9,p.z-p.tz*8.5);camera.lookAt(ahead.x,1.2,ahead.z);
+  $('view-label').textContent=track.name+' · '+(view==='start'?'starting grid':'road-level travel')+' · '+Math.round(distance/track.length*100)+'%';
+ }
+}
+function choose(){
+ $('status').textContent='Building '+select.selectedOptions[0].text;disposeWorld();track=setTrack(select.value);world=createWorld(renderer,{low:detail.value==='low',reducedMotion:reduced});landmarks=world.scene.userData.originalLandmarks||[];distance=0;landmarkIndex=-1;worldTime=0;$('position').value='0';setView('start');
+ document.body.dataset.ready=track.id;document.body.dataset.landmarks=String(landmarks.length);document.body.dataset.length=String(Math.round(track.length));
+ $('metadata').textContent=track.description+' · '+Math.round(track.length)+' m · '+track.width+' m asphalt · '+landmarks.length+' authored landmark sites · '+detail.selectedOptions[0].text+' detail';$('status').textContent='Ready';
+}
+select.onchange=choose;detail.onchange=choose;$('start').onclick=()=>{distance=0;$('position').value='0';setView('start');};$('travel').onclick=()=>setView('travel');$('overview').onclick=()=>setView('overview');$('landmark').onclick=()=>{if(!landmarks.length)return;landmarkIndex=(landmarkIndex+1)%landmarks.length;distance=projectOnTrack(landmarks[landmarkIndex].x,landmarks[landmarkIndex].z,undefined,track).s;$('position').value=String(distance/track.length*100);setView('landmark');};$('pause').onclick=()=>{paused=!paused;$('pause').ariaPressed=String(paused);$('pause').textContent=paused?'Resume motion':'Pause motion';};$('position').oninput=()=>{distance=Number($('position').value)/100*track.length;setView('travel');};
+new ResizeObserver(size).observe(stage);size();
+try{await document.fonts.load('32px "Racing Sans One"');choose();}catch(e){$('status').textContent='Review error: '+e.message;throw e;}
+renderer.setAnimationLoop(now=>{const dt=Math.min(.05,Math.max(0,(now-previous)/1000));previous=now;if(!world)return;if(!paused&&!document.hidden){worldTime+=dt;if(view==='travel')distance=(distance+dt*25)%track.length;}const p=sampleTrack(distance,track);world.update(worldTime,{x:p.x,z:p.z,speed:!paused&&view==='travel'?25:0},{paused,reducedMotion:reduced});updateCamera();renderer.render(world.scene,camera);if(now-labelTime>500){$('position').value=String(distance/track.length*100);$('status').textContent=Math.round(renderer.info.render.triangles/1000)+'k rendered triangles · '+renderer.info.render.calls+' calls';document.body.dataset.distance=String(Math.round(distance));labelTime=now;}});
+addEventListener('pagehide',()=>{renderer.setAnimationLoop(null);disposeWorld();renderer.dispose();});
+</script></body></html>

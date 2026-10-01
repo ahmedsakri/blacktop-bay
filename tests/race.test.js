@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createRace, startRace, stepRace, resetCar, VEHICLE_SPECS, TRACK, TRACKS, getTrack, setTrack, sampleTrack, projectOnTrack } from '../src/physics.js';
 import { createCompletedRaceFixture } from '../scripts/qa-race-fixture.js';
+const LAUNCH_CIRCUITS = new Set(['harbor', 'dockyard', 'coast', 'summit', 'grandprix']);
 
 const advance = (race, input, seconds, hz = 120) => {
   for (let i = 0; i < Math.round(seconds * hz); i++) stepRace(race, input, 1 / hz);
@@ -79,7 +80,7 @@ test('vehicle choices preserve their tuning across start and give distinct accel
 });
 
 test('the five original track choices remain distinct and simulations retain their own layout', () => {
-  const originals = TRACKS.filter(track => track.series === 'original');
+  const originals = TRACKS.filter(track => LAUNCH_CIRCUITS.has(track.id));
   assert.deepEqual(originals.map(track => track.id), ['harbor', 'dockyard', 'coast', 'summit', 'grandprix']);
   assert.equal(new Set(originals.map(track => Math.round(track.length))).size, 5);
   for (const descriptor of originals) {
@@ -138,7 +139,7 @@ test('car-to-car contact separates bodies and transfers momentum without awardin
   assert.equal(race.completedLaps, 0);
 });
 
-for (const descriptor of TRACKS.filter(track => track.series === 'original')) {
+for (const descriptor of TRACKS.filter(track => LAUNCH_CIRCUITS.has(track.id))) {
   test(`all AI opponents complete three real laps on ${descriptor.name}, even around a stopped player`, () => {
     const race = createRace({ track: descriptor.id }); startRace(race);
     for (let frame = 0; frame < 120 * 220 && race.rivals.some(rival => rival.state !== 'finished'); frame++) {

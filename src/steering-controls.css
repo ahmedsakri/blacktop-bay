@@ -1,0 +1,38 @@
+/* Original illustrated thumb controls; Nitro remains the only driving action. */
+body.in-race .touch-steer-cue {
+  width:156px; height:88px; padding:9px 10px 8px; bottom:var(--race-bottom);
+  box-sizing:border-box; pointer-events:auto; touch-action:none; user-select:none;
+  -webkit-user-select:none; -webkit-touch-callout:none; opacity:.94;
+  border:1px solid #ffffff90; border-radius:44px;
+  background:linear-gradient(135deg,#110017d9,#021439b8);
+  box-shadow:inset 0 0 0 4px #ffffff08,0 5px 20px #0004;
+}
+body.in-race .touch-steer-cue.subtle { opacity:.82; }
+body.in-race .touch-steer-cue.engaged { opacity:1; border-color:#FFF71E; box-shadow:0 0 20px #9246ff55,inset 0 0 0 3px #9146ff35; }
+body.in-race #touch-steer-label { font-size:8px; letter-spacing:.7px; }
+body.in-race .touch-steer-track { height:43px; margin-top:5px; }
+body.in-race .touch-steer-track::before { left:11px; right:11px; height:2px; background:#ffffff40; }
+body.in-race .touch-steer-track>.ui-icon { width:19px; height:19px; color:#fff; }
+body.in-race .touch-steer-track i { left:calc(50% - 19px); width:38px; height:38px; display:grid; place-items:center; background:#9246FF; border:1px solid #e9daff; box-shadow:0 2px 8px #0008; }
+body.in-race .touch-steer-track i .ui-icon { width:24px; height:24px; color:white; }
+body.in-race .touch-steer-cue:focus-visible { outline:3px solid #FFF71E; outline-offset:5px; }
+body.in-race .touch-controls .nitro-pedal { border:1px solid #ffffff82; background:radial-gradient(circle at 40% 35%,#332057db,#110017bd 72%); box-shadow:inset 0 0 0 5px #ffffff08,0 5px 20px #0005; color:#FFF71E; }
+body.in-race .nitro-pedal .nitro-symbol { width:36px; height:36px; }
+body.in-race #nitro-ring-fill { stroke:#FFF71E; stroke-width:3.5; }
+body.in-race .nitro-pedal.pressed { transform:scale(.94); background:radial-gradient(circle,#9246ffdd,#110017e8 75%); box-shadow:0 0 24px #9246ff88; }
+body.in-race.nitro-active #nitro-ring-fill { stroke:#fff; }
+body.in-race .nitro-pedal.unavailable { opacity:.72; color:#fff; border-style:dashed; }
+.steering-settings { margin-top:18px; padding:16px; border:1px solid #ffffff26; background:#021439; border-radius:8px; }
+.steering-settings h3 { font:700 16px Manrope,sans-serif; margin:0 0 10px; color:#fff; }
+.steering-options { display:flex; flex-wrap:wrap; gap:8px; }
+.steering-options button { min-height:44px; padding:10px 14px; display:inline-flex; align-items:center; gap:9px; border:1px solid #ffffff60; background:#110017; color:#fff; border-radius:4px; font:700 13px Manrope,sans-serif; }
+.steering-options button .ui-icon { width:21px; height:21px; }
+.steering-options button[aria-pressed="true"] { background:#9246FF; border-color:#fff; }
+.steering-options button:focus-visible { outline:3px solid #FFF71E; outline-offset:3px; }
+.steering-options button:disabled { opacity:.55; }
+.steering-settings p { margin:10px 0 0; color:#dce2ee; font:400 12px/1.6 Manrope,sans-serif; }
+@media (max-width:700px) and (orientation:landscape) {
+  body.in-race .touch-steer-cue { width:140px; height:80px; padding:7px 10px; }
+  body.in-race .nitro-pedal .nitro-symbol { width:30px; height:30px; }
+}
+@media (prefers-reduced-motion:reduce) { body.in-race .touch-steer-cue,body.in-race .nitro-pedal { transition:none; } }

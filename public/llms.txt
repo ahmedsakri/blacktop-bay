@@ -1,6 +1,6 @@
 # Blacktop Bay
 
-> Blacktop Bay is a free, single-player 3D browser racing game by AppsOverFlow. Race three computer-controlled rivals across thirty asphalt circuits in one of twenty race builds, earn race credits, and upgrade your car. No account, no install, no purchases.
+> Blacktop Bay is a free, single-player 3D browser racing game by AppsOverFlow. Race three computer-controlled rivals across thirty-four asphalt circuits in one of 36 cars, earn race credits, and upgrade your car. No account, no install, no purchases.
 
 ## About the game
 
@@ -9,22 +9,27 @@ Blacktop Bay runs directly in a modern web browser (WebGL 2 required) at https:/
 ## How to play
 
 - Choose a race car in the Garage and, optionally, spend earned credits on upgrades.
-- Pick one of thirty circuits on the home screen, then start the race.
-- Acceleration is automatic on every device. Drag left/right across the race view to steer and lift to center, or use Left/Right (A/D) on a keyboard. Turn sharply at speed to drift automatically. Nitro is the only on-screen driving button; optional keyboard controls are Down/S to brake and Space for the handbrake.
+- Pick one of thirty-four circuits on the home screen, then start the race.
+- Acceleration is automatic. Hold the left or right side of the steering thumbpad, or drag it for fine control; release to center. You can also drag across the race view or use Left/Right or A/D on a keyboard. On a compatible phone, open Pause → Steering → Enable tilt, allow motion access if asked, and use Recenter tilt in your comfortable holding position. Touch steering always overrides tilt, and unavailable or stale sensor data falls back to touch. Turn sharply at speed to drift automatically. Hold Nitro or Shift to boost; release to recharge. Nitro is the only on-screen pedal. Down/S is an optional keyboard brake and Space holds the optional handbrake.
 - Ease the steering back into line after an automatic drift to bank clean drift points; Space is an optional keyboard handbrake.
 - Hold Shift (or the Nitro button) for a boost on clear straights; release to recharge.
 - Complete three laps through the ordered checkpoints to finish and earn credits.
-- Touch controls and landscape orientation are supported on phones.
+- Touch controls and landscape orientation are supported on phones. Optional tilt requires a compatible motion sensor and permission when requested.
+- Light barrier scrapes preserve most forward momentum. A hard impact briefly reduces drive and interrupts nitro, and loses any unbanked drift points. If you remain pressed into a barrier while accelerating for about 2.4 seconds, the player car automatically returns to a clear point behind its last valid progress. A car far off the road recovers after about 0.9 seconds while acceleration is requested. Recovery may wait for a clear gap, rewinds any crossed checkpoint requirement and has a three-second cooldown. Holding the brake or handbrake does not trigger automatic recovery. R or Reset car remains available for a manual return to the last valid road position. Neither method grants lap progress or refills nitro; race time keeps running.
 
 ## Circuits
 
-The 30-course collection combines five original Blacktop Bay circuits, compact adaptations of all 23 venues on the official 2026 calendar checked on 1 October 2026, and Sakhir and Jeddah as original-calendar bonuses. Playable arcade laps are shorter than the real venues, with widened turns and flattened elevation. Suzuka is explicitly unrolled into a non-crossing course; its real overpass is not reproduced.
+The 34-course collection combines nine original Blacktop Bay circuits, compact adaptations of all 23 venues on the official 2026 calendar checked on 1 October 2026, and Sakhir and Jeddah as original-calendar bonuses. Playable arcade laps are shorter than the real venues, with widened turns and flattened elevation. Suzuka is explicitly unrolled into a non-crossing course; its real overpass is not reproduced.
 
 - Harbor Flow — about 1.22 km per lap; beginner-friendly waterfront sweepers.
 - Dockyard Technical — about 1.53 km; a tight sequence of dockside turns.
 - Coast Run — about 1.13 km; open coastal curves for sustained acceleration.
 - Summit Switchback — about 1.66 km; technical pine-lined switchbacks.
 - Bay Grand Prix — about 1.53 km; a wide permanent circuit with flowing chicanes.
+- Breakwater Run — about 2.09 km; A long sea-wall straight, sweeping headlands and an inland S-bend beside basalt outcrops and a working lighthouse.
+- Copper Canyon — about 2.36 km; Carry speed between sandstone mesas, then brake for a broad canyon hairpin and a linked pair of technical turns.
+- Cedar Ridge — about 2.41 km; Find a rhythm through cedar-lined bends, open the throttle on the forest straight, and sweep past timber lodges under the ridgeline.
+- Neon Freight — about 2.26 km; A floodlit freight district with a long loading-yard straight, generous ninety-degree turns and a fast return past container stacks.
 
 Current-calendar adaptations: Albert Park, Shanghai, Suzuka, Miami, Gilles Villeneuve, Monaco, Barcelona-Catalunya, Red Bull Ring, Silverstone, Spa-Francorchamps, Hungaroring, Zandvoort, Monza, Madring, Baku City, Sepang, Marina Bay, Circuit of the Americas, Hermanos Rodríguez, Interlagos, Las Vegas Strip, Lusail, Yas Marina.
 Original-calendar bonus adaptations: Bahrain International, Jeddah Corniche.
@@ -32,7 +37,7 @@ Venue outline data: Tomislav Bacinger / f1-circuits, MIT, with compact arcade mo
 
 ## Race cars
 
-Twenty tuned race builds across three families: seven GT builds (Apex GT, Apex Sprint, Torque R, Torque RS, Kestrel GT-R, Corsair GTS, Stratus GT3), four Formula builds (Vortex P1, Vortex X, Vector F, Zenith FX) and nine Prototype builds (Spectre LM, Spectre LM-R, Cinder R, Cinder RX, Mirage LMP, Solstice One, Tempest XR, Vela R, Aurora LMX). These fictional builds share licensed source geometry and original coachwork rather than representing twenty independently sourced models. All twenty are available from the start. Each car has five upgrade levels for Engine, Tyres, Nitro and Handling, purchased with earned race credits. Car names and handling are fictional.
+Twenty tuned race builds across three families: seven GT builds (Apex GT, Apex Sprint, Torque R, Torque RS, Kestrel GT-R, Corsair GTS, Stratus GT3), four Formula builds (Vortex P1, Vortex X, Vector F, Zenith FX) and nine Prototype builds (Spectre LM, Spectre LM-R, Cinder R, Cinder RX, Mirage LMP, Solstice One, Tempest XR, Vela R, Aurora LMX). These fictional builds share licensed source geometry and original coachwork rather than representing twenty independently sourced models. All twenty are available from the start. Each car has five upgrade levels for Engine, Tyres, Nitro and Handling, purchased with earned race credits. Original build names are fictional; manufacturer models retain their actual names. All handling is arcade tuning.
 
 ## Key Facts
 
@@ -40,7 +45,7 @@ Twenty tuned race builds across three families: seven GT builds (Apex GT, Apex S
 - Free to play; no account, no install and no real-money purchases.
 - Runs in a modern web browser; WebGL 2 and an internet connection are required to load.
 - Single-player only: one human racer versus three computer-controlled opponents (Mira, Jax and Nova) in a four-car field over three laps.
-- 20 race builds across three families (GT, Formula, Prototype) and 30 asphalt circuits, all available from the start.
+- 36 cars: 16 individually sourced real-car representations across 13 brands and 20 original GT, Formula and Prototype builds; 34 asphalt circuits, all available from the start.
 - Each car has five upgrade levels for Engine, Tyres, Nitro and Handling, bought with earned race credits.
 - Progress (records, credits, upgrades and paint) is saved locally in the browser; there is no online multiplayer.
 
@@ -56,3 +61,9 @@ Twenty tuned race builds across three families: seven GT builds (Apex GT, Apex S
 
 - Publisher site: https://appsoverflow.web.app/
 - Contact page: https://appsoverflow.web.app/contact/
+
+## Real-car collection
+
+Choose from 36 cars: 16 independently sourced real-car representations and 20 original GT, Formula and Prototype builds. Real cars include McLaren 570S Coupé, McLaren Senna, McLaren P1 GTR, Ferrari 458 Spider, Lamborghini Aventador, Koenigsegg One:1, Pagani Zonda C12, Bugatti Veyron, Maserati GranTurismo MC Stradale, Lotus Elise, Audi R8 Custom, Rimac Concept One, Porsche 911 (930) Turbo, GMA T.50 Custom, Aston Martin One-77, Rimac Nevera. Each car has its own game tuning and saved upgrades. Speed, handling and Nitro ratings describe the arcade game, not manufacturer specifications. Paint changes are free on supported body materials.
+
+New manufacturer models load only when selected; the catalogue uses lightweight rendered previews. Original model finishes and source credits are retained. The crowd uses individually posed animated 3D spectators with waves, claps, cheering and filming; it is not photoreal video.

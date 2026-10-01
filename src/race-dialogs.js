@@ -32,7 +32,7 @@ export function pausePanel({ race, track, sound = false, fullscreen = false, cou
 
 export function howToPlayPanel({ touch = false } = {}) {
   const cards = [
-    { title: 'Find your line', icon: icons.steer, cue: touch ? 'DRAG LEFT / RIGHT' : 'ARROWS / A + D', text: touch ? 'Drag on the road to steer. Lift your finger to straighten up.' : 'Steer with the arrow keys or A / D. You can also drag on the road.' },
+    { title: 'Find your line', icon: icons.steer, cue: touch ? 'HOLD / DRAG TO STEER' : 'ARROWS / A + D', text: touch ? 'Hold either side of the thumbpad or drag on the road. Lift to straighten. Optional tilt controls are below and in Pause.' : 'Steer with the arrow keys or A / D. You can also drag on the road.' },
     { title: 'Let it slide', icon: icons.drift, cue: 'TURN AT SPEED', text: 'Turn sharply at speed to drift. Ease back into line to bank your points.' },
     { title: 'Make your move', icon: icons.nitro, cue: touch ? 'HOLD NITRO' : 'HOLD SHIFT', text: 'Boost on a clear straight. Release to recharge while driving and drifting.' },
   ];

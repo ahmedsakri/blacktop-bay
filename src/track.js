@@ -1,4 +1,5 @@
 import { GRAND_PRIX_CIRCUITS } from './grand-prix-circuits.js';
+import { ORIGINAL_CIRCUITS } from './original-circuits.js';
 
 // A closed coastal circuit in the x/z plane. Tangents point in race direction;
 // normals point to +local X (the driver's left). Distances and positions are metres.
@@ -92,7 +93,7 @@ function buildTrack({ id, name, description, points, width = 16, ...metadata }) 
   };
 }
 
-const layouts = new Map([...CIRCUITS, ...GRAND_PRIX_CIRCUITS].map((circuit) => [circuit.id, buildTrack(circuit)]));
+const layouts = new Map([...CIRCUITS, ...GRAND_PRIX_CIRCUITS, ...ORIGINAL_CIRCUITS].map((circuit) => [circuit.id, buildTrack(circuit)]));
 export const TRACKS = [...layouts.values()].map(({ samples, spawn, ...descriptor }) => descriptor);
 export let TRACK = layouts.get('harbor');
 export function getTrack(id = TRACK.id) { return layouts.get(id) || layouts.get('harbor'); }

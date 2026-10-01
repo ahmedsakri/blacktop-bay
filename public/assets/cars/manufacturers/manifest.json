@@ -1,0 +1,1360 @@
+{
+  "lamborghini-aventador": {
+    "id": "lamborghini-aventador",
+    "brand": "Lamborghini",
+    "model": "Aventador",
+    "uid": "498ba84cb5a74262b6371308f801c51e",
+    "length": 4.78,
+    "author": "Mike BlueG",
+    "source": "https://sketchfab.com/3d-models/lamborghini-aventador-498ba84cb5a74262b6371308f801c51e",
+    "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-014/498ba84cb5a74262b6371308f801c51e.glb",
+    "license": "CC-BY-4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "sourceSha256": "dacac7756dd67c34daa2fc2584a3049d7542b590a105ccfc3cef173830371d71",
+    "sourceAsset": {
+      "author": "Mike BlueG (https://sketchfab.com/mikeblueg)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/lamborghini-aventador-498ba84cb5a74262b6371308f801c51e",
+      "title": "Lamborghini Aventador"
+    },
+    "additionalCredits": [],
+    "paintMaterialNames": [
+      "body-paint-Colo1"
+    ],
+    "paintable": true,
+    "brakeLightMaterialNames": [
+      "LucestraserasLINES"
+    ],
+    "wheelNames": [
+      "wheel_front_left",
+      "wheel_front_right",
+      "wheel_rear_left",
+      "wheel_rear_right"
+    ],
+    "factoryPaintPreservesTexture": true,
+    "changes": "Removed staging/people where present. Baked world transforms, normalized scale and +Z forward/+Y up coordinates. Preserved authored normals/UVs; separated whole wheel components into articulated pivots. Conservatively simplified secondary geometry with normals/UV weights, merged compatible material batches without changing vertex data, corrected named material roles where archived viewport shading was unsuitable for PBR, resized embedded textures and Meshopt-compressed for delivery.",
+    "variants": {
+      "high": {
+        "triangles": 136669,
+        "bytes": 1570928,
+        "sourceTriangles": 136669,
+        "primitives": 31,
+        "sha256": "5e0b295f44b32898252c39c47f2e2f5d6f85329199c6cebd39c4bc035b9f8614"
+      },
+      "low": {
+        "triangles": 136669,
+        "bytes": 1570928,
+        "sourceTriangles": 136669,
+        "primitives": 31,
+        "sha256": "4a0551fd799a82cc2323701ee00f4ec8871bb640cc2a7600bb7353c99093f41a"
+      }
+    },
+    "high": "/assets/cars/manufacturers/lamborghini-aventador-high.glb",
+    "wheelRadius": {
+      "wheel_front_left": 0.3539569705637007,
+      "wheel_front_right": 0.3539569705637007,
+      "wheel_rear_left": 0.38272321224212646,
+      "wheel_rear_right": 0.38272321224212646
+    },
+    "wheelPositions": {
+      "wheel_front_left": [
+        0.8322793543338776,
+        0.35395773948116016,
+        1.2737783193588257
+      ],
+      "wheel_front_right": [
+        -0.8322793543338776,
+        0.35395773948116016,
+        1.2737783193588257
+      ],
+      "wheel_rear_left": [
+        0.8191571831703186,
+        0.38272321224212646,
+        -1.4436052441596985
+      ],
+      "wheel_rear_right": [
+        -0.8191571831703186,
+        0.38272321224212646,
+        -1.4436052441596985
+      ]
+    },
+    "width": 2.2915166476999422,
+    "height": 1.149661060645782,
+    "removedNodes": [
+      "Suelo_Suelo_0"
+    ],
+    "low": "/assets/cars/manufacturers/lamborghini-aventador-low.glb"
+  },
+  "ferrari-458-italia": {
+    "id": "ferrari-458-italia",
+    "brand": "Ferrari",
+    "model": "458 Spider",
+    "uid": "57bf6cc56931426e87494f554df1dab6",
+    "length": 4.527,
+    "author": "vicent091036",
+    "source": "https://github.com/mrdoob/three.js/blob/dev/examples/models/gltf/ferrari.glb",
+    "license": "CC-BY-4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "sourceSha256": "cafe3f48da6797aa9bde75ca768bc5b57db366575fd233e90df186ae988a876e",
+    "sourceAsset": {},
+    "additionalCredits": [],
+    "paintMaterialNames": [
+      "body-paint-Body_Color"
+    ],
+    "paintable": true,
+    "brakeLightMaterialNames": [],
+    "wheelNames": [
+      "wheel_front_left",
+      "wheel_front_right",
+      "wheel_rear_left",
+      "wheel_rear_right"
+    ],
+    "factoryPaintPreservesTexture": true,
+    "changes": "Removed staging/people where present. Baked world transforms, normalized scale and +Z forward/+Y up coordinates. Preserved authored normals/UVs; separated whole wheel components into articulated pivots. Conservatively simplified secondary geometry with normals/UV weights, merged compatible material batches without changing vertex data, corrected named material roles where archived viewport shading was unsuitable for PBR, resized embedded textures and Meshopt-compressed for delivery.",
+    "variants": {
+      "high": {
+        "triangles": 358788,
+        "bytes": 3409060,
+        "sourceTriangles": 358788,
+        "primitives": 32,
+        "sha256": "931a495da0bbdce5ff46795ce1d56ff8c92ddd299102e55240ac04b181068007"
+      },
+      "low": {
+        "triangles": 199681,
+        "bytes": 1812900,
+        "sourceTriangles": 358788,
+        "primitives": 32,
+        "sha256": "59e3bc3fa3f12581a20e8d7e051f741e71afd6a9310c3e4bf5e28b7e973a413a"
+      }
+    },
+    "high": "/assets/cars/manufacturers/ferrari-458-italia-high.glb",
+    "wheelRadius": {
+      "wheel_front_left": 0.357502818107605,
+      "wheel_front_right": 0.357502794242464,
+      "wheel_rear_left": 0.3575029079911758,
+      "wheel_rear_right": 0.35750290755789926
+    },
+    "wheelPositions": {
+      "wheel_front_left": [
+        0.8413479924201965,
+        0.357502818107605,
+        1.1536478996276855
+      ],
+      "wheel_front_right": [
+        -0.8274692595005035,
+        0.3601311087841168,
+        1.1527901887893677
+      ],
+      "wheel_rear_left": [
+        0.8201719224452972,
+        0.357503562689061,
+        -1.4928116202354431
+      ],
+      "wheel_rear_right": [
+        -0.8231804072856903,
+        0.3575029670758898,
+        -1.494137167930603
+      ]
+    },
+    "width": 2.2538432060799174,
+    "height": 1.2340955168332852,
+    "removedNodes": [],
+    "low": "/assets/cars/manufacturers/ferrari-458-italia-low.glb"
+  },
+  "mclaren-p1-gtr": {
+    "id": "mclaren-p1-gtr",
+    "brand": "McLaren",
+    "model": "P1 GTR",
+    "uid": "d805bec04cf5407fa7c036c20c726d39",
+    "length": 4.59,
+    "author": "ALIEEEN",
+    "source": "https://sketchfab.com/3d-models/free-mclaren-p1-gtr-d805bec04cf5407fa7c036c20c726d39",
+    "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-044/d805bec04cf5407fa7c036c20c726d39.glb",
+    "license": "CC-BY-4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "sourceSha256": "c8309e98175d388badbd3b39d2f6267e16f9a104556c85e1440667b20d547f57",
+    "sourceAsset": {
+      "author": "Desiccated_Lemon (https://sketchfab.com/Desiccated_Lemon)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/free-mclaren-p1-gtr-d805bec04cf5407fa7c036c20c726d39",
+      "title": "Free McLaren P1 GTR"
+    },
+    "additionalCredits": [],
+    "paintMaterialNames": [
+      "body-paint-main_body",
+      "body-paint-wing",
+      "body-paint-side_mirrors"
+    ],
+    "paintable": true,
+    "brakeLightMaterialNames": [
+      "tail_light_light1",
+      "tail_light_light2",
+      "tail_light_light13"
+    ],
+    "wheelNames": [
+      "wheel_front_left",
+      "wheel_front_right",
+      "wheel_rear_left",
+      "wheel_rear_right"
+    ],
+    "factoryPaintPreservesTexture": true,
+    "changes": "Removed staging/people where present. Baked world transforms, normalized scale and +Z forward/+Y up coordinates. Preserved authored normals/UVs; separated whole wheel components into articulated pivots. Conservatively simplified secondary geometry with normals/UV weights, merged compatible material batches without changing vertex data, corrected named material roles where archived viewport shading was unsuitable for PBR, resized embedded textures and Meshopt-compressed for delivery.",
+    "variants": {
+      "high": {
+        "triangles": 71888,
+        "bytes": 2329892,
+        "sourceTriangles": 71888,
+        "primitives": 51,
+        "sha256": "52653f2e3cd56a4f5ac44cff67db780c0ad32376d46dda6dfb9505dcb211ae93"
+      },
+      "low": {
+        "triangles": 71888,
+        "bytes": 1429772,
+        "sourceTriangles": 71888,
+        "primitives": 51,
+        "sha256": "a7a24cd9f49fda0f9aa0e01d814fd4b3d6fa1e62dba08f6f497b7952ae417dfc"
+      }
+    },
+    "high": "/assets/cars/manufacturers/mclaren-p1-gtr-high.glb",
+    "wheelRadius": {
+      "wheel_front_left": 0.323301029697177,
+      "wheel_front_right": 0.32330098368402105,
+      "wheel_rear_left": 0.3291643261909485,
+      "wheel_rear_right": 0.3291643153423589
+    },
+    "wheelPositions": {
+      "wheel_front_left": [
+        0.8124157190322876,
+        0.32356660316872876,
+        1.201703429222107
+      ],
+      "wheel_front_right": [
+        -0.8124156296253204,
+        0.3235664703679504,
+        1.201703429222107
+      ],
+      "wheel_rear_left": [
+        0.810389906167984,
+        0.3291643261909485,
+        -1.40159672498703
+      ],
+      "wheel_rear_right": [
+        -0.810389906167984,
+        0.32916433703953807,
+        -1.4015967845916748
+      ]
+    },
+    "width": 1.9720203085594095,
+    "height": 1.1410539634364247,
+    "removedNodes": [],
+    "low": "/assets/cars/manufacturers/mclaren-p1-gtr-low.glb"
+  },
+  "porsche-930-turbo": {
+    "id": "porsche-930-turbo",
+    "brand": "Porsche",
+    "model": "911 (930) Turbo · 1975",
+    "uid": "8568d9d14a994b9cae59499f0dbed21e",
+    "length": 4.29,
+    "author": "Lionsharp Studios",
+    "source": "https://sketchfab.com/3d-models/free-1975-porsche-911-930-turbo-8568d9d14a994b9cae59499f0dbed21e",
+    "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-042/8568d9d14a994b9cae59499f0dbed21e.glb",
+    "license": "CC-BY-4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "sourceSha256": "ad7cb84e3bcf65eee57fdf99316f8fe0985906d876faa7581b2b169c2298885e",
+    "sourceAsset": {
+      "author": "Karol Miklas (https://sketchfab.com/karolmiklas)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/free-1975-porsche-911-930-turbo-8568d9d14a994b9cae59499f0dbed21e",
+      "title": "FREE 1975 Porsche 911 (930) Turbo"
+    },
+    "additionalCredits": [],
+    "paintMaterialNames": [
+      "body-paint-paint"
+    ],
+    "paintable": true,
+    "brakeLightMaterialNames": [],
+    "wheelNames": [
+      "wheel_front_left",
+      "wheel_front_right",
+      "wheel_rear_left",
+      "wheel_rear_right"
+    ],
+    "factoryPaintPreservesTexture": true,
+    "changes": "Removed staging/people where present. Baked world transforms, normalized scale and +Z forward/+Y up coordinates. Preserved authored normals/UVs; separated whole wheel components into articulated pivots. Conservatively simplified secondary geometry with normals/UV weights, merged compatible material batches without changing vertex data, corrected named material roles where archived viewport shading was unsuitable for PBR, resized embedded textures and Meshopt-compressed for delivery.",
+    "variants": {
+      "high": {
+        "triangles": 197545,
+        "bytes": 3949824,
+        "sourceTriangles": 197545,
+        "primitives": 18,
+        "sha256": "23eded9336befebc872a5d71fe5b1241ab97016ceb743df71e6efa7ca6cf6bd4"
+      },
+      "low": {
+        "triangles": 175803,
+        "bytes": 2346336,
+        "sourceTriangles": 197545,
+        "primitives": 18,
+        "sha256": "d292203834d7ce72850bec49261b590e7bb93558a64989a39a24477975d04a0e"
+      }
+    },
+    "high": "/assets/cars/manufacturers/porsche-930-turbo-high.glb",
+    "wheelRadius": {
+      "wheel_front_left": 0.31422385072073666,
+      "wheel_front_right": 0.3142505150171928,
+      "wheel_rear_left": 0.31437620520591736,
+      "wheel_rear_right": 0.3143698953981584
+    },
+    "wheelPositions": {
+      "wheel_front_left": [
+        0.7567793428897858,
+        0.3143681039873627,
+        1.2373253107070923
+      ],
+      "wheel_front_right": [
+        -0.7567717432975769,
+        0.3143639106419869,
+        1.2173300087451935
+      ],
+      "wheel_rear_left": [
+        0.775913417339325,
+        0.31437620520591736,
+        -1.0438186824321747
+      ],
+      "wheel_rear_right": [
+        -0.7759057581424713,
+        0.31439163452432695,
+        -1.0438482761383057
+      ]
+    },
+    "width": 1.907065952640297,
+    "height": 1.6438656338420785,
+    "removedNodes": [
+      "Object_32",
+      "Object_140"
+    ],
+    "low": "/assets/cars/manufacturers/porsche-930-turbo-low.glb"
+  },
+  "lotus-elise": {
+    "id": "lotus-elise",
+    "brand": "Lotus",
+    "model": "Elise",
+    "uid": "75e9045ac1af4cdbb69318108c81edfd",
+    "length": 3.785,
+    "author": "Stéphane Agullo",
+    "source": "https://sketchfab.com/3d-models/lotus-elise-75e9045ac1af4cdbb69318108c81edfd",
+    "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-056/75e9045ac1af4cdbb69318108c81edfd.glb",
+    "license": "CC-BY-4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "sourceSha256": "b08d16684febd7cb541ffb870df304b985cc7e9337e8d010cc3d4d665f3ff19a",
+    "sourceAsset": {
+      "author": "Stéphane Agullo (https://sketchfab.com/sa3d)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/lotus-elise-75e9045ac1af4cdbb69318108c81edfd",
+      "title": "LOTUS ÉLISE"
+    },
+    "additionalCredits": [],
+    "paintMaterialNames": [
+      "body-paint-CAR.carros"
+    ],
+    "paintable": true,
+    "brakeLightMaterialNames": [
+      "CAR.feu",
+      "CAR.lamp-arr-bas"
+    ],
+    "wheelNames": [
+      "wheel_front_left",
+      "wheel_front_right",
+      "wheel_rear_left",
+      "wheel_rear_right"
+    ],
+    "factoryPaintPreservesTexture": true,
+    "changes": "Removed staging/people where present. Baked world transforms, normalized scale and +Z forward/+Y up coordinates. Preserved authored normals/UVs; separated whole wheel components into articulated pivots. Conservatively simplified secondary geometry with normals/UV weights, merged compatible material batches without changing vertex data, corrected named material roles where archived viewport shading was unsuitable for PBR, resized embedded textures and Meshopt-compressed for delivery.",
+    "variants": {
+      "high": {
+        "triangles": 403157,
+        "bytes": 2829508,
+        "sourceTriangles": 403157,
+        "primitives": 28,
+        "sha256": "e2a582fd5721be6a106a1d7f7b2ea4ac34cffb58862030eaf2a241106a4abfa9"
+      },
+      "low": {
+        "triangles": 191463,
+        "bytes": 2105316,
+        "sourceTriangles": 403157,
+        "primitives": 28,
+        "sha256": "fa8a09eea2ab7c9ec172cd154f8a557db99e758ee737ab339679a6c986e6ceb7"
+      }
+    },
+    "high": "/assets/cars/manufacturers/lotus-elise-high.glb",
+    "wheelRadius": {
+      "wheel_front_left": 0.3412349224090576,
+      "wheel_front_right": 0.34123489656485617,
+      "wheel_rear_left": 0.34123490897763986,
+      "wheel_rear_right": 0.3412348993733758
+    },
+    "wheelPositions": {
+      "wheel_front_left": [
+        0.7111055552959442,
+        0.3412349224090576,
+        1.1490871906280518
+      ],
+      "wheel_front_right": [
+        -0.7111056447029114,
+        0.3417355080600828,
+        1.1490870714187622
+      ],
+      "wheel_rear_left": [
+        0.7111055552959442,
+        0.34158570917497855,
+        -1.183339238166809
+      ],
+      "wheel_rear_right": [
+        -0.7111056447029114,
+        0.34162458100763615,
+        -1.1833392679691315
+      ]
+    },
+    "width": 1.914532435668491,
+    "height": 1.2825281243531406,
+    "removedNodes": [
+      "Object_75",
+      "Object_76",
+      "Object_77",
+      "Object_78",
+      "Object_79",
+      "Object_80",
+      "LOTUS-def.3:Layer3_SHADE_0",
+      "SOL01_SOL_0"
+    ],
+    "low": "/assets/cars/manufacturers/lotus-elise-low.glb"
+  },
+  "audi-r8": {
+    "id": "audi-r8",
+    "brand": "Audi",
+    "model": "R8 · Custom",
+    "uid": "e17e438f076f4427a58d93aa779edaed",
+    "length": 4.43,
+    "author": "wallon",
+    "source": "https://sketchfab.com/3d-models/audi-r8-e17e438f076f4427a58d93aa779edaed",
+    "license": "CC-BY-4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "sourceSha256": "7466175a2104a86226409c2bafa8cd1b463eeabbb4ea26d37f190f2e9a774c34",
+    "sourceAsset": {
+      "author": "wallon (https://sketchfab.com/realwallon)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/audi-r8-e17e438f076f4427a58d93aa779edaed",
+      "title": "Audi R8"
+    },
+    "additionalCredits": [],
+    "paintMaterialNames": [
+      "body-paint-body"
+    ],
+    "paintable": true,
+    "brakeLightMaterialNames": [
+      "red_lights"
+    ],
+    "wheelNames": [
+      "wheel_front_left",
+      "wheel_front_right",
+      "wheel_rear_left",
+      "wheel_rear_right"
+    ],
+    "factoryPaintPreservesTexture": true,
+    "changes": "Removed staging/people where present. Baked world transforms, normalized scale and +Z forward/+Y up coordinates. Preserved authored normals/UVs; separated whole wheel components into articulated pivots. Conservatively simplified secondary geometry with normals/UV weights, merged compatible material batches without changing vertex data, corrected named material roles where archived viewport shading was unsuitable for PBR, resized embedded textures and Meshopt-compressed for delivery.",
+    "variants": {
+      "high": {
+        "triangles": 430220,
+        "bytes": 3368756,
+        "sourceTriangles": 447204,
+        "primitives": 24,
+        "sha256": "7a0865bc86bf3b4043b3fffe4838bb462b6f5b0f2888dcccbc14d1115f37b4de"
+      },
+      "low": {
+        "triangles": 184384,
+        "bytes": 1566072,
+        "sourceTriangles": 447204,
+        "primitives": 24,
+        "sha256": "de1470ddeb75d5ea54e149f5e7b2c32abf710d9f6e15a7a1a8ce6b69f1af484f"
+      }
+    },
+    "high": "/assets/cars/manufacturers/audi-r8-high.glb",
+    "wheelRadius": {
+      "wheel_front_left": 0.34609177708625793,
+      "wheel_front_right": 0.34609177708625793,
+      "wheel_rear_left": 0.35798745779902674,
+      "wheel_rear_right": 0.35798745779902674
+    },
+    "wheelPositions": {
+      "wheel_front_left": [
+        0.8575877845287323,
+        0.34609177708625793,
+        1.1107833981513977
+      ],
+      "wheel_front_right": [
+        -0.8575911819934845,
+        0.34609177708625793,
+        1.0811716616153717
+      ],
+      "wheel_rear_left": [
+        0.9185701012611389,
+        0.35864693493931554,
+        -1.4734469056129456
+      ],
+      "wheel_rear_right": [
+        -0.8831430971622467,
+        0.35864693493931554,
+        -1.4734469056129456
+      ]
+    },
+    "width": 2.3088747421479647,
+    "height": 1.239193622759702,
+    "removedNodes": [],
+    "low": "/assets/cars/manufacturers/audi-r8-low.glb"
+  },
+  "rimac-concept-one": {
+    "id": "rimac-concept-one",
+    "brand": "Rimac",
+    "model": "Concept One",
+    "uid": "31d8d36e371643d1a6cbd21a21a3de25",
+    "length": 4.195,
+    "author": "aizataizma",
+    "source": "https://sketchfab.com/3d-models/rimac-concept-one-31d8d36e371643d1a6cbd21a21a3de25",
+    "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-046/31d8d36e371643d1a6cbd21a21a3de25.glb",
+    "license": "CC-BY-4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "sourceSha256": "eaf9fe7d756e49eacf3903948e6403d0281a9599063e970b36a5daedcf335d26",
+    "sourceAsset": {
+      "author": "aizataizma (https://sketchfab.com/aizataizma)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/rimac-concept-one-31d8d36e371643d1a6cbd21a21a3de25",
+      "title": "Rimac Concept One"
+    },
+    "additionalCredits": [],
+    "paintMaterialNames": [
+      "body-paint-Body"
+    ],
+    "paintable": true,
+    "brakeLightMaterialNames": [
+      "Lampu_Merah"
+    ],
+    "wheelNames": [
+      "wheel_front_left",
+      "wheel_front_right",
+      "wheel_rear_left",
+      "wheel_rear_right"
+    ],
+    "factoryPaintPreservesTexture": true,
+    "changes": "Removed staging/people where present. Baked world transforms, normalized scale and +Z forward/+Y up coordinates. Preserved authored normals/UVs; separated whole wheel components into articulated pivots. Conservatively simplified secondary geometry with normals/UV weights, merged compatible material batches without changing vertex data, corrected named material roles where archived viewport shading was unsuitable for PBR, resized embedded textures and Meshopt-compressed for delivery.",
+    "variants": {
+      "high": {
+        "triangles": 26408,
+        "bytes": 225332,
+        "sourceTriangles": 26408,
+        "primitives": 17,
+        "sha256": "2cc61232b647d2e2c21d4229c2ae81839ae4167d98ef35ac0bb7842c42995fb3"
+      },
+      "low": {
+        "triangles": 26408,
+        "bytes": 225332,
+        "sourceTriangles": 26408,
+        "primitives": 17,
+        "sha256": "2683fe180e3a38ec62fd9e1b8accc8050a1c3e679c7d5db94418154ca8a9fd64"
+      }
+    },
+    "high": "/assets/cars/manufacturers/rimac-concept-one-high.glb",
+    "wheelRadius": {
+      "wheel_front_left": 0.343805730342865,
+      "wheel_front_right": 0.3438057459590196,
+      "wheel_rear_left": 0.3438057362292213,
+      "wheel_rear_right": 0.3438057188275181
+    },
+    "wheelPositions": {
+      "wheel_front_left": [
+        0.7652110755443573,
+        0.343805730342865,
+        1.1931369602680206
+      ],
+      "wheel_front_right": [
+        -0.765211284160614,
+        0.3438057743313552,
+        1.1931369602680206
+      ],
+      "wheel_rear_left": [
+        0.7652109563350677,
+        0.34380584366579825,
+        -1.3780011534690857
+      ],
+      "wheel_rear_right": [
+        -0.7652114033699036,
+        0.34380586106750144,
+        -1.3780011534690857
+      ]
+    },
+    "width": 1.8769595179534677,
+    "height": 1.0932920480081452,
+    "removedNodes": [],
+    "low": "/assets/cars/manufacturers/rimac-concept-one-low.glb"
+  },
+  "koenigsegg-one-1": {
+    "id": "koenigsegg-one-1",
+    "brand": "Koenigsegg",
+    "model": "One:1",
+    "uid": "8d253a7f43404113838d72c7fc9cfa94",
+    "length": 4.5,
+    "author": "jkazulyblanco",
+    "source": "https://sketchfab.com/3d-models/koenigsegg-one1-low-poly-8d253a7f43404113838d72c7fc9cfa94",
+    "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-032/8d253a7f43404113838d72c7fc9cfa94.glb",
+    "license": "CC-BY-4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "sourceSha256": "b4218693cce2a1b0e7cd9eb82ae879852b5011f2d52d4b3d7ec9858e7735e5dc",
+    "sourceAsset": {
+      "author": "jkazulyblanco (https://sketchfab.com/jkazulyblanco)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/koenigsegg-one1-low-poly-8d253a7f43404113838d72c7fc9cfa94",
+      "title": "Koenigsegg One1 low poly"
+    },
+    "additionalCredits": [],
+    "paintMaterialNames": [
+      "body-paint-lambert9SG"
+    ],
+    "paintable": true,
+    "brakeLightMaterialNames": [],
+    "wheelNames": [
+      "wheel_front_left",
+      "wheel_front_right",
+      "wheel_rear_left",
+      "wheel_rear_right"
+    ],
+    "factoryPaintPreservesTexture": true,
+    "changes": "Removed staging/people where present. Baked world transforms, normalized scale and +Z forward/+Y up coordinates. Preserved authored normals/UVs; separated whole wheel components into articulated pivots. Conservatively simplified secondary geometry with normals/UV weights, merged compatible material batches without changing vertex data, corrected named material roles where archived viewport shading was unsuitable for PBR, resized embedded textures and Meshopt-compressed for delivery.",
+    "variants": {
+      "high": {
+        "triangles": 42879,
+        "bytes": 2361544,
+        "sourceTriangles": 42879,
+        "primitives": 10,
+        "sha256": "8b99d9f4c4cf71680697027781eb0b795e059701b80764f3060ea97af4d9336b"
+      },
+      "low": {
+        "triangles": 42879,
+        "bytes": 1210776,
+        "sourceTriangles": 42879,
+        "primitives": 10,
+        "sha256": "c2f50d13707fdcdc7d7daa08165c3ee5ce0aebba177f3d040ccc1240fa0f6811"
+      }
+    },
+    "high": "/assets/cars/manufacturers/koenigsegg-one-1-high.glb",
+    "wheelRadius": {
+      "wheel_front_left": 0.32617345452308655,
+      "wheel_front_right": 0.32617345452308655,
+      "wheel_rear_left": 0.34340989659540355,
+      "wheel_rear_right": 0.34340989659540355
+    },
+    "wheelPositions": {
+      "wheel_front_left": [
+        0.851580947637558,
+        0.32617345452308655,
+        1.305404782295227
+      ],
+      "wheel_front_right": [
+        -0.8515808582305908,
+        0.32617345452308655,
+        1.305404782295227
+      ],
+      "wheel_rear_left": [
+        0.8674948513507843,
+        0.3482132547069341,
+        -1.3589369058609009
+      ],
+      "wheel_rear_right": [
+        -0.8674947023391724,
+        0.3482132547069341,
+        -1.3589369058609009
+      ]
+    },
+    "width": 2.203899210515218,
+    "height": 1.186864489949527,
+    "removedNodes": [],
+    "low": "/assets/cars/manufacturers/koenigsegg-one-1-low.glb"
+  },
+  "pagani-zonda-c12": {
+    "id": "pagani-zonda-c12",
+    "brand": "Pagani",
+    "model": "Zonda C12",
+    "uid": "de954b33bc8e4552903f98941ae41be2",
+    "length": 4.395,
+    "author": "jpo1703",
+    "source": "https://sketchfab.com/3d-models/pagani-zonda-c12-de954b33bc8e4552903f98941ae41be2",
+    "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-093/de954b33bc8e4552903f98941ae41be2.glb",
+    "license": "CC-BY-4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "sourceSha256": "7dac66109418a720931fdddd402e2e676e21853a6d55d3ca8562bb5f6110f266",
+    "sourceAsset": {
+      "author": "jpo1703 (https://sketchfab.com/jpo1703)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/pagani-zonda-c12-de954b33bc8e4552903f98941ae41be2",
+      "title": "Pagani Zonda C12"
+    },
+    "additionalCredits": [],
+    "paintMaterialNames": [
+      "body-paint-car_paint"
+    ],
+    "paintable": true,
+    "brakeLightMaterialNames": [
+      "glass_red"
+    ],
+    "wheelNames": [
+      "wheel_front_left",
+      "wheel_front_right",
+      "wheel_rear_left",
+      "wheel_rear_right"
+    ],
+    "factoryPaintPreservesTexture": true,
+    "changes": "Removed staging/people where present. Baked world transforms, normalized scale and +Z forward/+Y up coordinates. Preserved authored normals/UVs; separated whole wheel components into articulated pivots. Conservatively simplified secondary geometry with normals/UV weights, merged compatible material batches without changing vertex data, corrected named material roles where archived viewport shading was unsuitable for PBR, resized embedded textures and Meshopt-compressed for delivery.",
+    "variants": {
+      "high": {
+        "triangles": 436481,
+        "bytes": 2881084,
+        "sourceTriangles": 703781,
+        "primitives": 24,
+        "sha256": "5f03453e1236b0b53b98e03726d7160b763d228cf92f953cae9dc58fff8ecfcc"
+      },
+      "low": {
+        "triangles": 176426,
+        "bytes": 1402580,
+        "sourceTriangles": 703781,
+        "primitives": 24,
+        "sha256": "2408f6ea5930d3707e61500c85baca7f1ea55c89d0ab046c4b4106e904e84b94"
+      }
+    },
+    "high": "/assets/cars/manufacturers/pagani-zonda-c12-high.glb",
+    "wheelRadius": {
+      "wheel_front_left": 0.35556671023368835,
+      "wheel_front_right": 0.35556671023368835,
+      "wheel_rear_left": 0.35556671023368835,
+      "wheel_rear_right": 0.35556671023368835
+    },
+    "wheelPositions": {
+      "wheel_front_left": [
+        0.7841966152191162,
+        0.35556671023368835,
+        1.2513581812381744
+      ],
+      "wheel_front_right": [
+        -0.784196138381958,
+        0.35556671023368835,
+        1.2513581812381744
+      ],
+      "wheel_rear_left": [
+        0.8283186554908752,
+        0.35556671023368835,
+        -1.5147992372512817
+      ],
+      "wheel_rear_right": [
+        -0.8283180594444275,
+        0.35556671023368835,
+        -1.5147992372512817
+      ]
+    },
+    "width": 1.9467620263136356,
+    "height": 1.1940224208135537,
+    "removedNodes": [],
+    "low": "/assets/cars/manufacturers/pagani-zonda-c12-low.glb"
+  },
+  "maserati-mc-stradale": {
+    "id": "maserati-mc-stradale",
+    "brand": "Maserati",
+    "model": "GranTurismo MC Stradale",
+    "uid": "c4aa1cf6461048e3b75a77ff027f90c6",
+    "length": 4.933,
+    "author": "Marcos Gigena",
+    "source": "https://sketchfab.com/3d-models/maserati-granturismo-mc-stradale-c4aa1cf6461048e3b75a77ff027f90c6",
+    "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-009/c4aa1cf6461048e3b75a77ff027f90c6.glb",
+    "license": "CC-BY-4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "sourceSha256": "8c88b32a34ee66f8bd283a5bea2d294685e6c7e37abeff0c2e7aaeb3f8e3700c",
+    "sourceAsset": {
+      "author": "Marcos Gigena (https://sketchfab.com/MarcosGigena)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/maserati-granturismo-mc-stradale-c4aa1cf6461048e3b75a77ff027f90c6",
+      "title": "Maserati Granturismo Mc Stradale"
+    },
+    "additionalCredits": [],
+    "paintMaterialNames": [
+      "body-paint-Pintura-Auto"
+    ],
+    "paintable": true,
+    "brakeLightMaterialNames": [
+      "Vidrio-Faros-Traseros"
+    ],
+    "wheelNames": [
+      "wheel_front_left",
+      "wheel_front_right",
+      "wheel_rear_left",
+      "wheel_rear_right"
+    ],
+    "factoryPaintPreservesTexture": true,
+    "changes": "Removed staging/people where present. Baked world transforms, normalized scale and +Z forward/+Y up coordinates. Preserved authored normals/UVs; separated whole wheel components into articulated pivots. Conservatively simplified secondary geometry with normals/UV weights, merged compatible material batches without changing vertex data, corrected named material roles where archived viewport shading was unsuitable for PBR, resized embedded textures and Meshopt-compressed for delivery.",
+    "variants": {
+      "high": {
+        "triangles": 368241,
+        "bytes": 3521408,
+        "sourceTriangles": 368241,
+        "primitives": 32,
+        "sha256": "b5327e4cab60b66f2cb8b398fea0fd0b6c4da5d85bcf3e3003a55f69b8b3f86e"
+      },
+      "low": {
+        "triangles": 189511,
+        "bytes": 2032884,
+        "sourceTriangles": 368241,
+        "primitives": 32,
+        "sha256": "98f910f1c061d99875d4739f50dd37d06f304de656bdf04fb8b4eaa91edae07d"
+      }
+    },
+    "high": "/assets/cars/manufacturers/maserati-mc-stradale-high.glb",
+    "wheelRadius": {
+      "wheel_front_left": 0.349455326795578,
+      "wheel_front_right": 0.349455326795578,
+      "wheel_rear_left": 0.36267851758748293,
+      "wheel_rear_right": 0.36267851758748293
+    },
+    "wheelPositions": {
+      "wheel_front_left": [
+        0.8088120818138123,
+        0.349455326795578,
+        1.5463155508041382
+      ],
+      "wheel_front_right": [
+        -0.8088130354881287,
+        0.349455326795578,
+        1.5463155508041382
+      ],
+      "wheel_rear_left": [
+        0.8104299306869507,
+        0.3682868583127856,
+        -1.3993219137191772
+      ],
+      "wheel_rear_right": [
+        -0.8104308843612671,
+        0.3682868583127856,
+        -1.3993219137191772
+      ]
+    },
+    "width": 2.111041848057114,
+    "height": 1.3790862556597094,
+    "removedNodes": [],
+    "low": "/assets/cars/manufacturers/maserati-mc-stradale-low.glb"
+  },
+  "bugatti-veyron": {
+    "id": "bugatti-veyron",
+    "brand": "Bugatti",
+    "model": "Veyron",
+    "uid": "653d089ba9304657ab7f0e3552a8f87b",
+    "length": 4.462,
+    "author": "David_Holiday",
+    "source": "https://sketchfab.com/3d-models/bugatti-veyron-653d089ba9304657ab7f0e3552a8f87b",
+    "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-140/653d089ba9304657ab7f0e3552a8f87b.glb",
+    "license": "CC-BY-4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "sourceSha256": "ee8e17805d045f12295d3895f7880e2004e944f14207d7a141037af477c4e903",
+    "sourceAsset": {
+      "author": "David_Holiday (https://sketchfab.com/David_Holiday)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/bugatti-veyron-653d089ba9304657ab7f0e3552a8f87b",
+      "title": "Bugatti Veyron"
+    },
+    "additionalCredits": [],
+    "paintMaterialNames": [
+      "body-paint-material_9"
+    ],
+    "paintable": true,
+    "brakeLightMaterialNames": [],
+    "wheelNames": [
+      "wheel_front_left",
+      "wheel_front_right",
+      "wheel_rear_left",
+      "wheel_rear_right"
+    ],
+    "factoryPaintPreservesTexture": true,
+    "changes": "Removed staging/people where present. Baked world transforms, normalized scale and +Z forward/+Y up coordinates. Preserved authored normals/UVs; separated whole wheel components into articulated pivots. Conservatively simplified secondary geometry with normals/UV weights, merged compatible material batches without changing vertex data, corrected named material roles where archived viewport shading was unsuitable for PBR, resized embedded textures and Meshopt-compressed for delivery.",
+    "variants": {
+      "high": {
+        "triangles": 81505,
+        "bytes": 712724,
+        "sourceTriangles": 81505,
+        "primitives": 21,
+        "sha256": "e9ccf72aabb39f234f7ef9884a2e58ebbf4afb39a12728d5124f8aed0a24f40a"
+      },
+      "low": {
+        "triangles": 81505,
+        "bytes": 710636,
+        "sourceTriangles": 81505,
+        "primitives": 21,
+        "sha256": "9841ca79769de389ad40050b20df423e369469f6f5db2b1eb7470927f6f6d990"
+      }
+    },
+    "high": "/assets/cars/manufacturers/bugatti-veyron-high.glb",
+    "wheelRadius": {
+      "wheel_front_left": 0.36606590184328525,
+      "wheel_front_right": 0.36606590184328525,
+      "wheel_rear_left": 0.38414958119392395,
+      "wheel_rear_right": 0.38414958119392395
+    },
+    "wheelPositions": {
+      "wheel_front_left": [
+        0.9129408895969391,
+        0.3660886463248971,
+        1.2954852879047394
+      ],
+      "wheel_front_right": [
+        -0.9122951626777649,
+        0.3660886463248971,
+        1.2952927947044373
+      ],
+      "wheel_rear_left": [
+        0.8761396706104279,
+        0.38414958119392395,
+        -1.5067118406295776
+      ],
+      "wheel_rear_right": [
+        -0.875516951084137,
+        0.38414958119392395,
+        -1.5067429542541504
+      ]
+    },
+    "width": 2.1204175569787456,
+    "height": 1.259945372546391,
+    "removedNodes": [],
+    "low": "/assets/cars/manufacturers/bugatti-veyron-low.glb"
+  },
+  "gma-t50": {
+    "id": "gma-t50",
+    "brand": "Gordon Murray Automotive",
+    "model": "T.50 · Custom",
+    "uid": "8965e24f9aaa42d5ba156b53b2e978bb",
+    "length": 4.352,
+    "author": "juandiegozp.art",
+    "source": "https://sketchfab.com/3d-models/gordon-murray-t50-8965e24f9aaa42d5ba156b53b2e978bb",
+    "license": "CC-BY-4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "sourceSha256": "480566eba758e162dfb1cea29fd38a982f08cc8f213f3f39c4a6c32a143f06b5",
+    "sourceAsset": {
+      "author": "juandiegozp.art (https://sketchfab.com/juandiegozp)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/gordon-murray-t50-8965e24f9aaa42d5ba156b53b2e978bb",
+      "title": "Gordon murray T50"
+    },
+    "additionalCredits": [],
+    "paintMaterialNames": [
+      "body-paint-Procedural_Car_Paint.001"
+    ],
+    "paintable": true,
+    "brakeLightMaterialNames": [
+      "Red_car_lights_glass"
+    ],
+    "wheelNames": [
+      "wheel_front_left",
+      "wheel_front_right",
+      "wheel_rear_left",
+      "wheel_rear_right"
+    ],
+    "factoryPaintPreservesTexture": true,
+    "changes": "Removed staging/people where present. Baked world transforms, normalized scale and +Z forward/+Y up coordinates. Preserved authored normals/UVs; separated whole wheel components into articulated pivots. Conservatively simplified secondary geometry with normals/UV weights, merged compatible material batches without changing vertex data, corrected named material roles where archived viewport shading was unsuitable for PBR, resized embedded textures and Meshopt-compressed for delivery.",
+    "variants": {
+      "high": {
+        "triangles": 365507,
+        "bytes": 3026964,
+        "sourceTriangles": 631485,
+        "primitives": 23,
+        "sha256": "8dd2c44ab8c36e1f40ab00bef61c9655311b2e6b564276c6462446829f7b2f71"
+      },
+      "low": {
+        "triangles": 146032,
+        "bytes": 1285752,
+        "sourceTriangles": 631485,
+        "primitives": 23,
+        "sha256": "30fb15c70dd3ac436e1901bc177a54782d05abcaf49f5750c1875c8f1dc04bca"
+      }
+    },
+    "high": "/assets/cars/manufacturers/gma-t50-high.glb",
+    "wheelRadius": {
+      "wheel_front_left": 0.3304364847664658,
+      "wheel_front_right": 0.3304364932550641,
+      "wheel_rear_left": 0.33043651111981376,
+      "wheel_rear_right": 0.3304365575313568
+    },
+    "wheelPositions": {
+      "wheel_front_left": [
+        0.8040467202663422,
+        0.33043722634269557,
+        1.209629237651825
+      ],
+      "wheel_front_right": [
+        -0.8040467202663422,
+        0.3304371582494525,
+        1.2129288911819458
+      ],
+      "wheel_rear_left": [
+        0.8002719283103943,
+        0.3304367827568342,
+        -1.4539030194282532
+      ],
+      "wheel_rear_right": [
+        -0.8099589347839355,
+        0.3304365575313568,
+        -1.4509759545326233
+      ]
+    },
+    "width": 2.188676314927795,
+    "height": 1.117854408287972,
+    "removedNodes": [],
+    "low": "/assets/cars/manufacturers/gma-t50-low.glb"
+  },
+  "aston-martin-one-77": {
+    "id": "aston-martin-one-77",
+    "brand": "Aston Martin",
+    "model": "One-77",
+    "uid": "57d0b9062aab4e079fbb8d06bf39baf4",
+    "length": 4.601,
+    "author": "_shobh19",
+    "source": "https://sketchfab.com/3d-models/2011-aston-martin-one-77-57d0b9062aab4e079fbb8d06bf39baf4",
+    "license": "CC-BY-4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "sourceSha256": "f2c715ece0b86181340a1780f50d6fd4be1d037a2ffb6507ee631355e328201d",
+    "sourceAsset": {
+      "author": "_Sheep19 (https://sketchfab.com/s0h1o9b)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/2011-aston-martin-one-77-57d0b9062aab4e079fbb8d06bf39baf4",
+      "title": "2011 Aston Martin One-77"
+    },
+    "additionalCredits": [],
+    "paintMaterialNames": [
+      "body-paint-body"
+    ],
+    "paintable": true,
+    "brakeLightMaterialNames": [
+      "rear-brake-lights"
+    ],
+    "wheelNames": [
+      "wheel_front_left",
+      "wheel_front_right",
+      "wheel_rear_left",
+      "wheel_rear_right"
+    ],
+    "factoryPaintPreservesTexture": true,
+    "changes": "Removed staging/people where present. Baked world transforms, normalized scale and +Z forward/+Y up coordinates. Preserved authored normals/UVs; separated whole wheel components into articulated pivots. Conservatively simplified secondary geometry with normals/UV weights, merged compatible material batches without changing vertex data, corrected named material roles where archived viewport shading was unsuitable for PBR, resized embedded textures and Meshopt-compressed for delivery.",
+    "variants": {
+      "high": {
+        "triangles": 30561,
+        "bytes": 613456,
+        "sourceTriangles": 30561,
+        "primitives": 30,
+        "sha256": "75365f22c6bea2b3d1c23fc76bfab3e5a1696349635e97ffdb7fb939939b7b02"
+      },
+      "low": {
+        "triangles": 30561,
+        "bytes": 560068,
+        "sourceTriangles": 30561,
+        "primitives": 30,
+        "sha256": "3e616fa4fad368c0b44086f074acc7ed2ecc36a6501c11c645a30260f9102561"
+      }
+    },
+    "high": "/assets/cars/manufacturers/aston-martin-one-77-high.glb",
+    "wheelRadius": {
+      "wheel_front_left": 0.3468257088477742,
+      "wheel_front_right": 0.3468257486820221,
+      "wheel_rear_left": 0.3468257088477742,
+      "wheel_rear_right": 0.3468257486820221
+    },
+    "wheelPositions": {
+      "wheel_front_left": [
+        0.8623444736003876,
+        0.3468260269348491,
+        1.4367600679397583
+      ],
+      "wheel_front_right": [
+        -0.8623443245887756,
+        0.3468257486820221,
+        1.4367600679397583
+      ],
+      "wheel_rear_left": [
+        0.8623444736003876,
+        0.3468260269348491,
+        -1.3696266412734985
+      ],
+      "wheel_rear_right": [
+        -0.8623443245887756,
+        0.3468257486820221,
+        -1.3696266412734985
+      ]
+    },
+    "width": 2.20884320065402,
+    "height": 1.237243973753952,
+    "removedNodes": [],
+    "low": "/assets/cars/manufacturers/aston-martin-one-77-low.glb"
+  },
+  "rimac-nevera": {
+    "id": "rimac-nevera",
+    "brand": "Rimac",
+    "model": "Nevera",
+    "uid": "a56cbbb94174426c8011031ca6ca24ac",
+    "length": 4.75,
+    "author": "3dblender_1",
+    "source": "https://sketchfab.com/3d-models/rimac-nevera-a56cbbb94174426c8011031ca6ca24ac",
+    "license": "CC-BY-4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "sourceSha256": "282342c21a1b4df4660e8164157154cbe1777bfb70d219cb070e9f06ad425f91",
+    "sourceAsset": {
+      "author": "3dblender_1 (https://sketchfab.com/3dblenderlol)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/rimac-nevera-a56cbbb94174426c8011031ca6ca24ac",
+      "title": "Rimac Nevera"
+    },
+    "additionalCredits": [
+      {
+        "title": "Brake Disk and Caliper",
+        "author": "Vladi",
+        "source": "https://skfb.ly/6Xy8o",
+        "license": "CC-BY-4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/4.0/"
+      }
+    ],
+    "paintMaterialNames": [
+      "body-paint-Material.003"
+    ],
+    "paintable": true,
+    "brakeLightMaterialNames": [
+      "Material.005",
+      "Material.001"
+    ],
+    "wheelNames": [
+      "wheel_front_left",
+      "wheel_front_right",
+      "wheel_rear_left",
+      "wheel_rear_right"
+    ],
+    "factoryPaintPreservesTexture": true,
+    "changes": "Removed staging/people where present. Baked world transforms, normalized scale and +Z forward/+Y up coordinates. Preserved authored normals/UVs; separated whole wheel components into articulated pivots. Conservatively simplified secondary geometry with normals/UV weights, merged compatible material batches without changing vertex data, corrected named material roles where archived viewport shading was unsuitable for PBR, resized embedded textures and Meshopt-compressed for delivery.",
+    "variants": {
+      "high": {
+        "triangles": 29180,
+        "bytes": 501868,
+        "sourceTriangles": 29180,
+        "primitives": 35,
+        "sha256": "8e26aed0bfa6187b6caee302ecf3d4037670d0c83b3f77d49611f076f282446b"
+      },
+      "low": {
+        "triangles": 29180,
+        "bytes": 459000,
+        "sourceTriangles": 29180,
+        "primitives": 35,
+        "sha256": "c31a7d79573e1b78e63eee6c13212a7c3ca4a91f2e9a5e4d0268c4d44dbe5253"
+      }
+    },
+    "high": "/assets/cars/manufacturers/rimac-nevera-high.glb",
+    "wheelRadius": {
+      "wheel_front_left": 0.36292433738708496,
+      "wheel_front_right": 0.3629243344370552,
+      "wheel_rear_left": 0.36292432512920225,
+      "wheel_rear_right": 0.3629243344879176
+    },
+    "wheelPositions": {
+      "wheel_front_left": [
+        0.9389809668064117,
+        0.36292433738708496,
+        1.267364501953125
+      ],
+      "wheel_front_right": [
+        -0.8922606408596039,
+        0.36292434033711474,
+        1.2675441205501556
+      ],
+      "wheel_rear_left": [
+        0.9346054196357727,
+        0.36292434964496767,
+        -1.553753137588501
+      ],
+      "wheel_rear_right": [
+        -0.8678029179573059,
+        0.3629243402862523,
+        -1.553753137588501
+      ]
+    },
+    "width": 2.223884670435172,
+    "height": 1.2551394522675619,
+    "removedNodes": [],
+    "low": "/assets/cars/manufacturers/rimac-nevera-low.glb"
+  },
+  "mclaren-570s": {
+    "id": "mclaren-570s",
+    "brand": "McLaren",
+    "model": "570S Coupé",
+    "uid": "869feee8011d4803894318f6f0ddf2c6",
+    "length": 4.53,
+    "author": "MMC Works",
+    "source": "https://sketchfab.com/3d-models/mclaren-570s-coupe-869feee8011d4803894318f6f0ddf2c6",
+    "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-132/869feee8011d4803894318f6f0ddf2c6.glb",
+    "license": "CC-BY-4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "sourceSha256": "09ab5fe6a3c16ea9161802c0dde03379aa510f3d5f0c0556365eccdf56be5335",
+    "sourceAsset": {
+      "author": "Márcio Meireles (https://sketchfab.com/marciomeireles)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/mclaren-570s-coupe-869feee8011d4803894318f6f0ddf2c6",
+      "title": "Mclaren 570S Coupè"
+    },
+    "additionalCredits": [],
+    "paintMaterialNames": [
+      "body-paint-car-paint-v2"
+    ],
+    "paintable": true,
+    "brakeLightMaterialNames": [
+      "backights.emissions"
+    ],
+    "wheelNames": [
+      "wheel_front_left",
+      "wheel_front_right",
+      "wheel_rear_left",
+      "wheel_rear_right"
+    ],
+    "factoryPaintPreservesTexture": true,
+    "changes": "Removed staging/people where present. Baked world transforms, normalized scale and +Z forward/+Y up coordinates. Preserved authored normals/UVs; separated whole wheel components into articulated pivots. Conservatively simplified secondary geometry with normals/UV weights, merged compatible material batches without changing vertex data, corrected named material roles where archived viewport shading was unsuitable for PBR, resized embedded textures and Meshopt-compressed for delivery.",
+    "variants": {
+      "high": {
+        "triangles": 437781,
+        "bytes": 4126628,
+        "sourceTriangles": 512440,
+        "primitives": 36,
+        "sha256": "dcbf6844b1468a9aada2fc5a2459cb202b359608f1c6e6551a45ffbdab9df118"
+      },
+      "low": {
+        "triangles": 197327,
+        "bytes": 2225592,
+        "sourceTriangles": 512440,
+        "primitives": 36,
+        "sha256": "cfbe4e033fa675125619af7eb8490c19dc559a5893d3e9e5f8da7569f8ffdc55"
+      }
+    },
+    "high": "/assets/cars/manufacturers/mclaren-570s-high.glb",
+    "wheelRadius": {
+      "wheel_front_left": 0.34794867038726807,
+      "wheel_front_right": 0.34794867038726807,
+      "wheel_rear_left": 0.34794865967705846,
+      "wheel_rear_right": 0.34794865967705846
+    },
+    "wheelPositions": {
+      "wheel_front_left": [
+        0.8016727268695831,
+        0.34794867038726807,
+        1.1886251866817474
+      ],
+      "wheel_front_right": [
+        -0.8023174107074738,
+        0.34794867038726807,
+        1.1887849867343903
+      ],
+      "wheel_rear_left": [
+        0.8101100921630859,
+        0.3533194768242538,
+        -1.4782806038856506
+      ],
+      "wheel_rear_right": [
+        -0.8099317252635956,
+        0.3533194768242538,
+        -1.478283405303955
+      ]
+    },
+    "width": 2.0879925237850987,
+    "height": 1.2074258605592654,
+    "removedNodes": [],
+    "low": "/assets/cars/manufacturers/mclaren-570s-low.glb"
+  },
+  "mclaren-senna": {
+    "id": "mclaren-senna",
+    "brand": "McLaren",
+    "model": "Senna",
+    "uid": "42a67f79f3d64ba58c7746b6d48d0ab7",
+    "length": 4.744,
+    "author": "LiteBeet",
+    "source": "https://sketchfab.com/3d-models/mclaren-senna-42a67f79f3d64ba58c7746b6d48d0ab7",
+    "download": "https://huggingface.co/datasets/allenai/objaverse/resolve/main/glbs/000-115/42a67f79f3d64ba58c7746b6d48d0ab7.glb",
+    "license": "CC-BY-4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "sourceSha256": "f932fb34e2534736c4545b20288a4c8fd031cb191d09fe36a293af507ca8601e",
+    "sourceAsset": {
+      "author": "LiteBeet (https://sketchfab.com/litebeet)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/mclaren-senna-42a67f79f3d64ba58c7746b6d48d0ab7",
+      "title": "McLaren Senna"
+    },
+    "additionalCredits": [],
+    "paintMaterialNames": [
+      "body-paint-BodyPaint"
+    ],
+    "paintable": true,
+    "brakeLightMaterialNames": [
+      "Baclight"
+    ],
+    "wheelNames": [
+      "wheel_front_left",
+      "wheel_front_right",
+      "wheel_rear_left",
+      "wheel_rear_right"
+    ],
+    "factoryPaintPreservesTexture": true,
+    "changes": "Removed staging/people where present. Baked world transforms, normalized scale and +Z forward/+Y up coordinates. Preserved authored normals/UVs; separated whole wheel components into articulated pivots. Conservatively simplified secondary geometry with normals/UV weights, merged compatible material batches without changing vertex data, corrected named material roles where archived viewport shading was unsuitable for PBR, resized embedded textures and Meshopt-compressed for delivery.",
+    "variants": {
+      "high": {
+        "triangles": 423672,
+        "bytes": 3765156,
+        "sourceTriangles": 1184651,
+        "primitives": 27,
+        "sha256": "c27c8c6cffbbda0b9c84f7488edab93fed5080d32ffe713441ec63efb234f6f8"
+      },
+      "low": {
+        "triangles": 164891,
+        "bytes": 1672184,
+        "sourceTriangles": 1184651,
+        "primitives": 27,
+        "sha256": "5b75617af4f3e5495df9b5a20104e4749375ae663f5fce698a3fba3224ea6a87"
+      }
+    },
+    "high": "/assets/cars/manufacturers/mclaren-senna-high.glb",
+    "wheelRadius": {
+      "wheel_front_left": 0.3568163307163985,
+      "wheel_front_right": 0.3568163216114044,
+      "wheel_rear_left": 0.35681630961243727,
+      "wheel_rear_right": 0.3568163427153621
+    },
+    "wheelPositions": {
+      "wheel_front_left": [
+        0.8382871747016907,
+        0.35681678934356853,
+        1.1419092416763306
+      ],
+      "wheel_front_right": [
+        -0.8382745385169983,
+        0.3568163216114044,
+        1.1419142186641693
+      ],
+      "wheel_rear_left": [
+        0.863338977098465,
+        0.35681633361037157,
+        -1.5149765014648438
+      ],
+      "wheel_rear_right": [
+        -0.8638342022895813,
+        0.35681677734460493,
+        -1.5155054926872253
+      ]
+    },
+    "width": 2.1548928878271183,
+    "height": 1.2320231125914898,
+    "removedNodes": [
+      "Object_45",
+      "Object_47",
+      "Object_49"
+    ],
+    "low": "/assets/cars/manufacturers/mclaren-senna-low.glb"
+  }
+}

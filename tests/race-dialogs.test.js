@@ -73,11 +73,13 @@ test('pause reflects the selected race and safely presents names from external s
   assert.doesNotMatch(pausePanel({ race: result, track: { name: unsafe } }), /<img/);
 });
 
-test('controls distinguish drag steering from keyboard input while retaining the same automatic throttle rule', () => {
+test('controls explain the usable thumbpad and optional tilt separately from keyboard input', () => {
   const phone = howToPlayPanel({ touch: true }), desktop = howToPlayPanel({ touch: false });
   assert.match(phone, /Nitro is your only driving button/);
-  assert.match(phone, /DRAG LEFT \/ RIGHT/);
-  assert.match(phone, /Lift your finger to straighten/);
+  assert.match(phone, /HOLD \/ DRAG TO STEER/);
+  assert.match(phone, /Hold either side of the thumbpad/);
+  assert.match(phone, /Lift to straighten/);
+  assert.match(phone, /Optional tilt controls/);
   assert.match(desktop, /ARROWS \/ A \+ D/);
   assert.match(desktop, /HOLD SHIFT/);
   for (const html of [phone, desktop]) {

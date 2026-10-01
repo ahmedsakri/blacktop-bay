@@ -9,8 +9,8 @@ const wrapAngle = angle => Math.atan2(Math.sin(angle), Math.cos(angle));
 const orient = (a, b, c) => (b.x-a.x)*(c.z-a.z) - (b.z-a.z)*(c.x-a.x);
 
 test('calendar pack has 23 current venues and two clearly categorized original-calendar bonuses', () => {
-  assert.equal(TRACKS.length, 30);
-  assert.equal(new Set(TRACKS.map(track => track.id)).size, 30);
+  assert.equal(TRACKS.length, 34);
+  assert.equal(new Set(TRACKS.map(track => track.id)).size, 34);
   assert.equal(pack.length, 25);
   assert.deepEqual(pack.filter(t => t.calendarStatus === 'current').map(t => t.round), Array.from({length:23}, (_,i) => i+1));
   assert.deepEqual(pack.filter(t => t.calendarStatus === 'original-calendar-bonus').map(t => t.id), ['sakhir','jeddah']);

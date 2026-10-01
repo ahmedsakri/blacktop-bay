@@ -1,0 +1,78 @@
+{
+  "generator": "OpenAI image generation",
+  "purpose": "Original Blacktop Bay distant scenery; no third-party game artwork",
+  "families": {
+    "coastal": {
+      "source": "exec-1a859644-e9d9-4d55-8100-779c8bb1d5b2.png",
+      "sourceSha256": "1cdca631d6b708f4f5224dd0c3110c74fda2e0b8c693dd9bf3a26c1bc65cce63",
+      "desktop": {
+        "url": "/assets/environments/coastal.webp",
+        "sha256": "353a72b89b75db738b6f273c687b2848db6da64dced2bda4dc3daba78d2d48d0",
+        "bytes": 258316,
+        "width": 1774,
+        "height": 887
+      },
+      "mobile": {
+        "url": "/assets/environments/coastal-mobile.webp",
+        "sha256": "04b576077ef05a7eade962132d12c5eb8d67d274d4ff507d8b00f1b9bea4a715",
+        "bytes": 70930,
+        "width": 1024,
+        "height": 512
+      }
+    },
+    "desert": {
+      "source": "exec-180b595c-4dcf-462c-8bbd-a8b0ae1d8cb5.png",
+      "sourceSha256": "059f1841820829e61e8dbe6c823b278ca75e9b228bf2aeb70eaae41a66e8a074",
+      "desktop": {
+        "url": "/assets/environments/desert.webp",
+        "sha256": "2f19c39d3a2df1e3bcc5895e072ead99d4e33b5be9f0b4e2050382bc636b62e3",
+        "bytes": 303074,
+        "width": 1774,
+        "height": 887
+      },
+      "mobile": {
+        "url": "/assets/environments/desert-mobile.webp",
+        "sha256": "613a92431a1830769d41301fe58896a9b9242a83b360e2f83693d3f39becba8c",
+        "bytes": 81590,
+        "width": 1024,
+        "height": 512
+      }
+    },
+    "alpine": {
+      "source": "exec-ce0ff5ef-98e7-4a84-85b7-6b0f3bec5c31.png",
+      "sourceSha256": "1e85c445018de255363a4b57904ee4c95a51189aaebec7f671cf9a3b92595267",
+      "desktop": {
+        "url": "/assets/environments/alpine.webp",
+        "sha256": "ab79b7e7705f8dee43f4deca7aff9e6c069f75fa3aa4bb67f66a1f7281e1b5a8",
+        "bytes": 307894,
+        "width": 1774,
+        "height": 887
+      },
+      "mobile": {
+        "url": "/assets/environments/alpine-mobile.webp",
+        "sha256": "c39daabd7145df53e0f6c8ecaeac455a9112ab5d75266f3faa99f56123d21ba0",
+        "bytes": 86822,
+        "width": 1024,
+        "height": 512
+      }
+    },
+    "urban": {
+      "source": "exec-b1d1e422-c6a0-4a94-90e4-94358c51babe.png",
+      "sourceSha256": "099eb060dee344716749258935fca3c20d7d467728ebb8e66ccf43a10867a1f1",
+      "desktop": {
+        "url": "/assets/environments/urban.webp",
+        "sha256": "f8644056ba30a330814225784dc9eedebd278d8829cd6c595d2bb7c639dc3637",
+        "bytes": 267856,
+        "width": 1774,
+        "height": 887
+      },
+      "mobile": {
+        "url": "/assets/environments/urban-mobile.webp",
+        "sha256": "d56e42ad1822b60a172cecb904c514c33bb40992beacfde7f9752f14576b4a3f",
+        "bytes": 74898,
+        "width": 1024,
+        "height": 512
+      }
+    }
+  }
+}

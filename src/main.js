@@ -8,6 +8,8 @@ import "./collection-browser.css";
 import "./race-dialogs.css";
 import "./button-system.css";
 import "./brand-theme.css";
+import "./steering-controls.css";
+import "./race-feedback.css";
 import { NEW_CARS, loadFavorites, saveFavorites, findCars, carLibraryMarkup, carLibraryCard, circuitLibraryMarkup, circuitLibraryCards, findCircuits } from "./collection-browser.js";
 import { pausePanel, howToPlayPanel, finishPanel, finishRowsMarkup, finishStatusText } from "./race-dialogs.js";
 import { icon } from './icons.js';
@@ -15,6 +17,9 @@ import { renderCarPortraits } from "./car-portraits.js";
 import { garageStatsMarkup, circuitMapMarkup } from "./collection-ui.js";
 import { createDrivingInputs, resolveDriveControls } from "./driving-controls.js";
 import { createDragSteering } from "./drag-steering.js";
+import { bindSteeringPad } from "./steering-pad.js";
+import { createTiltSteering, requestTiltPermission } from "./tilt-steering.js";
+import { createRaceFeedback } from "./race-feedback.js";
 import { getRaceProgress, getDriftDisplay } from "./race-presentation.js";
 import * as THREE from "three";
 import WebGL from "three/addons/capabilities/WebGL.js";
@@ -25,6 +30,8 @@ import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
 import { SMAAPass } from "three/addons/postprocessing/SMAAPass.js";
 import { createWorld } from "./world.js";
 import { createCar, prepareCarAssets } from "./car.js";
+import { prepareManufacturerCar } from "./manufacturer-car.js";
+import { MANUFACTURER_RIVAL_VEHICLES } from "./opponent-fleet.js";
 import { createGarage } from "./garage.js";
 import { VEHICLES, getVehicle } from "./vehicles.js";
 import { loadProgression, buyUpgrade, awardRaceCredits } from "./progression.js";
@@ -67,7 +74,7 @@ for (const el of document.querySelectorAll("[data-brand]"))
   el.textContent = BRAND.name.toUpperCase();
 document.title = `${BRAND.name} — AppsOverFlow`;
 const preferenceKey = "blacktop-bay-choices-v1";
-let preferences = { vehicle: "coupe", track: "harbor" };
+let preferences = { vehicle: "mclaren-p1-gtr", track: "harbor" };
 try {
   const stored = JSON.parse(localStorage.getItem(preferenceKey));
   if (stored && typeof stored === "object") {
@@ -103,10 +110,11 @@ function saveChoices() {
 const progression = loadProgression();
 const paintChoices = loadPaint();
 const favoriteCars = loadFavorites();
+let rivalVehicles = ['gt', 'rally', 'coupe'];
 const playerColor = () => getPaint(preferences.vehicle, paintChoices[preferences.vehicle]).color;
 function createPlayerCar(){const car=createCar({vehicle:preferences.vehicle,low:mobile});applyPaint(car,preferences.vehicle,paintChoices[preferences.vehicle]);return car;}
 const newRace = () =>
-  createRace({ vehicle: preferences.vehicle, track: preferences.track, upgrades: progression.cars[preferences.vehicle] });
+  createRace({ vehicle: preferences.vehicle, track: preferences.track, upgrades: progression.cars[preferences.vehicle], rivalVehicles });
 function event(name, extra = {}) {
   trackEvent(name, {
     circuit: preferences.track,
@@ -132,6 +140,7 @@ let records = loadRecords(recordStore),
   pendingLandscapeStart = false,
   orientationFocus = null;
 let driftSnapshot = null, driftBankUntil = 0, lastBankedPoints = 0;
+const raceFeedback = createRaceFeedback();
 const coarsePointer = matchMedia("(any-pointer:coarse)");
 const input = {
     left: false,
@@ -142,10 +151,14 @@ const input = {
   },
   pointerInputs = createDrivingInputs(),
   dragSteering = createDragSteering(),
+  tiltSteering = createTiltSteering(),
   heldKeys = new Set(),
   heldPads = new Set(),
   reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const mobile = usesTouchControls();
+let steeringMode = 'touch', tiltPending = false, tiltRequest = 0, tiltTimer = null;
+let tiltGraceUntil = 0, analogSteering = 0;
+let tiltStatus = 'Hold either side of the thumbpad, or drag. Tilt is optional and uses motion sensors only after you enable it.';
 document.body.classList.toggle("touch-mode", mobile);
 $("track-km").textContent = (TRACK.length / 1000).toFixed(2);
 if (typeof preferences.sound === "boolean") records.sound = preferences.sound;
@@ -153,6 +166,8 @@ sound.setMuted(!records.sound);
 updateSound();
 let renderer, world, player, effects, camera, composer, carFill, garageStudio, renderPass, bloomPass;
 let garageFrame = null;
+let carSelectionPending = false;
+let initialCarNotice = '';
 updateMenu();
 let garageYaw = -.75,
   garageDrag = null;
@@ -161,8 +176,7 @@ let rivalModels = [],
 let cameraHeading = TRACK.spawn.yaw,
   cameraSpeed = 0,
   cameraBank = 0,
-  cameraKick = 0,
-  wasCollision = false;
+  cameraKick = 0;
 const loadStarted = performance.now();
 const nextPaint = () =>
   new Promise((resolve) =>
@@ -199,7 +213,7 @@ async function initGame() {
     renderer.domElement.addEventListener("pointerdown", (e) => {
       if (mode !== "garage") return;
       garageDrag = { id: e.pointerId, x: e.clientX };
-      renderer.domElement.setPointerCapture(e.pointerId);
+      try { renderer.domElement.setPointerCapture(e.pointerId); } catch {}
     });
     renderer.domElement.addEventListener("pointermove", (e) => {
       if (mode !== "garage" || garageDrag?.id !== e.pointerId) return;
@@ -216,7 +230,7 @@ async function initGame() {
       if (!["racing", "countdown"].includes(mode) || e.button !== 0) return;
       if (!dragSteering.start(e.pointerId, e.clientX, innerWidth)) return;
       e.preventDefault();
-      renderer.domElement.setPointerCapture(e.pointerId);
+      try { renderer.domElement.setPointerCapture(e.pointerId); } catch {}
     });
     renderer.domElement.addEventListener("pointermove", (e) => {
       if (["racing", "countdown"].includes(mode)) dragSteering.move(e.pointerId, e.clientX);
@@ -241,18 +255,44 @@ async function initGame() {
     await nextPaint();
     // Track signage is rasterized once; load its typeface before painting it.
     if(document.fonts) await document.fonts.load('32px "Racing Sans One"').catch(()=>{});
-    world = createWorld(renderer, { low: mobile });
+    world = createWorld(renderer, { low: mobile, reducedMotion: reduced });
     loadProgress(52, "PREPARING THE RACE CARS");
     await nextPaint();
     await prepareCarAssets({ low: mobile });
+    const selectedAsset = getVehicle(preferences.vehicle).assetId;
+    if (selectedAsset) {
+      try { await prepareManufacturerCar(selectedAsset, {low: mobile}); }
+      catch (error) {
+        console.warn('Saved car could not download; offering an available original car.',error);
+        initialCarNotice = `Your saved car couldn't download. Apex GT is available; choose your car again in the garage.`;
+        const enabled = records.sound;
+        preferences.vehicle = 'coupe';
+        race = newRace();
+        records = loadRecords(recordStore);
+        records.sound = enabled;
+      }
+    }
     player = createPlayerCar();
     world.scene.add(player.group);
-    rivalModels = race.rivals.map((r) => {
-      const model = createCar({ vehicle: r.vehicle, color: r.color, low: true });
+    // Load only this race's lightweight opponents. Pin each model immediately so
+    // it cannot be evicted from the bounded template cache during the next load.
+    rivalModels = [];
+    for (const [index, assetId] of MANUFACTURER_RIVAL_VEHICLES.entries()) {
+      let model;
+      try {
+        await prepareManufacturerCar(assetId, {low: true});
+        model = createCar({vehicle: assetId, low: true});
+        rivalVehicles[index] = assetId;
+      } catch (error) {
+        console.warn(`Opponent ${assetId} could not download; using an available race car.`, error);
+        const fallback = race.rivals[index];
+        model = createCar({vehicle: fallback.vehicle, color: fallback.color, low: true});
+      }
       world.scene.add(model.group);
       model.group.visible = false;
-      return model;
-    });
+      rivalModels.push(model);
+    }
+    race = newRace();
     carFill = new THREE.DirectionalLight("#c1d5e2", .55);
     world.scene.add(carFill, carFill.target);
     garageStudio = createGarage(renderer, { low: mobile });
@@ -293,6 +333,8 @@ async function initGame() {
     initializePrivacyChoice();
     $("start").disabled = false;
     $("menu").inert = false;
+    updateMenu();
+    if (initialCarNotice) { $('garage-status').textContent = initialCarNotice; toast(initialCarNotice); }
     setTimeout(() => ($("loading").hidden = true), reduced ? 0 : 650);
     last = performance.now();
     requestAnimationFrame(tick);
@@ -371,6 +413,75 @@ function updateTouchControls() {
   document.body.classList.toggle("touch-mode", touch);
   $("touch").hidden = !touch || !["racing", "countdown"].includes(mode);
 }
+function screenAngle() {
+  return Number.isFinite(screen.orientation?.angle) ? screen.orientation.angle
+    : Number.isFinite(window.orientation) ? window.orientation : 0;
+}
+function updateSteeringSettings() {
+  const touch = $('steering-touch'), tilt = $('steering-tilt'), recenter = $('steering-recenter');
+  if (!touch || !tilt || !recenter) return;
+  touch.setAttribute('aria-pressed', String(steeringMode === 'touch'));
+  tilt.setAttribute('aria-pressed', String(steeringMode === 'tilt'));
+  tilt.disabled = tiltPending;
+  tilt.querySelector('span').textContent = tiltPending ? 'Checking sensor…' : steeringMode === 'tilt' ? 'Tilt enabled' : 'Enable tilt';
+  recenter.disabled = steeringMode !== 'tilt';
+  $('steering-status').textContent = tiltStatus;
+}
+function useTouchSteering(message = 'Touch steering ready. Hold either side of the thumbpad or drag on the road.') {
+  tiltRequest++; tiltPending = false; steeringMode = 'touch';
+  clearTimeout(tiltTimer);
+  window.removeEventListener('deviceorientation', receiveOrientation);
+  tiltSteering.clear(); analogSteering = 0; tiltStatus = message;
+  updateSteeringSettings();
+}
+function receiveOrientation(event) {
+  if (document.hidden || !tiltSteering.sample(event, screenAngle())) return;
+  tiltGraceUntil = performance.now() + 5000;
+  if (tiltPending) {
+    clearTimeout(tiltTimer); tiltPending = false; steeringMode = 'tilt';
+    tiltSteering.calibrate();
+    tiltStatus = 'Tilt ready. Hold your phone comfortably, then tilt left or right. The thumbpad always works as an override.';
+    updateSteeringSettings();
+  }
+}
+async function enableTiltSteering() {
+  if (tiltPending) return;
+  const attempt = ++tiltRequest;
+  tiltPending = true;
+  tiltStatus = 'Allow motion access if asked, then hold your phone comfortably.';
+  updateSteeringSettings();
+  // Keep this permission call in the click's user-activation task for iOS.
+  const permission = await requestTiltPermission(window);
+  if (attempt !== tiltRequest) return;
+  if (!permission.ok) {
+    const message = permission.reason === 'secure' ? 'Tilt needs the secure HTTPS website. Touch steering is ready.'
+      : permission.reason === 'unsupported' ? 'This browser has no motion sensor support. Touch steering is ready.'
+        : 'Motion access was not allowed. Touch steering is ready; you can try again from these settings.';
+    useTouchSteering(message); return;
+  }
+  tiltSteering.clear();
+  window.addEventListener('deviceorientation', receiveOrientation);
+  tiltStatus = 'Checking for motion data. Hold the phone in your driving position.';
+  updateSteeringSettings();
+  tiltTimer = setTimeout(() => {
+    if (attempt === tiltRequest && tiltPending) useTouchSteering('No motion data arrived. Use touch steering, or check motion access in your browser settings.');
+  }, 4000);
+}
+function mountSteeringSettings() {
+  if (!usesTouchControls()) return;
+  const section = document.createElement('section'); section.className = 'steering-settings';
+  section.setAttribute('aria-labelledby', 'steering-settings-heading');
+  section.innerHTML = `<h3 id="steering-settings-heading">Steering</h3><div class="steering-options" role="group" aria-label="Steering mode"><button id="steering-touch" type="button">${icon('steering')}<span>Touch</span></button><button id="steering-tilt" type="button">${icon('phone')}<span>Enable tilt</span></button><button id="steering-recenter" type="button">${icon('restart')}<span>Recenter tilt</span></button></div><p id="steering-status" role="status" aria-live="polite"></p>`;
+  $('dialog-content').append(section);
+  $('steering-touch').onclick = () => useTouchSteering();
+  $('steering-tilt').onclick = enableTiltSteering;
+  $('steering-recenter').onclick = () => {
+    tiltStatus = tiltSteering.calibrate() ? 'Centered. This comfortable position is now straight ahead.' : 'Waiting for fresh motion data. Keep your phone in its driving position.';
+    updateSteeringSettings();
+  };
+  updateSteeringSettings();
+}
+bindSteeringPad($('touch-steer-cue'), dragSteering, {enabled: () => ['racing', 'countdown'].includes(mode)});
 function syncInput() {
   const pressedPointers = pointerInputs.read();
   for (const key in input)
@@ -386,6 +497,7 @@ function clearInput() {
   heldKeys.clear();
   heldPads.clear();
   dragSteering.clear();
+  tiltSteering.clear(); analogSteering = 0; tiltGraceUntil = performance.now() + 5000;
   for (const key in input) input[key] = false;
   pointerInputs.clear();
   for (const el of document.querySelectorAll("[data-input]")) {
@@ -464,9 +576,13 @@ function updateGarageCopy() {
   $("selected-car-tagline").textContent = v.tagline.toUpperCase();
   $("garage-class").textContent = v.specs.body.toUpperCase();
   $("garage-name").textContent = v.name;
+  for (const id of ["selected-car-name", "garage-name"]) $(id).dataset.longName = String(v.name.length > 24);
   $("garage-tagline").textContent = v.tagline;
   $("garage-specs").innerHTML = garageStatsMarkup(stats);
-  $("paint-label").textContent = getPaint(v.id, paintChoices[v.id]).name;
+  const paintable = player?.group.userData.paintable !== false;
+  $("open-paint").disabled = carSelectionPending || !paintable;
+  $("paint-label").textContent = paintable ? getPaint(v.id, paintChoices[v.id]).name : 'Factory finish';
+  $("open-paint").title = paintable ? '' : 'This model keeps its original textured finish.';
   $("garage-wallet").textContent = `${progression.credits.toLocaleString()} CR · RACE CREDITS`;
   for (const b of document.querySelectorAll("[data-vehicle]")) {
     b.setAttribute("aria-pressed", String(b.dataset.vehicle === v.id));
@@ -504,17 +620,29 @@ function showPaint() {
   for(const button of document.querySelectorAll("[data-paint-color]"))button.onclick=()=>choose("color",button.dataset.paintColor);
   for(const button of document.querySelectorAll("[data-paint-finish]"))button.onclick=()=>choose("finish",button.dataset.paintFinish);
 }
-function chooseVehicle(id) {
-  if (mode !== "menu" && mode !== "garage") return;
-  preferences.vehicle = getVehicle(id).id;
-  saveChoices();
-  if (player) {
+async function chooseVehicle(id) {
+  if ((mode !== "menu" && mode !== "garage") || carSelectionPending) return false;
+  const nextVehicle = getVehicle(id);
+  if (nextVehicle.id === preferences.vehicle) return true;
+  carSelectionPending = true;
+  const controls = [...document.querySelectorAll('[data-vehicle], #start, #garage-race, #open-paint, #open-upgrades, #browse-cars')];
+  for (const button of controls) button.disabled = true;
+  $('garage-status').textContent = `Preparing ${nextVehicle.name}…`;
+  $('garage').setAttribute('aria-busy','true');
+  try {
+    if (nextVehicle.assetId) await prepareManufacturerCar(nextVehicle.assetId, {low: mobile});
+    // Construct before changing the saved choice or disposing the current model.
+    const nextPlayer = createCar({vehicle: nextVehicle.id, low: mobile});
+    applyPaint(nextPlayer, nextVehicle.id, paintChoices[nextVehicle.id]);
+    preferences.vehicle = nextVehicle.id;
+    saveChoices();
+    if (player) {
     player.group.removeFromParent();
     player.dispose();
-    player = createPlayerCar();
+    }
+    player = nextPlayer;
     world.scene.add(player.group);
     addHeadlights(player);
-  }
   race = newRace();
   effects?.clear();
   const enabled = records.sound;
@@ -524,6 +652,19 @@ function chooseVehicle(id) {
   updateMenu();
   if (player) placeCar();
   event("car_select");
+    $('garage-status').textContent = `${nextVehicle.name} is ready to race.`;
+    return true;
+  } catch (error) {
+    console.warn('Car selection failed; keeping the current car.', error);
+    $('garage-status').textContent = `Couldn't load ${nextVehicle.name}. Your current car is ready. Please try again.`;
+    toast('Car download failed. Your current car is still selected.');
+    return false;
+  } finally {
+    carSelectionPending = false;
+    for (const button of controls) button.disabled = false;
+    $('garage').removeAttribute('aria-busy');
+    updateGarageCopy();
+  }
 }
 function openGarage() {
   closeDialog();
@@ -539,22 +680,26 @@ function openGarage() {
   event("garage_open");
 }
 function loadCarPortraits() {
-  void renderCarPortraits(VEHICLES, (id, url) => {
+  for (const v of VEHICLES.filter(v => v.assetId)) for (const image of document.querySelectorAll(`[data-car-portrait="${v.id}"]`)) {
+    image.src = `/assets/cars/manufacturers/${v.assetId}.webp`;
+    image.loading = 'lazy'; image.classList.add('ready');
+  }
+  void renderCarPortraits(VEHICLES.filter(v => !v.assetId), (id, url) => {
     for(const image of document.querySelectorAll(`[data-car-portrait="${id}"]`)) {
       image.src = url; image.classList.add('ready');
     }
   });
 }
 function openCarLibrary() {
-  const view = {query:'',family:'all',sort:'latest',favoritesOnly:false,compare:false};
+  const view = {query:'',family:'all',brand:'all',sort:'latest',favoritesOnly:false,compare:false};
   dialog({kind:'collection',eyebrow:`THE COLLECTION / ${VEHICLES.length} RACE CARS`,title:'Find your <em>next drive.</em>',html:carLibraryMarkup(),actions:[{label:'BACK TO GARAGE',primary:true,action:closeDialog}]});
   const refresh = () => {
     const cars = findCars({...view,favorites:favoriteCars,progression});
     $('library-count').textContent = `${cars.length} / ${VEHICLES.length} cars${view.compare ? ` · compared with ${getVehicle(preferences.vehicle).name}` : ''}`;
     $('car-library-grid').innerHTML = cars.map(car => carLibraryCard(car,{selected:preferences.vehicle,favorites:favoriteCars,progression,compare:view.compare})).join('');
     $('library-empty').hidden = cars.length !== 0;
-    for(const button of document.querySelectorAll('[data-library-car]')) button.onclick = () => {
-      closeDialog(); chooseVehicle(button.dataset.libraryCar);
+    for(const button of document.querySelectorAll('[data-library-car]')) button.onclick = async () => {
+      closeDialog(); await chooseVehicle(button.dataset.libraryCar);
       for(const filter of document.querySelectorAll('[data-family]')) filter.setAttribute('aria-pressed',String(filter.dataset.family === 'all'));
       for(const card of document.querySelectorAll('[data-vehicle]')) card.hidden = false;
       $('collection-count').textContent = `${VEHICLES.length} / ${VEHICLES.length} CARS`;
@@ -573,6 +718,7 @@ function openCarLibrary() {
   };
   $('car-search').oninput = event => {view.query = event.target.value; refresh();};
   $('car-sort').onchange = event => {view.sort = event.target.value; refresh();};
+  $('car-brand').onchange = event => {view.brand = event.target.value; refresh();};
   $('compare-cars').onchange = event => {view.compare = event.target.checked; refresh();};
   $('favorites-only').onclick = () => {view.favoritesOnly = !view.favoritesOnly; $('favorites-only').setAttribute('aria-pressed',String(view.favoritesOnly)); refresh();};
   for(const button of document.querySelectorAll('[data-library-family]')) button.onclick = () => {
@@ -581,7 +727,7 @@ function openCarLibrary() {
     refresh();
   };
   $('reset-car-search').onclick = () => {
-    Object.assign(view,{query:'',family:'all',favoritesOnly:false}); $('car-search').value = '';
+    Object.assign(view,{query:'',family:'all',brand:'all',favoritesOnly:false}); $('car-search').value = ''; $('car-brand').value = 'all';
     $('favorites-only').setAttribute('aria-pressed','false');
     for(const button of document.querySelectorAll('[data-library-family]')) button.setAttribute('aria-pressed',String(button.dataset.libraryFamily === 'all'));
     refresh(); $('car-search').focus();
@@ -589,6 +735,7 @@ function openCarLibrary() {
   refresh();
 }
 function start() {
+  if (carSelectionPending) return;
   // Preserve the initial tap activation before a physical rotation starts the race.
   sound.unlock();
   if (needsLandscape()) {
@@ -680,6 +827,7 @@ function pauseGame() {
         action() {
           if (needsLandscape()) { orientationGate(true); return; }
           closeDialog();
+          clearInput();
           mode = was;
           updateTouchControls();
           event("race_resume");
@@ -708,6 +856,7 @@ function pauseGame() {
     $("pause-screen-status").hidden = !message;
     $("pause-screen-status").textContent = message || "";
   };
+  mountSteeringSettings();
 }
 function how() {
   dialog({
@@ -720,6 +869,7 @@ function how() {
       { label: "LET’S DRIVE", action: start },
     ],
   });
+  mountSteeringSettings();
 }
 function privacy() {
   dialog({
@@ -861,13 +1011,16 @@ $("browse-circuits").onclick = () => {
   refresh();
 };
 $("garage-cars").replaceChildren(
-  ...VEHICLES.map((v, i) => {
+  ...[...VEHICLES].sort((a,b) => Number(Boolean(b.assetId)) - Number(Boolean(a.assetId))).map((v, i) => {
     const b = document.createElement("button");
     b.className = "car-choice";
     b.dataset.vehicle = v.id;
     b.style.setProperty("--car-color", v.color);
     b.setAttribute("aria-pressed", String(v.id === preferences.vehicle));
-    b.innerHTML = `<small><b>${v.family.toUpperCase()}</b><span>${NEW_CARS.has(v.id) ? "NEW" : String(i + 1).padStart(2, "0")}</span></small><img data-car-portrait="${v.id}" width="320" height="160" alt="" /><strong>${v.name}</strong><span class="car-choice-stats">${v.specs.speed} · ${v.specs.boost} NITRO</span>`;
+    b.setAttribute("aria-label", `Select ${v.name}`);
+    b.title = v.name;
+    const cardName = v.brand && v.name.startsWith(`${v.brand} `) ? v.name.slice(v.brand.length + 1) : v.name;
+    b.innerHTML = `<small><b>${v.brand || v.family.toUpperCase()}</b><span>${NEW_CARS.has(v.id) ? "NEW" : String(i + 1).padStart(2, "0")}</span></small><img data-car-portrait="${v.id}" width="320" height="160" alt="" /><strong>${cardName}</strong><span class="car-choice-stats">${v.specs.speed} · ${v.specs.boost} NITRO</span>`;
     b.onclick = () => { chooseVehicle(v.id); b.scrollIntoView({block:"nearest",inline:"nearest",behavior:reduced ? "instant" : "smooth"}); };
     return b;
   }),
@@ -904,7 +1057,6 @@ $("recover").onclick = () => {
     resetCar(race);
     event("car_reset");
     effects.clear();
-    toast("Back on your line.");
     renderer.domElement.focus({ preventScroll: true });
   }
 };
@@ -993,7 +1145,6 @@ window.addEventListener("keydown", (e) => {
     resetCar(race);
     event("car_reset");
     effects.clear();
-    toast("Back on your line.");
   }
 });
 window.addEventListener("keyup", (e) => {
@@ -1009,7 +1160,7 @@ for (const b of document.querySelectorAll("[data-input]")) {
   b.addEventListener("pointerdown", (e) => {
     if (!["racing", "countdown"].includes(mode) || e.button !== 0) return;
     e.preventDefault();
-    b.setPointerCapture(e.pointerId);
+    try { b.setPointerCapture(e.pointerId); } catch {}
     pointerInputs.press(e.pointerId, b.dataset.input);
     syncInput();
   });
@@ -1036,6 +1187,24 @@ window.addEventListener("blur", () => {
   clearInput();
   pauseGame();
 });
+window.addEventListener('pagehide', event => {
+  clearInput();
+  if (!event.persisted) world?.backdrop?.dispose();
+});
+for (const name of ['pointerup', 'pointercancel']) window.addEventListener(name, event => {
+  dragSteering.release(event.pointerId);
+  if (pointerInputs.release(event.pointerId)) syncInput();
+});
+const changedScreenOrientation = () => {
+  clearInput();
+  if (steeringMode === 'tilt') {
+    tiltStatus = 'Phone rotated. Hold it comfortably; the next reading recenters your steering.';
+    updateSteeringSettings();
+  }
+  checkOrientation();
+};
+screen.orientation?.addEventListener?.('change', changedScreenOrientation);
+window.addEventListener('orientationchange', changedScreenOrientation);
 document.addEventListener("visibilitychange", () => {
   if (document.hidden) {
     clearInput();
@@ -1237,8 +1406,12 @@ function updateHud() {
   $("pad-nitro-fill").style.transform = `scaleX(${charge})`;
   $("nitro-ring-fill").style.strokeDashoffset = String((1 - charge) * 100);
   $("nitro-pad-label").textContent = race.nitro.locked ? "RELEASE" : race.nitro.active ? "BOOST" : "NITRO";
-  $("touch-steer-dot").style.transform = `translateX(${race.car.steering * 50}px)`;
-  $("touch-steer-label").textContent = "DRAG LEFT OR RIGHT";
+  const steer = clamp(analogSteering + Number(input.right) - Number(input.left), -1, 1);
+  const pad = $('touch-steer-cue'), range = Math.max(20, (pad.getBoundingClientRect().width - 48) / 2);
+  $("touch-steer-dot").style.transform = `translateX(${steer * range}px)`;
+  $("touch-steer-label").textContent = steeringMode === 'tilt' ? 'TILT / TOUCH OVERRIDE' : 'HOLD OR DRAG TO STEER';
+  pad.setAttribute('aria-valuenow', String(Math.round(steer * 100)));
+  pad.setAttribute('aria-valuetext', Math.abs(steer) < .02 ? 'Straight' : `${Math.round(Math.abs(steer) * 100)} percent ${steer > 0 ? 'right' : 'left'}`);
   $("touch-steer-cue").classList.toggle("engaged", dragSteering.active());
   $("touch-steer-cue").classList.toggle("subtle", race.elapsed > 6);
   $("nitro-pad-amount").textContent = `${Math.round(charge * 100)}%`;
@@ -1289,10 +1462,6 @@ function updateHud() {
     "drift-active",
     mode === "racing" && race.car.drifting,
   );
-  document.body.classList.toggle(
-    "is-colliding",
-    mode === "racing" && race.collision,
-  );
   $("speed-lines").style.opacity =
     mode === "racing" && !reduced
       ? Math.max(0, (race.car.speed - 23) / 22) * 0.25
@@ -1301,8 +1470,15 @@ function updateHud() {
 }
 function tick(now) {
   const wasFinished = mode === "finished";
-  const driveControls = resolveDriveControls({...input, steer: dragSteering.read()});
   const dt = Math.min((now - last) / 1000, 0.05);
+  if (['racing', 'countdown'].includes(mode) && steeringMode === 'tilt' && now > tiltGraceUntil && !tiltSteering.fresh()) {
+    useTouchSteering('Motion data stopped. Touch steering is ready; enable tilt again in Pause when available.');
+    toast('Tilt signal stopped. Use the thumbpad to steer.');
+  }
+  analogSteering = ['racing', 'countdown'].includes(mode)
+    ? dragSteering.active() ? dragSteering.read() : steeringMode === 'tilt' ? tiltSteering.read(dt) : 0
+    : 0;
+  const driveControls = resolveDriveControls({...input, steer: analogSteering});
   last = now;
   time += dt;
   uiTimer += dt;
@@ -1380,10 +1556,22 @@ function tick(now) {
     collision: race.collision,
     menu: mode === "menu" || mode === "garage",
   });
-  if (race.collision && !wasCollision && !reduced) cameraKick = 0.1;
-  wasCollision = race.collision;
+  const status = raceFeedback.read(race, {active: mode === 'racing', reducedMotion: reduced, now});
+  const statusElement = $('race-feedback');
+  statusElement.hidden = status.kind === 'none';
+  if (statusElement.dataset.kind !== status.kind) {
+    statusElement.dataset.kind = status.kind;
+    const symbol = status.kind === 'crash' ? 'steering' : status.kind === 'recovered' ? 'check' : 'restart';
+    $('race-feedback-icon').setAttribute('href', `/assets/ui/race-icons.svg#${symbol}`);
+  }
+  if ($('race-feedback-title').textContent !== status.title) $('race-feedback-title').textContent = status.title;
+  if ($('race-feedback-detail').textContent !== status.detail) $('race-feedback-detail').textContent = status.detail;
+  if (status.announcement) $('race-feedback-live').textContent = status.announcement;
+  else if (mode !== 'racing' && $('race-feedback-live').textContent) $('race-feedback-live').textContent = '';
+  $('race-impact').style.opacity = String(status.flash);
+  if (status.kick) cameraKick = status.kick;
   cameraKick *= Math.exp(-dt * 9);
-  world.update(time, race.car);
+  world.update(time, race.car, {paused: mode === 'paused' || mode === 'garage', reducedMotion: reduced});
   const activeScene = mode === "garage" ? garageStudio.scene : world.scene;
   if (player.group.parent !== activeScene) activeScene.add(player.group);
   renderPass.scene = activeScene;
@@ -1415,9 +1603,11 @@ if (import.meta.env.DEV) {
   window.__blacktopBayQA = Object.freeze({
     snapshot: () => ({
       mode,
-      input: {...input, steer: dragSteering.read()},
+      input: {...input, steer: analogSteering, steeringMode},
       car: { ...race.car },
       elapsed: race.elapsed,
+      impact: {...race.impact},
+      recovery: {...race.recovery},
       nitro: { ...race.nitro },
       position: race.position,
       track: race.track,

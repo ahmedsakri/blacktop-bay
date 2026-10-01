@@ -6,6 +6,7 @@ const VOICES={
   gt:{gears:6,idle:52,range:88,body:.135,harmonic:.027,sub:.038,cutoff:1100},
   prototype:{gears:7,idle:76,range:126,body:.118,harmonic:.035,sub:.027,cutoff:1700},
   formula:{gears:8,idle:118,range:180,body:.096,harmonic:.047,sub:.015,cutoff:2650},
+  electric:{gears:1,idle:95,range:530,body:.060,harmonic:.008,sub:.012,cutoff:2300},
 };
 
 export function createAudio() {
@@ -111,16 +112,18 @@ export function createAudio() {
     drift=clamp(Math.abs(finite(state.drift)),0,1);
     brake=clamp(finite(state.brake),0,1);
     running=Boolean(state.running);
-    const vehicle=getVehicle(state.vehicle),voice=VOICES[vehicle.family]||VOICES.gt;
+    const vehicle=getVehicle(state.vehicle),electric=vehicle.powertrain==='electric',voice=VOICES[electric?'electric':vehicle.family]||VOICES.gt;
     if(vehicleId!==vehicle.id || !running){gear=0;shiftTime=0;vehicleId=vehicle.id;}
     if(!context || !unlocked || context.state!=='running')return;
     updateGates();
     if(!running || muted || !visible())return;
+    bodyOsc.type=electric?'sine':'triangle';
+    harmonicOsc.type=electric?'sine':'sawtooth';
 
     // Distinct six/seven/eight-speed voices follow road speed, with a brief torque
     // cut and rev drop at shifts. Hysteresis prevents chatter at a shift boundary.
     const step=clamp(finite(dt,1/60),0,.1),topSpeed=vehicle.handling.topSpeed;
-    const threshold=index=>topSpeed*(.20+.78*index/(voice.gears-1));
+    const threshold=index=>voice.gears===1?topSpeed:topSpeed*(.20+.78*index/(voice.gears-1));
     const oldGear=gear;
     if(gear<voice.gears-1 && speed>threshold(gear)+.5)gear++;
     else if(gear>0 && speed<threshold(gear-1)-1.5)gear--;

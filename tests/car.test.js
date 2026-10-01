@@ -51,7 +51,8 @@ function bounds(car, select = () => true, includePoint = () => true) {
   return box;
 }
 
-for (const low of [true, false]) for (const vehicle of VEHICLES) {
+// Manufacturer assets have their own actual-GLB lifecycle and topology tests.
+for (const low of [true, false]) for (const vehicle of VEHICLES.filter(vehicle => !vehicle.assetId)) {
   test(`${vehicle.name} ${low ? 'mobile' : 'desktop'} model has finite real geometry, working wheels and isolated disposable finishes`, () => {
     const car = createCar({vehicle: vehicle.id, low}), other = createCar({vehicle: vehicle.id, low});
     const a = resources(car), b = resources(other), disposalCounts = new Map();

@@ -2,6 +2,23 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createAudio } from '../src/audio.js';
 
+test('electric car sound rises smoothly without combustion gear drops',async()=>{
+  const env=environment(),audio=createAudio();
+  try {
+    await audio.unlock();
+    const body=env.contexts[0].oscillators[0];
+    let pitch=0;
+    for(let speed=0;speed<=55;speed+=.5){
+      audio.update({running:true,vehicle:'rimac-concept-one',speed,throttle:1},1/60);
+      assert.equal(body.type,'sine');
+      assert.ok(body.frequency.value>=pitch);
+      pitch=body.frequency.value;
+    }
+    audio.update({running:true,vehicle:'coupe',speed:20});
+    assert.equal(body.type,'triangle','switching back restores the combustion voice');
+  } finally {audio.dispose();env.restore();}
+});
+
 // Exercise the actual audio graph and automation without requiring a speaker or
 // pretending a silent Node process verifies the subjective quality of its sound.
 function environment() {

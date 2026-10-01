@@ -128,3 +128,69 @@ body:not(.in-race) .icon-button{width:44px;height:44px;min-width:44px;min-height
 
 .dialog .circuit-disclosure{font:500 10px/1.6 Manrope;color:#a9bdcc;margin:8px 0 16px;padding:12px 14px;border-left:2px solid #72dbea;background:#142c3c}
 .dialog .circuit-count{font:700 11px Manrope;color:#b9d3e1;margin:0 0 16px}
+.library-tools-cars{grid-template-columns:minmax(0,1fr) 200px 175px}
+.garage-status{font:600 11px/1.5 Manrope,sans-serif;color:#fff;max-width:38ch;min-height:0;margin:8px 0 0}
+.garage-status:empty{display:none}
+.garage[aria-busy="true"] .garage-status{border-left:2px solid #FFF71E;padding-left:10px}
+.library-card-head>span:first-child,.car-choice small>b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.library-card-head>span:last-child{flex-shrink:0}
+@media(max-width:700px){.library-tools-cars{grid-template-columns:1fr 1fr}.library-tools-cars .library-search{grid-column:1/-1}.garage-status{font-size:10px;margin-top:5px}}
+@media(max-height:520px) and (orientation:landscape){.library-tools-cars{grid-template-columns:minmax(0,1fr) 155px 145px}.library-tools-cars .library-search{grid-column:auto}.garage-status{font-size:9px;max-width:32ch}}
+@media(max-width:600px) and (orientation:landscape){.library-tools-cars{grid-template-columns:1fr 1fr}.library-tools-cars .library-search{grid-column:1/-1}}
+
+/* Reserve two readable model-name lines without growing the collection strip. */
+.car-choice{display:grid;grid-template-rows:12px minmax(0,1fr) 46px 12px;row-gap:2px;align-content:stretch}
+.car-choice small{align-items:center;min-width:0;line-height:1.2}
+.car-choice img{height:100%;min-height:0;align-self:stretch}
+.car-choice strong{display:flex;align-items:center;min-width:0;margin:0;white-space:normal;overflow-wrap:anywhere;font-size:23px;line-height:1}
+.car-choice .car-choice-stats{align-self:end;line-height:1.25}
+.garage .garage-orbit{min-height:44px;min-width:44px}
+.garage-spec #garage-name{overflow-wrap:anywhere;text-wrap:balance;line-height:1.03}
+/* Keep completion announcements available without adding a row above the workshop. */
+.garage:not([aria-busy="true"]) .garage-status{display:block;position:absolute;width:1px;height:1px;max-width:none;min-height:0;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);clip-path:inset(50%);white-space:nowrap;border:0}
+.garage[aria-busy="true"] .garage-status{display:block}
+@media(max-width:750px) and (orientation:portrait){
+ .car-choice{grid-template-rows:10px minmax(0,1fr) 42px 10px}
+ .car-choice strong{font-size:21px}
+}
+@media(max-height:520px) and (orientation:landscape){
+ .car-choice{grid-template-rows:8px minmax(0,1fr) 36px 8px;row-gap:1px}
+ .car-choice strong{font-size:18px}
+}
+
+/* Long manufacturer identities keep their full name without pushing actions
+   into the collection rail. Short names retain the original display scale. */
+.garage-spec #garage-name[data-long-name="true"]{font-size:32px}
+@media(max-width:360px){
+ .topbar .wordmark{min-width:0;max-width:calc(100% - 106px)}
+ .topbar .wordmark .brand-logo{width:100%;max-width:100%}
+ .topbar .top-actions{flex-shrink:0}
+}
+@media(max-width:750px) and (orientation:portrait){
+ .menu .car-spec{display:grid;grid-template-columns:minmax(0,1fr) 128px;column-gap:12px;align-items:end}
+ .menu .car-spec>p{grid-column:1/-1}
+ .menu .car-spec #selected-car-name{min-width:0;white-space:normal;overflow-wrap:anywhere;line-height:1.05}
+ .menu .car-spec #selected-car-name[data-long-name="true"]{font-size:24px!important}
+ .menu .car-spec #open-garage{position:static;grid-column:2;grid-row:2;width:128px;margin:0;align-self:end}
+ .garage-spec #garage-name[data-long-name="true"]{font-size:28px}
+}
+@media(max-height:520px) and (orientation:landscape){
+ .garage-spec{width:280px}
+ .collection-toolbar{margin-left:300px}
+ .garage-spec #garage-name[data-long-name="true"]{font-size:26px}
+ .garage-spec dl{margin:6px 0}
+ .garage-spec .performance-row{row-gap:3px}
+ .garage-workshop{margin-top:4px}
+}
+@media(max-width:760px) and (max-height:520px) and (orientation:landscape){
+ .collection-filters{display:none}
+ .collection-toolbar{justify-content:flex-end}
+}
+@media(max-width:600px) and (max-height:360px) and (orientation:landscape){
+ .garage-spec{left:20px;right:20px;width:auto;display:grid;grid-template-columns:minmax(0,1fr) 200px;column-gap:18px;row-gap:3px}
+ .garage-spec>span{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+ .garage-spec #garage-name,.garage-spec #garage-name[data-long-name="true"]{grid-column:1/-1;font-size:24px;max-width:calc(100% - 60px);margin:3px 0;text-wrap:initial}
+ .garage-spec dl{grid-column:1;grid-row:2;margin:0;align-self:center;column-gap:14px}
+ .garage-workshop{grid-column:2;grid-row:2;margin:0;align-self:end}
+ .garage-workshop .button{font-size:8px}
+}

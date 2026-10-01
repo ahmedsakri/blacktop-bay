@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { VEHICLES } from '../src/vehicles.js';
 import {
   PROGRESSION_KEY, MAX_CREDITS, UPGRADE_COMPONENTS, UPGRADE_COSTS,
   loadProgression, buyUpgrade, awardRaceCredits, getUpgradePreview, normalizeUpgrades,
@@ -18,7 +19,7 @@ test('a new garage starts with 1200 credits and independent zero-level cars', ()
   assert.equal(state.credits, 1200);
   assert.equal(state.version, 1);
   assert.deepEqual(state.awardedRaces, []);
-  assert.deepEqual(Object.keys(state.cars), ['coupe', 'sprint', 'gt', 'endurance', 'rally', 'formula', 'prototype', 'hyper', 'barchetta', 'spyder', 'kestrel', 'mirage', 'monoposto', 'tempest', 'corsair', 'stratus', 'vector', 'zenith', 'vela', 'aurora']);
+  assert.deepEqual(Object.keys(state.cars), VEHICLES.map(car => car.id));
   assert.deepEqual(state.cars.coupe, { engine: 0, tyres: 0, nitro: 0, handling: 0 });
   state.cars.coupe.engine = 2;
   assert.equal(state.cars.gt.engine, 0);

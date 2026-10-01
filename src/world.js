@@ -2,6 +2,9 @@ import * as THREE from 'three';
 import { Reflector } from 'three/addons/objects/Reflector.js';
 import { TRACK, sampleTrack, projectOnTrack } from './track.js';
 import { RIVAL_GRID } from './rivals.js';
+import { createCrowd } from './crowd.js';
+import { ORIGINAL_VENUE_PROFILES, originalLandmarkLayout, createOriginalLandmarks } from './original-venues.js';
+import { createCinematicBackdrop, CINEMATIC_BACKDROP_GLSL } from './cinematic-backdrop.js';
 
 const TAU = Math.PI * 2;
 const ORIGINAL_VENUES = new Set(['harbor', 'dockyard', 'coast', 'summit', 'grandprix']);
@@ -21,7 +24,7 @@ export function getVenueProfile(track = TRACK) {
  for(const p of track.samples){minX=Math.min(minX,p.x);maxX=Math.max(maxX,p.x);minZ=Math.min(minZ,p.z);maxZ=Math.max(maxZ,p.z);}
  const centerX=(minX+maxX)/2,centerZ=(minZ+maxZ)/2;
  let radius=0;for(const p of track.samples)radius=Math.max(radius,Math.hypot(p.x-centerX,p.z-centerZ));
- return {...VENUE_ENVIRONMENTS[environment],environment,original,centerX,centerZ,radius,
+ return {...VENUE_ENVIRONMENTS[environment],...ORIGINAL_VENUE_PROFILES[track.scenery],environment,original,centerX,centerZ,radius,
   horizonRadius:original?990:Math.max(990,radius+480),groundRadius:Math.max(1400,radius+650)};
 }
 
@@ -30,15 +33,17 @@ export function getVenueProfile(track = TRACK) {
 export function venueSceneryLayout(track=TRACK,{low=false}={}) {
  const profile=getVenueProfile(track);if(profile.original)return [];
  const seed=[...track.id].reduce((sum,char)=>(Math.imul(sum,31)+char.charCodeAt(0))|0,173),rng=random(seed),stands=grandstandLayout(track),items=[];
+ const landmarks=originalLandmarkLayout(track,{stands,low});
  const count=low?74:118;
  for(let i=0;i<count;i++){
   const p=sampleTrack(track.length*(i+.35)/count,track),side=i%2?1:-1;
-  const kind=profile.environment==='desert'?'rock':profile.environment==='urban'?(i%3?'building':'tree'):'tree';
+  const kind=profile.environment==='desert'||track.scenery==='breakwater'?'rock':profile.environment==='urban'?(i%3?'building':'tree'):'tree';
   const radius=kind==='building'?10+rng()*7:kind==='rock'?4+rng()*8:3+rng()*1.5;
   const offset=side*(track.width/2+radius+15+rng()*(kind==='building'?35:31));
   const x=p.x+p.nx*offset,z=p.z+p.nz*offset;
   if(projectOnTrack(x,z,undefined,track).distance < track.width/2+radius+7)continue;
   if(stands.some(stand=>Math.hypot(x-stand.x,z-stand.z)<radius+14))continue;
+  if(landmarks.some(item=>Math.hypot(x-item.x,z-item.z)<radius+item.radius+4))continue;
   if(items.some(item=>Math.hypot(x-item.x,z-item.z)<radius+item.radius+3))continue;
   items.push({kind,x,z,radius,height:kind==='building'?16+rng()*44:kind==='rock'?radius*(.5+rng()*.6):6+rng()*8,yaw:Math.atan2(p.tx,p.tz),shade:rng()});
  }
@@ -94,47 +99,6 @@ export function grandstandLayout(track = TRACK) {
  return stands;
 }
 
-function createCrowd() {
- const torsos = [], heads = [], hair = [], sleeves = [], trousers = [];
- const shirts = ['#d9dfdb', '#24576d', '#a74f3d', '#d6a659', '#507b76', '#667f93', '#313e54'];
- const skin = ['#d9a27e', '#ae7554', '#795244', '#e8b996', '#bd8b6d'];
- const hairColors = ['#251f20', '#302a24', '#554332', '#8c7050'];
- let count = 0;
- return {
-  add(x, floor, z, yaw, seated, rng) {
-   const shirt = shirts[Math.floor(rng() * shirts.length)], tone = skin[Math.floor(rng() * skin.length)];
-   const height = .92 + rng() * .16, hip = seated ? .48 : .80;
-   const point = (px, py, pz) => [x + (Math.cos(yaw) * px + Math.sin(yaw) * pz) * height, floor + py * height, z + (-Math.sin(yaw) * px + Math.cos(yaw) * pz) * height];
-   const place = (list, px, py, pz, sx, sy, sz, color) => { const [wx, wy, wz] = point(px, py, pz); list.push({ x: wx, y: wy, z: wz, ry: yaw, sx: sx * height, sy: sy * height, sz: sz * height, color }); };
-   place(torsos, 0, hip + .27, 0, 1.12, 1, .83, shirt);
-   place(heads, 0, hip + .69, .018, .125, .157, .125, tone);
-   place(hair, 0, hip + .76, -.008, .128, .092, .127, hairColors[Math.floor(rng() * hairColors.length)]);
-   for (const side of [-1, 1]) {
-    const knee = seated ? point(side * .115, .44, .34) : point(side * .12, .40, .01);
-    const foot = seated ? point(side * .115, .065, .38) : point(side * .14, .07, .05);
-    for (const [a, b, radius] of [[point(side * .12, hip, 0), knee, .08], [knee, foot, .07]]) { segment(trousers, a, b, radius * height); trousers.at(-1).color = '#27333f'; }
-    const cheering = !seated && rng() > .55;
-    const elbow = cheering ? point(side * .36, hip + .69, .03) : point(side * .26, hip + .19, .12);
-    const hand = cheering ? point(side * .32, hip + 1.03, .12) : point(side * .13, hip + .09, .30);
-    segment(sleeves, point(side * .20, hip + .44, 0), elbow, .067 * height); sleeves.at(-1).color = shirt;
-    segment(sleeves, elbow, hand, .052 * height); sleeves.at(-1).color = tone;
-   }
-   count++;
-  },
-  render(scene) {
-   const cloth = new THREE.MeshStandardMaterial({ color: 'white', roughness: .95 });
-   const meshes = [
-    instances(scene, new THREE.CylinderGeometry(.19, .145, .54, 6), cloth, torsos),
-    instances(scene, new THREE.SphereGeometry(1, 8, 5), cloth, heads),
-    instances(scene, new THREE.SphereGeometry(1, 7, 4), cloth, hair),
-    instances(scene, new THREE.CylinderGeometry(1, 1, 1, 5), cloth, sleeves),
-    instances(scene, new THREE.CylinderGeometry(1, 1, 1, 5), cloth, trousers),
-   ];
-   meshes.forEach(mesh => { mesh.name = 'race-spectators'; mesh.receiveShadow = false; });
-   scene.userData.spectatorCount = count;
-  },
- };
-}
 const noiseGLSL = `
 float hash21(vec2 p){ p=fract(p*vec2(123.34,456.21));p+=dot(p,p+45.32);return fract(p.x*p.y); }
 float noise21(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(hash21(i),hash21(i+vec2(1,0)),f.x),mix(hash21(i+vec2(0,1)),hash21(i+vec2(1,1)),f.x),f.y);}
@@ -182,14 +146,17 @@ function facadeMaterial() {
  material.customProgramCacheKey = () => 'blacktop-bay-facade-v2'; return material;
 }
 
-export function createWorld(renderer, { low = false } = {}) {
+export function createWorld(renderer, { low = false, reducedMotion = false } = {}) {
  const summit = TRACK.id === 'summit', grandPrix = TRACK.id === 'grandprix', venue = getVenueProfile(TRACK);
- const rng = random(), crowdRng = random(124), crowd = createCrowd(), scene = new THREE.Scene(); scene.background = new THREE.Color(venue.background); scene.fog = new THREE.FogExp2(venue.fog,venue.fogDensity);
+ const rng = random(), crowdRng = random(124), crowd = createCrowd({low, reducedMotion}), scene = new THREE.Scene(); scene.background = new THREE.Color(venue.background); scene.fog = new THREE.FogExp2(venue.fog,venue.fogDensity);
  scene.userData.venueEnvironment={type:venue.environment,original:venue.original,night:venue.night,water:venue.water};
  scene.add(new THREE.HemisphereLight(venue.sky,venue.bounce,venue.ambient));
  const sun = new THREE.DirectionalLight(venue.sun,venue.sunlight); sun.position.set(-180,venue.sunHeight,130); sun.castShadow = true; sun.shadow.mapSize.set(low ? 1024 : 2048, low ? 1024 : 2048); Object.assign(sun.shadow.camera, { left: -20, right: 20, top: 20, bottom: -20, near: 1, far: 360 }); sun.shadow.bias = -.00065; sun.shadow.normalBias = .015; scene.add(sun, sun.target);
  const fill = new THREE.DirectionalLight(venue.fill,venue.fillIntensity); fill.position.set(20, 45, -30); scene.add(fill);
- const sky = new THREE.Mesh(new THREE.SphereGeometry(1800, 48, 24), new THREE.ShaderMaterial({ side: THREE.BackSide, depthWrite: false, uniforms: {venueStyle:{value:venue.skyStyle}}, vertexShader: 'varying vec3 vPosition;void main(){vPosition=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}', fragmentShader: `${noiseGLSL}
+ const backdrop = createCinematicBackdrop({track:TRACK,venue,low,reducedMotion});
+ scene.userData.cinematicBackdrop = backdrop.status;
+ const sky = new THREE.Mesh(new THREE.SphereGeometry(1800, 48, 24), new THREE.ShaderMaterial({ side: THREE.BackSide, depthWrite: false, uniforms: {venueStyle:{value:venue.skyStyle},...backdrop.uniforms}, vertexShader: 'varying vec3 vPosition;void main(){vPosition=position;gl_Position=projectionMatrix*mat4(mat3(viewMatrix))*vec4(position,1.);}', fragmentShader: `${noiseGLSL}
+ ${CINEMATIC_BACKDROP_GLSL}
  varying vec3 vPosition;uniform float venueStyle;
  void main(){
   vec3 d=normalize(vPosition);float y=d.y;float sunset=pow(max(0.,dot(normalize(d.xz),normalize(vec2(-.8,.65)))),3.);
@@ -219,10 +186,11 @@ export function createWorld(renderer, { low = false } = {}) {
     col+=vec3(.10,.105,.07)*pow(max(0.,dot(d,normalize(vec3(-.8,.6,.65)))),18.);
    }
   }
+  col=cinematicBackdrop(col,d);
   gl_FragColor=vec4(col,1.);
   #include <tonemapping_fragment>
   #include <colorspace_fragment>
- }` })); scene.add(sky);
+ }` })); sky.name='cinematic-distant-sky';sky.frustumCulled=false;scene.add(sky);
  const environmentScene = new THREE.Scene(); environmentScene.add(sky.clone());
  const pmrem = new THREE.PMREMGenerator(renderer); scene.environment = pmrem.fromScene(environmentScene, .045, .1, 2000).texture; scene.environmentIntensity = .72; pmrem.dispose();
  const sea = new THREE.Mesh(new THREE.PlaneGeometry(3000, 3000), new THREE.ShaderMaterial({ uniforms: { time: { value: 0 } }, vertexShader: 'varying vec3 p;void main(){vec4 w=modelMatrix*vec4(position,1.);p=w.xyz;gl_Position=projectionMatrix*viewMatrix*w;}', fragmentShader: `${noiseGLSL}
@@ -251,6 +219,12 @@ export function createWorld(renderer, { low = false } = {}) {
   for (let i = 0; i < 100; i++) { c.strokeStyle = `rgba(10,17,23,${rng() * .13})`; c.lineWidth = 1 + rng() * 2; c.beginPath(); const x = rng() * w, y = rng() * h; c.moveTo(x, y); c.lineTo(x + rng() * 8 - 4, y + 20 + rng() * 70); c.stroke(); }
  }); asphalt.wrapS = asphalt.wrapT = THREE.RepeatWrapping; asphalt.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
  const base = new THREE.Mesh(roadGeometry(TRACK.width + 11), new THREE.MeshStandardMaterial({ color: venue.environment==='desert'?'#736855':'#303a43', roughness: .9 })); base.position.y = -.10; scene.add(base);
+ if(TRACK.scenery==='breakwater'){
+  // A submerged sea-wall foundation gives the causeway thickness at water level.
+  const foundations=[];
+  for(let s=0;s<TRACK.length;s+=5){const p=sampleTrack(s);foundations.push({x:p.x,y:-.56,z:p.z,sx:TRACK.width+10.9,sy:.90,sz:5.12,ry:Math.atan2(p.tx,p.tz)});}
+  instances(scene,box,new THREE.MeshStandardMaterial({color:'#555e61',roughness:.96}),foundations);
+ }
  const road = new THREE.Mesh(roadGeometry(TRACK.width), new THREE.MeshStandardMaterial({ color: '#b5bbc2', map: asphalt, bumpMap: asphalt, bumpScale: .036, roughness: .86, metalness: .015, envMapIntensity: .16 })); road.position.y = .011; road.receiveShadow = true; scene.add(road);
  const wetShader = {
   name: 'RainPolishedAsphalt', uniforms: { color: { value: null }, tDiffuse: { value: null }, textureMatrix: { value: null } },
@@ -374,7 +348,7 @@ export function createWorld(renderer, { low = false } = {}) {
      piece(standSeats, across, floor + .39, along, .67, .13, .68, (seat + row) % 5 ? '#196776' : '#d2ddd8');
      piece(standSeats, across + side * .28, floor + .64, along, .11, .46, .68, (seat + row) % 5 ? '#196776' : '#d2ddd8');
     }
-    if (crowdRng() > (low ? .48 : .19)) {
+    if (crowdRng() > .17) {
      const point = local(across, floor, along);
      crowd.add(point.x, floor, point.z, yaw - side * Math.PI / 2 + (crowdRng() - .5) * .2, !standing, crowdRng);
     }
@@ -433,6 +407,8 @@ export function createWorld(renderer, { low = false } = {}) {
   });terrainNoise.wrapS=terrainNoise.wrapT=THREE.RepeatWrapping;terrainNoise.repeat.set(110,110);
   const terrain=new THREE.Mesh(new THREE.CircleGeometry(venue.groundRadius,96),new THREE.MeshStandardMaterial({color:venue.ground,map:terrainNoise,roughness:1}));
   terrain.name='venue-terrain';terrain.rotation.x=-Math.PI/2;terrain.position.set(venue.centerX,-.16,venue.centerZ);terrain.receiveShadow=true;scene.add(terrain);
+ }
+ if(!venue.original&&(!venue.water||TRACK.scenery==='breakwater')){
   const foliage=[],treeTrunks=[],rocks=[],cityBlocks=[],cityRoofs=[];
   const decorations=venueSceneryLayout(TRACK,{low});scene.userData.venueDecorationCount=decorations.length;
   for(const item of decorations){
@@ -440,22 +416,24 @@ export function createWorld(renderer, { low = false } = {}) {
    if(item.kind==='building'){
     cityBlocks.push({x,z,y:height/2-.16,sx:radius*1.3,sy:height,sz:radius*.8,ry:yaw});
     cityRoofs.push({x,z,y:height+.1,sx:radius*1.34,sy:.32,sz:radius*.84,ry:yaw,color:shade>.7?'#67a8af':'#354759'});
-   }else if(item.kind==='rock')rocks.push({x,z,y:height*.18-.8,sx:radius*.84,sy:height*.65,sz:radius*.71,ry:yaw,color:shade>.5?'#9a805e':'#76644e'});
+   }else if(item.kind==='rock')rocks.push({x,z,y:height*.18-.8,sx:radius*.84,sy:height*.65,sz:radius*.71,ry:yaw,color:TRACK.scenery==='breakwater'?(shade>.5?'#4d5960':'#354047'):TRACK.scenery==='copper-canyon'?(shade>.5?'#a16c4c':'#86543d'):shade>.5?'#9a805e':'#76644e'});
    else{
     treeTrunks.push({x,z,y:height*.29,sx:.18,sy:height*.58,sz:.18});
-    foliage.push({x,z,y:height*.72,sx:radius*.90,sy:height*.37,sz:radius*.80,ry:yaw,color:shade>.66?'#506346':shade>.33?'#3a5744':'#304b3f'});
+    if(venue.vegetation==='conifers'){
+     for(let layer=0;layer<3;layer++)foliage.push({x,z,y:height*(.50+layer*.17),sx:radius*(1-layer*.23),sy:height*(.35-layer*.04),sz:radius*(1-layer*.23),ry:yaw,color:shade>.66?'#405a40':shade>.33?'#304d3a':'#263e32'});
+    }else foliage.push({x,z,y:height*.72,sx:radius*.90,sy:height*.37,sz:radius*.80,ry:yaw,color:shade>.66?'#506346':shade>.33?'#3a5744':'#304b3f'});
    }
   }
   if(foliage.length){
    instances(scene,new THREE.CylinderGeometry(1,1.1,1,6),new THREE.MeshStandardMaterial({color:'#594d3d',roughness:1}),treeTrunks);
-   instances(scene,new THREE.IcosahedronGeometry(1,2),new THREE.MeshStandardMaterial({color:'white',roughness:1}),foliage);
+   instances(scene,venue.vegetation==='conifers'?new THREE.ConeGeometry(1,1,low?7:10):new THREE.IcosahedronGeometry(1,2),new THREE.MeshStandardMaterial({color:'white',roughness:1}),foliage);
   }
   if(rocks.length)instances(scene,new THREE.DodecahedronGeometry(1,1),new THREE.MeshStandardMaterial({color:'white',roughness:1}),rocks);
   if(cityBlocks.length){
    instances(scene,box,facadeMaterial(),cityBlocks);
    instances(scene,box,new THREE.MeshStandardMaterial({color:'white',roughness:.65,metalness:.35}),cityRoofs);
   }
-  if(venue.environment==='desert'){
+  if(venue.environment==='desert'&&TRACK.scenery!=='copper-canyon'){
    const dunes=[];
    for(let i=0;i<(low?15:24);i++){
     const a=i/(low?15:24)*TAU,r=venue.radius+130+rng()*100,width=65+rng()*45;
@@ -466,6 +444,7 @@ export function createWorld(renderer, { low = false } = {}) {
    instances(scene,new THREE.SphereGeometry(1,16,8),new THREE.MeshStandardMaterial({color:'white',roughness:1}),dunes);
   }
  }
+ const landmarks=createOriginalLandmarks(scene,TRACK,{low,stands:standLayouts});
  const mountainPositions = [], mountainIndices = [];
  const ridgeSegments = 320;
  for (let i = 0; i <= ridgeSegments; i++) {
@@ -475,11 +454,14 @@ export function createWorld(renderer, { low = false } = {}) {
   mountainPositions.push(x,-5,z,x,height,z);
   if (i < ridgeSegments) { const j = i * 2; mountainIndices.push(j, j + 1, j + 2, j + 1, j + 3, j + 2); }
  }
- const mountains = new THREE.BufferGeometry(); mountains.setAttribute('position', new THREE.Float32BufferAttribute(mountainPositions, 3)); mountains.setIndex(mountainIndices); scene.add(new THREE.Mesh(mountains, new THREE.MeshBasicMaterial({ color:venue.horizon, side: THREE.DoubleSide })));
+ const mountains = new THREE.BufferGeometry(); mountains.setAttribute('position', new THREE.Float32BufferAttribute(mountainPositions, 3)); mountains.setIndex(mountainIndices);
+ // The procedural ridge is only a loading/error fallback. Leaving an opaque
+ // silhouette in front of the detailed image would hide its actual landscape.
+ const fallbackRidge = new THREE.Mesh(mountains, new THREE.MeshBasicMaterial({ color:venue.horizon, side: THREE.DoubleSide, transparent:true, depthWrite:false }));fallbackRidge.name='procedural-horizon-fallback';scene.add(fallbackRidge);
 
 
  const trunks = [], fronds = [], crowns = [], planters = [];
- for (let s = 16; s < (summit || !venue.water ? 0 : TRACK.length); s += grandPrix ? 72 : low ? 33 : 27) {
+ for (let s = 16; s < (summit || !venue.water || venue.vegetation!=='palms' ? 0 : TRACK.length); s += grandPrix ? 72 : low ? 33 : 27) {
   const p = sampleTrack(s), sign = p.x * p.nx + p.z * p.nz > 0 ? 1 : -1, o = sign * (TRACK.width / 2 + 3.5 + rng() * .6), x = p.x + p.nx * o, z = p.z + p.nz * o, h = 7.8 + rng() * 4.3, leanX = (rng() - .5) * 1.7, leanZ = (rng() - .5) * 1.7;
   if (standLayouts.some(stand => Math.hypot(x - stand.x, z - stand.z) < 14)) continue;
   for (let j = 0; j < 7; j++) { const a = j / 7, b = (j + 1) / 7; segment(trunks, [x + leanX * a * a, h * a, z + leanZ * a * a], [x + leanX * b * b, h * b, z + leanZ * b * b], .21 - a * .07); }
@@ -517,7 +499,7 @@ export function createWorld(renderer, { low = false } = {}) {
   boat.visible=false;
   for(let i=0;i<12;i++){
    const a=i/12*TAU,x=venue.centerX+Math.cos(a)*venue.radius*.47,z=venue.centerZ+Math.sin(a)*venue.radius*.47;
-   if(projectOnTrack(x,z).distance>TRACK.width/2+28){boat.position.set(x,-.8,z);boat.visible=true;break;}
+   if(projectOnTrack(x,z).distance>TRACK.width/2+28&&(scene.userData.originalLandmarks||[]).every(site=>Math.hypot(x-site.x,z-site.z)>site.radius+22)){boat.position.set(x,-.8,z);boat.visible=true;break;}
   }
  }
  if (!summit && !grandPrix && venue.water) scene.add(boat);
@@ -563,7 +545,7 @@ export function createWorld(renderer, { low = false } = {}) {
     const x = 23 + row * 1.5, z = seat * 1.55, color = (seat + row) % 4 === 0 ? '#dbe3e5' : '#167683';
     seats.push({ x, y: 1.02 + row * .75, z, sx: .74, sy: .20, sz: .90, color });
     seats.push({ x: x + .31, y: 1.37 + row * .75, z, sx: .10, sy: .59, sz: .90, color });
-    if (crowdRng() > (low ? .42 : .12)) {
+    if (crowdRng() > .13) {
      const standing = row === 6 && seat % 3 === 0, px = x - (standing ? .67 : 0);
      crowd.add(p.x + p.nx * px + p.tx * z, .73 + row * .75, p.z + p.nz * px + p.tz * z, paddock.rotation.y - Math.PI / 2 + (crowdRng() - .5) * .2, !standing, crowdRng);
     }
@@ -587,5 +569,5 @@ export function createWorld(renderer, { low = false } = {}) {
   }
  }
  crowd.render(scene);
- return { scene, reflection, sun, startLights, update(time, car) { sea.material.uniforms.time.value = time; boat.position.y = -.8 + Math.sin(time * .7) * .065; if (car) { sun.position.set(car.x - 150,venue.sunHeight,car.z + 130); sun.target.position.set(car.x, 0, car.z); } } };
+ return { scene, reflection, sun, startLights, backdrop, update(time, car, motion = {}) { backdrop.update(time,{reducedMotion:motion.reducedMotion??reducedMotion});fallbackRidge.material.opacity=1-backdrop.uniforms.cinematicAmount.value;fallbackRidge.visible=fallbackRidge.material.opacity>.001;crowd.update(time, car, motion); landmarks.update(time,{paused:motion.paused,reducedMotion:motion.reducedMotion??reducedMotion}); sea.material.uniforms.time.value = time; boat.position.y = -.8 + Math.sin(time * .7) * .065; if (car) { sun.position.set(car.x - 150,venue.sunHeight,car.z + 130); sun.target.position.set(car.x, 0, car.z); } } };
 }

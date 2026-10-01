@@ -1,0 +1,42 @@
+{
+  "method": "Built-in image generation tool",
+  "date": "2026-10-01",
+  "ownership": "Original artwork commissioned for Blacktop Bay. No Asphalt assets, screenshots, or branding used.",
+  "processing": "Sharp resize and WebP encoding only; original composition retained. Runtime samples the distant sky and horizon while preserving actual 3D terrain.",
+  "prompts": {
+    "coastal": {
+      "text": "Original seamless 360-degree equirectangular coastal panorama, 2:1, distant rocky headlands and harbor skyline beneath blue-hour sky with warm horizon, dark ocean lower half, horizon centered. Detailed cinematic natural landscape, no roads/cars/people/text/logos/UI. Intended behind real3D race geometry.",
+      "recordType": "reconstructed description",
+      "source": "exec-1a859644-e9d9-4d55-8100-779c8bb1d5b2.png",
+      "sourceSha256": "1cdca631d6b708f4f5224dd0c3110c74fda2e0b8c693dd9bf3a26c1bc65cce63"
+    },
+    "desert": {
+      "text": "Use case: photorealistic-natural. Asset type: original high-resolution seamless 360-degree equirectangular skybox for a 3D racing game, exact 2:1 aspect ratio. Create a panoramic desert canyon environment with distant richly stratified copper sandstone mesas and rugged mountains under dramatic clear late-afternoon sky. Horizon exactly halfway vertically. Upper half entirely expansive blue sky with delicate high clouds; mountains occupy a thin band around horizon with most peaks below 40 percent image height. Lower half distant desert plain, earth and subtle haze, no foreground objects. Warm sunset sunlight from one side, natural cinematic detail and realistic geology. Seamless left/right edges, panorama wraps 360 degrees, visually plausible spherical projection. Intended background BEHIND real 3D track geometry. No roads, no cars, no people, no text, no logos, no game UI, no buildings. This must be an entirely original environment, not a scene from an existing game.",
+      "recordType": "exact generation prompt",
+      "source": "exec-180b595c-4dcf-462c-8bbd-a8b0ae1d8cb5.png",
+      "sourceSha256": "059f1841820829e61e8dbe6c823b278ca75e9b228bf2aeb70eaae41a66e8a074"
+    },
+    "alpine": {
+      "text": "Use case: photorealistic-natural. Asset type: original high-resolution seamless 360-degree equirectangular environment skybox for a 3D racing game, exact 2:1 aspect ratio. Create a panoramic alpine forest valley with distant realistic pine-covered ridges and stone mountain peaks, morning sunlight, delicate mist in valleys and expansive pale blue sky with soft clouds. Horizon exactly halfway vertically. Upper half mostly sky, highest distant peaks no higher than 38 percent image height. Lower half pine forest slopes and meadow valley seen from the broad open valley floor, no close trees or foreground objects. Lush dark green, natural cool grey rock, warm highlights, premium cinematic landscape photography. Seamless left/right edges wrapping360 degrees; believable spherical projection. Intended background BEHIND real 3D race track geometry. No roads, cars, people, logos, text, game UI or close buildings. Entirely original environment.",
+      "recordType": "exact generation prompt",
+      "source": "exec-ce0ff5ef-98e7-4a84-85b7-6b0f3bec5c31.png",
+      "sourceSha256": "1e85c445018de255363a4b57904ee4c95a51189aaebec7f671cf9a3b92595267"
+    },
+    "urban": {
+      "text": "Use case: photorealistic-natural. Asset type: original high-resolution seamless360-degree equirectangular city skybox for a3D racing game, exact2:1 aspect ratio. A distant coastal industrial metropolis at blue hour just after sunset, refined modern towers and cranes along a faraway harbour skyline with warm window lights and restrained violet/cyan accents. Not a recognizable real city. Horizon exactly halfway vertically. Upper half expansive richly layered indigo evening sky and delicate clouds, tallest skyline peaks no higher than40 percent image height. Lower half dark distant harbour terrain and deep navy water, no close foreground objects. Cinematic realistic lighting, exquisite believable architecture, low haze. Seamless left/right edges wrapping360 degrees, plausible spherical projection. Used behind actual3D city buildings and race track. No roads, cars, people, ads, text, logos or UI. Entirely original artwork, not an existing game scene.",
+      "recordType": "exact generation prompt",
+      "source": "exec-b1d1e422-c6a0-4a94-90e4-94358c51babe.png",
+      "sourceSha256": "099eb060dee344716749258935fca3c20d7d467728ebb8e66ccf43a10867a1f1"
+    }
+  },
+  "runtime": {
+    "assets": "public/assets/environments/",
+    "module": "src/cinematic-backdrop.js",
+    "desktop": "1774 \u00d7 887, quality 90 WebP, 258\u2013308 KB",
+    "mobile": "1024 \u00d7 512, quality 83 WebP, 71\u201387 KB",
+    "memory": "One panorama requested per circuit; mobile texture plus mip chain uses approximately 2.8 MB RGBA GPU storage.",
+    "fallback": "Procedural sky and ridge remain on image failure; background fades in on success, immediately with reduced-motion preference.",
+    "lighting": "Race reflection map and lighting remain procedural; the garage scene is unaffected.",
+    "lifecycle": "Non-blocking fetch/decode; abort on disposal, dispose GPU texture and close decoded ImageBitmap. Pagehide preserves BFCache."
+  }
+}

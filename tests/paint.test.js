@@ -5,8 +5,8 @@ import { PAINT_KEY, loadPaint, savePaint, getPaint, applyPaint } from '../src/pa
 import { VEHICLES } from '../src/vehicles.js';
 const memory = () => { const data = new Map(); return {getItem:k=>data.get(k),setItem:(k,v)=>data.set(k,v)}; };
 
-test('all twenty builds begin with their own factory colour and safe gloss finish', () => {
-  const state = loadPaint(memory()); assert.equal(Object.keys(state).length,20);
+test('all available cars begin with their own factory colour and safe gloss finish', () => {
+  const state = loadPaint(memory()); assert.equal(Object.keys(state).length,VEHICLES.length);
   for (const v of VEHICLES) { assert.equal(getPaint(v.id,state[v.id]).color,v.color); assert.equal(state[v.id].finish,'gloss'); }
 });
 test('fourteen-car paint saves add six independent factory finishes without replacing old choices', () => {
