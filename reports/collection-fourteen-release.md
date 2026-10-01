@@ -25,3 +25,8 @@ These are browser viewport checks, not physical-device performance measurements.
 Blacktop Bay commit `3fb0af9` pushed to personal GitHub and deployed to `https://blacktop-bay.web.app/` with 186/186 predeploy tests. Live JavaScript `index-CeA2kX34.js` and CSS `index-BSDRvOKm.css` match the built files byte for byte; published HTML advertises all fourteen names and contains only Nitro as a driving action.
 
 AppsOverFlow commit `4cb2b7e` pushed and deployed to `https://appsoverflow.web.app/`. Production deploy passed 3,011 static checks plus 22 backend/148 contact-client mock checks; live homepage and `/projects/blacktop-bay/` contain the fourteen-car content. No contact submission was sent as part of this change.
+
+
+### Final surface correction
+
+Commit `af6633d` pushed and deployed successfully after **187/187 predeploy tests**. Published `index-DeOU3_Rd.js`, `index-BSDRvOKm.css` and both versioned GT GLBs match the final build byte for byte. The live 1280×800 garage shows all four additions with corrected body/wheel surfaces and no browser warnings/errors. Final screenshot: `reports/fourteen-car-garage-live.png` (local, Git-ignored). The final local 844×390 Kestrel race also verified actual advancing time/progress with Nitro as its only touch driving button.
