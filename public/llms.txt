@@ -10,7 +10,7 @@ Blacktop Bay runs directly in a modern web browser (WebGL 2 required) at https:/
 
 - Choose a race car in the Garage and, optionally, spend earned credits on upgrades.
 - Pick one of five circuits on the home screen, then start the race.
-- The car accelerates automatically; steer with Left/Right (or A/D), brake with Down (or S).
+- With driving pads visible, hold Gas or Up/W to accelerate and release to coast; without pads, acceleration is automatic. Nitro also accelerates; Brake overrides Gas and Nitro. Steer with Left/Right (or A/D), brake with Down (or S).
 - Drift through corners with Space (or the Drift pad) to bank clean drift points.
 - Hold Shift (or the Nitro pad) for a boost on clear straights; release to recharge.
 - Complete three laps through the ordered checkpoints to finish and earn credits.

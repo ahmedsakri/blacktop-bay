@@ -104,12 +104,13 @@ export function createAudio() {
     if(gear<4 && speed>(gear+1)*15+1)gear++;
     else if(gear>0 && speed<gear*15-2)gear--;
     const load=clamp((speed-gear*15)/16,0,1);
-    const pitch=38+load*42+Math.min(speed,70)*.13+drift*5;
+    const throttle=clamp(finite(state.throttle,1),0,1);
+    const pitch=38+load*42+Math.min(speed,70)*.13+drift*5+throttle*3;
     const smooth=clamp(finite(dt,1/60)*5,.055,.18);
     target(bodyOsc.frequency,pitch,smooth);
     target(harmonicOsc.frequency,pitch*2.006,smooth);
     target(subOsc.frequency,pitch*.5,smooth);
-    target(engineFilter.frequency,340+load*550+speed*5,.11);
+    target(engineFilter.frequency,270+load*(throttle?550:240)+speed*5,.11);
     const moving=clamp((speed-3)/12,0,1);
     const scrub=Math.max(drift,brake*.22)*moving;
     target(tyreGain.gain,Math.pow(scrub,1.35)*.16,.060);

@@ -1,6 +1,8 @@
 import { PAINT_COLORS, PAINT_FINISHES, loadPaint, savePaint, getPaint, applyPaint } from './paint.js';
 import "./style.css";
 import "./racing.css";
+import "./mobile-hud.css";
+import { createDrivingInputs, resolveDriveControls } from "./driving-controls.js";
 import * as THREE from "three";
 import WebGL from "three/addons/capabilities/WebGL.js";
 import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
@@ -115,18 +117,20 @@ let records = loadRecords(recordStore),
   countdownTimer = 0,
   pendingLandscapeStart = false,
   orientationFocus = null;
+const coarsePointer = matchMedia("(any-pointer:coarse)");
 const input = {
     left: false,
     right: false,
     brake: false,
     drift: false,
     nitro: false,
+    throttle: false,
   },
-  pointerOwners = new Map(),
+  pointerInputs = createDrivingInputs(),
   heldKeys = new Set(),
   heldPads = new Set(),
   reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
-const mobile = matchMedia("(pointer:coarse)").matches || innerWidth < 700;
+const mobile = usesTouchControls();
 document.body.classList.toggle("touch-mode", mobile);
 $("track-km").textContent = (TRACK.length / 1000).toFixed(2);
 if (typeof preferences.sound === "boolean") records.sound = preferences.sound;
@@ -196,7 +200,7 @@ async function initGame() {
     renderer.domElement.tabIndex = 0;
     renderer.domElement.setAttribute(
       "aria-label",
-      "Race canvas. Auto acceleration. Arrow keys or A and D steer, Space drifts, Down or S brakes, Shift boosts, R resets, and Escape pauses.",
+      "Race canvas. With driving pads, hold Gas or W or Up to accelerate, or Nitro to accelerate and boost. Without driving pads, acceleration is automatic. Arrow keys or A and D steer, Space drifts, Down or S brakes, Shift boosts, R resets, and Escape pauses.",
     );
     camera = new THREE.PerspectiveCamera(
       55,
@@ -220,7 +224,7 @@ async function initGame() {
       model.group.visible = false;
       return model;
     });
-    carFill = new THREE.DirectionalLight("#91bddb", 1.0);
+    carFill = new THREE.DirectionalLight("#c1d5e2", .55);
     world.scene.add(carFill, carFill.target);
     garageStudio = createGarage(renderer, { low: mobile });
     addHeadlights(player);
@@ -284,7 +288,7 @@ async function initGame() {
   }
 }
 function needsLandscape() {
-  const mobileViewport = matchMedia("(any-pointer:coarse)").matches || navigator.maxTouchPoints > 0 || innerWidth < 700;
+  const mobileViewport = coarsePointer.matches || navigator.maxTouchPoints > 0 || innerWidth < 700;
   return mobileViewport && innerHeight > innerWidth;
 }
 function orientationGate(show) {
@@ -330,16 +334,20 @@ $("orientation-home").onclick = () => {
   orientationGate(false);
   menu();
 };
+function usesTouchControls() {
+  return coarsePointer.matches || navigator.maxTouchPoints > 0 || innerWidth < 700 || (innerWidth < 1000 && innerHeight < 540);
+}
 function updateTouchControls() {
-  const touch = matchMedia("(any-pointer:coarse)").matches || innerWidth < 700 || (innerWidth < 1000 && innerHeight < 540);
+  const touch = usesTouchControls();
   document.body.classList.toggle("touch-mode", touch);
   $("touch").hidden = !touch || !["racing", "countdown"].includes(mode);
 }
 function syncInput() {
+  const pressedPointers = pointerInputs.read();
   for (const key in input)
     input[key] =
       [...heldKeys].some((code) => keyMap[code] === key) ||
-      [...pointerOwners.values()].includes(key) || heldPads.has(key);
+      pressedPointers[key] || heldPads.has(key);
   for (const b of document.querySelectorAll("[data-input]")) {
     b.classList.toggle("pressed", input[b.dataset.input]);
     b.setAttribute("aria-pressed", String(input[b.dataset.input]));
@@ -349,7 +357,7 @@ function clearInput() {
   heldKeys.clear();
   heldPads.clear();
   for (const key in input) input[key] = false;
-  pointerOwners.clear();
+  pointerInputs.clear();
   for (const el of document.querySelectorAll("[data-input]")) {
     el.classList.remove("pressed");
     el.setAttribute("aria-pressed", "false");
@@ -530,6 +538,7 @@ function start() {
   $("garage").hidden = true;
   $("hud").hidden = false;
   $("pause").hidden = false;
+  $("consent-banner").hidden = true;
   updateTouchControls();
   $("countdown").hidden = false;
   $("ghost-label").textContent = "YOU · 3 RIVALS";
@@ -564,6 +573,7 @@ function menu() {
   $("countdown").hidden = true;
   updateMenu();
   effects.clear();
+  $("consent-banner").hidden = getAnalyticsConsent() !== "unset";
   $("start").focus({ preventScroll: true });
 }
 function pauseGame() {
@@ -603,7 +613,7 @@ function how() {
     kind: "how",
     eyebrow: "FIND YOUR LINE",
     title: "Brake. Turn.<br><em>Let it slide.</em>",
-    html: `<p>The car accelerates for you. Steer into each corner, hold drift briefly to loosen the rear, then release it and steer gently back into line.</p><div class="controls-guide"><div><b>Steer</b><span>← / → or A / D</span></div><div><b>Drift / handbrake</b><span>Hold Space</span></div><div><b>Brake</b><span>↓ or S</span></div><div><b>Nitro boost</b><span>Hold Shift</span></div><div><b>Reset / pause</b><span>R / Esc</span></div></div><p>On a phone, rotate to landscape to race with the large driving pads. Turning upright pauses the race. Race three laps against three rivals. Hold Shift or the NITRO pad for extra speed; release it to recharge while driving and drifting. Finish first to take the win. Best times are saved separately for each car and circuit on this device. Earn race credits at the finish, then use Garage → Upgrade car to improve each car’s engine, tyres, nitro and handling. Keep a drift clean to build your multiplier; hitting a barrier loses unbanked points.</p>`,
+    html: `<p>When driving pads are visible, hold GAS (or W / ↑) to drive and release it to coast. Without driving pads, acceleration is automatic; hold NITRO to accelerate and boost together. The brake always takes priority. Steer into each corner, hold drift briefly to loosen the rear, then release it and steer gently back into line.</p><div class="controls-guide"><div><b>Steer</b><span>← / → or A / D</span></div><div><b>Drift / handbrake</b><span>Hold Space</span></div><div><b>Brake</b><span>↓ or S</span></div><div><b>Nitro boost</b><span>Hold Shift</span></div><div><b>Reset / pause</b><span>R / Esc</span></div></div><p>On a phone, rotate to landscape to race with the driving pads: steer on the left and use GAS, BRAKE or NITRO on the right. DRIFT sits beside BRAKE: lift off GAS and hold DRIFT while steering into a corner. Turning upright pauses the race. Race three laps against three rivals. Hold Shift or the NITRO pad for extra speed; release it to recharge while driving and drifting. Finish first to take the win. Best times are saved separately for each car and circuit on this device. Earn race credits at the finish, then use Garage → Upgrade car to improve each car’s engine, tyres, nitro and handling. Keep a drift clean to build your multiplier; hitting a barrier loses unbanked points.</p>`,
     actions: [
       { label: "GOT IT", primary: true, action: closeDialog },
       { label: "LET’S DRIVE", action: start },
@@ -829,6 +839,8 @@ const keyMap = {
   KeyA: "left",
   ArrowRight: "right",
   KeyD: "right",
+  ArrowUp: "throttle",
+  KeyW: "throttle",
   ArrowDown: "brake",
   KeyS: "brake",
   Space: "drift",
@@ -892,11 +904,11 @@ for (const b of document.querySelectorAll("[data-input]")) {
     if (!["racing", "countdown"].includes(mode) || e.button !== 0) return;
     e.preventDefault();
     b.setPointerCapture(e.pointerId);
-    pointerOwners.set(e.pointerId, b.dataset.input);
+    pointerInputs.press(e.pointerId, b.dataset.input);
     syncInput();
   });
   const release = (e) => {
-    pointerOwners.delete(e.pointerId);
+    pointerInputs.release(e.pointerId);
     syncInput();
   };
   b.addEventListener("pointerup", release);
@@ -952,7 +964,7 @@ window.addEventListener("resize", () => {
   if(mode === "garage") document.querySelector("[data-vehicle][aria-pressed=\"true\"]")?.scrollIntoView({block:"nearest",inline:"center",behavior:"instant"});
 });
 function placeCar() {
-  player.group.position.set(race.car.x, 0.055, race.car.z);
+  player.group.position.set(race.car.x, mode === "garage" ? 0.038 : 0.013, race.car.z);
   player.group.rotation.y = race.car.yaw;
 }
 
@@ -1016,12 +1028,13 @@ function updateCamera(dt, instant = false) {
       Math.cos(cameraHeading),
     );
     cameraSpeed += (c.speed - cameraSpeed) * (1 - Math.exp(-dt * 4));
-    camTarget.copy(pos).addScaledVector(forward, -8.5 - cameraSpeed * 0.048);
+    const phoneChase = usesTouchControls();
+    camTarget.copy(pos).addScaledVector(forward, -(phoneChase ? 7.4 : 8.5) - cameraSpeed * (phoneChase ? 0.025 : 0.048));
     camTarget.y = 3.5 + cameraSpeed * 0.012;
     lookTarget.copy(pos).addScaledVector(forward, 5.5);
     lookTarget.y = 1.05;
     camera.fov =
-      56 + cameraSpeed * 0.22 + (race.nitro.active && !reduced ? 5 : 0);
+      (phoneChase ? 52 : 56) + cameraSpeed * (phoneChase ? 0.12 : 0.22) + (race.nitro.active && !reduced ? 4 : 0);
   }
   const blend = instant ? 1 : 1 - Math.exp(-dt * (mode === "menu" ? 2 : 7));
   camera.position.lerp(camTarget, blend);
@@ -1070,50 +1083,25 @@ const trackBounds = {
 };
 const map = $("map").getContext("2d");
 function drawMap() {
-  const a = TRACK.samples,
-    b = trackBounds;
-  const scale = 210 / Math.max(b.maxX - b.minX, b.maxZ - b.minZ);
-  const to = (x, z) => [
-    140 + (x - (b.maxX + b.minX) / 2) * scale,
-    140 + (z - (b.maxZ + b.minZ) / 2) * scale,
-  ];
-  map.clearRect(0, 0, 280, 280);
-  map.lineCap = "round";
-  map.lineJoin = "round";
-  map.beginPath();
-  a.forEach((p, i) => {
-    const [x, y] = to(p.x, p.z);
-    i ? map.lineTo(x, y) : map.moveTo(x, y);
-  });
-  map.closePath();
-  map.strokeStyle = "#082132b5";
-  map.lineWidth = 13;
-  map.stroke();
-  map.strokeStyle = "#bdd1db99";
-  map.lineWidth = 3;
-  map.stroke();
-  for (const rival of race.rivals) {
-    const [x, y] = to(rival.car.x, rival.car.z);
-    map.beginPath();
-    map.arc(x, y, 4.5, 0, Math.PI * 2);
-    map.fillStyle = rival.color;
-    map.fill();
-  }
-  const [x, y] = to(race.car.x, race.car.z);
-  map.save();
-  map.translate(x, y);
-  map.rotate(-race.car.yaw);
-  map.beginPath();
-  map.moveTo(0, 8);
-  map.lineTo(-6, -6);
-  map.lineTo(6, -6);
-  map.closePath();
-  map.fillStyle = "#ff715b";
-  map.shadowColor = "#ff8e67";
-  map.shadowBlur = 8;
-  map.fill();
-  map.restore();
+  const a = TRACK.samples, b = trackBounds;
+  const scale = Math.min(266 / Math.max(1,b.maxX-b.minX), 150 / Math.max(1,b.maxZ-b.minZ));
+  const to = (x,z) => [160+(x-(b.maxX+b.minX)/2)*scale,100+(z-(b.maxZ+b.minZ)/2)*scale];
+  map.clearRect(0,0,320,200);
+  map.lineCap="round";map.lineJoin="round";
+  map.beginPath();a.forEach((p,i)=>{const[x,y]=to(p.x,p.z);i?map.lineTo(x,y):map.moveTo(x,y);});map.closePath();
+  map.strokeStyle="#040b12";map.lineWidth=17;map.stroke();
+  map.strokeStyle="#7998ab";map.lineWidth=9;map.stroke();
+  map.strokeStyle="#d8e9f2";map.lineWidth=2;map.stroke();
+  const start=sampleTrack(0),[sx,sy]=to(start.x,start.z);
+  map.save();map.translate(sx,sy);map.rotate(-Math.atan2(start.tx,start.tz));
+  for(let row=0;row<2;row++)for(let col=0;col<4;col++){map.fillStyle=(row+col)%2?"#08121b":"#fff";map.fillRect(col*4-8,row*4-4,4,4);}map.restore();
+  for(const rival of race.rivals){const[x,y]=to(rival.car.x,rival.car.z);map.beginPath();map.arc(x,y,5.5,0,Math.PI*2);map.fillStyle="#f6b777";map.fill();map.strokeStyle="#192430";map.lineWidth=2;map.stroke();}
+  const[x,y]=to(race.car.x,race.car.z);map.save();map.translate(x,y);map.rotate(-race.car.yaw);
+  map.beginPath();map.moveTo(0,11);map.lineTo(-8,-8);map.lineTo(0,-4);map.lineTo(8,-8);map.closePath();
+  map.fillStyle="#93ffeb";map.strokeStyle="#092d31";map.lineWidth=3;map.stroke();map.fill();map.restore();
+  $("map-track").textContent=TRACK.name;
 }
+
 function updateHud() {
   $("position").textContent = race.position;
   $("rival-order").innerHTML = race.leaderboard
@@ -1124,6 +1112,9 @@ function updateHud() {
     .join("");
   const charge = race.nitro.charge / race.nitro.capacity;
   $("nitro-fill").style.width = `${charge * 100}%`;
+  $("pad-nitro-fill").style.transform = `scaleX(${charge})`;
+  $("nitro-pad-label").textContent = race.nitro.locked ? "RELEASE" : race.nitro.active ? "BOOST" : "NITRO";
+  $("pedal-hint").hidden = !usesTouchControls() || race.car.speed > 1 || input.throttle || input.nitro;
   $("nitro-amount").textContent = `${Math.round(charge * 100)}%`;
   $("nitro-status").textContent = race.nitro.active
     ? "NITRO ACTIVE"
@@ -1184,6 +1175,7 @@ function updateHud() {
 }
 function tick(now) {
   const wasFinished = mode === "finished";
+  const driveControls = resolveDriveControls(input, {manualThrottle: usesTouchControls()});
   const dt = Math.min((now - last) / 1000, 0.05);
   last = now;
   time += dt;
@@ -1218,13 +1210,7 @@ function tick(now) {
     const lastLap = race.completedLaps;
     stepRace(
       race,
-      {
-        steer: (input.right ? 1 : 0) - (input.left ? 1 : 0),
-        throttle: 1,
-        brake: input.brake,
-        handbrake: input.drift,
-        nitro: input.nitro,
-      },
+      driveControls,
       dt,
     );
     if (race.elapsed >= nextFrame && frames.length < 9000) {
@@ -1264,7 +1250,7 @@ function tick(now) {
     profile: player.group.userData.effects,
     brake: input.brake,
     handbrake: input.drift,
-    throttle: mode === "racing" && !input.brake ? 1 : 0,
+    throttle: mode === "racing" ? driveControls.throttle : 0,
     collision: race.collision,
     menu: mode === "menu" || mode === "garage",
   });
@@ -1285,6 +1271,7 @@ function tick(now) {
       drift: race.car.drifting,
       brake: input.brake,
       running: mode === "racing",
+      throttle: driveControls.throttle,
     },
     dt,
   );
