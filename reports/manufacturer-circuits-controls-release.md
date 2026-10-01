@@ -47,3 +47,7 @@ Actual production-preview races were inspected on Harbor Flow, Breakwater Run an
 Final screenshots: `garage-release-final.png`, `race-release-final.png`, `mobile-race-release-final.png`, and the four `*-environment-final.png` views in this reports directory. AppsOverFlow uses the actual final McLaren garage and Cedar Ridge race screenshots, with matching captions.
 
 **Physical iOS/Android tilt sensors, permission prompts and two-finger device input have not been tested on an actual phone.** Browser viewport checks and automated input tests do not establish physical-phone performance. Missing-sensor fallback was also observed in the browser.
+
+## Production release
+
+Published successfully to `https://blacktop-bay.web.app/` on 1 October 2026 from commit `8fd4cdd`. Firebase predeploy reran all 398 tests successfully and rebuilt production. The public homepage and alpine texture returned HTTP 200, and production CSP contains the required WebAssembly compilation and embedded texture blob allowances. The public browser loaded the updated 36-car/34-circuit catalogue. The AppsOverFlow listing was pushed and deployed from `1c6f61f`, including fresh actual race imagery with cache versioning; its live page contains the new counts, Cedar Ridge caption and image version. All Apps static/contact/sharing checks passed. No live contact enquiry was sent.
