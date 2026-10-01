@@ -51,7 +51,7 @@ for(const descriptor of ORIGINAL_CIRCUITS){
     assert.ok(grandstandLayout(t).length>=4,'the grid should have room for spectators');
   });
 
-  for(const rivalVehicles of [undefined,MANUFACTURER_RIVAL_VEHICLES])test(`${descriptor.name}: player and ${rivalVehicles?'manufacturer':'original'} opponents complete three laps without recovery`,()=>{
+  for(const rivalVehicles of [undefined,MANUFACTURER_RIVAL_VEHICLES])test(`${descriptor.name}: player and ${rivalVehicles?'explicit manufacturer':'default manufacturer'} opponents complete three laps without recovery`,()=>{
     const race=createRace({track:descriptor.id,rivalVehicles}),track=getTrack(descriptor.id);startRace(race);
     for(let frame=0;frame<120*420&&!race.allFinished;frame++){
       const p=projectOnTrack(race.car.x,race.car.z,0,track),near=sampleTrack(p.s+3,track),far=sampleTrack(p.s+22,track);

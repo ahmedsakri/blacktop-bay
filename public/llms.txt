@@ -1,6 +1,6 @@
 # Blacktop Bay
 
-> Blacktop Bay is a free, single-player 3D browser racing game by AppsOverFlow. Race three computer-controlled rivals across thirty-four asphalt circuits in one of 36 cars, earn race credits, and upgrade your car. No account, no install, no purchases.
+> Blacktop Bay is a free, single-player 3D browser racing game by AppsOverFlow. Race three computer-controlled rivals across thirty-four asphalt circuits in one of 16 cars, earn race credits, and upgrade your car. No account, no install, no purchases.
 
 ## About the game
 
@@ -37,7 +37,7 @@ Venue outline data: Tomislav Bacinger / f1-circuits, MIT, with compact arcade mo
 
 ## Race cars
 
-Twenty tuned race builds across three families: seven GT builds (Apex GT, Apex Sprint, Torque R, Torque RS, Kestrel GT-R, Corsair GTS, Stratus GT3), four Formula builds (Vortex P1, Vortex X, Vector F, Zenith FX) and nine Prototype builds (Spectre LM, Spectre LM-R, Cinder R, Cinder RX, Mirage LMP, Solstice One, Tempest XR, Vela R, Aurora LMX). These fictional builds share licensed source geometry and original coachwork rather than representing twenty independently sourced models. All twenty are available from the start. Each car has five upgrade levels for Engine, Tyres, Nitro and Handling, purchased with earned race credits. Original build names are fictional; manufacturer models retain their actual names. All handling is arcade tuning.
+The garage contains 16 artist-made manufacturer models across 13 brands. All are available from the start and retain their actual model names, including labelled artist interpretations. Each car has five upgrade levels for Engine, Tyres, Nitro and Handling, purchased with earned race credits. Road cars, classics, grand tourers and track-focused models use arcade tuning rather than real-world performance specifications.
 
 ## Key Facts
 
@@ -45,7 +45,7 @@ Twenty tuned race builds across three families: seven GT builds (Apex GT, Apex S
 - Free to play; no account, no install and no real-money purchases.
 - Runs in a modern web browser; WebGL 2 and an internet connection are required to load.
 - Single-player only: one human racer versus three computer-controlled opponents (Mira, Jax and Nova) in a four-car field over three laps.
-- 36 cars: 16 individually sourced real-car representations across 13 brands and 20 original GT, Formula and Prototype builds; 34 asphalt circuits, all available from the start.
+- 16 cars: individually sourced manufacturer representations across 13 brands; 34 asphalt circuits, all available from the start.
 - Each car has five upgrade levels for Engine, Tyres, Nitro and Handling, bought with earned race credits.
 - Progress (records, credits, upgrades and paint) is saved locally in the browser; there is no online multiplayer.
 
@@ -64,6 +64,6 @@ Twenty tuned race builds across three families: seven GT builds (Apex GT, Apex S
 
 ## Real-car collection
 
-Choose from 36 cars: 16 independently sourced real-car representations and 20 original GT, Formula and Prototype builds. Real cars include McLaren 570S Coupé, McLaren Senna, McLaren P1 GTR, Ferrari 458 Spider, Lamborghini Aventador, Koenigsegg One:1, Pagani Zonda C12, Bugatti Veyron, Maserati GranTurismo MC Stradale, Lotus Elise, Audi R8 Custom, Rimac Concept One, Porsche 911 (930) Turbo, GMA T.50 Custom, Aston Martin One-77, Rimac Nevera. Each car has its own game tuning and saved upgrades. Speed, handling and Nitro ratings describe the arcade game, not manufacturer specifications. Paint changes are free on supported body materials.
+Choose from 16 independently sourced manufacturer representations across 13 brands. Real cars include McLaren 570S Coupé, McLaren Senna, McLaren P1 GTR, Ferrari 458 Spider, Lamborghini Aventador, Koenigsegg One:1, Pagani Zonda C12, Bugatti Veyron, Maserati GranTurismo MC Stradale, Lotus Elise, Audi R8 Custom, Rimac Concept One, Porsche 911 (930) Turbo, GMA T.50 Custom, Aston Martin One-77, Rimac Nevera. Each car has its own game tuning and saved upgrades. Speed, handling and Nitro ratings describe the arcade game, not manufacturer specifications. Paint changes are free on supported body materials.
 
 New manufacturer models load only when selected; the catalogue uses lightweight rendered previews. Original model finishes and source credits are retained. The crowd uses individually posed animated 3D spectators with waves, claps, cheering and filming; it is not photoreal video.

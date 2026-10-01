@@ -1,4 +1,5 @@
 import { VEHICLES, getVehicle } from './vehicles.js';
+import { LEGACY_VEHICLES } from './legacy-vehicles.js';
 
 export const PAINT_KEY = 'blacktop-bay-paint-v1';
 export const PAINT_COLORS = Object.freeze([
@@ -20,15 +21,21 @@ export const PAINT_FINISHES = Object.freeze([
   {id: 'satin', name: 'Satin', metalness: .22, roughness: .48, clearcoat: .28, clearcoatRoughness: .34},
 ].map(Object.freeze));
 const normalize = value => ({color: PAINT_COLORS.some(c => c.id === value?.color) ? value.color : 'factory', finish: PAINT_FINISHES.some(f => f.id === value?.finish) ? value.finish : 'gloss'});
+function normalizeState(value) {
+  const state = Object.fromEntries(VEHICLES.map(v => [v.id, normalize(value?.[v.id])]));
+  // Keep saved finishes for retired builds without exposing them in the garage.
+  for (const {id} of LEGACY_VEHICLES) if (Object.hasOwn(value ?? {}, id)) state[id] = normalize(value[id]);
+  return state;
+}
 export function loadPaint(storage) {
   let raw = {};
   try { const json = (storage ?? globalThis.localStorage)?.getItem(PAINT_KEY); if (typeof json === 'string' && json.length < 10_000) raw = JSON.parse(json); } catch {}
-  return Object.fromEntries(VEHICLES.map(v => [v.id, normalize(raw?.[v.id])]));
+  return normalizeState(raw);
 }
 export function savePaint(state, vehicle, choice, storage) {
   if (!VEHICLES.some(v => v.id === vehicle)) return {ok: false, persisted: false};
   state[vehicle] = normalize(choice);
-  try { const target = storage ?? globalThis.localStorage; if (!target?.setItem) return {ok: true, persisted: false}; target.setItem(PAINT_KEY, JSON.stringify(Object.fromEntries(VEHICLES.map(v => [v.id, normalize(state[v.id])])))); return {ok: true, persisted: true}; }
+  try { const target = storage ?? globalThis.localStorage; if (!target?.setItem) return {ok: true, persisted: false}; target.setItem(PAINT_KEY, JSON.stringify(normalizeState(state))); return {ok: true, persisted: true}; }
   catch { return {ok: true, persisted: false}; }
 }
 export function getPaint(vehicle, choice) {

@@ -5,14 +5,14 @@ import {
 } from '../src/race-dialogs.js';
 
 const race = () => ({
-  vehicle: 'gt', track: 'coast', totalLaps: 3, completedLaps: 3,
+  vehicle: 'porsche-930-turbo', track: 'coast', totalLaps: 3, completedLaps: 3,
   state: 'finished', elapsed: 145.23, bestLap: 46.15, score: 2180, recoveries: 2,
   position: 2, allFinished: false,
   leaderboard: [
-    { position: 1, name: 'Rival One', vehicle: 'rally', finished: true, finishTime: 143.4, completedLaps: 3 },
-    { position: 2, isPlayer: true, vehicle: 'gt', finished: true, finishTime: 145.23, completedLaps: 3 },
-    { position: 3, name: 'Rival Two', vehicle: 'coupe', finished: false, finishTime: null, completedLaps: 2 },
-    { position: 4, name: 'Rival Three', vehicle: 'sprint', finished: false, finishTime: null, completedLaps: 1 },
+    { position: 1, name: 'Rival One', vehicle: 'rimac-concept-one', finished: true, finishTime: 143.4, completedLaps: 3 },
+    { position: 2, isPlayer: true, vehicle: 'porsche-930-turbo', finished: true, finishTime: 145.23, completedLaps: 3 },
+    { position: 3, name: 'Rival Two', vehicle: 'lotus-elise', finished: false, finishTime: null, completedLaps: 2 },
+    { position: 4, name: 'Rival Three', vehicle: 'mclaren-570s', finished: false, finishTime: null, completedLaps: 1 },
   ],
 });
 
@@ -46,7 +46,7 @@ test('results show the persisted benchmark and actual reward receipt without mut
   assert.match(html, /2,008 <small>CR/);
   assert.match(html, /00:46\.15/);
   assert.match(html, /2,180/);
-  assert.match(html, /Torque R/);
+  assert.match(html, /Porsche 911 \(930\) Turbo/);
   assert.match(html, /Coast Run/);
   assert.equal(JSON.stringify(result), before);
 
@@ -60,7 +60,7 @@ test('results show the persisted benchmark and actual reward receipt without mut
 test('pause reflects the selected race and safely presents names from external state', () => {
   const result = { ...race(), state: 'racing', completedLaps: 1, elapsed: 60.4 };
   const html = pausePanel({ race: result, sound: true, fullscreen: true });
-  assert.match(html, /Torque R/);
+  assert.match(html, /Porsche 911 \(930\) Turbo/);
   assert.match(html, /Coast Run/);
   assert.match(html, /01:00\.40/);
   assert.match(html, /id="pause-sound"[^>]*aria-pressed="true"/);

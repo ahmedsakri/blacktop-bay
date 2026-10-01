@@ -1,6 +1,6 @@
 # Blacktop Bay
 
-A free AppsOverFlow browser racer. **Own the corner.** Choose from 36 cars, including 16 individually sourced real-car representations and twenty original GT, Formula and Prototype builds, upgrade their performance, and compete against three rivals across thirty-four asphalt circuits.
+A free AppsOverFlow browser racer. **Own the corner.** Choose from 16 individually sourced manufacturer car representations across 13 brands, upgrade their performance, and compete against three rivals across thirty-four asphalt circuits.
 
 [Play Blacktop Bay](https://blacktop-bay.web.app/) · [Driver’s guide](https://blacktop-bay.web.app/guide/) · [Asset credits](https://blacktop-bay.web.app/credits/)
 
@@ -13,29 +13,6 @@ Light barrier scrapes preserve most forward momentum. A hard impact briefly redu
 Esc/P pauses. Switching away from the tab pauses an active race. Mobile races require landscape: turning upright pauses without losing position. Rotate back and choose Keep driving. Fullscreen and orientation lock are requested when supported; otherwise rotate the device manually. The menu and garage also work in portrait.
 
 Mira, Jax and Nova use the same physical simulation, with steering, braking, avoidance, passing and car-to-car contact. Three valid laps complete a race. Standings use actual progress and finish crossings; unfinished rivals continue racing after the player finishes.
-
-| Car | Race setup | Base speed rating | Base nitro |
-| --- | --- | ---: | ---: |
-| Apex GT | Balanced GT circuit racer | 162 km/h | 3.0 s |
-| Apex Sprint | Responsive white-and-blue GT sprint build | 158 km/h | 2.8 s |
-| Torque R | Endurance GT with stronger acceleration | 173 km/h | 3.0 s |
-| Torque RS | Navy endurance build with a larger boost tank | 166 km/h | 3.8 s |
-| Vortex P1 | Open-wheel Formula racer with agile handling | 151 km/h | 3.4 s |
-| Vortex X | Lime Formula attack build | 169 km/h | 3.2 s |
-| Spectre LM | Closed-cockpit endurance prototype | 176 km/h | 3.6 s |
-| Spectre LM-R | Long-tail racing prototype | 180 km/h | 3.3 s |
-| Cinder R | Open-cockpit sports racer | 162 km/h | 3.1 s |
-| Cinder RX | Open-cockpit aero racer | 169 km/h | 3.5 s |
-| Kestrel GT-R | Long-nose GT time attack | 176 km/h | 3.5 s |
-| Mirage LMP | Low-canopy endurance prototype | 184 km/h | 3.6 s |
-| Solstice One | Single-seat open speedster | 166 km/h | 3.0 s |
-| Tempest XR | Extreme aero racing prototype | 180 km/h | 3.8 s |
-| Corsair GTS | Open-cockpit GT cup racer | 167 km/h | 3.2 s |
-| Stratus GT3 | Long-tail endurance GT | 178 km/h | 4.0 s |
-| Vector F | Formula sprint aero racer | 167 km/h | 2.9 s |
-| Zenith FX | Enclosed-canopy Formula concept | 182 km/h | 3.5 s |
-| Vela R | Offset-cockpit sports racer | 164 km/h | 3.3 s |
-| Aurora LMX | Finned endurance racer | 187 km/h | 3.9 s |
 
 ### Manufacturer models
 
@@ -118,13 +95,13 @@ Car/circuit choices, favourite cars, per-car paint colours and finishes, upgrade
 
 ## Paint studio
 
-Garage → Paint offers ten curated colours plus Team original, with Gloss, Metallic and Satin finishes. All choices are free and cosmetic. Each build stores its own colour and finish locally; unavailable storage keeps changes for the current page session. Clearing site data removes saved choices. Paint updates body materials in the garage and races, including the original closed- and open-cockpit Prototype bodywork.
+Garage → Paint offers ten curated colours plus Team original, with Gloss, Metallic and Satin finishes. All choices are free and cosmetic. Each build stores its own colour and finish locally; unavailable storage keeps changes for the current page session. Clearing site data removes saved choices. Paint updates supported body materials in the garage and races.
 
 ## Graphics and motion
 
 The visual palette uses electric violet `#9246FF` as the dominant UI accent, yellow `#FFF71E` as the secondary highlight for important CTAs and key moments, near-black base `#110017`, navy panels `#021439` and white text `#FFFFFF`. Dark surfaces remain the majority of each screen. Alerts use `#FF0054`, rewards use `#FFD700`, and lime `#C3FB13` is reserved for occasional status emphasis. Vector logos retain white chrome shading with violet forms and small yellow accents; the guide, privacy and credits pages share the same hierarchy. Keep body text white on dark surfaces and button labels white on violet or dark on yellow.
 
-The game renders twenty fictional race builds from licensed models and original bodywork. Apex GT, Apex Sprint, Torque R and Torque RS adapt a shared GT source; Vortex P1, Vortex X, Vector F and Zenith FX adapt a shared Formula concept source. Spectre LM and Spectre LM-R share an original closed-cockpit Prototype body profile; Cinder R and Cinder RX share an original open-cockpit profile. Those four Prototype builds reuse credited GT wheel geometry. Kestrel GT-R adds a long-nose GT time-attack shape; Mirage LMP has a low closed canopy; Solstice One is a single-seat open speedster; Tempest XR uses an extreme-aero prototype profile. These four additional builds combine shared licensed GT parts with newly authored coachwork and aero. Corsair GTS and Stratus GT3 add GT cup and endurance packages; Vector F and Zenith FX extend the Formula family with sprint aero and an enclosed canopy; Vela R and Aurora LMX add offset-cockpit and finned Prototype designs. The new race packages retain their shared GT or Formula source attribution. Liveries, race numbers, aero setups and driving tuning distinguish the builds; these are not twenty separately sourced models. The garage supports drag rotation, keyboard-accessible quarter turns, neutral studio lighting and responsive camera framing. Wheels steer/roll, brake lamps respond and nitro uses model-specific exhaust outlets. Body paint, glass, carbon and rubber use separate physical materials. Mobile and race opponents use reduced-detail geometry.
+The game renders sixteen individually credited manufacturer car representations across thirteen brands. Road cars, classics, grand tourers and track-focused models retain their actual identities; Audi R8 Custom and GMA T.50 Custom remain labelled artist interpretations. The garage supports drag rotation, keyboard-accessible quarter turns, neutral studio lighting and responsive camera framing. Wheels steer and roll, brake lamps respond and nitro uses model-specific exhaust outlets. Body paint, glass, carbon and rubber use separate physical materials. Mobile and race opponents use reduced-detail geometry. Earlier fictional builds are no longer selectable; their legacy source assets and attribution notices remain in the repository.
 
 All thirty-four circuits have covered spectator stands with animated seated and standing crowds with varied poses, clothing and asynchronous cheering behind the barriers. Bay Grand Prix adds a larger permanent grandstand and pit complex. A full-width checkered stripe, four numbered starting bays, branded truss gantry and three twin-lamp countdown columns mark the start/finish area.
 
@@ -150,7 +127,7 @@ Local: http://127.0.0.1:4180/. Production output: `dist/`.
 - `src/original-circuits.js`, `src/original-venues.js`: four additional authored routes, lighthouse/basalt/mesa/lodge/freight landmarks, safe scenery footprints and bounded instancing.
 - `src/steering-pad.js`, `src/tilt-steering.js`: touch steering ownership, opt-in orientation permission, calibration and touch fallback.
 - `src/progression.js`, `src/upgrades-ui.js`: bounded upgrade levels, credit economy, persistence and workshop previews.
-- `src/car.js`, `src/prototype-car.js`, `src/vehicles.js`, `src/garage.js`: cached licensed models, original Prototype bodywork, materials, animations, catalog and inspection studio.
+- `src/manufacturer-car.js`, `src/vehicles.js`, `src/garage.js`: cached licensed manufacturer models, materials, animations, catalogue and inspection studio. Legacy geometry helpers remain in `src/car.js` and `src/prototype-car.js`.
 - `src/main.js`: loader, race/menu lifecycle, camera, input, garage and results.
 - `src/world.js`, `src/effects.js`, `src/audio.js`: environment, bounded driving effects and synthesized audio.
 - `src/storage.js`: validated race records with graceful storage failure.
@@ -165,9 +142,9 @@ Google/Bing verification tags, robots.txt, sitemap.xml and crawlable guide/priva
 
 ## Credits and validation
 
-Original game code, nine original tracks, branding, Prototype body profiles and racing adaptations: AppsOverFlow. Formula source: Qvist_designs, CC BY 4.0. GT source and reused geometry in the additional coachwork builds: vicent091036 / Three.js Ferrari 458 Spider model, CC BY 4.0. Full source URLs, adaptation notes and licences: `public/credits/` and `public/assets/cars/`. Grand Prix outline data: Tomislav Bacinger, MIT; compact arcade modifications by AppsOverFlow, including a non-crossing Suzuka reinterpretation. Three.js is MIT. No manufacturer or motorsport affiliation is implied.
+Original game code, nine original tracks, branding and racing adaptations: AppsOverFlow. Manufacturer model sources and authors are credited individually. Retained legacy Formula and GT assets keep their Qvist_designs and vicent091036 / Three.js attribution under CC BY 4.0. Full source URLs, adaptation notes and licences: `public/credits/` and `public/assets/cars/`. Grand Prix outline data: Tomislav Bacinger, MIT; compact arcade modifications by AppsOverFlow, including a non-crossing Suzuka reinterpretation. Three.js is MIT. No manufacturer or motorsport affiliation is implied.
 
-The automated suite covers driving, lap guards, rivals, all circuits, nitro, upgrades, payments, storage and analytics privacy. The 36-car/34-circuit update, crash/recovery checks and physical-device limitations are documented in `reports/manufacturer-circuits-controls-release.md`. Earlier expansion checks and review limits are documented in `reports/expansion-release.md`; `reports/release-checks.md` preserves the earlier release evidence. Phone viewport emulation does not establish performance on every physical phone.
+The automated suite covers driving, lap guards, rivals, all circuits, nitro, upgrades, payments, storage and analytics privacy. The earlier 36-car/34-circuit update, crash/recovery checks and physical-device limitations are documented in `reports/manufacturer-circuits-controls-release.md`. Earlier expansion checks and review limits are documented in `reports/expansion-release.md`; `reports/release-checks.md` preserves the earlier release evidence. Phone viewport emulation does not establish performance on every physical phone.
 
 Deployment targets only Firebase Hosting site `blacktop-bay` in project `echo-heist`, never other shared-project sites.
 

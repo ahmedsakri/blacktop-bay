@@ -1,13 +1,14 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createRace, startRace, stepRace, resetCar, VEHICLE_SPECS, TRACK, TRACKS, getTrack, setTrack, sampleTrack, projectOnTrack } from '../src/physics.js';
+import { DEFAULT_VEHICLE_ID } from '../src/vehicles.js';
 import { createCompletedRaceFixture } from '../scripts/qa-race-fixture.js';
 const LAUNCH_CIRCUITS = new Set(['harbor', 'dockyard', 'coast', 'summit', 'grandprix']);
 
 const advance = (race, input, seconds, hz = 120) => {
   for (let i = 0; i < Math.round(seconds * hz); i++) stepRace(race, input, 1 / hz);
 };
-function drivingRace(vehicle = 'coupe', speed = 20) {
+function drivingRace(vehicle = DEFAULT_VEHICLE_ID, speed = 20) {
   const race = createRace({ vehicle, track: 'harbor' }); startRace(race); race.rivals = [];
   const point = sampleTrack(110, getTrack(race.track));
   Object.assign(race.car, { x: point.x, z: point.z, yaw: Math.atan2(point.tx, point.tz), speed, forwardSpeed: speed, vx: point.tx * speed, vz: point.tz * speed });
@@ -20,7 +21,7 @@ test('nitro supplies real acceleration, consumes bounded seconds and requires re
   advance(normal, { throttle: 1 }, 0.8);
   advance(boosted, { throttle: 1, nitro: true }, 0.8);
   assert.ok(boosted.car.speed > normal.car.speed + 7);
-  assert.ok(Math.abs(boosted.nitro.charge - 2.2) < 1e-9);
+  assert.ok(Math.abs(boosted.nitro.charge - (boosted.nitro.capacity - .8)) < 1e-9);
   assert.equal(boosted.nitro.active, true);
   assert.equal(boosted.car.nitroActive, true);
   boosted.nitro.charge = 0.05;
@@ -39,7 +40,7 @@ test('nitro supplies real acceleration, consumes bounded seconds and requires re
 });
 
 test('nitro cannot be farmed at rest, consumed under brakes or refilled by recovery', () => {
-  const race = drivingRace('coupe', 0); race.nitro.charge = 0.4;
+  const race = drivingRace(DEFAULT_VEHICLE_ID, 0); race.nitro.charge = 0.4;
   advance(race, { nitro: true }, 1);
   assert.equal(race.nitro.charge, 0.4);
   assert.equal(race.nitro.active, false);
@@ -52,7 +53,7 @@ test('nitro cannot be farmed at rest, consumed under brakes or refilled by recov
 });
 
 test('clean drifting recharges nitro faster than ordinary driving without exceeding capacity', () => {
-  const grip = drivingRace('coupe', 28), drift = drivingRace('coupe', 28);
+  const grip = drivingRace(DEFAULT_VEHICLE_ID, 28), drift = drivingRace(DEFAULT_VEHICLE_ID, 28);
   grip.nitro.charge = drift.nitro.charge = 0;
   advance(grip, { throttle: 1 }, 0.6);
   advance(drift, { throttle: 1, steer: -0.75, handbrake: true }, 0.6);
@@ -64,7 +65,7 @@ test('clean drifting recharges nitro faster than ordinary driving without exceed
 
 test('vehicle choices preserve their tuning across start and give distinct acceleration and steering', () => {
   const speeds = {}, angles = {};
-  for (const vehicle of ['coupe', 'gt', 'rally']) {
+  for (const vehicle of ['lamborghini-aventador', 'bugatti-veyron', 'lotus-elise']) {
     const race = drivingRace(vehicle, 0);
     advance(race, { throttle: 1 }, 0.6); speeds[vehicle] = race.car.speed;
     const turning = drivingRace(vehicle, 20), yaw = turning.car.yaw;
@@ -74,9 +75,9 @@ test('vehicle choices preserve their tuning across start and give distinct accel
     assert.equal(race.vehicle, vehicle);
     assert.equal(race.nitro.capacity, VEHICLE_SPECS[vehicle].nitroCapacity);
   }
-  assert.ok(speeds.gt > speeds.coupe && speeds.coupe > speeds.rally);
-  assert.ok(angles.rally > angles.coupe && angles.coupe > angles.gt);
-  assert.equal(createRace({ vehicle: 'invalid' }).vehicle, 'coupe');
+  assert.ok(speeds['lotus-elise'] > speeds['lamborghini-aventador'] && speeds['bugatti-veyron'] > speeds['lamborghini-aventador']);
+  assert.ok(angles['lotus-elise'] > angles['lamborghini-aventador'] && angles['lamborghini-aventador'] > angles['bugatti-veyron']);
+  assert.equal(createRace({ vehicle: 'invalid' }).vehicle, DEFAULT_VEHICLE_ID);
 });
 
 test('the five original track choices remain distinct and simulations retain their own layout', () => {

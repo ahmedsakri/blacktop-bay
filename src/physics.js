@@ -1,4 +1,4 @@
-import { VEHICLES } from './vehicles.js';
+import { DEFAULT_VEHICLE_ID, VEHICLES } from './vehicles.js';
 import { TRACK, TRACKS, getTrack, setTrack, projectOnTrack, sampleTrack } from './track.js';
 import { RIVAL_GRID, rivalControls } from './rivals.js';
 import { normalizeUpgrades } from './progression.js';
@@ -9,8 +9,8 @@ export { TRACK, TRACKS, getTrack, setTrack, projectOnTrack, sampleTrack };
 // Garage labels and race tuning share one source of truth.
 export const VEHICLE_SPECS = Object.freeze(Object.fromEntries(VEHICLES.map(vehicle => [vehicle.id, vehicle.handling])));
 
-export function getUpgradeStats(vehicle = 'coupe', upgrades = {}) {
-  const base = Object.hasOwn(VEHICLE_SPECS, vehicle) ? VEHICLE_SPECS[vehicle] : VEHICLE_SPECS.coupe;
+export function getUpgradeStats(vehicle = DEFAULT_VEHICLE_ID, upgrades = {}) {
+  const base = Object.hasOwn(VEHICLE_SPECS, vehicle) ? VEHICLE_SPECS[vehicle] : VEHICLE_SPECS[DEFAULT_VEHICLE_ID];
   const { engine, tyres, nitro, handling } = normalizeUpgrades(upgrades);
   return {
     acceleration: base.acceleration * (1 + engine * 0.06),
@@ -70,8 +70,8 @@ function createRacer(vehicle, track, grid = null, upgrades = {}) {
   };
 }
 
-export function createRace({ vehicle = 'coupe', track: trackId, upgrades = {}, rivalVehicles } = {}) {
-  if (!Object.hasOwn(VEHICLE_SPECS, vehicle)) vehicle = 'coupe';
+export function createRace({ vehicle = DEFAULT_VEHICLE_ID, track: trackId, upgrades = {}, rivalVehicles } = {}) {
+  if (!Object.hasOwn(VEHICLE_SPECS, vehicle)) vehicle = DEFAULT_VEHICLE_ID;
   const track = trackId === undefined ? TRACK : setTrack(trackId);
   const race = createRacer(vehicle, track, null, upgrades);
   race.raceId = nextRaceId();

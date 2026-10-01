@@ -3,8 +3,8 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { createCar, prepareCarAssets } from '../src/car.js';
-import { VEHICLES } from '../src/vehicles.js';
+import { createLegacyCar as createCar, prepareCarAssets } from '../src/car.js';
+import { LEGACY_VEHICLES as VEHICLES } from '../src/legacy-vehicles.js';
 import { applyPaint } from '../src/paint.js';
 
 // Read the actual shipping GLBs. Only the browser transport and number-plate

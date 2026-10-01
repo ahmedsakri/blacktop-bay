@@ -3,10 +3,9 @@ import { RIVAL_GRID } from './rivals.js';
 
 // These three real bodies together cost about 103k triangles at mobile quality.
 // The frontend prepares only this fixed fleet and reports each successfully
-// loaded identity back to physics; a failed slot uses its original opponent.
-export const MANUFACTURER_RIVAL_VEHICLES = Object.freeze([
-  'rimac-nevera', 'aston-martin-one-77', 'koenigsegg-one-1',
-]);
+// loaded identity back to physics; failed optional downloads reuse a prepared
+// manufacturer model and its matching tuning.
+export const MANUFACTURER_RIVAL_VEHICLES = Object.freeze(RIVAL_GRID.map(grid => grid.vehicle));
 const validVehicles = new Set(VEHICLES.map(vehicle => vehicle.id));
 
 export function resolveRivalVehicles(requested) {

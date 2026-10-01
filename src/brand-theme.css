@@ -72,14 +72,20 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 #dialog .rd-best-badge{background:var(--brand-yellow);color:var(--brand-base)}
 #dialog .rd-record-card strong{color:var(--brand-white)}
 .orientation-gate,#loading{background:radial-gradient(ellipse at 70% 24%,#9246FF26,transparent 55%),linear-gradient(135deg,#021439,#110017 70%)}
+#loading .loader-art{position:absolute;inset:0;pointer-events:none;opacity:.48;animation:loader-car-reveal 1.2s ease-out both}
+#loading .loader-art img{width:100%;height:100%;display:block;object-fit:cover}
+#loading .loader-art::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at center,#110017d9 5%,#11001777 48%,#11001722 80%)}
+#loading .loader-kicker,#loading .loader-caption span{color:#d6cede}
+@keyframes loader-car-reveal{from{opacity:0;transform:scale(1.035)}to{opacity:.48;transform:scale(1)}}
+@media(prefers-reduced-motion:reduce){#loading .loader-art{animation:none}}
 #loading .loader-diagnostics,#loading #loading-percent{color:var(--brand-yellow)}
 .loader-track,.loading-track{background:#FFFFFF20}.loader-track i,.loading-track i{background:var(--brand-violet)}
 .orientation-gate h2{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-style:italic}.orientation-gate h2 em{color:var(--brand-white);text-decoration:underline;text-decoration-color:var(--brand-violet)}
 body.in-race .race-clock{background:var(--brand-violet)}
 body.in-race .nitro-track i{background:var(--brand-yellow)}
-body.in-race.nitro-active .nitro-track i{background:linear-gradient(90deg,var(--brand-violet),var(--brand-yellow))}
-body.in-race.nitro-active .nitro-gauge{filter:drop-shadow(0 0 8px #9246FF99)}
-body.in-race.nitro-active .nitro-gauge strong{color:var(--brand-yellow)}
+body.in-race.nitro-active .nitro-track i{background:linear-gradient(90deg,#168AFF,#60BFFF,#C0EDFF)}
+body.in-race.nitro-active .nitro-gauge{filter:drop-shadow(0 0 8px #168AFF99)}
+body.in-race.nitro-active .nitro-gauge strong{color:#C0EDFF}
 body.in-race .touch-controls .nitro-pedal{background:radial-gradient(circle,#110017d9,#0214398c 64%,transparent 66%);color:var(--brand-yellow)}
 body.in-race #nitro-ring-fill,body.in-race.nitro-active #nitro-ring-fill{stroke:var(--brand-yellow)}
 body.in-race .nitro-pedal.pressed{background:radial-gradient(circle,#9246FF99,#110017aa 65%,transparent 66%);color:var(--brand-white);box-shadow:0 0 24px #9246FF4d}

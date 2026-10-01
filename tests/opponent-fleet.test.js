@@ -18,19 +18,20 @@ test('the real opponent fleet stays bounded for phones and supplies three distin
   assert.ok(bytes <= 3_000_000, `opponents download ${bytes} bytes`);
 });
 
-test('original opponents remain the default and invalid slots fall back independently', () => {
-  const originals = RIVAL_GRID.map(grid => grid.vehicle);
+test('manufacturer opponents remain the default and retired or invalid slots fall back independently', () => {
+  const defaults = RIVAL_GRID.map(grid => grid.vehicle);
   for (const invalid of [undefined, null, {}, 'rimac-nevera']) {
-    assert.deepEqual(resolveRivalVehicles(invalid), originals);
-    assert.deepEqual(createRace({rivalVehicles: invalid}).rivals.map(rival => rival.vehicle), originals);
+    assert.deepEqual(resolveRivalVehicles(invalid), defaults);
+    assert.deepEqual(createRace({rivalVehicles: invalid}).rivals.map(rival => rival.vehicle), defaults);
   }
+  assert.deepEqual(resolveRivalVehicles(['coupe', 'rally', 'gt']), defaults);
   const requested = ['rimac-nevera', '__proto__', 'koenigsegg-one-1', 'extra-slot'];
   const race = createRace({rivalVehicles: requested});
-  assert.deepEqual(race.rivalVehicles, ['rimac-nevera', 'rally', 'koenigsegg-one-1']);
+  assert.deepEqual(race.rivalVehicles, ['rimac-nevera', 'aston-martin-one-77', 'koenigsegg-one-1']);
   requested[0] = 'coupe';
   assert.equal(race.rivalVehicles[0], 'rimac-nevera', 'the race owns a copy of the loaded fleet');
   startRace(race);
-  assert.deepEqual(race.rivals.map(rival => rival.vehicle), ['rimac-nevera', 'rally', 'koenigsegg-one-1']);
+  assert.deepEqual(race.rivals.map(rival => rival.vehicle), ['rimac-nevera', 'aston-martin-one-77', 'koenigsegg-one-1']);
 });
 
 test('starting, recovering and restarting keep each loaded body matched to its own physics', () => {

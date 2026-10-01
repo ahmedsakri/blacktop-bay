@@ -14,7 +14,7 @@ test('electric car sound rises smoothly without combustion gear drops',async()=>
       assert.ok(body.frequency.value>=pitch);
       pitch=body.frequency.value;
     }
-    audio.update({running:true,vehicle:'coupe',speed:20});
+    audio.update({running:true,vehicle:'mclaren-p1-gtr',speed:20});
     assert.equal(body.type,'triangle','switching back restores the combustion voice');
   } finally {audio.dispose();env.restore();}
 });
@@ -58,11 +58,11 @@ function environment() {
 test('engine audio needs user unlock, respects mute/background/pause and disposes every running source',async()=>{
   const env=environment(),audio=createAudio();
   try{
-    audio.update({running:true,speed:20,vehicle:'vector'});
+    audio.update({running:true,speed:20,vehicle:'mclaren-p1-gtr'});
     assert.equal(env.contexts.length,0,'constructing or updating the game must not bypass browser audio unlock');
     assert.equal(await audio.unlock(),true);
     const ctx=env.contexts[0],master=ctx.gains[0],engine=ctx.gains[1];
-    audio.update({running:true,speed:20,vehicle:'vector'});
+    audio.update({running:true,speed:20,vehicle:'mclaren-p1-gtr'});
     assert.ok(master.gain.value>0&&engine.gain.value>0);
     audio.setMuted(true);assert.equal(master.gain.value,0);
     audio.setMuted(false);assert.ok(master.gain.value>0);
@@ -77,10 +77,10 @@ test('engine audio needs user unlock, respects mute/background/pause and dispose
   }finally{audio.dispose();env.restore();}
 });
 
-test('Formula, prototype and GT voices produce distinct engine frequencies and respond to throttle',async()=>{
+test('combustion and electric manufacturer models produce distinct voices and respond to throttle',async()=>{
   const env=environment(),pitches={};
   try{
-    for(const vehicle of ['coupe','prototype','vector']){
+    for(const vehicle of ['mclaren-p1-gtr','rimac-concept-one','rimac-nevera']){
       const audio=createAudio();await audio.unlock();const ctx=env.contexts.at(-1);
       const body=ctx.oscillators.find(node=>node.type==='triangle'),harmonic=ctx.oscillators.find(node=>node.type==='sawtooth');
       for(let i=0;i<20;i++)audio.update({running:true,vehicle,speed:20,throttle:1},1/60);
@@ -89,28 +89,29 @@ test('Formula, prototype and GT voices produce distinct engine frequencies and r
       audio.update({running:true,vehicle,speed:20,throttle:0},1/60);
       assert.ok(body.connections[0].gain.value<loadedGain*.65,'lifting off audibly unloads the engine');
       assert.ok(harmonic.frequency.value>body.frequency.value*1.9);
-      if(vehicle==='vector')assert.ok(harmonic.frequency.value>body.frequency.value*2.9);
+      assert.equal(body.type,vehicle.startsWith('rimac-')?'sine':'triangle');
+      assert.equal(harmonic.type,vehicle.startsWith('rimac-')?'sine':'sawtooth');
       audio.dispose();
     }
-    assert.ok(pitches.vector>pitches.prototype*1.25);
-    assert.ok(pitches.prototype>pitches.coupe*1.15);
+    for(const id of ['rimac-concept-one','rimac-nevera'])
+      assert.ok(pitches[id]>pitches['mclaren-p1-gtr']*1.5,'electric drive has a distinct higher motor whine');
   }finally{env.restore();}
 });
 
-test('Formula upshifts drop revs without hunting and Nitro adds a bounded layer without allocating each frame',async()=>{
+test('combustion upshifts drop revs without hunting and Nitro adds a bounded layer without allocating each frame',async()=>{
   const env=environment(),audio=createAudio();
   try{
     await audio.unlock();const ctx=env.contexts[0],body=ctx.oscillators.find(node=>node.type==='triangle');
     const boost=ctx.oscillators.find(node=>node.frequency.value===900),boostGain=boost.connections[0].connections[0];
     let previous=0,drops=0;
-    for(let speed=0;speed<48;speed+=.2){audio.update({running:true,vehicle:'vector',speed,throttle:1},.02);if(body.frequency.value<previous-15)drops++;previous=body.frequency.value;}
-    assert.equal(drops,7,'eight-speed Formula voice must shift seven times during an acceleration run');
+    for(let speed=0;speed<55;speed+=.2){audio.update({running:true,vehicle:'mclaren-p1-gtr',speed,throttle:1},.02);if(body.frequency.value<previous-15)drops++;previous=body.frequency.value;}
+    assert.equal(drops,5,'six-speed combustion voice must shift five times during an acceleration run');
     const nodes=ctx.all.length;
-    for(let i=0;i<120;i++)audio.update({running:true,vehicle:'vector',speed:30+(i%2)*.02,throttle:1,nitro:true},1/60);
+    for(let i=0;i<120;i++)audio.update({running:true,vehicle:'mclaren-p1-gtr',speed:30+(i%2)*.02,throttle:1,nitro:true},1/60);
     assert.ok(boostGain.gain.value>0);
     assert.equal(ctx.all.length,nodes,'steady driving and boost reuse the existing graph');
-    audio.update({running:true,vehicle:'vector',speed:30,throttle:1,nitro:false});assert.equal(boostGain.gain.value,0);
-    audio.update({running:true,vehicle:'vector',speed:30,throttle:1,nitro:true,brake:1});assert.equal(boostGain.gain.value,0);
+    audio.update({running:true,vehicle:'mclaren-p1-gtr',speed:30,throttle:1,nitro:false});assert.equal(boostGain.gain.value,0);
+    audio.update({running:true,vehicle:'mclaren-p1-gtr',speed:30,throttle:1,nitro:true,brake:1});assert.equal(boostGain.gain.value,0);
     audio.update({running:true,vehicle:'unknown',speed:Infinity,throttle:NaN,drift:NaN},Infinity);
     assert.ok(Number.isFinite(body.frequency.value));
   }finally{audio.dispose();env.restore();}

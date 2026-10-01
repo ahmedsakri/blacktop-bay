@@ -4,7 +4,8 @@ import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { DecalGeometry } from 'three/addons/geometries/DecalGeometry.js';
-import { getVehicle } from './vehicles.js';
+import { DEFAULT_VEHICLE_ID, getVehicle } from './vehicles.js';
+import { getLegacyVehicle } from './legacy-vehicles.js';
 
 // All cars use +Z forward, +Y up, and tyre contact at ground Y = 0.
 const clamp = THREE.MathUtils.clamp;
@@ -105,7 +106,7 @@ export function prepareCarAssets({low=false,baseURL,onProgress}={}){
 function createFormulaCar({vehicle='rally',ghost=false,color,low=false}={}){
   const template=formulaAssets.get(low?'low':'high')||formulaAssets.get('low');
   if(!template)throw new Error('Car assets are not ready. Await prepareCarAssets() before opening the garage.');
-  const model=getVehicle(vehicle),attack=model.id==='formula',sprintAero=model.id==='vector',enclosed=model.id==='zenith';
+  const model=getLegacyVehicle(vehicle),attack=model.id==='formula',sprintAero=model.id==='vector',enclosed=model.id==='zenith';
   const group=new THREE.Group(),chassis=new THREE.Group();group.name=sprintAero?'vector-f':enclosed?'zenith-fx':attack?'vortex-x-formula':'vortex-p1-formula';chassis.name='sprung-body';group.add(chassis);
   const paint=new THREE.MeshPhysicalMaterial({color:color??model.color,metalness:.34,roughness:.25,clearcoat:1,clearcoatRoughness:.12,envMapIntensity:.75});
   const carbon=new THREE.MeshPhysicalMaterial({color:0x171c23,metalness:.38,roughness:.36,clearcoat:.22,envMapIntensity:.65});
@@ -221,7 +222,7 @@ function createFormulaCar({vehicle='rally',ghost=false,color,low=false}={}){
 function createGTRacer({vehicle='coupe',ghost=false,color,low=false}={}){
   const template=gtAssets.get(low?'low':'high')||gtAssets.get('low');
   if(!template)throw new Error('Car assets are not ready. Await prepareCarAssets() before opening the garage.');
-  const timeAttack=vehicle==='kestrel',openTop=vehicle==='corsair',longTail=vehicle==='stratus',endurance=vehicle==='gt'||vehicle==='endurance',sprint=vehicle==='sprint',longRun=vehicle==='endurance',model=getVehicle(vehicle),group=new THREE.Group(),renderRoot=new THREE.Group(),chassis=new THREE.Group();
+  const timeAttack=vehicle==='kestrel',openTop=vehicle==='corsair',longTail=vehicle==='stratus',endurance=vehicle==='gt'||vehicle==='endurance',sprint=vehicle==='sprint',longRun=vehicle==='endurance',model=getLegacyVehicle(vehicle),group=new THREE.Group(),renderRoot=new THREE.Group(),chassis=new THREE.Group();
   group.name=openTop?'corsair-gts':longTail?'stratus-gt3':timeAttack?'kestrel-gt-r':longRun?'torque-rs-endurance':sprint?'apex-sprint':endurance?'torque-r-endurance':'apex-gt-racer';chassis.name='sprung-body';group.add(renderRoot);renderRoot.add(chassis);
   const paint=new THREE.MeshPhysicalMaterial({color:color??model.color,metalness:.45,roughness:.23,clearcoat:1,clearcoatRoughness:.095,envMapIntensity:.85});
   const carbon=new THREE.MeshPhysicalMaterial({color:0x10161c,metalness:.36,roughness:.34,clearcoat:.25,clearcoatRoughness:.20});
@@ -547,9 +548,15 @@ function batchStaticMeshes(parent) {
   }
 }
 
-export function createCar({ghost=false,vehicle='coupe',color,low=false}={}) {
+export function createCar({ghost=false,vehicle=DEFAULT_VEHICLE_ID,color,low=false}={}) {
   const model=getVehicle(vehicle);
-  if(model.assetId)return createManufacturerCar({assetId:model.assetId,vehicle:model.id,color,low,ghost});
+  return createManufacturerCar({assetId:model.assetId,vehicle:model.id,color,low,ghost});
+}
+
+// Explicit compatibility path for archived original geometry; never used by the garage.
+export function createLegacyCar({ghost=false,vehicle='coupe',color,low=false}={}) {
+  const model=getLegacyVehicle(vehicle);
+  if(!model)throw new Error(`Unknown retired car: ${vehicle}`);
   if(model.family==='formula')return createFormulaCar({ghost,vehicle:model.id,color,low});
   if(model.family==='prototype'){
     const template=gtAssets.get(low?'low':'high')||gtAssets.get('low');

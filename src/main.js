@@ -13,7 +13,6 @@ import "./race-feedback.css";
 import { NEW_CARS, loadFavorites, saveFavorites, findCars, carLibraryMarkup, carLibraryCard, circuitLibraryMarkup, circuitLibraryCards, findCircuits } from "./collection-browser.js";
 import { pausePanel, howToPlayPanel, finishPanel, finishRowsMarkup, finishStatusText } from "./race-dialogs.js";
 import { icon } from './icons.js';
-import { renderCarPortraits } from "./car-portraits.js";
 import { garageStatsMarkup, circuitMapMarkup } from "./collection-ui.js";
 import { createDrivingInputs, resolveDriveControls } from "./driving-controls.js";
 import { createDragSteering } from "./drag-steering.js";
@@ -29,11 +28,11 @@ import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js"
 import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
 import { SMAAPass } from "three/addons/postprocessing/SMAAPass.js";
 import { createWorld } from "./world.js";
-import { createCar, prepareCarAssets } from "./car.js";
+import { createCar } from "./car.js";
 import { prepareManufacturerCar } from "./manufacturer-car.js";
 import { MANUFACTURER_RIVAL_VEHICLES } from "./opponent-fleet.js";
 import { createGarage } from "./garage.js";
-import { VEHICLES, getVehicle } from "./vehicles.js";
+import { DEFAULT_VEHICLE_ID, VEHICLES, getVehicle } from "./vehicles.js";
 import { loadProgression, buyUpgrade, awardRaceCredits } from "./progression.js";
 import { upgradePanel, speedLabel } from "./upgrades-ui.js";
 import {
@@ -74,13 +73,17 @@ for (const el of document.querySelectorAll("[data-brand]"))
   el.textContent = BRAND.name.toUpperCase();
 document.title = `${BRAND.name} — AppsOverFlow`;
 const preferenceKey = "blacktop-bay-choices-v1";
-let preferences = { vehicle: "mclaren-p1-gtr", track: "harbor" };
+let preferences = { vehicle: DEFAULT_VEHICLE_ID, track: "harbor" };
 try {
   const stored = JSON.parse(localStorage.getItem(preferenceKey));
   if (stored && typeof stored === "object") {
     if (typeof stored.sound === "boolean") preferences.sound = stored.sound;
-    if (VEHICLES.some((v) => v.id === stored.vehicle))
-      preferences.vehicle = stored.vehicle;
+    if (typeof stored.vehicle === "string") {
+      preferences.vehicle = getVehicle(stored.vehicle).id;
+      if (preferences.vehicle !== stored.vehicle) {
+        try { localStorage.setItem(preferenceKey, JSON.stringify({...stored, vehicle: preferences.vehicle})); } catch {}
+      }
+    }
     if (TRACKS.some((t) => t.id === stored.track))
       preferences.track = stored.track;
   }
@@ -110,7 +113,7 @@ function saveChoices() {
 const progression = loadProgression();
 const paintChoices = loadPaint();
 const favoriteCars = loadFavorites();
-let rivalVehicles = ['gt', 'rally', 'coupe'];
+const rivalVehicles = [...MANUFACTURER_RIVAL_VEHICLES];
 const playerColor = () => getPaint(preferences.vehicle, paintChoices[preferences.vehicle]).color;
 function createPlayerCar(){const car=createCar({vehicle:preferences.vehicle,low:mobile});applyPaint(car,preferences.vehicle,paintChoices[preferences.vehicle]);return car;}
 const newRace = () =>
@@ -167,7 +170,6 @@ updateSound();
 let renderer, world, player, effects, camera, composer, carFill, garageStudio, renderPass, bloomPass;
 let garageFrame = null;
 let carSelectionPending = false;
-let initialCarNotice = '';
 updateMenu();
 let garageYaw = -.75,
   garageDrag = null;
@@ -258,20 +260,8 @@ async function initGame() {
     world = createWorld(renderer, { low: mobile, reducedMotion: reduced });
     loadProgress(52, "PREPARING THE RACE CARS");
     await nextPaint();
-    await prepareCarAssets({ low: mobile });
     const selectedAsset = getVehicle(preferences.vehicle).assetId;
-    if (selectedAsset) {
-      try { await prepareManufacturerCar(selectedAsset, {low: mobile}); }
-      catch (error) {
-        console.warn('Saved car could not download; offering an available original car.',error);
-        initialCarNotice = `Your saved car couldn't download. Apex GT is available; choose your car again in the garage.`;
-        const enabled = records.sound;
-        preferences.vehicle = 'coupe';
-        race = newRace();
-        records = loadRecords(recordStore);
-        records.sound = enabled;
-      }
-    }
+    await prepareManufacturerCar(selectedAsset, {low: mobile});
     player = createPlayerCar();
     world.scene.add(player.group);
     // Load only this race's lightweight opponents. Pin each model immediately so
@@ -284,9 +274,11 @@ async function initGame() {
         model = createCar({vehicle: assetId, low: true});
         rivalVehicles[index] = assetId;
       } catch (error) {
-        console.warn(`Opponent ${assetId} could not download; using an available race car.`, error);
-        const fallback = race.rivals[index];
-        model = createCar({vehicle: fallback.vehicle, color: fallback.color, low: true});
+        // The selected manufacturer's template is already pinned by the player.
+        // Reuse that real body and matching tuning without another download.
+        console.warn(`Opponent ${assetId} could not download; using ${preferences.vehicle}.`, error);
+        model = createCar({vehicle: preferences.vehicle, low: true});
+        rivalVehicles[index] = preferences.vehicle;
       }
       world.scene.add(model.group);
       model.group.visible = false;
@@ -334,7 +326,6 @@ async function initGame() {
     $("start").disabled = false;
     $("menu").inert = false;
     updateMenu();
-    if (initialCarNotice) { $('garage-status').textContent = initialCarNotice; toast(initialCarNotice); }
     setTimeout(() => ($("loading").hidden = true), reduced ? 0 : 650);
     last = performance.now();
     requestAnimationFrame(tick);
@@ -680,15 +671,10 @@ function openGarage() {
   event("garage_open");
 }
 function loadCarPortraits() {
-  for (const v of VEHICLES.filter(v => v.assetId)) for (const image of document.querySelectorAll(`[data-car-portrait="${v.id}"]`)) {
+  for (const v of VEHICLES) for (const image of document.querySelectorAll(`[data-car-portrait="${v.id}"]`)) {
     image.src = `/assets/cars/manufacturers/${v.assetId}.webp`;
     image.loading = 'lazy'; image.classList.add('ready');
   }
-  void renderCarPortraits(VEHICLES.filter(v => !v.assetId), (id, url) => {
-    for(const image of document.querySelectorAll(`[data-car-portrait="${id}"]`)) {
-      image.src = url; image.classList.add('ready');
-    }
-  });
 }
 function openCarLibrary() {
   const view = {query:'',family:'all',brand:'all',sort:'latest',favoritesOnly:false,compare:false};
@@ -931,6 +917,7 @@ function finish() {
   clearTimeout(countdownTimer);
   $("countdown").hidden = true;
   mode = "finished";
+  effects.clear(); // Do not freeze boost plumes behind the results overlay.
   clearInput();
   document.body.classList.remove("nitro-active");
   $("touch").hidden = true;
@@ -1550,6 +1537,8 @@ function tick(now) {
   updateRivals();
   effects.update(race.car, dt, time, mode === "racing", {
     profile: player.group.userData.effects,
+    nitro: mode === "racing" && race.nitro.active,
+    reducedMotion: reduced,
     brake: input.brake,
     handbrake: input.drift,
     throttle: mode === "racing" ? driveControls.throttle : 0,

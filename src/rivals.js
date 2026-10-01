@@ -6,9 +6,9 @@ const wrap = (angle) => Math.atan2(Math.sin(angle), Math.cos(angle));
 // Every opponent supplies ordinary controls to the same vehicle simulation as
 // the player. Grid and lane choices are deterministic; no rubber-band teleports.
 export const RIVAL_GRID = [
-  { id: 'mira', name: 'Mira', vehicle: 'gt', color: '#ffd166', s: 24, lane: 2.8, pace: 0.97 },
-  { id: 'jax', name: 'Jax', vehicle: 'rally', color: '#72edac', s: 16, lane: -2.8, pace: 0.94 },
-  { id: 'nova', name: 'Nova', vehicle: 'coupe', color: '#689cff', s: 8, lane: 2.8, pace: 0.91 },
+  { id: 'mira', name: 'Mira', vehicle: 'rimac-nevera', color: '#ffd166', s: 24, lane: 2.8, pace: 0.97 },
+  { id: 'jax', name: 'Jax', vehicle: 'aston-martin-one-77', color: '#72edac', s: 16, lane: -2.8, pace: 0.94 },
+  { id: 'nova', name: 'Nova', vehicle: 'koenigsegg-one-1', color: '#689cff', s: 8, lane: 2.8, pace: 0.91 },
 ];
 
 export function rivalControls(racer, field, track, specs, dt) {

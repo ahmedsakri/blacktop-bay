@@ -1,24 +1,27 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { findCars, loadFavorites, saveFavorites, findCircuits, circuitLibraryMarkup } from '../src/collection-browser.js';
+import { findCars, loadFavorites, saveFavorites, findCircuits, circuitLibraryMarkup, carLibraryMarkup } from '../src/collection-browser.js';
 import { getUpgradeStats } from '../src/physics.js';
 import { TRACKS } from '../src/track.js';
 import { VEHICLES } from '../src/vehicles.js';
 
 test('garage filters intersect search, family and favourites without changing collection order', () => {
   assert.equal(findCars().length,VEHICLES.length);
-  const matches = findCars({query:'VECTOR',family:'formula',favoritesOnly:true,favorites:new Set(['vector','zenith'])});
-  assert.deepEqual(matches.map(car=>car.id),['vector']);
-  assert.equal(findCars({query:'vector',family:'gt'}).length,0);
+  const matches = findCars({query:'SENNA',family:'gt',favoritesOnly:true,favorites:new Set(['mclaren-senna','mclaren-p1-gtr'])});
+  assert.deepEqual(matches.map(car=>car.id),['mclaren-senna']);
+  assert.equal(findCars({query:'senna',family:'formula'}).length,0);
   assert.equal(findCars({favoritesOnly:true}).length,0);
   assert.ok(findCars()[0].assetId,'actual manufacturer models lead latest arrivals');
   assert.deepEqual(findCars({brand:'McLaren'}).map(car=>car.id),['mclaren-570s','mclaren-senna','mclaren-p1-gtr']);
-  assert.equal(findCars({brand:'original'}).length,20,'original save IDs remain available');
+  assert.equal(findCars({brand:'original'}).length,0,'retired originals cannot be selected');
+  const markup = carLibraryMarkup();
+  assert.ok(!markup.includes('Blacktop originals'));
+  assert.ok(!markup.includes('data-library-family="formula"') && !markup.includes('data-library-family="prototype"'));
   assert.equal(findCars({brand:'McLaren',family:'formula'}).length,0);
   assert.equal(findCars({brand:'Porsche',query:'1975'}).length,1,'classic source is accurately identified');
 });
 test('speed and handling ranking use saved upgrades rather than factory labels', () => {
-  const progression={cars:{coupe:{engine:5,tyres:5,nitro:5,handling:5}}};
+  const progression={cars:{'lotus-elise':{engine:5,tyres:5,nitro:5,handling:5}}};
   for(const sort of ['speed','handling']) {
     const cars=findCars({sort,progression});
     const key=sort==='speed'?'topSpeed':'handling';
@@ -29,11 +32,11 @@ test('speed and handling ranking use saved upgrades rather than factory labels',
 });
 test('favourites reject corrupt storage and unavailable cars, and report failed persistence', () => {
   for(const raw of ['broken','null','{}','x'.repeat(5000)]) assert.equal(loadFavorites({getItem:()=>raw}).size,0);
-  assert.deepEqual([...loadFavorites({getItem:()=> '["vector","vector","deleted"]'})],['vector']);
+  assert.deepEqual([...loadFavorites({getItem:()=> '["mclaren-senna","mclaren-senna","vector","deleted"]'})],['mclaren-senna']);
   let saved;
-  assert.equal(saveFavorites(new Set(['aurora','unknown']),{setItem:(_,value)=>saved=value}),true);
-  assert.deepEqual(JSON.parse(saved),['aurora']);
-  assert.equal(saveFavorites(new Set(['vector']),{setItem(){throw Error('quota')}}),false);
+  assert.equal(saveFavorites(new Set(['rimac-nevera','aurora','unknown']),{setItem:(_,value)=>saved=value}),true);
+  assert.deepEqual(JSON.parse(saved),['rimac-nevera']);
+  assert.equal(saveFavorites(new Set(['mclaren-senna']),{setItem(){throw Error('quota')}}),false);
   assert.equal(loadFavorites({getItem(){throw Error('disabled')}}).size,0);
 });
 test('circuit atlas filters current calendar separately from bonus and original routes', () => {

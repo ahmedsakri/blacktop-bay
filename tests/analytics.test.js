@@ -57,14 +57,14 @@ const consentCommands = window => (window.dataLayer || [])
 test('event boundary accepts useful race facts but strips identifiers, URLs and arbitrary fields', async () => {
   await withBrowser({}, ({ analytics }) => {
     const result = analytics.sanitizeGameEvent('race_complete', {
-      circuit: 'dockyard', vehicle: 'rally', position: 2, duration_seconds: 139,
+      circuit: 'dockyard', vehicle: 'rimac-nevera', position: 2, duration_seconds: 139,
       drift_score: 1280, resets: 1, lap: 3,
       email: 'private@example.test', name: 'Someone Private', user_id: 'personal-id',
       page_location: 'https://example.test/?email=private@example.test',
       coordinates: { lat: 19.1, lng: 72.9 }, input: 'private chat text', event: 'custom_event',
     });
     assert.deepEqual(result, {
-      event: 'race_complete', game_name: 'Blacktop Bay', circuit: 'dockyard', vehicle: 'rally',
+      event: 'race_complete', game_name: 'Blacktop Bay', circuit: 'dockyard', vehicle: 'rimac-nevera',
       position: 2, duration_seconds: 139, drift_score: 1280, resets: 1, lap: 3,
     });
     for (const name of ['page_view', 'purchase', 'private@example.test', '', null, {}, '__proto__'])
@@ -75,6 +75,8 @@ test('event boundary accepts useful race facts but strips identifiers, URLs and 
 test('unsafe enum and numeric values never cross the event boundary', async () => {
   await withBrowser({}, ({ analytics }) => {
     const minimal = { event: 'lap_complete', game_name: 'Blacktop Bay' };
+    for (const vehicle of ['coupe', 'prototype', 'vector'])
+      assert.deepEqual(analytics.sanitizeGameEvent('lap_complete', { vehicle }), minimal);
     const unsafeNumbers = [NaN, Infinity, -Infinity, '2', null, {}, [], true, -1, 1_000_000_001];
     for (const value of unsafeNumbers) {
       assert.deepEqual(analytics.sanitizeGameEvent('lap_complete', {
@@ -84,7 +86,7 @@ test('unsafe enum and numeric values never cross the event boundary', async () =
     }
     assert.deepEqual(analytics.sanitizeGameEvent('lap_complete', {
       position: 5, lap: 4, duration_seconds: 3601, resets: 10001,
-      circuit: { toString: () => 'harbor' }, vehicle: ['coupe'],
+      circuit: { toString: () => 'harbor' }, vehicle: ['mclaren-p1-gtr'],
     }), minimal);
   });
 });
@@ -94,7 +96,7 @@ test('fresh, denied, invalid and unavailable consent cannot load Google or queue
     await withBrowser(options, ({ analytics, window, scripts }) => {
       analytics.initializeAnalytics();
       analytics.initializeAnalytics();
-      assert.equal(analytics.trackEvent('race_start', { circuit: 'harbor', vehicle: 'coupe' }), false);
+      assert.equal(analytics.trackEvent('race_start', { circuit: 'harbor', vehicle: 'mclaren-p1-gtr' }), false);
       assert.equal(scripts.length, 0);
       assert.deepEqual(measuredEvents(window), []);
       assert.ok(!window.dataLayer.some(entry => 'page_location' in entry));
@@ -114,7 +116,7 @@ test('granting consent loads the configured container once with advertising stil
     analytics.setAnalyticsConsent(true);
     analytics.setAnalyticsConsent(true);
     analytics.initializeAnalytics();
-    assert.equal(analytics.trackEvent('race_start', { vehicle: 'gt', circuit: 'coast' }), true);
+    assert.equal(analytics.trackEvent('race_start', { vehicle: 'porsche-930-turbo', circuit: 'coast' }), true);
     assert.equal(scripts.length, 1);
     assert.equal(scripts[0].tagName, 'SCRIPT');
     assert.equal(scripts[0].async, true);
@@ -138,7 +140,7 @@ test('local, preview and lookalike hosts never load Google or accept analytics e
     await withBrowser({ hostname, consent: 'granted' }, ({ analytics, window, scripts }) => {
       analytics.initializeAnalytics();
       analytics.setAnalyticsConsent(true);
-      assert.equal(analytics.trackEvent('race_complete', { duration_seconds: 120, vehicle: 'coupe' }), false);
+      assert.equal(analytics.trackEvent('race_complete', { duration_seconds: 120, vehicle: 'mclaren-p1-gtr' }), false);
       assert.equal(scripts.length, 0, hostname);
       assert.deepEqual(measuredEvents(window), [], hostname);
       assert.ok(!window.dataLayer.some(entry => 'page_location' in entry), hostname);
@@ -150,12 +152,12 @@ test('previously granted consent restores measurement and unapproved events rema
   await withBrowser({ consent: 'granted' }, ({ analytics, window, scripts }) => {
     analytics.initializeAnalytics();
     assert.equal(scripts.length, 1);
-    assert.equal(analytics.trackEvent('nitro_use', { circuit: 'harbor', vehicle: 'rally', email: 'private@example.test' }), true);
+    assert.equal(analytics.trackEvent('nitro_use', { circuit: 'harbor', vehicle: 'rimac-nevera', email: 'private@example.test' }), true);
     const count = window.dataLayer.length;
     assert.equal(analytics.trackEvent('private@example.test', { email: 'private@example.test' }), false);
     assert.equal(window.dataLayer.length, count);
     assert.deepEqual(measuredEvents(window).at(-1), {
-      event: 'nitro_use', game_name: 'Blacktop Bay', circuit: 'harbor', vehicle: 'rally',
+      event: 'nitro_use', game_name: 'Blacktop Bay', circuit: 'harbor', vehicle: 'rimac-nevera',
     });
   });
 });
@@ -166,7 +168,7 @@ test('revocation disables measurement, clears only GA cookies and cannot queue f
     preferred_car: 'rally', _gaNotAnalytics: 'keep-this', session: 'keep-this-too',
   } }, ({ analytics, window, scripts, storage, cookieWrites, cookieJar }) => {
     analytics.initializeAnalytics();
-    analytics.trackEvent('race_start', { circuit: 'harbor', vehicle: 'coupe' });
+    analytics.trackEvent('race_start', { circuit: 'harbor', vehicle: 'mclaren-p1-gtr' });
     const before = measuredEvents(window).length;
     analytics.setAnalyticsConsent(false);
     assert.equal(analytics.getAnalyticsConsent(), 'denied');
