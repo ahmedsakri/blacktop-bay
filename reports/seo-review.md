@@ -36,17 +36,19 @@ Sitemap dates should be revised for significant page changes, not automatically 
 
 These are source and consistency checks. They are not a Google Rich Results Test, a schema.org remote-validator certification, an SEO score or proof of search indexing.
 
-## Search Console and Bing status
+## Deployed search-console checks — 1 October 2026
 
 The intended personal account was confirmed in both native Safari console UIs. Existing unrelated properties were left unchanged. Blacktop Bay was absent from each property list before setup.
 
 | Service | Observed status | Remaining step |
 | --- | --- | --- |
-| Google Search Console | Blacktop Bay URL-prefix ownership flow opened; HTML-tag token obtained and added to source. | Deploy, verify ownership, submit `/sitemap.xml`, then inspect URL status. |
-| Bing Webmaster Tools | Blacktop Bay manual add-site flow opened; HTML-tag token obtained and added to source. | Deploy, verify ownership and submit `/sitemap.xml`. |
+| Google Search Console | Explicit **Ownership verified** confirmation using the HTML tag. Submitted `/sitemap.xml`; explicit **Sitemap submitted successfully** confirmation. The subsequent report says **Couldn't fetch**, and its detail says **Sitemap could not be read**, last read 1 October 2026, zero discovered pages. | Recheck the sitemap after Google's next processing attempt; investigate further if the fetch error persists. Submission is confirmed, successful crawling is not. |
+| Bing Webmaster Tools | HTML-tag Verify completed into the Blacktop Bay property dashboard. Submitted `https://blacktop-bay.web.app/sitemap.xml`; report shows one known sitemap, **Submitted 10/1/2026**, status **Processing**, zero errors and zero warnings, and no crawl date yet. | Await Bing's processing and inspect the resulting crawl report. |
 
-At this checkpoint, neither service has confirmed ownership or sitemap submission. No indexing request or successful indexing is claimed. Verification and submission results must be appended only after the deployed site and console success states are observed.
+The Google homepage inspection reports **URL is not on Google** and **URL is unknown to Google**, with no previous crawl recorded. A homepage **Request indexing** attempt ran its live eligibility test, then returned **Oops! Something went wrong** and “We had a problem submitting your indexing request. Please try again later.” The indexing request was not confirmed; it was not repeatedly retried. These results describe the first post-deployment check, not a permanent indexing decision.
 
-## Follow-up after deployment
+Production checks confirmed HTTP 200 for the home page, guide, credits, sitemap and robots file; both ownership tags and six-build `VideoGame` metadata are present in the deployed home page. The sitemap parses as XML and lists four canonical URLs. A further request using a Googlebot user-agent also returned HTTP 200 with `Content-Type: application/xml`; this local request does not establish that Google's own crawler can fetch it and does not resolve the console's reported error.
 
-Confirm live HTML, guide, screenshot, sitemap and robots responses; complete ownership verification and sitemap submissions; inspect the home and guide URLs. A submitted sitemap or indexing request is a discovery signal, not a guarantee of crawling, indexing, ranking or a particular search presentation. Retain the ownership tags after verification.
+## Follow-up
+
+Recheck Google sitemap processing and Bing's crawl results later; the external processing window was not waited out during release checks. Retry Google's failed homepage indexing request later and inspect the guide URL after processing. A submitted sitemap or indexing request is a discovery signal, not a guarantee of crawling, indexing, ranking or a particular search presentation. Retain the ownership tags after verification.

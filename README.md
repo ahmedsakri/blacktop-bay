@@ -6,7 +6,7 @@ A free AppsOverFlow browser racer. **Own the corner.** Choose a GT or Formula ra
 
 ## Driving
 
-The car accelerates automatically. Right/D turns driver-right; Left/A turns driver-left. Hold Space to drift, Down/S to brake and Shift for nitro. R resets to the last valid road position; Esc/P pauses. Phones have separate steer, brake, drift and nitro pads. Nitro is finite; release the trigger to recharge while driving. Clean drifting restores charge faster. Resetting cannot refill the tank or award lap progress.
+The car accelerates automatically. Right/D turns driver-right; Left/A turns driver-left. Hold Space to drift, Down/S to brake and Shift for nitro. R resets to the last valid road position; Esc/P pauses. Mobile races require landscape, with separate steer, brake, drift and nitro pads. Starting upright shows a rotate screen; rotating upright mid-race pauses without losing position. Rotate back and choose Keep driving. The browser requests fullscreen/landscape lock when supported; otherwise users rotate the device manually. The menu and garage also work in portrait. Nitro is finite; release the trigger to recharge while driving. Clean drifting restores charge faster. Resetting cannot refill the tank or award lap progress.
 
 Mira, Jax and Nova use the same physical simulation, with steering, braking, avoidance, passing and car-to-car contact. Three valid laps complete a race. Standings use actual progress and finish crossings; unfinished rivals continue racing after the player finishes.
 

@@ -426,6 +426,18 @@
         <a href="https://appsoverflow.web.app/">Explore AppsOverFlow ↗</a>
       </div>
     </main>
+    <div id="orientation-gate" class="orientation-gate" hidden>
+      <section id="orientation-dialog" role="dialog" aria-modal="true" aria-labelledby="orientation-title" aria-describedby="orientation-message" tabindex="-1">
+        <img src="/assets/logo.svg" alt="Blacktop Bay" width="240" height="80" />
+        <div class="rotate-device" aria-hidden="true"><span></span><b>↻</b></div>
+        <p class="eyebrow">A WIDER VIEW. A BETTER LINE.</p>
+        <h2 id="orientation-title">Turn your phone.<br /><em>Take the corner.</em></h2>
+        <p id="orientation-message">Races are played in landscape. Rotate your phone to give the track and driving controls room.</p>
+        <button id="orientation-fullscreen" class="button primary">Fullscreen &amp; rotate <span aria-hidden="true">↗</span></button>
+        <button id="orientation-home" class="button secondary">Back to home</button>
+        <p id="orientation-status" class="orientation-status" role="status"></p>
+      </section>
+    </div>
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>

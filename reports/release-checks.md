@@ -39,3 +39,19 @@ Deployment must target only Firebase Hosting site `blacktop-bay` in project `ech
 ## Limits
 
 Physical iOS/Android devices were unavailable. Touch, safe-area layouts, and reduced geometry were inspected through desktop browser emulation; thermal behavior, Safari-specific WebGL performance and mobile battery use remain device-testing items. Do not describe the release as universally pixel-perfect or guarantee a numeric SEO/AEO/GEO score.
+
+## Live release verification
+
+- Game code committed and pushed as `11f0c36`; Firebase released only Hosting site `blacktop-bay` successfully on 2026-10-01. Predeploy ran all68 tests and built the production bundle.
+- Live homepage, guide, privacy, credits, robots, sitemap and ads.txt return200. Homepage contains the six-build facts and valid VideoGame JSON-LD; guide carries the matching FAQ/HowTo content.
+- Fresh production load completed models/fonts with no console errors or warnings. Before consent only the local game script was present. After Allow analytics, GTM and gtag returned200 and GA collection returned204. Garage selection and race-start events were exercised.
+- Live390×844 check: all five touch pads visible after pause/resize/resume; no horizontal overflow. Primary pad widths are46–76px internally, heights58–77px. Desktop garage displays all six builds; live proof captured in `blacktop-live-garage.png`.
+- AppsOverFlow listing published in commit `8d7af41`, with carousel, collection card, dedicated guide, responsive actual-game artwork, shared links and sitemap entry. Site checks:2,757 static assertions,514 interaction assertions,4 sharing tests, plus existing contact checks. Live detail: https://appsoverflow.web.app/projects/blacktop-bay/.
+
+## Mobile landscape follow-up
+
+Mobile gameplay now requires landscape. Portrait Race now opens an accessible rotate dialog before the countdown begins. On touch hardware the browser attempts fullscreen and landscape lock when supported; unsupported browsers provide a clear manual rotation path. The menu/garage remain available in portrait. The orientation overlay traps focus and makes the underlying controls inert, uses a reduced-motion-safe rotation illustration, and includes Back to home.
+
+Verified in browser viewport tests: portrait entry keeps elapsed time0; resizing to844×390 starts countdown/racing; rotating to390×844 mid-race pauses at24.45 seconds with all held inputs cleared. Time stayed exactly24.45 while upright. Rotating back kept the pause dialog, and Keep driving resumed beyond24.45 with touch controls visible and the underlying UI no longer inert. Physical device orientation-lock behavior remains dependent on browser support and was not tested on physical hardware.
+
+AdSense reports Review requested / Getting ready. GA4 Realtime shows actual page and gameplay events. See `external-services.md`. Search consoles are verified and sitemaps submitted; Google’s first read/index request returned errors, while Bing is Processing. No indexing success is claimed; see `seo-review.md`.

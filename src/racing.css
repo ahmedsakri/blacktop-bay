@@ -1343,3 +1343,21 @@ select:focus-visible { outline:3px solid var(--cyan); outline-offset:4px; }
   .garage-spec { top:98px; }
   .garage-orbit { bottom:168px; }
 }
+
+.orientation-gate { position:fixed; inset:0; z-index:150; overflow:auto; display:grid; place-items:center; padding:24px max(24px,env(safe-area-inset-right)) 24px max(24px,env(safe-area-inset-left)); background:radial-gradient(ellipse at 50% 35%,#21394a 0%,#101e2b 44%,#070e17 100%); text-align:center; }
+.orientation-gate[hidden] { display:none; }
+.orientation-gate section { width:min(360px,100%); padding:12px 0; outline:none; }
+.orientation-gate img { width:220px; height:auto; max-width:85%; }
+.rotate-device { width:150px; height:125px; position:relative; margin:22px auto 26px; }
+.rotate-device span { position:absolute; width:64px; height:111px; left:43px; top:7px; border:3px solid #9eddec; border-radius:13px; background:linear-gradient(145deg,#44758a50,#17354420); box-shadow:0 0 35px #69dded15; transform:rotate(90deg); animation:phone-landscape 3.6s ease-in-out infinite; }
+.rotate-device span:after { content:""; position:absolute; width:23px; height:3px; background:#9eddec; border-radius:4px; bottom:8px; left:17px; }
+.rotate-device b { position:absolute; right:5px; top:0; font:400 45px Manrope; color:var(--orange,#ff835f); }
+.orientation-gate h2 { font:400 clamp(28px,8vw,38px)/1.05 'Racing Sans One',sans-serif; margin:15px 0; }
+.orientation-gate h2 em { color:var(--cyan); font-style:normal; }
+.orientation-gate .eyebrow { font-size:8px; letter-spacing:1.9px; }
+.orientation-gate p:not(.eyebrow) { font:500 13px/1.7 Manrope,sans-serif; color:#bed0dc; }
+.orientation-gate .button { width:100%; margin-top:10px; min-height:48px; font:800 12px Manrope,sans-serif; }
+.orientation-gate .orientation-status { min-height:22px; margin:14px 0 0; font-size:11px!important; }
+@keyframes phone-landscape { 0%,15% { transform:rotate(0); } 45%,85% { transform:rotate(90deg); } 100% { transform:rotate(0); } }
+@media(prefers-reduced-motion:reduce) { .rotate-device span { animation:none; } }
+@media(max-height:650px) { .orientation-gate { padding:16px 24px; } .orientation-gate img { width:175px; } .rotate-device { height:95px; margin:10px auto; transform:scale(.8); } .orientation-gate h2 { font-size:28px; margin:10px 0; } .orientation-gate p:not(.eyebrow) { font-size:11px; } }

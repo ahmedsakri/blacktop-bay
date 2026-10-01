@@ -108,7 +108,9 @@ let records = loadRecords(recordStore),
   modalKind = "",
   previousFocus = null,
   toastTimer = 0,
-  countdownTimer = 0;
+  countdownTimer = 0,
+  pendingLandscapeStart = false,
+  orientationFocus = null;
 const input = {
     left: false,
     right: false,
@@ -275,6 +277,52 @@ async function initGame() {
     }
   }
 }
+function needsLandscape() {
+  const mobileViewport = matchMedia("(any-pointer:coarse)").matches || navigator.maxTouchPoints > 0 || innerWidth < 700;
+  return mobileViewport && innerHeight > innerWidth;
+}
+function orientationGate(show) {
+  const wasHidden = $("orientation-gate").hidden;
+  $("orientation-gate").hidden = !show;
+  for (const el of [document.querySelector("main"), document.querySelector("header"), $("scene")]) if (el) el.inert = show;
+  if (show) {
+    clearInput();
+    $("orientation-message").textContent = pendingLandscapeStart
+      ? "Races are played in landscape. Rotate your phone to give the track and driving controls room."
+      : "Your race is paused. Rotate your phone, then choose Keep driving to continue from the same place.";
+    $("orientation-fullscreen").hidden = !document.documentElement.requestFullscreen;
+    if (wasHidden) { orientationFocus = document.activeElement; $("orientation-dialog").focus({preventScroll:true}); }
+  } else if (!wasHidden) {
+    $("orientation-status").textContent = "";
+    if (mode === "paused") $("dialog").focus({preventScroll:true});
+    else orientationFocus?.focus?.({preventScroll:true});
+  }
+}
+async function requestLandscape() {
+  try {
+    if (!document.fullscreenElement && document.documentElement.requestFullscreen) await document.documentElement.requestFullscreen();
+    if (screen.orientation?.lock) await screen.orientation.lock("landscape");
+  } catch { /* Safari and some browsers require physical device rotation. */ }
+  if (needsLandscape()) $("orientation-status").textContent = "Rotate your phone sideways. If it stays upright, turn off your phone’s portrait orientation lock.";
+  checkOrientation();
+}
+function checkOrientation() {
+  if (needsLandscape()) {
+    if (["racing", "countdown"].includes(mode)) pauseGame();
+    if (pendingLandscapeStart || mode === "paused") orientationGate(true);
+    return;
+  }
+  if (!$("orientation-gate").hidden) {
+    orientationGate(false);
+    if (pendingLandscapeStart) { pendingLandscapeStart = false; start(); }
+  }
+}
+$("orientation-fullscreen").onclick = requestLandscape;
+$("orientation-home").onclick = () => {
+  pendingLandscapeStart = false;
+  orientationGate(false);
+  menu();
+};
 function updateTouchControls() {
   const touch = matchMedia("(any-pointer:coarse)").matches || innerWidth < 700 || (innerWidth < 1000 && innerHeight < 540);
   document.body.classList.toggle("touch-mode", touch);
@@ -426,6 +474,16 @@ function openGarage() {
   event("garage_open");
 }
 function start() {
+  if (needsLandscape()) {
+    pendingLandscapeStart = true;
+    orientationGate(true);
+    // Only touch hardware attempts a browser orientation lock; small desktop
+    // windows can be resized without an unexpected fullscreen transition.
+    if (matchMedia("(any-pointer:coarse)").matches || navigator.maxTouchPoints > 0) void requestLandscape();
+    return;
+  }
+  pendingLandscapeStart = false;
+  orientationGate(false);
   clearTimeout(countdownTimer);
   closeDialog();
   clearInput();
@@ -457,6 +515,9 @@ function start() {
   event("race_start");
 }
 function menu() {
+  pendingLandscapeStart = false;
+  orientationGate(false);
+  try { screen.orientation?.unlock?.(); } catch {}
   clearTimeout(countdownTimer);
   closeDialog();
   clearInput();
@@ -497,6 +558,7 @@ function pauseGame() {
         label: "KEEP DRIVING",
         primary: true,
         action() {
+          if (needsLandscape()) { orientationGate(true); return; }
           closeDialog();
           mode = was;
           updateTouchControls();
@@ -516,7 +578,7 @@ function how() {
     kind: "how",
     eyebrow: "FIND YOUR LINE",
     title: "Brake. Turn.<br><em>Let it slide.</em>",
-    html: `<p>The car accelerates for you. Steer into each corner, hold drift briefly to loosen the rear, then release it and steer gently back into line.</p><div class="controls-guide"><div><b>Steer</b><span>← / → or A / D</span></div><div><b>Drift / handbrake</b><span>Hold Space</span></div><div><b>Brake</b><span>↓ or S</span></div><div><b>Nitro boost</b><span>Hold Shift</span></div><div><b>Reset / pause</b><span>R / Esc</span></div></div><p>On a phone, use the large driving pads. Landscape gives you a wider view. Race three laps against three AI drivers. Hold Shift or the NITRO pad for extra speed; release it to recharge while driving and drifting. Finish first to take the win. Best times are saved separately for each car and circuit on this device. Earn race credits at the finish, then use Garage → Upgrade car to improve each car’s engine, tyres, nitro and handling. Keep a drift clean to build your multiplier; hitting a barrier loses unbanked points.</p>`,
+    html: `<p>The car accelerates for you. Steer into each corner, hold drift briefly to loosen the rear, then release it and steer gently back into line.</p><div class="controls-guide"><div><b>Steer</b><span>← / → or A / D</span></div><div><b>Drift / handbrake</b><span>Hold Space</span></div><div><b>Brake</b><span>↓ or S</span></div><div><b>Nitro boost</b><span>Hold Shift</span></div><div><b>Reset / pause</b><span>R / Esc</span></div></div><p>On a phone, rotate to landscape to race with the large driving pads. Turning upright pauses the race. Race three laps against three AI drivers. Hold Shift or the NITRO pad for extra speed; release it to recharge while driving and drifting. Finish first to take the win. Best times are saved separately for each car and circuit on this device. Earn race credits at the finish, then use Garage → Upgrade car to improve each car’s engine, tyres, nitro and handling. Keep a drift clean to build your multiplier; hitting a barrier loses unbanked points.</p>`,
     actions: [
       { label: "GOT IT", primary: true, action: closeDialog },
       { label: "LET’S DRIVE", action: start },
@@ -748,6 +810,16 @@ const keyMap = {
   ShiftRight: "nitro",
 };
 window.addEventListener("keydown", (e) => {
+  if (!$("orientation-gate").hidden) {
+    if (e.code === "Escape") { e.preventDefault(); return; }
+    if (e.key === "Tab") {
+      const buttons = [...$("orientation-gate").querySelectorAll("button")].filter(b => !b.hidden);
+      const first = buttons[0], end = buttons.at(-1);
+      if (e.shiftKey && [first, $("orientation-dialog")].includes(document.activeElement)) { e.preventDefault(); end.focus(); }
+      else if (!e.shiftKey && document.activeElement === end) { e.preventDefault(); first.focus(); }
+    }
+    return;
+  }
   if ((e.code === "Escape" || e.code === "KeyP") && e.repeat) return;
   if (modalKind) {
     if (e.code === "Escape") {
@@ -849,6 +921,7 @@ window.addEventListener("resize", () => {
   camera.updateProjectionMatrix();
   renderer.setSize(innerWidth, innerHeight);
   composer?.setSize(innerWidth, innerHeight);
+  checkOrientation();
   updateTouchControls();
 });
 function placeCar() {
