@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createAudio } from '../src/audio.js';
+import {LOBBY_STYLES,lobbyMusicFrame,normalizeLobbyStyle} from '../src/lobby-music.js';
 
 test('electric car sound rises smoothly without combustion gear drops',async()=>{
   const env=environment(),audio=createAudio();
@@ -33,18 +34,22 @@ function environment() {
   }
   class Node {
     connections=[];stops=0;disconnections=0;gain=new Parameter();frequency=new Parameter();Q=new Parameter();
+    delayTime=new Parameter();threshold=new Parameter();knee=new Parameter();ratio=new Parameter();attack=new Parameter();release=new Parameter();
     connect(destination){this.connections.push(destination);return destination;}
     disconnect(){this.disconnections++;}
     start(){this.started=true;}
     stop(){this.stops++;this.onended?.();}
   }
   class Context {
-    state='suspended';currentTime=0;sampleRate=8000;destination={};oscillators=[];gains=[];all=[];
+    state='suspended';currentTime=0;sampleRate=8000;destination={};oscillators=[];gains=[];compressors=[];all=[];
     constructor(){contexts.push(this);}
     make(){const node=new Node();this.all.push(node);return node;}
     createOscillator(){const node=this.make();this.oscillators.push(node);return node;}
     createGain(){const node=this.make();this.gains.push(node);return node;}
     createBiquadFilter(){return this.make();}
+    createConvolver(){return this.make();}
+    createDelay(){return this.make();}
+    createDynamicsCompressor(){const node=this.make();this.compressors.push(node);return node;}
     createBufferSource(){return this.make();}
     createBuffer(channels,length){const data=new Float32Array(length);return {getChannelData:()=>data};}
     async resume(){this.state='running';}
@@ -102,7 +107,7 @@ test('combustion upshifts drop revs without hunting and Nitro adds a bounded lay
   const env=environment(),audio=createAudio();
   try{
     await audio.unlock();const ctx=env.contexts[0],body=ctx.oscillators.find(node=>node.type==='triangle');
-    const boost=ctx.oscillators.find(node=>node.frequency.value===900),boostGain=boost.connections[0].connections[0];
+    const boost=ctx.oscillators.find(node=>node.frequency.value===220),boostGain=boost.connections[0];
     let previous=0,drops=0;
     for(let speed=0;speed<55;speed+=.2){audio.update({running:true,vehicle:'mclaren-p1-gtr',speed,throttle:1},.02);if(body.frequency.value<previous-15)drops++;previous=body.frequency.value;}
     assert.equal(drops,5,'six-speed combustion voice must shift five times during an acceleration run');
@@ -115,4 +120,106 @@ test('combustion upshifts drop revs without hunting and Nitro adds a bounded lay
     audio.update({running:true,vehicle:'unknown',speed:Infinity,throttle:NaN,drift:NaN},Infinity);
     assert.ok(Number.isFinite(body.frequency.value));
   }finally{audio.dispose();env.restore();}
+});
+
+test('manufacturer synthesis characters differ while sustained boost reuses all voices and releases on pause',async()=>{
+ const env=environment(),audio=createAudio();
+ try{
+  await audio.unlock();const ctx=env.contexts[0],body=ctx.oscillators[0],pitches=[];
+  for(const vehicle of ['ferrari-enzo','mercedes-amg-gt','porsche-911-gt3']){
+   for(let i=0;i<40;i++)audio.update({running:true,vehicle,speed:25,throttle:1,nitro:false},1/60);
+   pitches.push(body.frequency.value);
+  }
+  assert.ok(new Set(pitches.map(p=>Math.round(p))).size===3,'manufacturer sound characters have distinct pitch envelopes');
+  const count=ctx.all.length;
+  for(let i=0;i<90;i++)audio.update({running:true,vehicle:'ferrari-enzo',speed:35,throttle:1,nitro:i<60},1/60);
+  assert.equal(ctx.all.length,count,'boost attack, sustain and release allocate no new audio graph nodes');
+  audio.update({running:false});assert.equal(ctx.gains[1].gain.value,0);
+ }finally{audio.dispose();env.restore();}
+});
+
+test('original lobby music requires unlock, follows sound/visibility, and crossfades away from racing',async()=>{
+ const env=environment(),audio=createAudio();
+ try{
+  audio.update({lobby:true});assert.equal(env.contexts.length,0);
+  await audio.unlock();const ctx=env.contexts[0];
+  const pad=ctx.oscillators[7],filter=pad.connections[0].connections[0],music=filter.connections[0];
+  const nodes=ctx.all.length,pitches=new Set();
+  for(let i=0;i<1400;i++){
+   audio.update({lobby:true,vehicle:'ferrari-enzo'},.02);
+   pitches.add(Math.round(pad.frequency.value));
+  }
+  assert.equal(music.gain.value,.65);assert.equal(ctx.gains[1].gain.value,0);
+  assert.ok(pitches.size>=3,'the lobby has an original changing harmony rather than a static hum');
+  assert.equal(ctx.all.length,nodes,'lobby music is a bounded reusable graph');
+  audio.update({running:true,lobby:true,speed:25,vehicle:'ferrari-enzo'});assert.equal(music.gain.value,0);
+  audio.update({running:false,lobby:false});assert.equal(music.gain.value,0,'pause/result views do not accidentally restart music');
+  audio.update({lobby:true});assert.equal(music.gain.value,.65);
+  audio.setMuted(true);assert.equal(music.gain.value,0);
+  audio.setMuted(false);assert.equal(music.gain.value,.65);
+  globalThis.document.hidden=true;env.listeners.get('visibilitychange')();assert.equal(music.gain.value,0);
+ }finally{audio.dispose();env.restore();}
+});
+
+test('driving and music volume remain independently bounded and every audible path uses the master compressor',async()=>{
+ const env=environment(),audio=createAudio();
+ try{
+  audio.setVolume(.5);audio.setMusicVolume(.3);
+  audio.beep();
+  assert.equal(env.contexts.length,0,'volume settings cannot unlock audio or create a graph');
+  await audio.unlock();const ctx=env.contexts[0],master=ctx.gains[0],engine=ctx.gains[1];
+  const pad=ctx.oscillators[7],music=pad.connections[0].connections[0].connections[0];
+  const compressor=ctx.compressors[0];
+  assert.equal(ctx.compressors.length,1);
+  assert.deepEqual(master.connections,[compressor]);assert.deepEqual(compressor.connections,[ctx.destination]);
+  assert.deepEqual(engine.connections,[master]);assert.deepEqual(music.connections,[master]);
+  assert.equal(compressor.threshold.value,-10);assert.equal(compressor.knee.value,12);
+  assert.equal(compressor.ratio.value,4);assert.equal(compressor.attack.value,.003);assert.equal(compressor.release.value,.18);
+  audio.update({lobby:true});assert.equal(master.gain.value,.8);assert.equal(music.gain.value,.3);
+  for(const [input,expected] of [[-5,0],[0,0],[.25,.4],[1,1.6],[5,1.6],[NaN,1.2],[Infinity,1.2]]){
+   audio.setVolume(input);assert.ok(Math.abs(master.gain.value-expected)<1e-12);
+   assert.equal(music.gain.value,.3,'master volume cannot alter the saved music mix');
+  }
+  audio.setVolume(.5);
+  for(const [input,expected] of [[-5,0],[0,0],[.25,.25],[1,1],[5,1],[NaN,.65],[Infinity,.65]]){
+   audio.setMusicVolume(input);assert.equal(music.gain.value,expected);assert.equal(master.gain.value,.8);
+  }
+  audio.update({running:true,lobby:true,vehicle:'ferrari-enzo',speed:35,nitro:true,throttle:1});
+  assert.equal(engine.gain.value,1);assert.equal(music.gain.value,0,'race audio always takes precedence over lobby music');
+  audio.setVolume(0);assert.equal(master.gain.value,0,'zero volume silences engine, Nitro and UI tones through the shared bus');
+  audio.beep(880,.1);
+  const cue=ctx.oscillators.at(-1);
+  assert.deepEqual(cue.connections[0].connections,[master],'UI tones cannot bypass master volume or compression');
+  audio.setVolume(1);audio.setMuted(true);audio.setVolume(.6);assert.equal(master.gain.value,0,'moving a slider cannot override mute');
+  audio.setMuted(false);assert.equal(master.gain.value,.96);
+  globalThis.document.hidden=true;env.listeners.get('visibilitychange')();audio.setVolume(1);assert.equal(master.gain.value,0);
+ }finally{audio.dispose();env.restore();}
+});
+
+test('Liquid Lines is the only soundtrack and legacy choices cannot restore removed music',async()=>{
+ for(const value of [undefined,null,'original','midnight-drive','after-hours','unapproved','liquid-lines'])assert.equal(normalizeLobbyStyle(value),'liquid-lines');
+ assert.deepEqual(LOBBY_STYLES.map(style=>style.id),['liquid-lines']);
+ for(let i=0;i<1200;i++){
+  const frame=lobbyMusicFrame('liquid-lines',i/60);
+  assert.equal(frame.bpm,168);
+  for(const [key,value] of Object.entries(frame))if(typeof value==='number')assert.ok(Number.isFinite(value),key);
+  assert.ok(frame.padGains.every(gain=>gain>=0&&gain<=.05));
+  assert.ok(frame.kickGain>=0&&frame.kickGain<.17);assert.ok(frame.snareGain>=0&&frame.snareGain<.12);
+  assert.deepEqual(lobbyMusicFrame('original',i/60),frame,'old saved IDs resolve to the approved arrangement');
+ }
+ const env=environment(),audio=createAudio();
+ try{
+  assert.equal(audio.setLobbyStyle('original'),'liquid-lines');assert.equal(env.contexts.length,0,'preference migration never unlocks playback');
+  await audio.unlock();const ctx=env.contexts[0],count=ctx.all.length;
+  for(const legacyStyle of ['original','midnight-drive','after-hours']){
+   assert.equal(audio.setLobbyStyle(legacyStyle),'liquid-lines');
+   for(let i=0;i<100;i++)audio.update({lobby:true},.02);
+   assert.equal(ctx.all.length,count,'migrating a preference reuses instruments and ambience');
+   const music=ctx.oscillators[7].connections[0].connections[0].connections[0];
+   assert.equal(music.gain.value,.65);
+  }
+  audio.update({running:true,lobby:true});
+  const music=ctx.oscillators[7].connections[0].connections[0].connections[0];assert.equal(music.gain.value,0);
+  audio.setLobbyStyle('after-hours');assert.equal(music.gain.value,0,'preference migration cannot restart music during a race');
+ }finally{audio.dispose();env.restore();}
 });

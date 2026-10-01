@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { Reflector } from 'three/addons/objects/Reflector.js';
 import { TRACK, sampleTrack, projectOnTrack } from './track.js';
 import { RIVAL_GRID } from './rivals.js';
+import { cornerApproachMarkers } from './track-details.js';
 import { createCrowd } from './crowd.js';
 import { ORIGINAL_VENUE_PROFILES, originalLandmarkLayout, createOriginalLandmarks } from './original-venues.js';
 import { createCinematicBackdrop, CINEMATIC_BACKDROP_GLSL } from './cinematic-backdrop.js';
@@ -214,8 +215,19 @@ export function createWorld(renderer, { low = false, reducedMotion = false } = {
  const asphalt = canvasTexture(low ? 512 : 1024, low ? 512 : 1024, (c, w, h) => {
   c.fillStyle = '#474b50'; c.fillRect(0, 0, w, h);
   const pixels = c.getImageData(0, 0, w, h);
-  for (let i = 0; i < pixels.data.length; i += 4) { const v = 40 + rng() * 43; pixels.data[i] = v; pixels.data[i + 1] = v + 3; pixels.data[i + 2] = v + 6; }
+  for (let i = 0; i < pixels.data.length; i += 4) { const aggregate=rng(),v = 48 + aggregate * 25 + (aggregate>.987?14:0); pixels.data[i] = v; pixels.data[i + 1] = v + 3; pixels.data[i + 2] = v + 6; }
   c.putImageData(pixels, 0, 0);
+  // Fine aggregate sits inside larger resurfacing variation. Long understated
+  // rubber bands read as driven asphalt instead of uniform glittery gravel.
+  for(let patch=0;patch<18;patch++){
+   c.fillStyle=`rgba(12,17,23,${.025+rng()*.045})`;
+   c.fillRect(rng()*w,rng()*h,w*(.10+rng()*.28),h*(.12+rng()*.48));
+  }
+  for(const lane of [.33,.67]){
+   const band=c.createLinearGradient((lane-.075)*w,0,(lane+.075)*w,0);
+   band.addColorStop(0,'rgba(9,14,18,0)');band.addColorStop(.5,'rgba(9,14,18,.075)');band.addColorStop(1,'rgba(9,14,18,0)');
+   c.fillStyle=band;c.fillRect((lane-.075)*w,0,w*.15,h);
+  }
   for (let i = 0; i < 100; i++) { c.strokeStyle = `rgba(10,17,23,${rng() * .13})`; c.lineWidth = 1 + rng() * 2; c.beginPath(); const x = rng() * w, y = rng() * h; c.moveTo(x, y); c.lineTo(x + rng() * 8 - 4, y + 20 + rng() * 70); c.stroke(); }
  }); asphalt.wrapS = asphalt.wrapT = THREE.RepeatWrapping; asphalt.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
  const base = new THREE.Mesh(roadGeometry(TRACK.width + 11), new THREE.MeshStandardMaterial({ color: venue.environment==='desert'?'#736855':'#303a43', roughness: .9 })); base.position.y = -.10; scene.add(base);
@@ -225,7 +237,7 @@ export function createWorld(renderer, { low = false, reducedMotion = false } = {
   for(let s=0;s<TRACK.length;s+=5){const p=sampleTrack(s);foundations.push({x:p.x,y:-.56,z:p.z,sx:TRACK.width+10.9,sy:.90,sz:5.12,ry:Math.atan2(p.tx,p.tz)});}
   instances(scene,box,new THREE.MeshStandardMaterial({color:'#555e61',roughness:.96}),foundations);
  }
- const road = new THREE.Mesh(roadGeometry(TRACK.width), new THREE.MeshStandardMaterial({ color: '#b5bbc2', map: asphalt, bumpMap: asphalt, bumpScale: .036, roughness: .86, metalness: .015, envMapIntensity: .16 })); road.position.y = .011; road.receiveShadow = true; scene.add(road);
+ const road = new THREE.Mesh(roadGeometry(TRACK.width), new THREE.MeshStandardMaterial({ color: '#b5bbc2', map: asphalt, bumpMap: asphalt, bumpScale: .012, roughness: .86, metalness: .015, envMapIntensity: .16 })); road.position.y = .011; road.receiveShadow = true; scene.add(road);
  const wetShader = {
   name: 'RainPolishedAsphalt', uniforms: { color: { value: null }, tDiffuse: { value: null }, textureMatrix: { value: null } },
   vertexShader: `uniform mat4 textureMatrix;varying vec4 vUv;varying vec3 vWorld;void main(){vUv=textureMatrix*vec4(position,1.);vWorld=(modelMatrix*vec4(position,1.)).xyz;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
@@ -283,24 +295,41 @@ export function createWorld(renderer, { low = false, reducedMotion = false } = {
   kerbs.push({x:p.x+p.nx*offset,z:p.z+p.nz*offset,y:.064,sx:.72,sy:.028,sz:1.34,ry:Math.atan2(p.tx,p.tz),color:Math.floor(distance/1.35)%2?'#dcded8':'#ce4838'});
  }
  instances(scene,box,new THREE.MeshStandardMaterial({color:'white',roughness:.89}),kerbs);
+ const cornerBoards=cornerApproachMarkers(TRACK,{stands:grandstandLayout(),limit:low?6:8});
+ scene.userData.cornerApproachMarkers=cornerBoards;
+ const markerPosts=cornerBoards.map(p=>({x:p.x,z:p.z,y:.88,sx:.09,sy:1.76,sz:.09,ry:p.yaw}));
+ if(markerPosts.length)instances(scene,box,metal,markerPosts);
+ for(const distance of [100,50]){
+  const markers=cornerBoards.filter(p=>p.distance===distance).map(p=>({x:p.x,z:p.z,y:1.65,ry:p.yaw}));
+  if(!markers.length)continue;
+  const art=canvasTexture(256,256,(c,w,h)=>{
+   c.fillStyle='#eef1e9';c.fillRect(0,0,w,h);c.fillStyle='#17212a';c.fillRect(12,12,w-24,6);c.fillRect(12,h-18,w-24,6);
+   c.textAlign='center';c.textBaseline='middle';c.font='800 112px "Barlow Condensed", sans-serif';c.fillText(String(distance),w/2,h*.48);
+   c.font='700 25px "Barlow Condensed", sans-serif';c.fillText('METRES',w/2,h*.78);
+  });
+  instances(scene,new THREE.PlaneGeometry(.95,1.05),new THREE.MeshBasicMaterial({map:art,side:THREE.FrontSide}),markers);
+ }
+
  const finish = sampleTrack(0), checkers = [], checkerColumns = Math.round(TRACK.width / .5);
  for (let row = 0; row < 4; row++) for (let col = 0; col < checkerColumns; col++) {
   const across = (col - (checkerColumns - 1) / 2) * .5, along = (row - 1.5) * .5;
   checkers.push({ x: finish.x + finish.nx * across + finish.tx * along, z: finish.z + finish.nz * across + finish.tz * along, y: .061, sx: .5, sy: .006, sz: .5, ry: Math.atan2(finish.tx, finish.tz), color: (col + row) % 2 ? '#17202a' : '#e8eeeb' });
  }
  instances(scene, box, new THREE.MeshBasicMaterial({ color: 'white' }), checkers);
- // Grid paint follows the actual four-car staggered starting positions.
+ // Grid paint follows every actual staggered starting position, including expanded fields.
  const startingGrid = [{ s: 0, lane: 0 }, ...RIVAL_GRID].sort((a, b) => b.s - a.s);
- const gridTexture = canvasTexture(512, 128, (c, w, h) => {
+ const gridCount=startingGrid.length;
+ const gridTexture = canvasTexture(128*gridCount, 128, (c, w, h) => {
   c.clearRect(0, 0, w, h); c.fillStyle = '#e9efec'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.font = '800 92px Arial';
-  for (let n = 1; n <= 4; n++) c.fillText(String(n).padStart(2, '0'), (n - .5) * 128, 68);
+  for (let n = 1; n <= gridCount; n++) c.fillText(String(n).padStart(2, '0'), (n - .5) * 128, 68);
  });
+ scene.userData.startingGridCount=gridCount;
  startingGrid.forEach((grid, index) => {
   const p = sampleTrack(grid.s), angle = Math.atan2(p.tx, p.tz), offset = grid.lane;
   for (const along of [-2.8, 2.8]) gridMarks.push({ x: p.x + p.nx * offset + p.tx * along, z: p.z + p.nz * offset + p.tz * along, y: .063, sx: 2.85, sy: .006, sz: .11, ry: angle });
   for (const edge of [-1, 1]) gridMarks.push({ x: p.x + p.nx * (offset + edge * 1.425), z: p.z + p.nz * (offset + edge * 1.425), y: .063, sx: .1, sy: .006, sz: 5.6, ry: angle });
   const numberGeo = new THREE.PlaneGeometry(1.05, 1.05), uv = numberGeo.attributes.uv;
-  for (let i = 0; i < uv.count; i++) uv.setX(i, (uv.getX(i) + index) / 4);
+  for (let i = 0; i < uv.count; i++) uv.setX(i, (uv.getX(i) + index) / gridCount);
   const number = new THREE.Mesh(numberGeo, new THREE.MeshBasicMaterial({ map: gridTexture, transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -1 }));
   // Driver-right is local -X: rotate the horizontal numeral toward the grid.
   number.rotation.set(-Math.PI / 2, 0, Math.PI + angle); number.position.set(p.x + p.nx * offset - p.tx * 3.6, .07, p.z + p.nz * offset - p.tz * 3.6); scene.add(number);

@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { projectOnTrack } from './track.js';
+import { createNitroJets } from './nitro-jets.js';
 
 const clamp = THREE.MathUtils.clamp;
 const REAR_AXLE = -1.35, TYRE_OFFSET = .884, TYRE_WIDTH = .238;
@@ -38,6 +39,21 @@ function streakTexture(flame = false) {
     const alpha = Math.exp(-u * u / (width * width) * 4) * Math.sin(v * Math.PI) ** (flame ? .7 : .5);
     pixels.data[i] = 255; pixels.data[i + 1] = flame ? Math.round(95 + 150 * (1 - v)) : 255; pixels.data[i + 2] = flame ? Math.round(30 + 200 * (1 - v) ** 5) : 255;
     pixels.data[i + 3] = Math.round(alpha * 255);
+  }
+  context.putImageData(pixels, 0, 0);
+  const texture = new THREE.CanvasTexture(canvas); texture.colorSpace = THREE.SRGBColorSpace; return texture;
+}
+
+// Angular carbon/rubber flecks use a single tiny shared sprite, not a mesh per
+// fragment. All crash pools are allocated once, including on mobile.
+function fragmentTexture() {
+  const canvas = document.createElement('canvas'); canvas.width = canvas.height = 16;
+  const context = canvas.getContext('2d'), pixels = context.createImageData(16, 16);
+  for (let y = 0; y < 16; y++) for (let x = 0; x < 16; x++) {
+    const u = x / 15, v = y / 15, i = (y * 16 + x) * 4;
+    const inside = u > .13 + v * .22 && u < .92 - v * .18 && v > .08 && v < .92;
+    pixels.data[i] = pixels.data[i + 1] = pixels.data[i + 2] = 175 + x * 5;
+    pixels.data[i + 3] = inside ? 255 : 0;
   }
   context.putImageData(pixels, 0, 0);
   const texture = new THREE.CanvasTexture(canvas); texture.colorSpace = THREE.SRGBColorSpace; return texture;
@@ -97,16 +113,19 @@ function particleBatch(scene, name, capacity, texture, additive = false) {
 }
 
 export function createEffects(scene, { low = false } = {}) {
-  const cloud = cloudTexture(), streak = streakTexture(), flameTexture = streakTexture(true);
+  const cloud = cloudTexture(), streak = streakTexture(), flameTexture = streakTexture(true), fragment = fragmentTexture();
+  const jets=createNitroJets(scene,{low});
   const clouds = particleBatch(scene, 'tyre-smoke-and-exhaust', low ? 88 : 144, cloud);
   const spray = particleBatch(scene, 'wet-road-spray', low ? 52 : 88, streak);
-  const sparks = particleBatch(scene, 'contact-sparks', low ? 24 : 40, streak, true);
+  const sparks = particleBatch(scene, 'contact-sparks', low ? 36 : 56, streak, true);
+  const debris = particleBatch(scene, 'contact-road-fragments', low ? 12 : 20, fragment);
+  sparks.material.toneMapped = false;
   const flames = particleBatch(scene, 'exhaust-liftoff', low ? 4 : 8, flameTexture, true);
   // Separate, bounded pools keep boost colour from replacing natural tyre smoke.
   const nitroClouds = particleBatch(scene, 'nitro-blue-plume', low ? 48 : 80, cloud);
   const nitroCores = particleBatch(scene, 'nitro-blue-core', low ? 12 : 20, streak, true);
   nitroClouds.material.toneMapped = false; nitroCores.material.toneMapped = false;
-  const batches = [clouds, spray, sparks, flames, nitroClouds, nitroCores];
+  const batches = [clouds, spray, sparks, debris, flames, nitroClouds, nitroCores];
   const maxMarks = low ? 420 : 720, markPositions = new Float32Array(maxMarks * 18), markUV = new Float32Array(maxMarks * 12), markBirth = new Float32Array(maxMarks * 6), markOpacity = new Float32Array(maxMarks * 6);
   const markGeometry = new THREE.BufferGeometry();
   markGeometry.setAttribute('position', new THREE.BufferAttribute(markPositions, 3).setUsage(THREE.DynamicDrawUsage));
@@ -125,11 +144,11 @@ export function createEffects(scene, { low = false } = {}) {
       }`,
   });
   const markMesh = new THREE.Mesh(markGeometry, markMaterial); markMesh.name = 'grounded-tyre-marks'; markMesh.frustumCulled = false; markMesh.renderOrder = 1; scene.add(markMesh);
-  let clock = 0, markCount = 0, previousPose = null, previousThrottle = null, previousCollision = false, collisionCooldown = 0, flameCooldown = 0;
+  let clock = 0, markCount = 0, previousPose = null, previousThrottle = null, previousCollision = false, collisionCooldown = 0, flameCooldown = 0, impactId = 0, impactBursts = 0;
   let rearAxle = REAR_AXLE, tyreOffset = TYRE_OFFSET, tyreWidth = TYRE_WIDTH;
   let exhausts = [-.699,-.567,.567,.699].map(x=>({x,y:.385,z:-2.41}));
   let smokeDebt = 0, sprayDebt = 0, mistDebt = 0, exhaustDebt = 0, nitroDebt = 0, markAnchors = null;
-  const live = { clouds: 0, spray: 0, sparks: 0, flames: 0, nitro: 0, nitroCores: 0 };
+  const live = { clouds: 0, spray: 0, sparks: 0, debris: 0, flames: 0, nitro: 0, nitroCores: 0 };
   const multiplier = low ? .65 : 1;
   function posePoint(pose, side, longitudinal) { const fx = Math.sin(pose.yaw), fz = Math.cos(pose.yaw); return { x: pose.x + fx * longitudinal + fz * side, z: pose.z + fz * longitudinal - fx * side }; }
   function emissionPose(car, fraction) {
@@ -173,13 +192,13 @@ export function createEffects(scene, { low = false } = {}) {
       nitroClouds.emit({x: p.x, y: outlet.y, z: p.z,
         vx: (car.vx || 0) * .04 - fx * 2.1, vz: (car.vz || 0) * .04 - fz * 2.1, vy: .18,
         windX: .06, windZ: -.03, gravity: .02, drag: .7,
-        width: .48, height: .38, growX: 1.05, growY: .68,
+        width: .24, height: .20, growX: .84, growY: .42,
         rotation: Math.random() * TAU, spin: reduced ? 0 : .12,
-        duration: reduced ? .36 : .80, alpha: reduced ? .24 : .68, flash: false, ...tint(nitroTint)});
+        duration: reduced ? .30 : .56, alpha: reduced ? .20 : .40, flash: false, ...tint(nitroTint)});
       if (exhausts.length && !reduced) nitroCores.emit({x: p.x, y: outlet.y, z: p.z,
         vx: -fx * 4, vz: -fz * 4, vy: .02, windX: 0, windZ: 0, gravity: 0, drag: .2,
-        width: .16, height: .30, growX: .08, growY: .16, rotation: 0, spin: 0,
-        duration: .18, alpha: .65, flash: false, ...tint(nitroCoreTint, 1.3)});
+        width: .10, height: .14, growX: .06, growY: .08, rotation: 0, spin: 0,
+        duration: .12, alpha: .40, flash: false, ...tint(nitroCoreTint, 1.3)});
     }
   }
   function liftOff(car) {
@@ -191,19 +210,54 @@ export function createEffects(scene, { low = false } = {}) {
     }
     flameCooldown = .85;
   }
-  function contactBurst(car, contact) {
+  function contactBurst(car, contact, reduced = false) {
     const projection = projectOnTrack(car.x, car.z), side = Math.sign(projection.signedDistance) || 1;
-    const nx = projection.nx * side, nz = projection.nz * side;
-    const x = Number.isFinite(contact?.x) ? contact.x : car.x + nx * .96;
-    const z = Number.isFinite(contact?.z) ? contact.z : car.z + nz * .96;
-    const count = low ? 10 : 17;
-    for (let i = 0; i < count; i++) sparks.emit({ x, y: .25 + Math.random() * .22, z,
-      vx: (car.vx || 0) * .23 - nx * (1.0 + Math.random() * 3.0) + (Math.random() - .5) * 3,
-      vz: (car.vz || 0) * .23 - nz * (1.0 + Math.random() * 3.0) + (Math.random() - .5) * 3,
-      vy: .9 + Math.random() * 2.1, windX: 0, windZ: 0, gravity: -9.8, drag: .4, width: .021 + Math.random() * .016, height: .12 + Math.random() * .18, growX: -.008, growY: -.045,
-      rotation: Math.random() * TAU, spin: (Math.random() - .5) * 8, duration: .22 + Math.random() * .28, alpha: .9, flash: true, red: 2.7, green: 1.25 + Math.random() * .7, blue: .24,
-    });
-    collisionCooldown = .36;
+    const normalLength = Math.hypot(contact?.nx, contact?.nz);
+    const nx = Number.isFinite(normalLength) && normalLength > .001 ? contact.nx / normalLength : -projection.nx * side;
+    const nz = Number.isFinite(normalLength) && normalLength > .001 ? contact.nz / normalLength : -projection.nz * side;
+    const validPoint = Number.isFinite(contact?.x) && Number.isFinite(contact?.z)
+      && Math.hypot(contact.x - car.x, contact.z - car.z) < 6;
+    const x = validPoint ? contact.x : car.x - nx * .96, z = validPoint ? contact.z : car.z - nz * .96;
+    const strength = clamp(Number.isFinite(contact?.strength) ? contact.strength : .35, 0, 1);
+    const hard = contact?.kind === 'crash', count = reduced ? 0 : hard ? Math.round((low ? 17 : 25) + strength * 9) : low ? 4 : 6;
+    for (let i = 0; i < count; i++) {
+      const outward = 1.4 + Math.random() * (hard ? 4 + strength * 3 : 2), tangent = (Math.random() - .5) * (hard ? 6 : 3);
+      sparks.emit({ x, y: .25 + Math.random() * .3, z,
+        vx: nx * outward + nz * tangent + (car.vx || 0) * .12,
+        vz: nz * outward - nx * tangent + (car.vz || 0) * .12,
+        vy: .6 + Math.random() * (hard ? 2.8 : 1.1), windX: 0, windZ: 0, gravity: -9.8, drag: .5,
+        width: hard ? .035 + Math.random() * .025 : .022, height: .18 + Math.random() * (hard ? .35 : .10), growX: -.01, growY: -.08,
+        rotation: Math.random() * TAU, spin: (Math.random() - .5) * 7, duration: hard ? .35 + Math.random() * .30 : .18 + Math.random() * .14,
+        alpha: .95, flash: true, red: 2.5, green: 1.45 + Math.random() * .55, blue: .40,
+      });
+    }
+    // Real hard impacts kick road grit and a small dust plume from the contact
+    // point. No explosions, detached car panels or invented vehicle damage.
+    if (hard) {
+      const fragments = reduced ? 0 : low ? 7 : 11;
+      for (let i = 0; i < fragments; i++) {
+        const outward = 1 + Math.random() * 3, tangent = (Math.random() - .5) * 4, shade = .08 + Math.random() * .13;
+        debris.emit({x, y: .2 + Math.random() * .2, z, vx: nx * outward + nz * tangent, vz: nz * outward - nx * tangent,
+          vy: .6 + Math.random() * 2, windX: 0, windZ: 0, gravity: -9.8, drag: 2.5,
+          width: .06 + Math.random() * .08, height: .04 + Math.random() * .06, growX: 0, growY: 0,
+          rotation: Math.random() * TAU, spin: (Math.random() - .5) * 13, duration: .55 + Math.random() * .45,
+          alpha: .85, flash: true, red: shade, green: shade * .95, blue: shade * .9});
+      }
+      if (!reduced) for (let i = 0; i < (low ? 3 : 5); i++) clouds.emit({x: x + nx * i * .10, y: .2, z: z + nz * i * .10,
+        vx: nx * (.5 + Math.random()) + (car.vx || 0) * .08, vz: nz * (.5 + Math.random()) + (car.vz || 0) * .08,
+        vy: .3, windX: .1, windZ: -.05, gravity: .02, drag: 1.8,
+        width: .35, height: .25, growX: 1.1, growY: .75, rotation: Math.random() * TAU, spin: .15,
+        duration: .65 + Math.random() * .3, alpha: .36, flash: false, red: .55, green: .52, blue: .47});
+      // Mark only the distance the tyres actually travelled this frame. A
+      // recovery jump must never draw a rubber stripe across the circuit.
+      if (previousPose && Math.hypot(car.x - previousPose.x, car.z - previousPose.z) < 3) {
+        for (const axle of [rearAxle, Math.abs(rearAxle) * .8]) for (const wheelSide of [-1, 1]) {
+          addMark(posePoint(previousPose, wheelSide * tyreOffset, axle), posePoint(car, wheelSide * tyreOffset, axle), .9);
+        }
+        flushMarks();
+      }
+    }
+    impactBursts++; collisionCooldown = hard ? .3 : .16;
   }
   function addMark(a, b, strength) {
     const dx = b.x - a.x, dz = b.z - a.z, length = Math.hypot(dx, dz);
@@ -211,6 +265,9 @@ export function createEffects(scene, { low = false } = {}) {
     const nx = dz / length * tyreWidth / 2, nz = -dx / length * tyreWidth / 2, slot = markCount % maxMarks, offset = slot * 18;
     markPositions.set([a.x - nx, GROUND, a.z - nz, a.x + nx, GROUND, a.z + nz, b.x - nx, GROUND, b.z - nz, a.x + nx, GROUND, a.z + nz, b.x + nx, GROUND, b.z + nz, b.x - nx, GROUND, b.z - nz], offset);
     markBirth.fill(clock, slot * 6, slot * 6 + 6); markOpacity.fill(.28 + strength * .38, slot * 6, slot * 6 + 6); markCount++;
+  }
+  function flushMarks() {
+    markGeometry.attributes.position.needsUpdate = true; markGeometry.attributes.birth.needsUpdate = true; markGeometry.attributes.strength.needsUpdate = true; markGeometry.setDrawRange(0, Math.min(markCount, maxMarks) * 6);
   }
   function marksAt(car, strength) {
     const points = [-1, 1].map(side => posePoint(car, side * tyreOffset, rearAxle));
@@ -223,19 +280,20 @@ export function createEffects(scene, { low = false } = {}) {
       if (!count) continue;
       for (let i = 1; i <= count; i++) { const fraction = Math.min(1, i * .38 / length), next = { x: from.x + (to.x - from.x) * fraction, z: from.z + (to.z - from.z) * fraction }; addMark(markAnchors[side], next, strength); markAnchors[side] = next; changed = true; }
     }
-    if (changed) { markGeometry.attributes.position.needsUpdate = true; markGeometry.attributes.birth.needsUpdate = true; markGeometry.attributes.strength.needsUpdate = true; markGeometry.setDrawRange(0, Math.min(markCount, maxMarks) * 6); }
+    if (changed) flushMarks();
   }
   function clear() {
     for (const batch of batches) batch.clear();
-    clock = 0; markCount = 0; previousPose = null; previousThrottle = null; previousCollision = false; collisionCooldown = 0; flameCooldown = 0;
+    jets.clear();
+    clock = 0; markCount = 0; previousPose = null; previousThrottle = null; previousCollision = false; collisionCooldown = 0; flameCooldown = 0; impactId = 0; impactBursts = 0;
     smokeDebt = sprayDebt = mistDebt = exhaustDebt = nitroDebt = 0; markAnchors = null;
     markGeometry.setDrawRange(0, 0); markMaterial.uniforms.clock.value = 0;
-    live.clouds = live.spray = live.sparks = live.flames = live.nitro = live.nitroCores = 0;
+    live.clouds = live.spray = live.sparks = live.debris = live.flames = live.nitro = live.nitroCores = 0;
   }
   clear();
   return {
     clear,
-    get stats() { return { ...live, marks: Math.min(markCount, maxMarks), emitted: batches.reduce((total, batch) => total + batch.emitted, 0), budget: { clouds: clouds.capacity, spray: spray.capacity, sparks: sparks.capacity, flames: flames.capacity, nitro: nitroClouds.capacity, nitroCores: nitroCores.capacity, marks: maxMarks } }; },
+    get stats() { return { ...live, impactBursts, jets: jets.mesh.count, marks: Math.min(markCount, maxMarks), emitted: batches.reduce((total, batch) => total + batch.emitted, 0), budget: { clouds: clouds.capacity, spray: spray.capacity, sparks: sparks.capacity, debris: debris.capacity, flames: flames.capacity, nitro: nitroClouds.capacity, nitroCores: nitroCores.capacity, marks: maxMarks } }; },
     update(car, dt, time, active, controls = {}) {
       const profile = controls.profile;
       if (profile) {
@@ -250,14 +308,14 @@ export function createEffects(scene, { low = false } = {}) {
       dt = clamp(Number.isFinite(dt) ? dt : 0, 0, .08); if (!dt) return;
       clock += dt; markMaterial.uniforms.clock.value = clock; collisionCooldown = Math.max(0, collisionCooldown - dt); flameCooldown = Math.max(0, flameCooldown - dt);
       const moved = previousPose ? Math.hypot(car.x - previousPose.x, car.z - previousPose.z) : 0;
-      if (moved > Math.max(8, (car.speed || 0) * dt * 4)) { previousPose = null; markAnchors = null; smokeDebt = sprayDebt = mistDebt = nitroDebt = 0; nitroClouds.clear(); nitroCores.clear(); }
+      if (moved > Math.max(8, (car.speed || 0) * dt * 4)) { previousPose = null; markAnchors = null; smokeDebt = sprayDebt = mistDebt = nitroDebt = 0; nitroClouds.clear(); nitroCores.clear(); jets.clear(); }
       const speed = active ? Math.max(0, Number.isFinite(car.speed) ? car.speed : Math.hypot(car.vx || 0, car.vz || 0)) : 0;
       const braking = Boolean(controls.brake), handbrake = Boolean(controls.handbrake);
       const fx = Math.sin(car.yaw), fz = Math.cos(car.yaw);
       const lateral = Math.abs(Number.isFinite(car.lateralSpeed) ? car.lateralSpeed : (car.vx || 0) * fz - (car.vz || 0) * fx);
       const slip = Math.abs(Number.isFinite(car.slipAngle) ? car.slipAngle : Math.atan2(lateral, Math.max(speed, 1)));
       const intensity = speed > 3 ? clamp(Math.max((lateral - .75) / 5, (slip - .06) * 2.3, handbrake ? .7 + speed / 100 : 0, braking ? .35 + speed / 120 : 0, car.drifting ? .6 : 0), 0, 1) : 0;
-      const wet = active ? clamp((speed - 5) / 22, 0, 1) : 0;
+      const wet = active && controls.wetRoad !== false ? clamp((speed - 5) / 22, 0, 1) : 0;
       if (active && intensity > .04) {
         smokeDebt += (12 + intensity * 34) * clamp(speed / 12, .25, 1) * multiplier * dt;
         const count = Math.floor(smokeDebt); smokeDebt -= count;
@@ -277,7 +335,9 @@ export function createEffects(scene, { low = false } = {}) {
         const exhaustCount = Math.floor(exhaustDebt); exhaustDebt -= exhaustCount;
         for (let i = 0; i < exhaustCount; i++) exhaustAt(car, emissionPose(car, (i + .5) / exhaustCount), menu);
       } else exhaustDebt = 0;
-      if (active && controls.nitro === true && speed > 3 && !braking && !handbrake) {
+      const boostActive=active && controls.nitro === true && speed > 3 && !braking && !handbrake;
+      jets.update(car,exhausts,dt,{active:boostActive,reducedMotion:controls.reducedMotion,time:clock});
+      if (boostActive) {
         nitroDebt += 42 * multiplier * (controls.reducedMotion ? .3 : 1) * dt;
         const count = Math.floor(nitroDebt); nitroDebt -= count;
         for (let i = 0; i < count; i++) nitroAt(car, emissionPose(car, (i + .5) / count), controls.reducedMotion);
@@ -285,12 +345,22 @@ export function createEffects(scene, { low = false } = {}) {
       const throttle = active ? braking ? 0 : clamp(controls.throttle ?? 1, 0, 1) : 0;
       if (exhausts.length && active && speed > 11 && previousThrottle !== null && previousThrottle > .55 && throttle < .25 && flameCooldown <= 0) liftOff(car);
       previousThrottle = throttle;
-      const collision = active && Boolean(controls.collision);
-      if (collision && !previousCollision && collisionCooldown <= 0 && speed > 1.5) contactBurst(car, controls.collision);
+      const collision = active && Boolean(controls.collision), impact = controls.impact;
+      if (active && impact && Number.isSafeInteger(impact.id)) {
+        if (impact.id < impactId) impactId = 0;
+        if (impact.id > impactId && impact.remaining > 0 && ['crash', 'scrape'].includes(impact.kind)) {
+          // Event IDs capture a new hard hit even during continuous contact,
+          // and do not depend on the already-reduced speed after impact.
+          if (impact.kind === 'crash' || collisionCooldown <= 0) contactBurst(car, impact, controls.reducedMotion);
+        }
+        impactId = impact.id;
+      } else if (collision && !previousCollision && collisionCooldown <= 0 && speed > 1.5) {
+        contactBurst(car, controls.collision, controls.reducedMotion);
+      }
       previousCollision = collision;
-      live.clouds = clouds.flush(dt); live.spray = spray.flush(dt); live.sparks = sparks.flush(dt); live.flames = flames.flush(dt); live.nitro = nitroClouds.flush(dt); live.nitroCores = nitroCores.flush(dt);
+      live.clouds = clouds.flush(dt); live.spray = spray.flush(dt); live.sparks = sparks.flush(dt); live.debris = debris.flush(dt); live.flames = flames.flush(dt); live.nitro = nitroClouds.flush(dt); live.nitroCores = nitroCores.flush(dt);
       previousPose = { x: car.x, z: car.z, yaw: car.yaw };
     },
-    destroy() { for (const batch of batches) { scene.remove(batch.mesh); batch.geometry.dispose(); batch.material.dispose(); } scene.remove(markMesh); markGeometry.dispose(); markMaterial.dispose(); cloud.dispose(); streak.dispose(); flameTexture.dispose(); },
+    destroy() { jets.dispose(); for (const batch of batches) { scene.remove(batch.mesh); batch.geometry.dispose(); batch.material.dispose(); } scene.remove(markMesh); markGeometry.dispose(); markMaterial.dispose(); cloud.dispose(); streak.dispose(); flameTexture.dispose(); fragment.dispose(); },
   };
 }

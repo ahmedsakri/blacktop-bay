@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {createRaceFeedback} from '../src/race-feedback.js';
+import {createRaceFeedback, impactCameraOffset} from '../src/race-feedback.js';
 import {createRace, startRace, resetCar} from '../src/physics.js';
 
 function raceFixture() {
@@ -10,12 +10,12 @@ function raceFixture() {
 test('scrapes stay quiet; a hard impact gives one restrained flash and announcement', () => {
   const feedback = createRaceFeedback(), race = raceFixture();
   race.impact = {id: 1, kind: 'scrape', source: 'barrier', strength: .2, remaining: .18};
-  assert.deepEqual(feedback.read(race, {now: 100}), {kind: 'none', title: '', detail: '', announcement: '', flash: 0, kick: 0});
+  assert.deepEqual(feedback.read(race, {now: 100}), {kind: 'none', title: '', detail: '', announcement: '', flash: 0, kick: 0, edge: 'front'});
   race.impact = {id: 2, kind: 'crash', source: 'car', strength: 1, remaining: .8};
   const first = feedback.read(race, {now: 200});
   assert.equal(first.title, 'Car contact');
   assert.equal(first.announcement, 'Car contact. Keep steering.');
-  assert.ok(first.flash > 0 && first.flash <= .55); assert.ok(first.kick > 0 && first.kick < .1);
+  assert.ok(first.flash > 0 && first.flash <= .55); assert.ok(first.kick >= .16 && first.kick <= .4);
   const next = feedback.read(race, {now: 300});
   assert.equal(next.announcement, ''); assert.equal(next.kick, 0); assert.ok(next.flash < first.flash);
   assert.equal(feedback.read(race, {now: 600}).flash, 0);
@@ -120,4 +120,37 @@ test('invalid or incomplete lap records never produce lap feedback', () => {
 test('lap clocks round through minute boundaries without showing sixty seconds', () => {
   const result = createRaceFeedback().read({...raceFixture(), totalLaps: 3, completedLaps: 1, lapTimes: [59.999], elapsed: 60});
   assert.match(result.detail, /01:00.00/);
+});
+
+
+test('directional impact cue follows the actual contact side relative to the car', () => {
+  for (const [yaw,nx,nz,edge] of [[0,-1,0,'right'],[0,1,0,'left'],[0,0,-1,'front'],[0,0,1,'rear'],[Math.PI/2,0,1,'right']]) {
+    const feedback = createRaceFeedback(), race = {...raceFixture(), car: {yaw}};
+    race.impact = {id: 1, kind: 'crash', source: 'barrier', strength: .8, remaining: .8, nx, nz};
+    const first = feedback.read(race, {now: 10});
+    assert.equal(first.edge, edge);
+    assert.equal(feedback.read(race, {now: 30}).edge, edge, 'cue remains on the same edge while it fades');
+  }
+});
+
+test('camera impact is a finite 320ms directional impulse with no continuing oscillation', () => {
+  assert.deepEqual(impactCameraOffset(0,.4,1,0), {x:0,y:0,z:0});
+  const impulse = impactCameraOffset(.1,.4,4,0);
+  assert.ok(impulse.x > .15 && impulse.x < .4); assert.equal(impulse.z,0);
+  assert.ok(impulse.y > 0 && impulse.y < .13);
+  const opposite = impactCameraOffset(.1,.4,-4,0); assert.equal(opposite.x,-impulse.x);
+  for(const age of [.32,1,10,Infinity,NaN,-1]) assert.deepEqual(impactCameraOffset(age,.4,1,0),{x:0,y:0,z:0});
+  assert.deepEqual(impactCameraOffset(.1,.4,NaN,0),{x:0,y:0,z:0});
+  assert.deepEqual(impactCameraOffset(.1,.4,0,0),{x:0,y:0,z:0});
+  assert.deepEqual(impactCameraOffset(.1,100,1,0),impulse,'strength cannot exceed the bounded camera travel');
+});
+
+
+test('recovery waiting for a safe gap does not show a frozen countdown or invent a return',()=>{
+  const feedback=createRaceFeedback(),race=raceFixture();
+  race.recovery={id:0,phase:'waiting',reason:'stuck',remaining:0};
+  const before=structuredClone(race),result=feedback.read(race,{now:3000});
+  assert.equal(result.kind,'waiting');assert.equal(result.title,'Finding a clear gap');
+  assert.equal(result.detail,'Waiting for space behind you');assert.doesNotMatch(result.detail,/\ds/);
+  assert.deepEqual(race,before);assert.equal(feedback.read(race,{now:3100}).announcement,'');
 });

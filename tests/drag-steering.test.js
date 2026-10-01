@@ -29,3 +29,20 @@ test('pause and rotation cancel the drag and stale pointer moves cannot resume i
   assert.equal(drag.read(), 0);
   drag.move(2, NaN); assert.equal(drag.read(), 0);
 });
+
+test('an oversized road swipe can countersteer without dragging back across the entire screen', () => {
+  const drag = createDragSteering();
+  drag.start(1, 100, 844);
+  drag.move(1, 700); assert.equal(drag.read(), 1);
+  drag.move(1, 700 - 77); assert.ok(Math.abs(drag.read()) < .02, 'one steering radius returns to neutral');
+  drag.move(1, 700 - 155); assert.equal(drag.read(), -1, 'the thumb can catch a fast slide within local travel');
+  drag.release(1); assert.equal(drag.read(), 0);
+});
+
+test('the fixed thumbpad centre stays anchored even when a captured thumb leaves its visible bounds', () => {
+  const drag = createDragSteering();
+  drag.start(1, 100, 156, 54);
+  drag.move(1, 800); assert.equal(drag.read(), 1);
+  drag.move(1, 100); assert.equal(drag.read(), 0);
+  drag.move(1, 40); assert.equal(drag.read(), -1);
+});

@@ -3,14 +3,14 @@
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://blacktop-bay.web.app/</loc>
-    <lastmod>2026-10-01</lastmod>
+    <lastmod>2026-10-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <image:image><image:loc>https://blacktop-bay.web.app/assets/blacktop-bay-gameplay.png</image:loc></image:image>
   </url>
   <url>
     <loc>https://blacktop-bay.web.app/guide/</loc>
-    <lastmod>2026-10-01</lastmod>
+    <lastmod>2026-10-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <image:image><image:loc>https://blacktop-bay.web.app/assets/blacktop-bay-gameplay.png</image:loc></image:image>
@@ -23,7 +23,7 @@
   </url>
   <url>
     <loc>https://blacktop-bay.web.app/privacy/</loc>
-    <lastmod>2026-10-01</lastmod>
+    <lastmod>2026-10-02</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>

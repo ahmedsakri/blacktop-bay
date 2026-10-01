@@ -198,7 +198,7 @@ test('blocked saving still permits earned session upgrades and reports lack of p
 });
 
 test('finish rewards respect real classification, capped drift bonus and credit ceiling', () => {
-  for (const [position, expected] of [[1, 900], [2, 650], [3, 500], [4, 350]]) {
+  for (const [position, expected] of [[1, 900], [2, 650], [3, 500], [4, 350], [5, 300], [6, 250], [7, 200], [8, 150]]) {
     const store = memoryStorage(), state = loadProgression(store);
     const reward = awardRaceCredits(state, result({ position, score: 4000 }), store);
     assert.equal(reward.base, expected); assert.equal(reward.driftBonus, 200);
@@ -213,11 +213,39 @@ test('finish rewards respect real classification, capped drift bonus and credit 
 test('unfinished, malformed, out-of-range and overlong races cannot mint credits', () => {
   const state = loadProgression(null), before = JSON.stringify(state);
   for (const extra of [{ state: 'racing' }, { completedLaps: 2 }, { totalLaps: 1 }, { elapsed: 901 },
-    { elapsed: NaN }, { position: 0 }, { position: 5 }, { position: 1.5 }, { score: -1 },
-    { score: Infinity }, { score: 2.5 }, { raceId: '' }]) {
+    { elapsed: NaN }, { position: 0 }, { position: 9 }, { position: 1.5 }, { score: -1 },
+    { score: Infinity }, { score: 2.5 }, { raceId: '' }, { mode: 'unknown' }, { mode: null }]) {
     assert.equal(awardRaceCredits(state, result(extra), null).awarded, false);
   }
   assert.equal(JSON.stringify(state), before);
+});
+
+test('solo time attack pays a completion reward once and cannot claim a rival finishing position', async () => {
+  const store = memoryStorage(), state = loadProgression(store);
+  const finish = result({mode: 'time-attack', position: 1, score: 1200});
+  const receipt = awardRaceCredits(state, finish, store);
+  assert.equal(receipt.awarded, true);
+  assert.equal(receipt.base, 350);
+  assert.equal(receipt.driftBonus, 60);
+  assert.equal(state.credits, 1610);
+  assert.equal(awardRaceCredits(state, finish, store).awarded, false);
+  const fresh = await import('../src/progression.js?solo-receipt-reload');
+  assert.equal(fresh.awardRaceCredits(fresh.loadProgression(store), finish, store).awarded, false);
+  for (const position of [0, 2, 8, 9]) {
+    assert.equal(awardRaceCredits(state, result({mode: 'time-attack', position}), store).awarded, false);
+  }
+  assert.equal(state.credits, 1610);
+});
+
+test('last-place race and tour rewards remain idempotent when browser storage is unavailable', () => {
+  for (const mode of ['race', 'championship']) {
+    const state = loadProgression(null), finish = result({mode, position: 8});
+    const receipt = awardRaceCredits(state, finish, null);
+    assert.equal(receipt.credits, 150);
+    assert.equal(receipt.persisted, false);
+    assert.equal(awardRaceCredits(state, finish, null).awarded, false);
+    assert.equal(state.credits, 1350);
+  }
 });
 
 test('a race reward is idempotent after both an in-memory repeat and a fresh module reload', async () => {

@@ -1,8 +1,24 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createDrivingInputs, resolveDriveControls } from '../src/driving-controls.js';
+import { createDrivingInputs, resolveDriveControls, normalizeSteeringSensitivity } from '../src/driving-controls.js';
 
 const idle = { left: false, right: false, brake: false, drift: false, nitro: false };
+
+test('steering sensitivity tunes thumb and tilt precision while retaining full lock, keyboard control and Nitro', () => {
+  const gentle = resolveDriveControls({steer: .3, nitro: true}, {steeringSensitivity: .65});
+  const standard = resolveDriveControls({steer: .3}, {steeringSensitivity: 1});
+  const quick = resolveDriveControls({steer: .3}, {steeringSensitivity: 1.5});
+  assert.ok(gentle.steer < standard.steer && standard.steer < quick.steer);
+  assert.equal(gentle.nitro, true); assert.equal(gentle.throttle, 1);
+  for (const sensitivity of [.65, 1, 1.5]) for (const sign of [-1, 1]) {
+    assert.equal(resolveDriveControls({steer: sign}, {steeringSensitivity: sensitivity}).steer, sign);
+    assert.equal(resolveDriveControls({[sign < 0 ? 'left' : 'right']: true}, {steeringSensitivity: sensitivity}).steer, sign);
+    assert.equal(resolveDriveControls({steer: 0}, {steeringSensitivity: sensitivity}).steer, 0);
+  }
+  for (const value of [undefined, NaN, Infinity, '1.5', null, {}]) assert.equal(normalizeSteeringSensitivity(value), 1);
+  assert.equal(normalizeSteeringSensitivity(-100), .65);
+  assert.equal(normalizeSteeringSensitivity(100), 1.5);
+});
 
 test('drag steering and a separate nitro finger combine without requiring an accelerator', () => {
   const controls = createDrivingInputs();

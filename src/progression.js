@@ -7,7 +7,7 @@ export const UPGRADE_COMPONENTS = Object.freeze(['engine', 'tyres', 'nitro', 'ha
 export const UPGRADE_COSTS = Object.freeze([200, 400, 700, 1100, 1600]);
 const VEHICLE_IDS = VEHICLES.map(vehicle => vehicle.id);
 const LEGACY_VEHICLE_IDS = LEGACY_VEHICLES.map(vehicle => vehicle.id);
-const FINISH_REWARDS = [900, 650, 500, 350];
+const FINISH_REWARDS = [900, 650, 500, 350, 300, 250, 200, 150];
 const MAX_RECEIPTS = 2048;
 const validId = (id) => typeof id === 'string' && /^[a-zA-Z0-9_-]{8,100}$/.test(id);
 const paidInSession = new Set();
@@ -81,14 +81,15 @@ export function buyUpgrade(state, vehicle, component, storage) {
 export function awardRaceCredits(state, result, storage) {
   const rejected = { awarded: false, credits: 0, base: 0, driftBonus: 0, persisted: false };
   if (!state || typeof state !== 'object' || Array.isArray(state) || !result
+    || (result.mode !== undefined && !['race', 'time-attack', 'championship'].includes(result.mode))
     || result.state !== 'finished' || result.completedLaps !== 3 || result.totalLaps !== 3
     || !Number.isFinite(result.elapsed) || result.elapsed <= 0 || result.elapsed > 900
-    || !integer(result.position) || result.position < 1 || result.position > 4
+    || !integer(result.position) || result.position < 1 || result.position > (result.mode === 'time-attack' ? 1 : 8)
     || !integer(result.score) || result.score < 0 || result.score > 1_000_000_000
     || !validId(result.raceId)) return rejected;
   const safe = clean(state);
   if (paidInSession.has(result.raceId) || safe.awardedRaces.includes(result.raceId)) return rejected;
-  const base = FINISH_REWARDS[result.position - 1];
+  const base = result.mode === 'time-attack' ? 350 : FINISH_REWARDS[result.position - 1];
   const driftBonus = Math.min(500, Math.floor(result.score / 20));
   const credits = Math.min(MAX_CREDITS - safe.credits, base + driftBonus);
   safe.credits += credits;

@@ -12,7 +12,7 @@ export function bindSteeringPad(element, steering, {enabled = () => true, onChan
     onChange();
   };
   const move = event => {
-    if (!enabled()) return;
+    if (!enabled()) { steering.clear(); onChange(); return; }
     steering.move(event.pointerId, event.clientX);
     onChange();
   };
@@ -21,6 +21,7 @@ export function bindSteeringPad(element, steering, {enabled = () => true, onChan
   element.addEventListener('pointermove', move);
   for (const name of ['pointerup', 'pointercancel', 'lostpointercapture']) element.addEventListener(name, release);
   return () => {
+    steering.clear(); onChange();
     element.removeEventListener('pointerdown', down);
     element.removeEventListener('pointermove', move);
     for (const name of ['pointerup', 'pointercancel', 'lostpointercapture']) element.removeEventListener(name, release);

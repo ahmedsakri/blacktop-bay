@@ -42,9 +42,14 @@ export function createCompletedRaceFixture(options={}) {
     || race.lapTimes.length!==3 || race.progress!==1 || race.raceProgress!==1
     || race.lapTimes.some(time=>!Number.isFinite(time) || time<=0)
     || Math.abs(lapTotal-race.elapsed)>1e-7 || race.recoveries!==0
-    || !race.allFinished || race.leaderboard.length!==4
+    || !race.allFinished || race.leaderboard.length!==race.rivals.length+1
     || race.leaderboard.some(row=>!row.finished || !Number.isFinite(row.finishTime))) {
-    throw new Error('QA field must complete three real laps with valid classified results and no player recovery.');
+    throw new Error(`QA field must complete three real laps with valid classified results and no player recovery. ${JSON.stringify({
+      state: race.state, elapsed: race.elapsed, completedLaps: race.completedLaps, lapTimes: race.lapTimes,
+      recoveries: race.recoveries, allFinished: race.allFinished,
+      rivals: race.rivals.map(rival => ({vehicle: rival.vehicle, state: rival.state, elapsed: rival.elapsed,
+        completedLaps: rival.completedLaps, recoveries: rival.recoveries, speed: rival.car.speed})),
+    })}`);
   }
   if(frames.length>MAX_FRAMES || frames.length<2 || race.elapsed>MAX_SECONDS
     || getTrack(race.track).length*3/race.elapsed>60) {

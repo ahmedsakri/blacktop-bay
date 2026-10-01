@@ -29,6 +29,42 @@ test('glancing wall contact preserves forward momentum while a hard strike cuts 
  assert.equal(scrape.impact.kind,'crash','a recent light scrape cannot suppress a subsequent hard impact');
 });
 
+test('a heavy wall strike has a bounded rebound, a real contact normal and a fading traction window',()=>{
+ const race=at();const p=wall(race,{along:18,outward:45});
+ race._autoDrift=1;race.car.yawRate=.8;
+ const speedBefore=race.car.speed;
+ stepRace(race,{throttle:1,nitro:true},1/120);
+ const inwardSpeed=-(race.car.vx*p.nx+race.car.vz*p.nz);
+ assert.ok(inwardSpeed>=0&&inwardSpeed<=1.6,'a head-on strike cannot throw the car back across the road');
+ assert.ok(race.car.speed<speedBefore);assert.ok(race.car.speed>10,'an angled impact retains useful forward travel');
+ assert.equal(race.impact.kind,'crash');assert.equal(race._autoDrift,0);
+ assert.ok(race._impactStability>.6);assert.equal(race.recoveries,0);
+ assert.ok(Math.abs(Math.hypot(race.impact.nx,race.impact.nz)-1)<1e-8);
+ assert.ok(race.impact.nx*p.nx+race.impact.nz*p.nz<-.99,'the effect normal points into the road');
+ const contact=projectOnTrack(race.impact.x,race.impact.z,undefined,getTrack(race.track));
+ assert.ok(Math.abs(contact.distance-getTrack(race.track).width/2)<.08,'sparks originate at the barrier, not the centre of the car');
+ const remaining=race._impactStability;
+ stepRace(race,{throttle:1,steer:-1},1/120);
+ assert.ok(race._impactStability<remaining);assert.ok(race.car.steering<0,'stabilization preserves steering authority');
+ assert.equal(race._autoDrift,0);assert.equal(race.car.drifting,false);
+});
+
+test('head-on car contact transfers momentum without a large separating kick',()=>{
+ const race=createRace({track:'breakwater'});startRace(race);race.rivals=[race.rivals[0]];
+ const rival=race.rivals[0],track=getTrack(race.track),p=sampleTrack(110,track);
+ for(const [racer,offset,speed,direction] of [[race,0,40,1],[rival,3.8,20,-1]]){
+  Object.assign(racer.car,{x:p.x+p.tx*offset,z:p.z+p.tz*offset,yaw:Math.atan2(p.tx*direction,p.tz*direction),vx:p.tx*speed*direction,vz:p.tz*speed*direction,speed,forwardSpeed:speed});
+  racer._lastTrackS=p.s+offset;racer._safeS=p.s+offset;racer._trackIndex=p.index;
+ }
+ stepRace(race,{throttle:0},1/120);
+ const opening=(rival.car.vx-race.car.vx)*rival.impact.nx+(rival.car.vz-race.car.vz)*rival.impact.nz;
+ assert.ok(opening>=0&&opening<=1.80001,`bounded separating speed, received ${opening}`);
+ assert.equal(race.impact.kind,'crash');assert.equal(rival.impact.kind,'crash');
+ assert.ok(Math.hypot(race.impact.nx+rival.impact.nx,race.impact.nz+rival.impact.nz)<1e-8);
+ assert.equal(race.impact.x,rival.impact.x);assert.equal(race.impact.z,rival.impact.z);
+ assert.equal(race.recoveries+rival.recoveries,0);assert.ok(race.car.speed<40&&rival.car.speed<40);
+});
+
 test('both cars receive the same hard-impact classification regardless of which collider is the player',()=>{
  for(const playerBehind of [true,false]){
   const race=createRace({track:'breakwater'});startRace(race);race.rivals=[race.rivals[0]];
@@ -64,6 +100,34 @@ test('braking, coasting at rest and holding a stationary handbrake never trigger
  for(const input of [{throttle:1,brake:true},{throttle:0},{throttle:1,handbrake:true}]){
   const race=at();wall(race,{outward:.1});advance(race,input,5);assert.equal(race.recoveries,0);assert.notEqual(race.recovery.phase,'waiting');
  }
+});
+
+test('sustained wall creep above the old speed threshold recovers behind validated progress',()=>{
+ const race=createRace({track:'breakwater',mode:'time-attack'});startRace(race);
+ let previous;
+ for(let i=0;i<30*120&&!race.recoveries;i++){
+  previous={speed:race.car.speed,distance:race._lapDistance,checkpoint:race._nextCheckpoint,stuck:race._stuckTime};
+  stepRace(race,{throttle:1},1/120);
+ }
+ assert.equal(race.recoveries,1,'barrier creep must not continue indefinitely');
+ assert.ok(previous.speed>2,'this is a moving wheel-speed stall, not the existing stopped-car case');
+ assert.equal(previous.stuck,0);assert.equal(race.recovery.reason,'stuck');
+ assert.ok(Math.abs(race._lapDistance-(previous.distance-8))<1e-7);
+ assert.ok(race._nextCheckpoint<=previous.checkpoint);assert.equal(race.completedLaps,0);
+ assert.equal(race.car.speed,0);assert.equal(race.score,0);
+});
+
+test('a driver can cancel a pending wall-creep recovery with brake or leave the wall normally',()=>{
+ for(const input of [{throttle:1,brake:true},{throttle:1,handbrake:true},{throttle:0}]){
+  const race=createRace({track:'breakwater',mode:'time-attack'});startRace(race);
+  for(let i=0;i<30*120&&race._wallStallTime<1.8;i++)stepRace(race,{throttle:1},1/120);
+  assert.ok(race._wallStallTime>=1.8);assert.equal(race.recoveries,0);
+  advance(race,input,3);
+  assert.equal(race.recoveries,0);assert.equal(race._wallStallTime,0);assert.notEqual(race.recovery.phase,'waiting');
+ }
+ const moving=at();wall(moving,{along:5,outward:1.8});advance(moving,{throttle:1},2.4);
+ assert.equal(moving.recoveries,0,'a genuine slow corner does not count as being stranded');
+ assert.ok(moving._lapDistance>116);
 });
 
 test('far off-road recovery uses the saved route location instead of the nearest bend and has a loop cooldown',()=>{

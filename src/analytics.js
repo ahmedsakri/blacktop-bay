@@ -1,5 +1,6 @@
 import { VEHICLES } from './vehicles.js';
 import { TRACKS } from './track.js';
+import { RACE_MODES, DIFFICULTIES } from './race-options.js';
 // One production-only GTM entry point. Advertising storage stays denied.
 export const ANALYTICS_CONFIG = Object.freeze({
   measurementId: "G-RC925EV263",
@@ -28,8 +29,10 @@ export function sanitizeGameEvent(name, values = {}) {
     result.circuit = values.circuit;
   if (VEHICLES.some(vehicle => vehicle.id === values.vehicle))
     result.vehicle = values.vehicle;
+  if (RACE_MODES.some(mode => mode.id === values.race_mode)) result.race_mode = values.race_mode;
+  if (DIFFICULTIES.some(difficulty => difficulty.id === values.difficulty)) result.difficulty = values.difficulty;
   const limits = {
-    position: [1, 4],
+    position: [1, 8],
     duration_seconds: [0, 3600],
     drift_score: [0, 1000000000],
     resets: [0, 10000],
@@ -149,6 +152,8 @@ export function trackEvent(name, values = {}) {
   window.dataLayer.push({
     circuit: undefined,
     vehicle: undefined,
+    race_mode: undefined,
+    difficulty: undefined,
     position: undefined,
     duration_seconds: undefined,
     drift_score: undefined,

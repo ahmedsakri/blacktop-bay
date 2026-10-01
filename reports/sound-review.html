@@ -1,0 +1,41 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Blacktop Bay original sound review</title>
+<style>body{background:#110017;color:white;font:16px system-ui;max-width:800px;margin:40px auto;padding:20px}button{padding:16px;background:#fff71e;color:#110017;border:0;border-radius:6px;font:inherit}audio{display:block;width:100%;margin:16px 0}section{border:1px solid #66517c;padding:24px;margin:20px 0}code{overflow-wrap:anywhere}</style>
+<h1>Original sound review</h1><p>Local QA fixture. Render the actual synthesis graph, then listen to its output. Liquid Lines is the approved lobby soundtrack. The previous arrangements have been removed. This fixture does not test a completed race.</p><button id="render">Render audio previews</button><p id="status" role="status">Ready.</p><main id="outputs"></main>
+<script type="module">
+import {createAudio} from '/src/audio.js';
+import {LOBBY_STYLES} from '/src/lobby-music.js';
+const status=document.querySelector('#status'),outputs=document.querySelector('#outputs');
+const wav=buffer=>{
+ const channel=buffer.getChannelData(0),bytes=new ArrayBuffer(44+channel.length*2),view=new DataView(bytes);
+ const word=(offset,text)=>{for(let i=0;i<text.length;i++)view.setUint8(offset+i,text.charCodeAt(i));};
+ word(0,'RIFF');view.setUint32(4,36+channel.length*2,true);word(8,'WAVE');word(12,'fmt ');view.setUint32(16,16,true);view.setUint16(20,1,true);view.setUint16(22,1,true);view.setUint32(24,buffer.sampleRate,true);view.setUint32(28,buffer.sampleRate*2,true);view.setUint16(32,2,true);view.setUint16(34,16,true);word(36,'data');view.setUint32(40,channel.length*2,true);
+ let peak=0,sum=0,jump=0;for(let i=0;i<channel.length;i++){const sample=channel[i];peak=Math.max(peak,Math.abs(sample));sum+=sample*sample;if(i)jump=Math.max(jump,Math.abs(sample-channel[i-1]));view.setInt16(44+i*2,Math.max(-1,Math.min(1,sample))*32767,true);}
+ return {blob:new Blob([bytes],{type:'audio/wav'}),peak,rms:Math.sqrt(sum/channel.length),jump};
+};
+async function render(label,seconds,frame,{volume=.75,musicVolume=.65,style='liquid-lines',filename='audio-review.wav'}={}){
+ const context=new OfflineAudioContext(1,Math.round(seconds*24000),24000);let time=0;
+ const adapter={get state(){return'running';},get currentTime(){return time;},sampleRate:context.sampleRate,destination:context.destination,close(){return Promise.resolve();}};
+ for(const method of ['createGain','createOscillator','createBiquadFilter','createBuffer','createBufferSource','createDynamicsCompressor','createConvolver','createDelay'])adapter[method]=context[method].bind(context);
+ const sound=createAudio({contextFactory:()=>adapter});await sound.unlock();sound.setVolume(volume);sound.setMusicVolume(musicVolume);sound.setLobbyStyle(style);
+ for(let tick=0;tick<seconds*60;tick++){time=tick/60;sound.update(frame(time),1/60);}
+ const buffer=await context.startRendering(),result=wav(buffer);sound.dispose();
+ const section=document.createElement('section'),title=document.createElement('h2'),player=document.createElement('audio'),data=document.createElement('p');
+ title.textContent=label;player.controls=true;player.setAttribute('aria-label',label);player.src=URL.createObjectURL(result.blob);data.textContent=`Peak ${result.peak.toFixed(4)} · RMS ${result.rms.toFixed(4)} · Maximum sample step ${result.jump.toFixed(4)}`;
+ const download=document.createElement('a');download.download=filename;download.textContent=`Download ${label}`;
+ download.href=await new Promise(resolve=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.readAsDataURL(result.blob);});
+ download.style.color='#fff71e';download.dataset.sound=style;download.setAttribute('aria-label',`Download ${label} WAV`);
+ section.append(title,player,download,data);outputs.append(section);
+}
+document.querySelector('#render').onclick=async event=>{
+ event.target.disabled=true;outputs.replaceChildren();status.textContent='Rendering…';
+ try{
+  for(const style of LOBBY_STYLES){
+   status.textContent=`Rendering ${style.name}…`;
+   await render(`${style.name} — ${style.bpm} BPM`,21,t=>({lobby:t<20}),{style:style.id,filename:`blacktop-bay-${style.id}.wav`});
+  }
+  await render('Refined Nitro — ignition, thrust, release',10,t=>({running:t<9,vehicle:'ferrari-enzo',speed:32+Math.min(t,6)*2,throttle:1,nitro:t>=2&&t<6,drift:0}),{filename:'blacktop-bay-nitro-refined.wav'});
+  await render('Maximum volume Nitro — mix safety check',8,t=>({running:t<7,vehicle:'bugatti-veyron',speed:40,throttle:1,nitro:t>=1&&t<6,drift:t>5?.7:0}),{volume:1,filename:'blacktop-bay-nitro-maximum.wav'});
+  status.textContent='Ready. Liquid Lines and two Nitro previews rendered. Liquid Lines is the only lobby soundtrack.';
+ }catch(error){status.textContent=String(error);}finally{event.target.disabled=false;}
+};
+</script></html>

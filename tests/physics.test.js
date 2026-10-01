@@ -224,6 +224,7 @@ test('controlled drift points bank after straightening and braking', () => {
 
 test('stationary wheel turning and handbraking cannot farm drift points', () => {
   const race = raceAt();
+  race.rivals = []; // A stationary steering test must not include an opponent pushing the parked car.
   const yaw = race.car.yaw;
   advance(race, { steer: 1, handbrake: true }, 4);
   assert.equal(race.score, 0);

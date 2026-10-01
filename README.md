@@ -1,20 +1,40 @@
 # Blacktop Bay
 
-A free AppsOverFlow browser racer. **Own the corner.** Choose from 33 individually sourced manufacturer car representations across 16 brands, upgrade their performance, and compete against three rivals across thirty-four asphalt circuits.
+A free AppsOverFlow browser racer. **Own the corner.** Choose from 33 individually sourced manufacturer car representations across 16 brands, upgrade their performance, and compete against seven rivals across thirty-four asphalt circuits.
 
 [Play Blacktop Bay](https://blacktop-bay.web.app/) · [Driver’s guide](https://blacktop-bay.web.app/guide/) · [Asset credits](https://blacktop-bay.web.app/credits/)
+
+## Find your next race
+
+The Race HQ lobby keeps your selected car on the studio floor, with its current speed, Nitro capacity and installed upgrade count. Use the bottom navigation to switch between Circuit race, Time attack and Three-race tour. The race settings button below the circuit preview changes rival difficulty and shows medal targets or a saved tour. Changing a mode updates its own record immediately; Race Now starts the selected mode.
+
+Choose **Cars** to open the full 33-car collection. Preview a car using its card or the previous/next controls, then choose **Open garage** to load and select its actual 3D model. The collection distinguishes the preview from your current car. In the garage, use **Upgrades** for performance upgrades, **Paint** for finishes, **Race** to drive or **Back** to return to the lobby. The credit balance at the top of the lobby also opens your current car’s workshop.
+
+Choose **Circuits** in the bottom navigation, or select the circuit name, to open the 34-route collection. Inspect the scenic preview, actual playable route and lap length, then use **Select circuit** to return to Race HQ with that venue. Previewing a card does not start a race. Search, region and series filters narrow the route strip; **Full grid** shows every matching circuit together.
+
+Use the steering-wheel control in the top rail for driving help, steering sensitivity and sound levels. The speaker mutes the entire game; fullscreen has its own control. Menus and collections work in portrait, while racing uses landscape on phones.
 
 ## Driving
 
 Acceleration is automatic. Hold the left or right side of the steering thumbpad, or drag it for fine control; release to center. You can also drag across the race view or use Left/Right or A/D on a keyboard. On a compatible phone, open Pause → Steering → Enable tilt, allow motion access if asked, and use Recenter tilt in your comfortable holding position. Touch steering always overrides tilt, and unavailable or stale sensor data falls back to touch. Turn sharply at speed to drift automatically. Hold Nitro or Shift to boost; release to recharge. Nitro is the only on-screen pedal. Down/S is an optional keyboard brake and Space holds the optional handbrake.
 
-Light barrier scrapes preserve most forward momentum. A hard impact briefly reduces drive and interrupts nitro, and loses any unbanked drift points. If you remain pressed into a barrier while accelerating for about 2.4 seconds, the player car automatically returns to a clear point behind its last valid progress. A car far off the road recovers after about 0.9 seconds while acceleration is requested. Recovery may wait for a clear gap, rewinds any crossed checkpoint requirement and has a three-second cooldown. Holding the brake or handbrake does not trigger automatic recovery. R or Reset car remains available for a manual return to the last valid road position. Neither method grants lap progress or refills nitro; race time keeps running.
+Light barrier scrapes preserve most forward momentum. A hard impact briefly reduces drive, interrupts nitro and clears unbanked drift points; steering stays available as grip settles. A car nearly stopped against a barrier can recover after about 2.4 seconds of attempted acceleration. Recovery also catches sideways wall-creeping: if you keep pushing into a barrier without advancing along the course, a countdown appears before recovery at about 2.8 seconds. A car far off the road can recover after about 0.9 seconds. Automatic recovery looks for a clear gap behind your last valid progress and may wait for nearby cars to move. It normally retreats at least eight metres, limited by the distance already driven in that lap. It restores any crossed checkpoint requirement and has a three-second cooldown. Moving clear, braking or holding the handbrake cancels a pending return. R or Reset car remains available manually. Neither method adds lap progress or refills nitro; race time keeps running.
 
 Esc/P pauses. Switching away from the tab pauses an active race. Mobile races require landscape: turning upright pauses without losing position. Rotate back and choose Keep driving. Fullscreen and orientation lock are requested when supported; otherwise rotate the device manually. The menu and garage also work in portrait.
 
-Mira, Jax and Nova use the same physical simulation, with steering, braking, avoidance, passing and car-to-car contact. Three valid laps complete a race. Standings use actual progress and finish crossings; unfinished rivals continue racing after the player finishes.
+Mira, Jax, Nova, Ren, Kai, Aria and Leo use the same physical simulation, with steering, braking, avoidance, passing and car-to-car contact. Three valid laps complete a race. Standings use actual progress and finish crossings; unfinished rivals continue racing after the player finishes.
 
 After a valid lap, a short notice shows the last lap time and the next lap number. From the second completed lap, it compares that time with your previous best in the current race; the third lap is marked Final lap.
+
+### Race your way
+
+- **Circuit race:** eight actual car models, three laps, and Club, Sport or Pro rival pace. Opponents use the same driving simulation and must reach every checkpoint; difficulty never moves a rival forward.
+- **Time attack:** the same three-lap course with no opponents. Beat your own time and work toward Bronze, Silver and Gold circuit targets.
+- **Three-race tour:** one car, one difficulty and three different circuits. The first round starts at your chosen venue. Each real finish earns ordinary race credits and 25/18/15/12/10/8/6/4 tour points by finishing position. The tour summary adds those earned results; it does not invent a separate cash bonus or claim a multiplayer championship.
+
+Medal targets are game challenges derived from the playable layout and the selected car’s base tuning, not real-world venue records. Upgrades can help reach them. Records are kept separately by car, circuit, mode and difficulty. Tours require working browser storage so the next circuit can restore the same car and earned rounds. Your tour resumes from this browser; choosing a different car, circuit or difficulty offers Continue tour or Start new tour before replacing unfinished progress. The next tour round keeps the selected car and difficulty.
+
+Opponent fields rotate through the branded catalogue. Seven different reduced-detail bodies are selected before loading, excluding the player’s current car and preferring varied manufacturers. Mobile fields stay within 650,000 model triangles and 12 MB of GLB data; desktop fields stay within 900,000 triangles and 18 MB. Loading failures can reuse an already prepared manufacturer model, with the correct matching physics.
 
 ### Manufacturer models
 
@@ -102,7 +122,7 @@ The 34-course collection combines nine original Blacktop Bay circuits, compact a
 | [Bahrain International](https://www.formula1.com/en/racing/2025/bahrain) | Original-calendar bonus | 2.36 km | 5.412 km |
 | [Jeddah Corniche](https://www.formula1.com/en/racing/2025/saudi-arabia) | Original-calendar bonus | 2.61 km | 6.174 km |
 
-Use the circuit selector to search by name or country, or filter the collection by region and calendar category. Geography and metadata are researched; the game does not reproduce every historical Formula 1 venue or claim a surveyed simulation. See [research and validation](reports/grand-prix-circuit-research.md).
+Open the [circuit collection](https://blacktop-bay.web.app/circuits/) from Race HQ’s Circuits navigation or selected circuit name. Search by name or country, or filter by region and calendar category. Choose a route to preview it, then Select circuit to return to Race HQ. Geography and metadata are researched; the game does not reproduce every historical Formula 1 venue or claim a surveyed simulation. See [research and validation](reports/grand-prix-circuit-research.md).
 
 Speed ratings describe arcade tuning, not real-world manufacturer specifications or a guarantee of cornering speed.
 
@@ -110,13 +130,13 @@ Speed ratings describe arcade tuning, not real-world manufacturer specifications
 
 Each car has five levels of Engine, Tyres, Nitro and Handling. Engine improves acceleration, tyres improve grip/braking, handling improves steering response, and nitro improves capacity, thrust and recharge. All four also increase the car’s base top-speed rating. The chosen upgrades are snapshotted into the actual race physics; Computer-controlled opponents remain at base tuning.
 
-New players start with 1,200 CR. Levels cost 200, 400, 700, 1,100 and 1,600 CR. Finishing pays 900/650/500/350 CR for places 1–4 plus `floor(driftScore / 20)`, capped at 500 bonus CR. Valid finishes pay once per race ID; incomplete or over-15-minute runs do not create rewards or records. Credits have no cash value and cannot be bought with real money.
+New players start with 1,200 CR. Levels cost 200, 400, 700, 1,100 and 1,600 CR. Circuit races and tour rounds pay 900/650/500/350/300/250/200/150 CR for places 1–8; a solo Time attack finish pays 350 CR. Both add `floor(driftScore / 20)`, capped at 500 bonus CR. Valid finishes pay once per race ID; incomplete or over-15-minute runs do not create rewards or records. Credits have no cash value and cannot be bought with real money.
 
-Car/circuit choices, favourite cars, per-car paint colours and finishes, upgrades, credit balance and results save in local browser storage. Best time and drift score are separated by car/circuit. Clearing race records preserves upgrades and paint choices; clearing site data removes all local progress. Blocked storage allows session-only play and upgrades. This is a local single-player economy, not a secure competitive server leaderboard.
+Car/circuit choices, favourite cars, per-car paint colours and finishes, upgrades, credit balance and results save in local browser storage. Best time and drift score are separated by car, circuit, mode and difficulty. The revised driving version starts a new set of comparable records; older-version records remain stored separately until race records or site data are cleared. Circuit medals and three-race tour progress also stay on this device. Clearing race records preserves medals, tours, credits, upgrades and paint choices; clearing site data removes all local progress. Blocked storage allows session-only play and upgrades. This is a local single-player economy, not a secure competitive server leaderboard.
 
 ## Paint studio
 
-Garage → Paint offers ten curated colours plus Team original, with Gloss, Metallic and Satin finishes. All choices are free and cosmetic. Each build stores its own colour and finish locally; unavailable storage keeps changes for the current page session. Clearing site data removes saved choices. Paint updates supported body materials in the garage and races.
+Cars → Open garage → Paint offers ten curated colours plus Team original, with Gloss, Metallic and Satin finishes. All choices are free and cosmetic. Each build stores its own colour and finish locally; unavailable storage keeps changes for the current page session. Clearing site data removes saved choices. Paint updates supported body materials in the garage and races.
 
 ## Graphics and motion
 
@@ -124,11 +144,17 @@ The visual palette uses electric violet `#9246FF` as the dominant UI accent, yel
 
 The game renders thirty-three individually credited manufacturer car representations across sixteen brands. Road cars, classics, grand tourers and track-focused models retain their actual identities; Audi R8 Custom and GMA T.50 Custom remain labelled artist interpretations. The garage supports drag rotation, keyboard-accessible quarter turns, neutral studio lighting and responsive camera framing. Wheels steer and roll, brake lamps respond and nitro uses model-specific exhaust outlets. Body paint, glass, carbon and rubber use separate physical materials. Mobile and race opponents use reduced-detail geometry. Earlier fictional builds are no longer selectable; their legacy source assets and attribution notices remain in the repository.
 
-All thirty-four circuits have covered spectator stands with animated seated and standing crowds with varied poses, clothing and asynchronous cheering behind the barriers. Bay Grand Prix adds a larger permanent grandstand and pit complex. A full-width checkered stripe, four numbered starting bays, branded truss gantry and three twin-lamp countdown columns mark the start/finish area.
+All thirty-four circuits have covered spectator stands with animated seated and standing crowds with varied poses, clothing and asynchronous cheering behind the barriers. Bay Grand Prix adds a larger permanent grandstand and pit complex. A full-width checkered stripe, eight numbered starting bays, branded truss gantry and three twin-lamp countdown columns mark the start/finish area.
 
-A phase-based animated logo loader waits for models, shaders and fonts. Camera inertia, speed-dependent field of view, drift smoke, road spray, skid marks and contact sparks respond to gameplay. Pools are bounded and smoke/skid anchors follow each model’s measured tyres. SMAA smooths post-processing edges. Reduced motion disables decorative orbit, entrance animation, bank and shake; the driving camera still moves with the race.
+A phase-based animated logo loader waits for models, shaders and fonts. Camera inertia, speed-dependent field of view, drift smoke, road spray and skid marks respond to gameplay. Hard collisions emit directional sparks, road grit and dust from the actual contact point, with short tyre scuffs along the distance travelled. A 320 ms directional camera impulse and a brief edge cue make the impact readable without covering the controls. These consume real impact event IDs, including a hit that has already stopped the car; they do not move the vehicle or award progress. Mobile crash pools cap at 36 sparks and 12 fragments, with shared dust and mark pools. SMAA smooths post-processing edges. Reduced motion removes decorative orbit, entrance animation, bank, impact particles, edge flashes and camera impulses while retaining static tyre marks, impact/recovery messages and the camera movement needed to drive.
 
 Racing Sans One is used for display headlines, Barlow Condensed for telemetry and Manrope for readable controls/body copy. Fonts are self-hosted with OFL notices.
+
+### Sound and lobby music
+
+**Liquid Lines** is the lobby soundtrack: an original 168 BPM liquid drum & bass composition with syncopated drums, deep bass and bright keys. Previous lobby arrangements have been removed, and older saved soundtrack selections migrate to Liquid Lines. Music is synthesized for this game; it is not a recording taken from another racing game.
+
+Game volume and Lobby music have separate controls. The speaker button mutes the whole game; setting Lobby music to zero leaves driving audio available. Music fades away when a race starts, and audio waits for a player gesture before unlocking. Each car has a distinct synthesized engine or electric voice, with gearing, tyre scrub and layered Nitro thrust responding to driving. These are designed game sounds, not recordings of the manufacturers’ vehicles.
 
 ## Development
 
@@ -150,8 +176,16 @@ Local: http://127.0.0.1:4180/. Production output: `dist/`.
 - `src/progression.js`, `src/upgrades-ui.js`: bounded upgrade levels, credit economy, persistence and workshop previews.
 - `src/manufacturer-car.js`, `src/vehicles.js`, `src/garage.js`: cached licensed manufacturer models, materials, animations, catalogue and inspection studio. Legacy geometry helpers remain in `src/car.js` and `src/prototype-car.js`.
 - `src/main.js`: loader, race/menu lifecycle, camera, input, garage and results.
-- `src/world.js`, `src/effects.js`, `src/audio.js`: environment, bounded driving effects and synthesized audio.
+- `src/world.js`, `src/effects.js`, `src/race-feedback.js`: environment, bounded tyre/impact effects and event-based collision, lap and recovery feedback.
+- `src/audio.js`, `src/driving-sound.js`, `src/lobby-music.js`: bounded synthesized driving voices, Nitro layers and the Liquid Lines lobby soundtrack.
 - `src/storage.js`: validated race records with graceful storage failure.
+- `src/race-options.js`, `src/race-career.js`: difficulty, solo/circuit/tour modes, three-lap medal targets and receipt-gated local tour history.
+- `src/opponent-fleet.js`: rotating seven-car manufacturer fields with explicit geometry and download budgets.
+- `src/car-atlas.js`, `src/car-atlas-view.js`, `src/car-routes.js`: searchable car collection, current-versus-preview state and individual garage links.
+- `src/circuit-atlas.js`, `src/circuit-atlas-view.js`, `src/circuit-routes.js`: searchable circuit collection, route previews and individual circuit launch links.
+- `src/lobby.css`: responsive Race HQ navigation, performance readouts and next-race hierarchy.
+- `src/garage-screen.css`: responsive car inspection screen, upgrade/paint actions and collection rail.
+- `src/nitro-hud.css`: angled charge meter, yellow ready charge, blue active boost and reduced-motion presentation.
 - `src/paint.js`: curated body colours, surface finishes and per-car local paint preferences.
 - `src/analytics.js`: consent gate, production-host guard and sanitized event allowlist.
 

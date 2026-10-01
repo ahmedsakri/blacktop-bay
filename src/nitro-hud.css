@@ -1,0 +1,80 @@
+/* Charge silhouette follows the current racing HUD reference. Colour changes
+   describe this game's real held boost; there are no invented boost modes. */
+body.in-race .nitro-gauge {
+  --nitro-cut: 10px;
+  inset: calc(var(--race-top) + 7px) auto auto 50%;
+  width: clamp(144px, 30vw, 380px);
+  height: clamp(12px, 2vw, 22px);
+  transform: translateX(-50%);
+  display: block;
+  filter: drop-shadow(0 2px 4px #0009);
+  pointer-events: none;
+}
+
+/* Keep the honest status and percentage available without covering the road
+   with a second row of permanent HUD labels. The meter carries its own value. */
+body.in-race .nitro-gauge > div:first-child {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+body.in-race .nitro-track {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  transform: none;
+  border: 0;
+  background: #68727b91;
+  clip-path: polygon(0 0, 100% 0, calc(100% - var(--nitro-cut)) 100%, var(--nitro-cut) 100%);
+  overflow: hidden;
+}
+
+body.in-race .nitro-track i {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  max-width: 100%;
+  background: linear-gradient(180deg, #fffbb7 0%, #fff71e 25%, #fff71e 75%, #e6cd0f 100%);
+  clip-path: polygon(0 0, 100% 0, calc(100% - min(var(--nitro-cut), 25%)) 100%, min(var(--nitro-cut), 25%) 100%);
+  transition: width .08s linear;
+}
+
+/* A fine upper edge and lower shade replace the old four artificial segments. */
+body.in-race .nitro-track::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, #ffffffd9 0 1px, transparent 1px calc(100% - 1px), #10172155 calc(100% - 1px));
+  pointer-events: none;
+}
+
+body.in-race.nitro-active .nitro-gauge {
+  filter: drop-shadow(0 0 7px #168affb3);
+}
+
+body.in-race.nitro-active .nitro-track i {
+  background: linear-gradient(180deg, #e6faff 0%, #9be8ff 22%, #35baff 75%, #168aff 100%);
+}
+
+@media (max-width: 700px) and (orientation: landscape) {
+  body.in-race .nitro-gauge { --nitro-cut: 7px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.in-race .nitro-track i { transition: none; }
+}
+
+@media (forced-colors: active) {
+  body.in-race .nitro-track { background: GrayText; forced-color-adjust: none; }
+  body.in-race .nitro-track i { background: Highlight; }
+}

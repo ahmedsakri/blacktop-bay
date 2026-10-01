@@ -1,21 +1,22 @@
 // Original, synthesized driving sound. Nothing is constructed or played before unlock().
-// Levels deliberately sit below UI sounds; there are no samples or network requests.
+// Separate music/driving buses and a soft compressor keep the louder mix controlled.
 import { getVehicle } from './vehicles.js';
 
-const VOICES={
-  gt:{gears:6,idle:52,range:88,body:.135,harmonic:.027,sub:.038,cutoff:1100},
-  prototype:{gears:7,idle:76,range:126,body:.118,harmonic:.035,sub:.027,cutoff:1700},
-  formula:{gears:8,idle:118,range:180,body:.096,harmonic:.047,sub:.015,cutoff:2650},
-  electric:{gears:1,idle:95,range:530,body:.060,harmonic:.008,sub:.012,cutoff:2300},
-};
+import { drivingVoice, nitroSoundFrame } from './driving-sound.js';
+import { lobbyMusicFrame, normalizeLobbyStyle } from './lobby-music.js';
 
-export function createAudio() {
+export function createAudio({contextFactory} = {}) {
   const doc=globalThis.document;
   let context=null,master=null,engineGate=null,tyreGain=null,squealGain=null,boostGain=null;
   let engineFilter=null,tyreFilter=null,bodyOsc=null,harmonicOsc=null,subOsc=null,squealOsc=null,boostOsc=null;
   let bodyGain=null,harmonicGain=null,subGain=null;
+  let boostFilter=null,boostLowOsc=null,boostLowGain=null,boostImpactGain=null,boostReleaseGain=null,boostToneGain=null;
+  let boostAge=0,boostWasActive=false,boostRelease=0;
+  let lobby=false,lobbyClock=0,lobbyGate=null,lobbyFilter=null,lobbyBass=null,lobbyPulse=null,lobbyTick=null;
+  const lobbyPads=[];
+  let lobbyStyle=normalizeLobbyStyle(),lobbyTransition=1,lobbyKick=null,lobbyLead=null,lobbySnareBody=null,lobbySnare=null,lobbySpace=null,lobbyEcho=null;
   let unlockPromise=null,disposed=false,unlocked=false,muted=false,gear=0;
-  let running=false,speed=0,drift=0,brake=0,vehicleId=null,shiftTime=0;
+  let running=false,speed=0,drift=0,brake=0,vehicleId=null,shiftTime=0,volume=.75,musicVolume=.65;
   const sources=new Set(),transients=new Set(),nodes=new Set();
   const finite=(value,fallback=0)=>Number.isFinite(Number(value))?Number(value):fallback;
   const clamp=(value,min,max)=>Math.min(max,Math.max(min,value));
@@ -28,12 +29,15 @@ export function createAudio() {
   }
   function updateGates() {
     const audible=unlocked && !muted && visible() && !disposed;
-    target(master?.gain,audible?.24:0,.035);
+    target(master?.gain,audible?volume*1.6:0,.035);
     target(engineGate?.gain,audible && running?1:0,.070);
+    target(lobbyGate?.gain,audible && lobby && !running?musicVolume*lobbyTransition:0,.28);
     if(!audible || !running) {
       target(tyreGain?.gain,0,.045);
       target(squealGain?.gain,0,.045);
       target(boostGain?.gain,0,.045);
+      target(boostToneGain?.gain,0,.045);target(boostLowGain?.gain,0,.045);target(boostImpactGain?.gain,0,.045);target(boostReleaseGain?.gain,0,.035);
+      boostWasActive=false;boostAge=0;boostRelease=0;
     }
   }
   function makeOscillator(type,frequency,gain,destination) {
@@ -43,7 +47,8 @@ export function createAudio() {
     oscillator.start();sources.add(oscillator);return {oscillator,amplitude};
   }
   function constructGraph() {
-    master=node(context.createGain());master.gain.value=0;master.connect(context.destination);
+    master=node(context.createGain());master.gain.value=0;
+    if(context.createDynamicsCompressor){const limiter=node(context.createDynamicsCompressor());limiter.threshold.value=-10;limiter.knee.value=12;limiter.ratio.value=4;limiter.attack.value=.003;limiter.release.value=.18;master.connect(limiter);limiter.connect(context.destination);}else master.connect(context.destination);
     engineGate=node(context.createGain());engineGate.gain.value=0;engineGate.connect(master);
     engineFilter=node(context.createBiquadFilter());engineFilter.type='lowpass';
     engineFilter.frequency.value=360;engineFilter.Q.value=.48;engineFilter.connect(engineGate);
@@ -70,15 +75,57 @@ export function createAudio() {
     tyreFilter.frequency.value=850;tyreFilter.Q.value=.56;
     tyreGain=node(context.createGain());tyreGain.gain.value=0;
     noise.connect(tyreFilter);tyreFilter.connect(tyreGain);tyreGain.connect(engineGate);
-    const boostFilter=node(context.createBiquadFilter());boostFilter.type='highpass';boostFilter.frequency.value=1700;
+    boostFilter=node(context.createBiquadFilter());boostFilter.type='lowpass';boostFilter.frequency.value=620;boostFilter.Q.value=.35;
     boostGain=node(context.createGain());boostGain.gain.value=0;boostGain.connect(engineGate);
     noise.connect(boostFilter);boostFilter.connect(boostGain);
-    // Boost layers filtered air and a quiet rising electrical whine over the engine.
-    ({oscillator:boostOsc}=makeOscillator('sine',900,.065,boostGain));
+    // Warm turbine harmonics have their own gain; they do not need a loud
+    // noise bus or a piercing electrical whine to remain audible.
+    ({oscillator:boostOsc,amplitude:boostToneGain}=makeOscillator('triangle',220,0,engineGate));
+    // Low thrust and a short pressure onset give boost weight without raising
+    // the whole mix. All layers share engineGate so pause/mute are immediate.
+    ({oscillator:boostLowOsc,amplitude:boostLowGain}=makeOscillator('sine',52,0,engineGate));
+    const impactFilter=node(context.createBiquadFilter());impactFilter.type='lowpass';impactFilter.frequency.value=210;
+    boostImpactGain=node(context.createGain());boostImpactGain.gain.value=0;
+    noise.connect(impactFilter);impactFilter.connect(boostImpactGain);boostImpactGain.connect(engineGate);
+    const releaseFilter=node(context.createBiquadFilter());releaseFilter.type='lowpass';releaseFilter.frequency.value=470;releaseFilter.Q.value=.4;
+    boostReleaseGain=node(context.createGain());boostReleaseGain.gain.value=0;
+    noise.connect(releaseFilter);releaseFilter.connect(boostReleaseGain);boostReleaseGain.connect(engineGate);
     noise.start();sources.add(noise);
     squealGain=node(context.createGain());squealGain.gain.value=0;squealGain.connect(engineGate);
     squealOsc=node(context.createOscillator());squealOsc.type='sine';squealOsc.frequency.value=820;
     squealOsc.connect(squealGain);squealOsc.start();sources.add(squealOsc);
+
+    // Liquid Lines uses a separate bus: music eases out before the race,
+    // leaving engines readable.
+    lobbyGate=node(context.createGain());lobbyGate.gain.value=0;lobbyGate.connect(master);
+    lobbyFilter=node(context.createBiquadFilter());lobbyFilter.type='lowpass';lobbyFilter.frequency.value=1050;lobbyFilter.Q.value=.42;lobbyFilter.connect(lobbyGate);
+    for(let i=0;i<4;i++)lobbyPads.push(makeOscillator(i===0?'sine':'triangle',220+i*30,0,lobbyFilter));
+    lobbyBass=makeOscillator('sine',73.42,0,lobbyGate);
+    lobbyPulse=makeOscillator('sine',440,0,lobbyFilter);
+    const tickFilter=node(context.createBiquadFilter());tickFilter.type='highpass';tickFilter.frequency.value=3600;
+    lobbyTick=node(context.createGain());lobbyTick.gain.value=0;noise.connect(tickFilter);tickFilter.connect(lobbyTick);lobbyTick.connect(lobbyGate);
+    lobbyKick=makeOscillator('sine',55,0,lobbyGate);
+    lobbyLead=makeOscillator('sine',440,0,lobbyFilter);
+    lobbySnareBody=makeOscillator('triangle',185,0,lobbyGate);
+    const snareFilter=node(context.createBiquadFilter());snareFilter.type='bandpass';snareFilter.frequency.value=1700;snareFilter.Q.value=.58;
+    lobbySnare=node(context.createGain());lobbySnare.gain.value=0;noise.connect(snareFilter);snareFilter.connect(lobbySnare);lobbySnare.connect(lobbyGate);
+    // Original room impulse and filtered echo add depth, not unlicensed samples.
+    // These optional standard Web Audio nodes use one bounded music graph.
+    if(context.createConvolver){
+      const room=node(context.createConvolver()),impulse=context.createBuffer(2,Math.round(context.sampleRate*1.35),context.sampleRate);
+      for(let channel=0;channel<2;channel++){
+        const samples=impulse.getChannelData(channel);let seed=channel+137;
+        for(let i=0;i<samples.length;i++){seed=(Math.imul(seed,1664525)+1013904223)>>>0;const t=i/context.sampleRate;samples[i]=(seed/4294967296*2-1)*Math.exp(-t*5.5)*Math.min(1,t*90)*.22;}
+      }
+      room.buffer=impulse;lobbySpace=node(context.createGain());lobbySpace.gain.value=0;
+      lobbyFilter.connect(room);room.connect(lobbySpace);lobbySpace.connect(lobbyGate);
+    }
+    if(context.createDelay){
+      const echo=node(context.createDelay(1)),feedback=node(context.createGain()),echoFilter=node(context.createBiquadFilter());
+      echo.delayTime.value=.29;feedback.gain.value=.28;echoFilter.type='lowpass';echoFilter.frequency.value=1800;
+      lobbyEcho=node(context.createGain());lobbyEcho.gain.value=0;
+      lobbyPulse.amplitude.connect(echo);lobbyLead.amplitude.connect(echo);echo.connect(echoFilter);echoFilter.connect(feedback);feedback.connect(echo);echoFilter.connect(lobbyEcho);lobbyEcho.connect(lobbyGate);
+    }
   }
 
   async function unlock() {
@@ -88,8 +135,8 @@ export function createAudio() {
       try {
         if(!context) {
           const AudioContext=globalThis.AudioContext || globalThis.webkitAudioContext;
-          if(typeof AudioContext!=='function')return false;
-          context=new AudioContext({latencyHint:'interactive'});
+          if(typeof contextFactory!=='function' && typeof AudioContext!=='function')return false;
+          context=typeof contextFactory==='function'?contextFactory():new AudioContext({latencyHint:'interactive'});
           constructGraph();
         }
         if(disposed || context.state==='closed')return false;
@@ -106,17 +153,26 @@ export function createAudio() {
   function setMuted(value) {
     muted=Boolean(value);updateGates();
   }
+  function setVolume(value){volume=clamp(finite(value,.75),0,1);updateGates();}
+  function setMusicVolume(value){musicVolume=clamp(finite(value,.65),0,1);updateGates();}
+  function setLobbyStyle(value){
+    const next=normalizeLobbyStyle(value);if(next===lobbyStyle)return lobbyStyle;
+    lobbyStyle=next;lobbyClock=0;lobbyTransition=0;updateGates();return lobbyStyle;
+  }
   function update(state={},dt=1/60) {
     if(disposed)return;
     speed=clamp(Math.abs(finite(state.speed)),0,100);
     drift=clamp(Math.abs(finite(state.drift)),0,1);
     brake=clamp(finite(state.brake),0,1);
     running=Boolean(state.running);
-    const vehicle=getVehicle(state.vehicle),electric=vehicle.powertrain==='electric',voice=VOICES[electric?'electric':vehicle.family]||VOICES.gt;
+    lobby=state.lobby===true&&!running;
+    const vehicle=getVehicle(state.vehicle),voice=drivingVoice(vehicle),electric=voice.electric;
     if(vehicleId!==vehicle.id || !running){gear=0;shiftTime=0;vehicleId=vehicle.id;}
     if(!context || !unlocked || context.state!=='running')return;
     updateGates();
-    if(!running || muted || !visible())return;
+    if(muted || !visible())return;
+    if(lobby)updateLobby(clamp(finite(dt,1/60),0,.1));
+    if(!running)return;
     bodyOsc.type=electric?'sine':'triangle';
     harmonicOsc.type=electric?'sine':'sawtooth';
 
@@ -143,14 +199,42 @@ export function createAudio() {
     target(harmonicGain.gain,voice.harmonic*(.35+throttle*.65)*cut,.035);
     target(subGain.gain,voice.sub*(.72+throttle*.28),.07);
     target(engineFilter.frequency,300+voice.cutoff*(.22+rev*.78)*(.48+throttle*.52)+(boost?300:0),.075);
-    target(boostGain.gain,boost?.17:0,boost?.045:.10);
-    target(boostOsc.frequency,880+speed*12+(boost?180:0),.12);
+    if(boost&&!boostWasActive){boostAge=0;boostRelease=0;}
+    if(!boost&&boostWasActive)boostRelease=1;
+    if(boost)boostAge+=step;
+    else boostRelease*=Math.exp(-step*13);
+    const thrust=nitroSoundFrame({active:boost,age:boostAge,speed,electric});
+    target(boostGain.gain,thrust.air,boost?.055:.065);
+    target(boostFilter.frequency,thrust.airCutoff,.10);
+    target(boostOsc.frequency,thrust.coreFrequency,.16);
+    target(boostToneGain.gain,thrust.coreGain,boost?.045:.075);
+    target(boostLowOsc.frequency,thrust.lowFrequency,.055);
+    target(boostLowGain.gain,thrust.lowGain,boost?.038:.09);
+    target(boostImpactGain.gain,thrust.impact,.029);
+    target(boostReleaseGain.gain,thrust.release*boostRelease,.024);
+    boostWasActive=boost;
     const moving=clamp((speed-3)/12,0,1);
     const scrub=Math.max(drift,brake*.22)*moving;
     target(tyreGain.gain,Math.pow(scrub,1.35)*.16,.060);
     target(tyreFilter.frequency,720+scrub*570+Math.min(speed,60)*4,.12);
     target(squealGain.gain,Math.pow(scrub,2.8)*.015,.10);
     target(squealOsc.frequency,780+scrub*190+Math.min(speed,60)*1.4,.16);
+  }
+  function updateLobby(dt) {
+    lobbyClock+=dt;lobbyTransition=Math.min(1,lobbyTransition+dt*2.5);
+    const frame=lobbyMusicFrame(lobbyStyle,lobbyClock);
+    for(let i=0;i<lobbyPads.length;i++){
+      lobbyPads[i].oscillator.type=i===0?'sine':frame.padWave;
+      target(lobbyPads[i].oscillator.frequency,frame.padNotes[i]*(i%2?1.001:1),frame.padSmoothing);
+      target(lobbyPads[i].amplitude.gain,frame.padGains[i],.09);
+    }
+    target(lobbyBass.oscillator.frequency,frame.bassFrequency,.025);target(lobbyBass.amplitude.gain,frame.bassGain,.012);
+    lobbyPulse.oscillator.type=frame.pulseWave;target(lobbyPulse.oscillator.frequency,frame.pulseFrequency,.010);target(lobbyPulse.amplitude.gain,frame.pulseGain,.010);
+    target(lobbyKick.oscillator.frequency,frame.kickFrequency,.009);target(lobbyKick.amplitude.gain,frame.kickGain,.009);
+    lobbyLead.oscillator.type=frame.leadWave;target(lobbyLead.oscillator.frequency,frame.leadFrequency,.035);target(lobbyLead.amplitude.gain,frame.leadGain,.035);
+    target(lobbySnare.gain,frame.snareGain,.008);target(lobbySnareBody.amplitude.gain,frame.snareBodyGain,.009);
+    target(lobbyTick.gain,frame.hatGain,.008);target(lobbyFilter.frequency,frame.padCutoff,.2);
+    target(lobbySpace?.gain,frame.space,.2);target(lobbyEcho?.gain,frame.echo,.2);
   }
   function beep(frequency=440,duration=.1) {
     if(disposed || !unlocked || muted || !visible() || context?.state!=='running')return;
@@ -178,5 +262,5 @@ export function createAudio() {
     context=null;master=null;
   }
   doc?.addEventListener?.('visibilitychange',updateGates);
-  return {unlock,setMuted,update,beep,dispose};
+  return {unlock,setMuted,setVolume,setMusicVolume,setLobbyStyle,update,beep,dispose};
 }

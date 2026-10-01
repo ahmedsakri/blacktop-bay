@@ -6,6 +6,10 @@ export const DRIVING_ACTIONS = Object.freeze([
 const actions = new Set(DRIVING_ACTIONS);
 const validPointer = id => Number.isSafeInteger(id) && id >= 0;
 
+export function normalizeSteeringSensitivity(value) {
+  return Number.isFinite(value) ? Math.max(.65, Math.min(1.5, value)) : 1;
+}
+
 export function createDrivingInputs() {
   const owners = new Map();
   return {
@@ -33,13 +37,17 @@ export function createDrivingInputs() {
 
 // Drag steering and keyboard arrows share a bounded steering value. Racing
 // always auto-accelerates; the optional keyboard brake overrides gas and boost.
-export function resolveDriveControls(input = {}) {
+export function resolveDriveControls(input = {}, {steeringSensitivity = 1} = {}) {
   const held = action => input?.[action] === true;
   const brake = held('brake');
   const nitro = !brake && held('nitro');
   const analog = Number.isFinite(input?.steer) ? Math.max(-1, Math.min(1, input.steer)) : 0;
+  // Change precision around centre without taking away full steering lock at
+  // a low setting. Keyboard arrows remain independent of touch/tilt tuning.
+  const sensitivity = normalizeSteeringSensitivity(steeringSensitivity);
+  const adjustedAnalog = Math.sign(analog) * Math.abs(analog) ** (1 / sensitivity);
   return {
-    steer: Math.max(-1, Math.min(1, analog + Number(held('right')) - Number(held('left')))),
+    steer: Math.max(-1, Math.min(1, adjustedAnalog + Number(held('right')) - Number(held('left')))),
     throttle: brake ? 0 : 1,
     brake,
     handbrake: held('drift'),

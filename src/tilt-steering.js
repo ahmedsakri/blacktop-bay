@@ -20,7 +20,9 @@ export function createTiltSteering({now = () => performance.now(), staleAfter = 
       const value = screenTiltDegrees(event, screenAngle);
       if (value === null) return false;
       const orientation = ((screenAngle % 360) + 360) % 360;
-      if (angle !== orientation) { clear(); angle = orientation; }
+      // A suspended sensor can resume at a different hand position. Its first
+      // fresh event is a new neutral pose, never an unexpected full-lock turn.
+      if (angle !== orientation || !fresh()) { clear(); angle = orientation; }
       raw = value; sampledAt = now();
       if (center === null) center = value;
       const delta = value - center;

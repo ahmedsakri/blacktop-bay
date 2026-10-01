@@ -89,3 +89,28 @@ test('controls explain the usable thumbpad and optional tilt separately from key
     assert.doesNotMatch(html, /onclick=|<script/);
   }
 });
+
+test('solo Time attack presents the actual run and laps without fabricating a victory or rival standings', () => {
+  const result = {...race(), mode: 'time-attack', position: 1, allFinished: true, rivals: [],
+    lapTimes: [50.1, 46.15, 48.98], leaderboard: [{position: 1, isPlayer: true, finished: true, finishTime: 145.23}]};
+  const before = JSON.stringify(result);
+  const html = finishPanel({race: result, bestTime: 145.23, reward: {awarded: true, credits: 459}, credits: 1659});
+  assert.match(html, /SOLO/); assert.match(html, /TIME ATTACK COMPLETE/); assert.match(html, /YOUR RUN TIME/);
+  assert.match(html, /YOUR LAPS/); assert.match(html, /00:50\.10/); assert.match(html, /00:46\.15/); assert.match(html, /00:48\.98/);
+  assert.match(html, /02:25\.23/); assert.match(html, /\+459 <small>CR/);
+  assert.doesNotMatch(html, /RACE WINNER|PODIUM|rd-winner|FINAL ORDER|drivers classified|Rivals still|id="finish-order"/);
+  assert.equal(finishRowsMarkup(result), ''); assert.equal(finishStatusText(result), 'Run complete. Chase your next personal best.');
+  assert.equal(JSON.stringify(result), before);
+});
+
+test('solo pause identifies Time attack and freezes lap progress instead of showing position one of one', () => {
+  const html = pausePanel({race: {...race(), mode: 'time-attack', state: 'racing', completedLaps: 1, elapsed: 70}});
+  assert.match(html, /<dt>TIME ATTACK<\/dt><dd>SOLO<\/dd>/); assert.match(html, /RUN TIME/);
+  assert.match(html, /Your lap progress and run time are held/); assert.doesNotMatch(html, /POSITION|Your position/);
+});
+
+test('a solo run with missing lap timings shows no invented lap time or personal best', () => {
+  const html = finishPanel({race: {...race(), mode: 'time-attack', lapTimes: [NaN, null, '43']}});
+  assert.equal((html.match(/<time>—<\/time>/g) || []).length, 3);
+  assert.doesNotMatch(html, /<time>00:00\.00<\/time>|NEW PERSONAL BEST/);
+});

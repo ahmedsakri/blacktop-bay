@@ -61,3 +61,21 @@ test('inactive screens reject touch steering and failed pointer capture does not
   pad.pointer('pointermove', 1, 160);
   assert.equal(steering.read(), 0);
 });
+
+test('disabling or removing the pad clears a captured turn without needing a later pointerup', () => {
+  const pad = new Pad(), steering = createDragSteering();
+  let active = true;
+  const cleanup = bindSteeringPad(pad, steering, {enabled: () => active});
+  pad.pointer('pointerdown', 1, 162);
+  assert.equal(steering.read(), 1);
+  active = false;
+  pad.pointer('pointermove', 1, 160);
+  assert.equal(steering.read(), 0);
+  assert.equal(steering.active(), false);
+  active = true;
+  pad.pointer('pointerdown', 2, 30);
+  assert.equal(steering.read(), -1);
+  cleanup();
+  assert.equal(steering.read(), 0);
+  assert.equal(steering.active(), false);
+});

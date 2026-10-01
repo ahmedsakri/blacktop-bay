@@ -23,7 +23,24 @@ export function spectatorProfile(x, floor, z, yaw, seated, rng = Math.random) {
   shift: (rng() - .5) * .045, reaction: 0, lookYaw: 0, previousDistance: Infinity,
   faceWidth: .94 + rng() * .13, jawWidth: .85 + rng() * .22, polo: rng() < .36,
   shoe: pick(['#c5c3ba','#23242b','#494b48','#857866'],rng),
+  garment: Math.floor(rng()*3), shorts: rng()<.19, scarf: rng()<.12, build:.89+rng()*.22,
+  reactionDistance:22+rng()*13, reactionSpeed:.72+rng()*.66, blinkPhase:rng()*7,
  };
+}
+
+// A real two-bone chain keeps upper arms and forearms a constant length while
+// cheering. The previous directly animated joints stretched bodies like rubber.
+export function solveSpectatorArm(shoulder, desiredHand, elbowHint, upper=.285, lower=.265) {
+ const direction=desiredHand.map((v,i)=>v-shoulder[i]);
+ const raw=Math.hypot(...direction),distance=Math.min(upper+lower-.003,Math.max(Math.abs(upper-lower)+.003,raw));
+ const axis=raw>1e-6?direction.map(v=>v/raw):[0,-1,0];
+ let pole=elbowHint.map((v,i)=>v-shoulder[i]);
+ const dot=pole.reduce((sum,v,i)=>sum+v*axis[i],0);pole=pole.map((v,i)=>v-dot*axis[i]);
+ let magnitude=Math.hypot(...pole);
+ if(magnitude<1e-5){pole=[axis[1],-axis[0],0];magnitude=Math.hypot(...pole);if(magnitude<1e-5){pole=[1,0,0];magnitude=1;}}
+ pole=pole.map(v=>v/magnitude);
+ const along=(upper*upper-lower*lower+distance*distance)/(2*distance),out=Math.sqrt(Math.max(0,upper*upper-along*along));
+ return {elbow:shoulder.map((v,i)=>v+axis[i]*along+pole[i]*out),hand:shoulder.map((v,i)=>v+axis[i]*distance)};
 }
 
 // All five gestures have distinct shoulder/elbow/wrist silhouettes at driving
@@ -38,7 +55,8 @@ export function spectatorPose(person, time = 0, excitement = 0) {
   const shoulder = [side * .202 + sway, hip + .46 + breathe, lean];
   let elbow = [side * .265 + sway, hip + .20, .085];
   let hand = [side * .14 + sway, hip + .07, person.seated ? .30 : .12];
-  const active = excitement > .08;
+  const active = excitement > .001;
+  const restElbow=[...elbow],restHand=[...hand];
   if (person.gesture === 0 && active) { // An asymmetric wave, wrist above head.
    if (side > 0) {
     elbow = [.33 + sway, hip + .77, .08];
@@ -57,11 +75,17 @@ export function spectatorPose(person, time = 0, excitement = 0) {
    elbow = [side * .32, hip + .66 + Math.sin(t + side) * .025, .025];
    hand = [side * .36, hip + .98 + Math.sin(t * 2.1 + side) * .045, .10];
   }
+  const blend=person.gesture===3?1:Math.min(1,Math.max(0,excitement*1.45));
+  const eased=blend*blend*(3-2*blend);
+  elbow=mixPoint(restElbow,elbow,eased);hand=mixPoint(restHand,hand,eased);
+  shoulder[0]*=person.width;elbow[0]*=person.width;hand[0]*=person.width;
+  const solved=solveSpectatorArm(shoulder,hand,elbow);elbow=solved.elbow;hand=solved.hand;
   arms.push({side, shoulder, elbow, hand});
  }
  return {hip, chest, head, lean, sway, breathe, arms,
   headYaw:(person.lookYaw||0)+Math.sin(t*.37)*.035, headPitch:-excitement*.035+Math.sin(t*.53)*.025,
   headRoll:Math.sin(t*.42)*.026, torsoTilt:.025+excitement*.045,
+  blink:((time+(person.blinkPhase||0))%5.7)<.115?.12:1,
   mouth:Math.max(0,excitement-.24)*(person.gesture===0||person.gesture===2||person.gesture===4?1:.36),
  };
 }
@@ -157,7 +181,7 @@ export function createCrowd({low = false, reducedMotion = false} = {}) {
    const entry=person.parts[parts.length]; Object.assign(entry,{position:pos,scale,segmentEnd:end,rotation:rot||[0,0,0]});parts.push(entry);write(entry);return entry;
   };
   const segment = (kind,from,to,radius,tint) => part(kind,from,[radius,1,radius],tint,[0,0,0],to);
-  const hip=pose.hip,w=person.width,skinShadow=person.skinShadow||(person.skinShadow=shade(person.skin,.77));
+  const hip=pose.hip,w=person.width*(person.build||1),skinShadow=person.skinShadow||(person.skinShadow=shade(person.skin,.77));
   const shirtShadow=person.shirtShadow||(person.shirtShadow=shade(person.shirt,.70));
   const shirtLight=person.shirtLight||(person.shirtLight=shade(person.shirt,1.08));
   part('torso',[pose.sway,hip-.022,pose.lean],[w,1,.68],person.shirt,[pose.torsoTilt,0,-pose.sway*.3]);
@@ -174,7 +198,7 @@ export function createCrowd({low = false, reducedMotion = false} = {}) {
    return entry;
   };
   const hw=person.faceWidth;
-  face('heads',[0,0,0],[.096*hw,.139,.105],person.skin);
+  face('heads',[0,0,0],[.096*hw,.139,.100+.007*(person.jawWidth||1)],person.skin);
   // A narrow nasal bridge and rounded tip, smaller ears and a recessed ear
   // bowl read as anatomy rather than the old spherical nose and side knobs.
   face('skin',[0,-.006,.101],[.010,.026,.011],person.skin);
@@ -196,10 +220,10 @@ export function createCrowd({low = false, reducedMotion = false} = {}) {
     face('skin',[ex,.021,.092],[.025,.015,.010],'#292c31');
     face('skin',[side*.003,.023,.096],[.010,.0025,.003],'#49484a');
    }else{
-    face('skin',[ex,.021,.090],[.016,.0050,.0045],'#cbbba8');
-    face('skin',[ex+Math.sin(pose.headYaw)*.002,.021,.094],[.005,.0045,.0028],'#42382e');
+    face('skin',[ex,.021,.090],[.016,.0050*pose.blink,.0045],'#cbbba8');
+    face('skin',[ex+Math.sin(pose.headYaw)*.002,.021,.094],[.005,.0045*pose.blink,.0028],'#42382e');
     face('skin',[ex,.0247,.092],[.017,.0021,.005],skinShadow);
-    face('skin',[ex,.040,.086],[.019,.0026,.004],person.hair);
+    face('skin',[ex,.040+pose.mouth*.014,.086],[.019,.0026,.004],person.hair);
    }
   }
   // A curved mouth opens only for vocal cheering; quieter poses retain a
@@ -211,22 +235,33 @@ export function createCrowd({low = false, reducedMotion = false} = {}) {
   for(const side of [-1,1])face('skin',[side*.022,-.054,.083],[.003,.002,.003],skinShadow);
   for(const {side,shoulder,elbow,hand} of pose.arms){
    segment('limbs',shoulder,elbow,.051*w,person.skin);
-   segment('limbs',shoulder,mixPoint(shoulder,elbow,.56),.073*w,person.shirt);
+   segment('limbs',shoulder,mixPoint(shoulder,elbow,person.garment===1?.98:.56),.068*w,person.shirt);
    part('skin',elbow,[.036*w,.037,.034],person.skin);
-   segment('limbs',elbow,hand,.047*w,person.skin);
+   segment('limbs',elbow,hand,.041*w,person.garment===1?person.shirt:person.skin);
    part('skin',hand,[.033,.042,.022],person.skin,[0,person.gesture===1?side*.7:0,side*.12]);
    part('skin',[hand[0]-side*.027,hand[1]-.015,hand[2]+.011],[.011,.023,.011],person.skin,[0,0,side*.25]);
+   // Fingers read in nearby waves, then leave the draw entirely at face LOD.
+   if(person.gesture===0||person.gesture===4)for(let finger=0;finger<4;finger++){
+    const detail=part('skin',[hand[0]+(finger-1.5)*.013,hand[1]+.035,hand[2]],[.006,.023-Math.abs(finger-1.5)*.003,.006],person.skin,[0,0,(finger-1.5)*-.06]);
+    detail.faceDetail=true;
+   }
    const knee=person.seated?[side*.12,.435,.31]:[side*(.115+person.shift),.44,.01+side*.028];
    const ankle=person.seated?[side*.12,.095,.36]:[side*.13,.085,.02+side*.028];
    segment('trousers',[side*.105,hip-.02,0],knee,.083*w,person.pants);
-   part('skin',knee,[.054*w,.055,.055],person.pants);
-   segment('trousers',knee,ankle,.069*w,person.pants);
+   part('skin',knee,[.054*w,.055,.055],person.shorts?person.skin:person.pants);
+   segment('trousers',knee,ankle,.059*w,person.shorts?person.skin:person.pants);
    part('shoes',[ankle[0],.051,ankle[2]+.060],[.061,.049,.113],person.shoe);
    part('details',[ankle[0],.026,ankle[2]+.063],[.112,.021,.185],'#d3cdc1');
   }
   if(person.gesture===3)part('details',[0,hip+.60+pose.breathe,.337],[.083,.133,.014],'#1f252b',[-.08,0,0]);
   // A restrained collar placket, hem and offset chest emblem interrupt the
   // uniform plastic-shirt appearance without extra draw calls or textures.
+  if(person.garment===1){
+   part('details',[pose.sway,hip+.31,pose.lean+.112],[.011,.42,.006],shirtShadow,[pose.torsoTilt,0,0]);
+   for(const side of [-1,1])part('details',[pose.sway+side*.095,hip+.23,pose.lean+.108],[.060,.010,.005],shirtShadow,[pose.torsoTilt,0,side*.18]);
+  }
+  if(person.garment===2)for(const stripe of [.22,.27,.32])part('skin',[pose.sway,hip+stripe,pose.lean+.112],[.152*w,.009,.009],shirtLight,[pose.torsoTilt,0,0]);
+  if(person.scarf){part('collars',[pose.sway,hip+.557,pose.lean],[.077,.062,.072],person.pants,[Math.PI/2,0,0]);part('details',[pose.sway+.056,hip+.45,pose.lean+.125],[.052,.20,.011],person.pants,[pose.torsoTilt,0,-.09]);}
   if(person.polo)part('details',[pose.sway,hip+.471,pose.lean+.108],[.012,.083,.004],shirtShadow,[pose.torsoTilt,0,0]);
   part('skin',[pose.sway,hip+.032,pose.lean+.103],[.130*w,.003,.006],shirtShadow);
   part('skin',[pose.sway-.068*w,hip+.148,pose.lean+.110],[.064*w,.002,.004],shirtLight,[0,0,-.13]);
@@ -280,12 +315,13 @@ export function createCrowd({low = false, reducedMotion = false} = {}) {
     if(distance>(low?76:110))continue;
     // Each spectator reacts at a different time as the car approaches their
     // own seat. Reactions ease away instead of snapping when the car passes.
-    const nearby=car&&Math.abs(car.speed||0)>3&&distance<34;
+    const nearby=car&&Math.abs(car.speed||0)>3&&distance<(person.reactionDistance||34);
     if(car){const target=Math.atan2(car.x-person.x,car.z-person.z)-person.yaw;
      const angle=Math.atan2(Math.sin(target),Math.cos(target));
      person.lookYaw+=(Math.max(-.43,Math.min(.43,angle))*.62-person.lookYaw)*.08;
     }
-    person.reaction+=(Number(nearby)-person.reaction)*(nearby?.20:.035);
+    const response=(nearby?.15:.028)*(person.reactionSpeed||1);
+    person.reaction+=(Number(nearby)-person.reaction)*response;
     const spontaneous=Math.sin(motionTime*.19+person.phase)> .72?.16:0;
     compose(person,motionTime,spontaneous+person.reaction*.84);changed=true;
    }

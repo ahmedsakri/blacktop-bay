@@ -1,10 +1,10 @@
 # Blacktop Bay
 
-> Blacktop Bay is a free, single-player 3D browser racing game by AppsOverFlow. Race three computer-controlled rivals across thirty-four asphalt circuits in one of 33 cars, earn race credits, and upgrade your car. No account, no install, no purchases.
+> Blacktop Bay is a free, single-player 3D browser racing game by AppsOverFlow. Race seven computer-controlled rivals across thirty-four asphalt circuits in one of 33 cars, earn race credits, and upgrade your car. No account, no install, no purchases.
 
 ## About the game
 
-Blacktop Bay runs directly in a modern web browser (WebGL 2 required) at https://blacktop-bay.web.app/. A single human player races three computer-controlled opponents — Mira, Jax and Nova — in a four-car field over three laps. Gameplay centres on drifting for score, a rechargeable nitro boost, and earning race credits to install permanent, per-car upgrades. Progress is saved locally in the browser; there is no online multiplayer and no real-money payment.
+Blacktop Bay runs directly in a modern web browser (WebGL 2 required) at https://blacktop-bay.web.app/. A single human player races seven computer-controlled opponents — Mira, Jax, Nova, Ren, Kai, Aria and Leo — in an eight-car field over three laps. Gameplay centres on drifting for score, a rechargeable nitro boost, and earning race credits to install permanent, per-car upgrades. Progress is saved locally in the browser; there is no online multiplayer and no real-money payment.
 
 ## How to play
 
@@ -43,12 +43,20 @@ Search the collection by car, manufacturer or style. Accents, spaces and punctua
 
 After a valid lap, a short notice shows the last lap time and the next lap number. From the second completed lap, it compares that time with your previous best in the current race; the third lap is marked Final lap.
 
+## Race modes and local progression
+
+- Circuit race: one player and seven computer-controlled opponents over three laps. Club, Sport and Pro change rival pace; opponents still follow the same physical simulation and checkpoints.
+- Time attack: solo three-lap runs, local personal bests and Bronze/Silver/Gold targets for the chosen car and course.
+- Three-race tour: the same car and difficulty across three distinct circuits. Every valid finish earns its ordinary race credits, and the tour totals earned credits and position points.
+- Medal targets describe this arcade game, not real-world motorsport records. Records are separate by car, circuit, mode and difficulty. Medals are saved in this browser when storage is available. Tours require working browser storage to carry the same car and earned rounds between circuits. An unfinished tour is replaced only after an explicit Start new tour choice.
+- Circuit race and tour finish rewards: 900/650/500/350/300/250/200/150 credits for places 1–8. Solo time attack: 350 credits. Both add one credit per 20 drift points, up to a 500-credit bonus. Incomplete and over-15-minute runs do not award credits.
+
 ## Key Facts
 
 - Publisher: AppsOverFlow (https://appsoverflow.web.app/).
 - Free to play; no account, no install and no real-money purchases.
 - Runs in a modern web browser; WebGL 2 and an internet connection are required to load.
-- Single-player only: one human racer versus three computer-controlled opponents (Mira, Jax and Nova) in a four-car field over three laps.
+- Single-player only: one human racer versus seven computer-controlled opponents (Mira, Jax, Nova, Ren, Kai, Aria and Leo) in an eight-car field over three laps.
 - 33 cars: individually sourced manufacturer representations across 16 brands; 34 asphalt circuits, all available from the start.
 - Each car has five upgrade levels for Engine, Tyres, Nitro and Handling, bought with earned race credits.
 - Progress (records, credits, upgrades and paint) is saved locally in the browser; there is no online multiplayer.
@@ -56,6 +64,7 @@ After a valid lap, a short notice shows the last lap time and the next lap numbe
 ## Links
 
 - Game: https://blacktop-bay.web.app/
+- Circuit atlas: https://blacktop-bay.web.app/circuits/
 - Guide (controls, cars, circuits, upgrades, FAQ): https://blacktop-bay.web.app/guide/
 - Credits & licenses: https://blacktop-bay.web.app/credits/
 - Privacy notice: https://blacktop-bay.web.app/privacy/

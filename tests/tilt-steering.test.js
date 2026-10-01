@@ -56,6 +56,19 @@ test('rotation, pause cleanup and fresh resumption cannot reuse a previous steer
   assert.equal(tilt.read(), 0, 'resume establishes a new neutral driving pose');
 });
 
+test('the first sensor sample after a reporting gap establishes a safe new neutral', () => {
+  let clock = 0;
+  const tilt = createTiltSteering({now: () => clock});
+  tilt.sample({beta: 0, gamma: -65}, 90);
+  tilt.sample({beta: 24, gamma: -65}, 90);
+  assert.ok(tilt.read(.1) > .6);
+  clock = 1600;
+  tilt.sample({beta: -30, gamma: -65}, 90);
+  assert.equal(tilt.read(.1), 0, 'a resumed phone must not apply its new pose against stale calibration');
+  tilt.sample({beta: -8, gamma: -65}, 90);
+  assert.ok(tilt.read(.1) > .6, 'normal steering resumes relative to the new pose');
+});
+
 test('motion permission is requested only by the explicit call and handles iOS denial and missing sensors', async () => {
   let calls = 0;
   const ios = {isSecureContext: true, DeviceOrientationEvent: {requestPermission() { calls++; return Promise.resolve('granted'); }}};

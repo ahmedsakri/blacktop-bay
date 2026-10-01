@@ -3,6 +3,7 @@ import { TRACK, TRACKS, getTrack, setTrack, projectOnTrack, sampleTrack } from '
 import { RIVAL_GRID, rivalControls } from './rivals.js';
 import { normalizeUpgrades } from './progression.js';
 import { resolveRivalVehicles } from './opponent-fleet.js';
+import { normalizeRaceOptions, getDifficulty } from './race-options.js';
 
 export { TRACK, TRACKS, getTrack, setTrack, projectOnTrack, sampleTrack };
 
@@ -39,11 +40,28 @@ const CAR_RADIUS = 0.95;
 const MAX_SPEED = 45;
 const RECOVERY_COOLDOWN = 3;
 const STUCK_DELAY = 2.4;
+const WALL_STALL_DELAY = 2.8;
 const OFF_TRACK_DELAY = .9;
+const IMPACT_STABILITY_TIME = .65;
+const roadProjections = new WeakMap();
 const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
 const finite = (value, fallback = 0) => Number.isFinite(value) ? value : fallback;
 const angleWrap = (angle) => Math.atan2(Math.sin(angle), Math.cos(angle));
 const smoothRange = (value, min, max) => { const t = clamp((value - min) / (max - min), 0, 1); return t * t * (3 - 2 * t); };
+
+function rememberRoad(racer, track, projection) {
+  roadProjections.set(racer, {x: racer.car.x, z: racer.car.z, track, projection});
+  return projection;
+}
+
+function currentRoad(racer, track) {
+  const previous = roadProjections.get(racer);
+  // Consecutive fixed steps start at the exact position projected at the end of
+  // the last step. External displacements, resets and collision corrections
+  // invalidate this naturally; distant recovery still searches the whole loop.
+  if (previous?.track === track && previous.x === racer.car.x && previous.z === racer.car.z) return previous.projection;
+  return rememberRoad(racer, track, projectOnTrack(racer.car.x, racer.car.z, racer._trackIndex, track));
+}
 
 function createRacer(vehicle, track, grid = null, upgrades = {}) {
   const levels = normalizeUpgrades(upgrades), specs = getUpgradeStats(vehicle, levels);
@@ -60,30 +78,34 @@ function createRacer(vehicle, track, grid = null, upgrades = {}) {
     lap: 1, completedLaps: 0, totalLaps: 3, bestLap: null, lastLap: null,
     lapTimes: [], state: 'ready', collision: false, progress: 0, raceProgress: 0,
     recoveries: 0,
-    impact: { id: 0, kind: 'none', source: null, strength: 0, remaining: 0 },
+    impact: { id: 0, kind: 'none', source: null, strength: 0, remaining: 0, x: spawn.x, z: spawn.z, nx: 0, nz: 0 },
     recovery: { id: 0, phase: 'none', reason: null, remaining: 0, fromS: spawn.s, toS: spawn.s },
-    _stuckTime: 0, _offTrackTime: 0, _recoveryCooldown: 0, _crashPenaltyTimer: 0,
+    _stuckTime: 0, _wallStallTime: 0, _wallStallOrigin: grid?.s || 0,
+    _offTrackTime: 0, _recoveryCooldown: 0, _crashPenaltyTimer: 0, _impactStability: 0,
     _accumulator: 0, _collisionTimer: 0, _collisionCooldown: 0,
     _driftTime: 0, _straightTime: 0, _autoDrift: 0, _lastTrackS: spawn.s, _trackIndex: spawn.index,
     _lapDistance: grid?.s || 0, _nextCheckpoint: 1, _safeS: spawn.s,
+    _lastProgressX: spawn.x + spawn.nx * lane, _lastProgressZ: spawn.z + spawn.nz * lane,
     _baseLane: lane, _lane: lane, _pace: grid?.pace || 1,
   };
 }
 
-export function createRace({ vehicle = DEFAULT_VEHICLE_ID, track: trackId, upgrades = {}, rivalVehicles } = {}) {
+export function createRace({ vehicle = DEFAULT_VEHICLE_ID, track: trackId, upgrades = {}, rivalVehicles, mode, difficulty } = {}) {
   if (!Object.hasOwn(VEHICLE_SPECS, vehicle)) vehicle = DEFAULT_VEHICLE_ID;
   const track = trackId === undefined ? TRACK : setTrack(trackId);
   const race = createRacer(vehicle, track, null, upgrades);
+  Object.assign(race, normalizeRaceOptions({mode, difficulty}));
   race.raceId = nextRaceId();
   race.rivalVehicles = resolveRivalVehicles(rivalVehicles);
-  race.rivals = RIVAL_GRID.map((grid, index) => createRacer(race.rivalVehicles[index], track, grid));
+  race.rivals = race.mode === 'time-attack' ? [] : RIVAL_GRID.map((grid, index) => createRacer(race.rivalVehicles[index], track,
+    {...grid, pace: grid.pace * getDifficulty(race.difficulty).pace}));
   race.clock = 0; race.allFinished = false; race.leaderboard = [];
   updateStandings(race);
   return race;
 }
 
 export function startRace(race) {
-  Object.assign(race, createRace({ vehicle: race.vehicle, track: race.track, upgrades: race.upgrades, rivalVehicles: race.rivalVehicles }));
+  Object.assign(race, createRace({ vehicle: race.vehicle, track: race.track, upgrades: race.upgrades, rivalVehicles: race.rivalVehicles, mode: race.mode, difficulty: race.difficulty }));
   race.state = 'racing';
   for (const rival of race.rivals) rival.state = 'racing';
   return race;
@@ -99,7 +121,7 @@ function bankDrift(race) {
   clearDrift(race);
 }
 
-export function resetCar(race, { reason = 'manual', retreat = 0 } = {}) {
+export function resetCar(race, { reason = 'manual', retreat = 0, occupants = race.rivals || [] } = {}) {
   if (race.state === 'finished') return false;
   const track = getTrack(race.track), fromS = race._safeS;
   // An automatic recovery only gives up already validated distance. It never
@@ -112,7 +134,7 @@ export function resetCar(race, { reason = 'manual', retreat = 0 } = {}) {
       const loss = Math.min(back, race._lapDistance, fromS), point = sampleTrack(fromS - loss, track);
       for (const offset of [0, -3, 3]) {
         const x = point.x + point.nx * offset, z = point.z + point.nz * offset;
-        if ((race.rivals || []).some(rival => rival.state === 'racing' && Math.hypot(rival.car.x - x, rival.car.z - z) < 6.2)) continue;
+        if (occupants.some(rival => rival !== race && rival.state === 'racing' && Math.hypot(rival.car.x - x, rival.car.z - z) < 6.2)) continue;
         location = point; lane = offset; lostDistance = loss; found = true; break;
       }
       if (found) break;
@@ -128,9 +150,10 @@ export function resetCar(race, { reason = 'manual', retreat = 0 } = {}) {
   race.velocity.x = 0; race.velocity.z = 0;
   race._lastTrackS = location.s;
   race._trackIndex = location.index;
+  race._lastProgressX = race.car.x; race._lastProgressZ = race.car.z;
   race._collisionTimer = 0; race._collisionCooldown = .6; race.collision = false;
-  race._autoDrift = 0; race._stuckTime = 0; race._offTrackTime = 0;
-  race._crashPenaltyTimer = 0; race._recoveryCooldown = RECOVERY_COOLDOWN;
+  race._autoDrift = 0; race._stuckTime = 0; race._wallStallTime = 0; race._offTrackTime = 0;
+  race._crashPenaltyTimer = 0; race._impactStability = 0; race._recoveryCooldown = RECOVERY_COOLDOWN;
   race.impact.remaining = 0;
   race.recovery = { id: race.recovery.id + 1, phase: 'recovered', reason, remaining: 1.5, fromS, toS: location.s };
   if (lostDistance > 0) {
@@ -161,8 +184,8 @@ export function stepRace(race, input = {}, dt = STEP) {
     const field = [race, ...race.rivals];
     // Choose all controls from the same frame before integrating any vehicle.
     const opponentInputs = race.rivals.map((rival) => rivalControls(rival, field, track, rival.specs, STEP));
-    if (race.state === 'racing') simulate(race, controls, STEP);
-    race.rivals.forEach((rival, i) => { if (rival.state === 'racing') simulate(rival, opponentInputs[i], STEP); });
+    if (race.state === 'racing') simulate(race, controls, STEP, field);
+    race.rivals.forEach((rival, i) => { if (rival.state === 'racing') simulate(rival, opponentInputs[i], STEP, field); });
     resolveCars(field, track);
     updateStandings(race);
     race._accumulator -= STEP;
@@ -170,17 +193,21 @@ export function stepRace(race, input = {}, dt = STEP) {
   return race;
 }
 
-function registerImpact(race, source, normalSpeed, speed) {
+function registerImpact(race, source, normalSpeed, speed, contact) {
   const hard = normalSpeed >= 8 && speed >= 12;
   if ((race._collisionCooldown > 0 && !(hard && race.impact.kind !== 'crash')) || normalSpeed < .7) return;
   race._collisionTimer = hard ? .38 : .09;
   race._collisionCooldown = hard ? .55 : .18;
   if (hard || race.impact.remaining <= 0 || race.impact.kind !== 'crash') {
     race.impact = { id: race.impact.id + 1, kind: hard ? 'crash' : 'scrape', source,
-      strength: clamp(normalSpeed / 24, 0, 1), remaining: hard ? .8 : .18 };
+      strength: clamp(normalSpeed / 24, 0, 1), remaining: hard ? .8 : .18,
+      x: contact.x, z: contact.z, nx: contact.nx, nz: contact.nz };
   }
   if (hard) {
     race._crashPenaltyTimer = .32;
+    race._impactStability = IMPACT_STABILITY_TIME;
+    race._autoDrift = 0;
+    race.car.yawRate *= .6;
     race.nitro.active = false; race.car.nitroActive = false;
     clearDrift(race);
   }
@@ -190,16 +217,16 @@ function recoveryIntent(input) {
   return input.throttle > .3 && !input.brake && !input.handbrake;
 }
 
-function waitForRecovery(race, reason, elapsed, duration) {
+function waitForRecovery(race, reason, elapsed, duration, occupants) {
   race.recovery.phase = 'waiting'; race.recovery.reason = reason;
   race.recovery.remaining = Math.max(0, duration - elapsed, race._recoveryCooldown);
   if (elapsed >= duration && race._recoveryCooldown <= 0) {
-    return resetCar(race, { reason, retreat: 8 });
+    return resetCar(race, { reason, retreat: 8, occupants });
   }
   return false;
 }
 
-function simulate(race, input, dt) {
+function simulate(race, input, dt, occupants) {
   const car = race.car;
   const track = getTrack(race.track), specs = race.specs;
   race.elapsed += dt;
@@ -207,6 +234,7 @@ function simulate(race, input, dt) {
   race._collisionTimer = Math.max(0, race._collisionTimer - dt);
   race._collisionCooldown = Math.max(0, race._collisionCooldown - dt);
   race._crashPenaltyTimer = Math.max(0, race._crashPenaltyTimer - dt);
+  race._impactStability = Math.max(0, race._impactStability - dt);
   race._recoveryCooldown = Math.max(0, race._recoveryCooldown - dt);
   race.impact.remaining = Math.max(0, race.impact.remaining - dt);
   if (race.recovery.phase === 'recovered') {
@@ -215,19 +243,24 @@ function simulate(race, input, dt) {
   } else if (race.recovery.phase === 'waiting') {
     race.recovery.phase = 'none'; race.recovery.remaining = 0;
   }
-  const initialRoad = race.id === 'player' ? projectOnTrack(car.x, car.z, race._trackIndex, track) : null;
+  const initialRoad = currentRoad(race, track);
   if (initialRoad && initialRoad.distance > track.width / 2 + 8) {
     // A displaced car must not snap onto whichever distant road segment happens
     // to be nearest. Preserve its last valid gate while the driver can reset.
     car.vx *= Math.exp(-dt * 7); car.vz *= Math.exp(-dt * 7);
     car.nitroActive = false; race.nitro.active = false; race._autoDrift = 0;
-    car.braking = input.brake; race.collision = race._collisionTimer > 0; clearDrift(race); refreshVelocity(race);
+    car.braking = input.brake; race.collision = race._collisionTimer > 0; race._wallStallTime = 0; clearDrift(race); refreshVelocity(race);
     race._offTrackTime = recoveryIntent(input) ? race._offTrackTime + dt : 0;
-    if (race._offTrackTime > 0) waitForRecovery(race, 'off-track', race._offTrackTime, OFF_TRACK_DELAY);
+    if (race._offTrackTime > 0) waitForRecovery(race, 'off-track', race._offTrackTime, OFF_TRACK_DELAY, occupants);
     return;
   }
   race._offTrackTime = 0;
-  car.steering += (input.steer - car.steering) * (1 - Math.exp(-specs.steeringResponse * dt));
+  const releasingSteering = Math.abs(input.steer) < Math.abs(car.steering) * .5;
+  const reversingSteering = input.steer * car.steering < -.025;
+  // Full turn-in stays progressive, while lifting or countersteering unloads
+  // the wheel more promptly. The old uniform damping kept turning after a tap.
+  const response = specs.steeringResponse * (reversingSteering ? 1.3 : releasingSteering ? 1.35 : 1);
+  car.steering += (input.steer - car.steering) * (1 - Math.exp(-response * dt));
 
   const speed = Math.hypot(car.vx, car.vz);
   const barrier = track.width / 2 - CAR_RADIUS;
@@ -256,13 +289,16 @@ function simulate(race, input, dt) {
   if (input.nitro && race.nitro.charge < dt) { race.nitro.locked = true; race.nitro.active = false; }
   car.nitroActive = race.nitro.active;
   car.braking = input.brake;
-  const drive = input.brake ? 0 : input.throttle * specs.acceleration * (input.handbrake ? 0.45 : 1) * (race._crashPenaltyTimer > 0 ? .55 : 1) + (race.nitro.active ? specs.nitroAcceleration : 0);
+  const impactDrive = .55 + .45 * smoothRange(.32 - race._crashPenaltyTimer, 0, .32);
+  const recoveryDrive = race.recovery.phase === 'recovered'
+    ? .7 + .3 * smoothRange(1.5 - race.recovery.remaining, 0, .45) : 1;
+  const drive = input.brake ? 0 : input.throttle * specs.acceleration * (input.handbrake ? 0.45 : 1) * impactDrive * recoveryDrive + (race.nitro.active ? specs.nitroAcceleration : 0);
   const resistance = 0.65 + specs.drag * speed * speed + (input.brake ? specs.braking : 0) + (input.handbrake ? 4 : 0);
   forward = Math.max(0, forward + (drive - resistance) * dt);
   // Sustained fast steering progressively loosens the rear tyres. The heading
   // still follows ordinary steering: slip comes from planar velocity lagging
   // behind the body, without a spin impulse or a separate mobile drift button.
-  const slideTarget = !input.brake && !input.handbrake && race._collisionTimer === 0
+  const slideTarget = !input.brake && !input.handbrake && race._collisionTimer === 0 && race._impactStability <= 0
     ? smoothRange(speed, 18, 23) * smoothRange(Math.abs(car.steering), .26, .58) : 0;
   race._autoDrift += (slideTarget - race._autoDrift) * (1 - Math.exp(-dt * (slideTarget > race._autoDrift ? 4.5 : 9)));
   const slideGrip = 2.7 * (specs.grip / 9.5) ** .35;
@@ -270,6 +306,13 @@ function simulate(race, input, dt) {
   // A large slip angle restores some grip, keeping automatic slides catchable.
   const slipBeforeGrip = Math.abs(Math.atan2(lateral, Math.max(.01, forward)));
   grip += smoothRange(slipBeforeGrip, .34, .65) * 4;
+  // Steering into the existing velocity catches a slide; it should not keep
+  // feeding the original drift while the thumb has already changed direction.
+  const countersteering = input.steer * car.yawRate > .035;
+  if (countersteering && !input.handbrake) grip += 2.4 * smoothRange(slipBeforeGrip, .12, .28);
+  // Traction settles smoothly after a heavy hit instead of immediately feeding
+  // a new automatic slide. The driver retains the full steering range.
+  grip += specs.grip * .6 * smoothRange(race._impactStability, 0, IMPACT_STABILITY_TIME);
   lateral *= Math.exp(-(input.handbrake ? 1.8 : grip) * dt);
   car.vx = fx * forward + rx * lateral;
   car.vz = fz * forward + rz * lateral;
@@ -291,15 +334,19 @@ function simulate(race, input, dt) {
     car.z = projection.z + projection.nz * side * (barrier - 0.03);
     const outward = (car.vx * projection.nx + car.vz * projection.nz) * side;
     if (outward > 0) {
-      car.vx -= projection.nx * side * outward * 1.12;
-      car.vz -= projection.nz * side * outward * 1.12;
+      const rebound = Math.min(outward * .12, 1.6);
+      car.vx -= projection.nx * side * (outward + rebound);
+      car.vz -= projection.nz * side * (outward + rebound);
     }
     if (outward > .7 && (race._collisionCooldown <= 0 || (outward >= 8 && speed >= 12 && race.impact.kind !== 'crash'))) {
       // Resolve the wall-normal velocity physically, then apply a small loss to
       // hard impacts only. A glancing scrape should not erase a third of speed.
       const retained = outward >= 8 && speed >= 12 ? .82 : .995;
       car.vx *= retained; car.vz *= retained;
-      registerImpact(race, 'barrier', outward, speed);
+      registerImpact(race, 'barrier', outward, speed, {
+        x: car.x + projection.nx * side * CAR_RADIUS, z: car.z + projection.nz * side * CAR_RADIUS,
+        nx: -projection.nx * side, nz: -projection.nz * side,
+      });
     }
     projection = projectOnTrack(car.x, car.z, projection.index, track);
   }
@@ -311,16 +358,34 @@ function simulate(race, input, dt) {
   race.velocity.x = car.vx; race.velocity.z = car.vz;
 
   updateProgress(race, projection, dt);
+  rememberRoad(race, track, projection);
   if (race.state === 'finished') return;
-  if (race.id === 'player') {
+  {
     const facingWall = (Math.sin(car.yaw) * projection.nx + Math.cos(car.yaw) * projection.nz) * Math.sign(projection.signedDistance);
     const trapped = car.speed < 1.6 && projection.distance > barrier - .45 && facingWall > .35;
     race._stuckTime = trapped && recoveryIntent(input) ? race._stuckTime + dt : 0;
-    if (race._stuckTime > 0 && waitForRecovery(race, 'stuck', race._stuckTime, STUCK_DELAY)) return;
+    if (race._stuckTime > 0 && waitForRecovery(race, 'stuck', race._stuckTime, STUCK_DELAY, occupants)) return;
+    const pushingWall = projection.distance > barrier - .6 && facingWall > .2 && recoveryIntent(input);
+    const validatedDistance = race.completedLaps * track.length + race._lapDistance;
+    if (pushingWall) {
+      if (race._wallStallTime === 0) race._wallStallOrigin = validatedDistance;
+      race._wallStallTime += dt;
+      // Wheel speed alone cannot detect a sideways car creeping against a
+      // barrier. Require real, checkpoint-validated forward distance instead.
+      // A slow corner that advances 1.8 m within this window starts fresh.
+      if (validatedDistance - race._wallStallOrigin > 1.8) {
+        race._wallStallTime = 0;
+        race._wallStallOrigin = validatedDistance;
+      } else if (race._wallStallTime > 1.1 && race._stuckTime === 0
+          && waitForRecovery(race, 'stuck', race._wallStallTime, WALL_STALL_DELAY, occupants)) return;
+    } else {
+      race._wallStallTime = 0;
+      race._wallStallOrigin = validatedDistance;
+    }
   }
 
   const slip = Math.abs(car.slipAngle);
-  car.drifting = !race.collision && car.speed > 10 && car.forwardSpeed > car.speed * 0.55
+  car.drifting = !race.collision && race._impactStability <= 0 && car.speed > 10 && car.forwardSpeed > car.speed * 0.55
     && slip > 0.17 && slip < 1.05 && Math.abs(projection.signedDistance) < barrier - 0.15;
   if (car.drifting) {
     race._straightTime = 0;
@@ -344,8 +409,17 @@ function updateProgress(race, projection, dt) {
   if (delta > track.length / 2) delta -= track.length;
   if (delta < -track.length / 2) delta += track.length;
   const plausible = Math.max(1.5, race.car.speed * dt * 2.6 + 0.3);
+  const worldTravel = Math.hypot(race.car.x - race._lastProgressX, race.car.z - race._lastProgressZ);
+  const indexDistance = Math.abs(projection.index - race._trackIndex);
+  const adjacent = Math.min(indexDistance, track.samples.length - indexDistance) <= 1;
+  // On the inside of a tight corner, the nearest polyline segment can change
+  // while the car travels only centimetres. Permit one adjacent sample's arc
+  // jump only when the actual world movement is plausible. An arbitrary road
+  // teleport cannot borrow this allowance to skip a checkpoint.
+  const projectionJump = worldTravel <= plausible && adjacent
+    && Math.abs(delta) <= plausible + track.length / track.samples.length;
   const onRoad = Math.abs(projection.signedDistance) <= track.width / 2;
-  if (Math.abs(delta) <= plausible && onRoad) {
+  if ((Math.abs(delta) <= plausible || projectionJump) && onRoad) {
     race._lapDistance = Math.max(0, race._lapDistance + delta);
     race._safeS = projection.s;
     if (delta > 0) {
@@ -373,6 +447,7 @@ function updateProgress(race, projection, dt) {
   }
   race._lastTrackS = projection.s;
   race._trackIndex = projection.index;
+  race._lastProgressX = race.car.x; race._lastProgressZ = race.car.z;
   if (race.state !== 'finished') {
     race.progress = clamp(race._lapDistance / track.length, 0, 1);
     race.raceProgress = clamp((race.completedLaps + race.progress) / race.totalLaps, 0, 1);
@@ -405,12 +480,17 @@ function resolveCars(field, track) {
       const closing = (a.car.vx - b.car.vx) * nx + (a.car.vz - b.car.vz) * nz;
       const impactSpeed = Math.max(a.car.speed, b.car.speed);
       if (closing > 0) {
-        const impulse = closing * 0.57;
+        // Equal-mass momentum transfer with a bounded opening speed. A very
+        // fast closing car must not slingshot both bodies across the circuit.
+        const impulse = (closing + Math.min(closing * .14, 1.8)) * .5;
         a.car.vx -= nx * impulse; a.car.vz -= nz * impulse;
         b.car.vx += nx * impulse; b.car.vz += nz * impulse;
       }
+      const contactX = (a.car.x + Math.sin(a.car.yaw) * frontA + b.car.x + Math.sin(b.car.yaw) * frontB) * .5;
+      const contactZ = (a.car.z + Math.cos(a.car.yaw) * frontA + b.car.z + Math.cos(b.car.yaw) * frontB) * .5;
       for (const racer of [a, b]) {
-        if (closing > .8) registerImpact(racer, 'car', closing, impactSpeed);
+        const direction = racer === a ? -1 : 1;
+        if (closing > .8) registerImpact(racer, 'car', closing, impactSpeed, {x: contactX, z: contactZ, nx: nx * direction, nz: nz * direction});
         racer.collision = racer._collisionTimer > 0;
         const road = projectOnTrack(racer.car.x, racer.car.z, racer._trackIndex, track);
         const limit = track.width / 2 - CAR_RADIUS;

@@ -85,9 +85,27 @@ test('unsafe enum and numeric values never cross the event boundary', async () =
       }), minimal);
     }
     assert.deepEqual(analytics.sanitizeGameEvent('lap_complete', {
-      position: 5, lap: 4, duration_seconds: 3601, resets: 10001,
+      position: 9, lap: 4, duration_seconds: 3601, resets: 10001,
       circuit: { toString: () => 'harbor' }, vehicle: ['mclaren-p1-gtr'],
     }), minimal);
+  });
+});
+
+test('eight-car and solo events preserve only allowlisted mode and difficulty facts and clear stale values', async () => {
+  await withBrowser({consent: 'granted'}, ({analytics, window}) => {
+    const result = analytics.sanitizeGameEvent('race_complete', {position: 8, race_mode: 'championship', difficulty: 'pro'});
+    assert.deepEqual(result, {event: 'race_complete', game_name: 'Blacktop Bay', position: 8, race_mode: 'championship', difficulty: 'pro'});
+    for (const value of ['email@example.test', '<script>', '__proto__', null, {}]) {
+      const invalid = analytics.sanitizeGameEvent('race_complete', {race_mode: value, difficulty: value});
+      assert.equal(invalid.race_mode, undefined); assert.equal(invalid.difficulty, undefined);
+    }
+    analytics.trackEvent('race_complete', {position: 1, race_mode: 'time-attack', difficulty: 'street'});
+    assert.equal(measuredEvents(window).at(-1).race_mode, 'time-attack');
+    analytics.trackEvent('garage_open', {});
+    const reset = window.dataLayer.at(-2);
+    assert.ok(Object.hasOwn(reset, 'race_mode')); assert.equal(reset.race_mode, undefined);
+    assert.ok(Object.hasOwn(reset, 'difficulty')); assert.equal(reset.difficulty, undefined);
+    assert.equal(measuredEvents(window).at(-1).race_mode, undefined);
   });
 });
 

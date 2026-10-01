@@ -107,8 +107,8 @@ test('opponents wait for the shared start and use finite physical motion without
   const staged = JSON.stringify(race.rivals);
   advance(race, { throttle: 1 }, 1);
   assert.equal(JSON.stringify(race.rivals), staged);
-  assert.equal(race.rivals.length, 3);
-  assert.equal(race.position, 4);
+  assert.equal(race.rivals.length, 7);
+  assert.equal(race.position, 8);
   startRace(race);
   for (let frame = 0; frame < 120 * 8; frame++) {
     const previous = race.rivals.map(rival => ({ x: rival.car.x, z: rival.car.z }));
@@ -147,7 +147,7 @@ for (const descriptor of TRACKS.filter(track => LAUNCH_CIRCUITS.has(track.id))) 
       stepRace(race, { brake: true }, 1 / 120);
     }
     assert.equal(race.completedLaps, 0);
-    assert.equal(race.position, 4);
+    assert.equal(race.position, 8);
     assert.ok(race.rivals.every(rival => rival.completedLaps === 3 && rival.finishTime > 60 && rival.finishTime < 220));
     assert.ok(race.rivals.every(rival => rival.recoveries === 0 && rival.lapTimes.length === 3));
     const finishTimes = race.leaderboard.filter(row => row.finished).map(row => row.finishTime);
@@ -157,7 +157,7 @@ for (const descriptor of TRACKS.filter(track => LAUNCH_CIRCUITS.has(track.id))) 
   });
 }
 
-test('competitive fixture produces four actual finish times and freezes the classified result', () => {
+test('competitive fixture produces eight actual finish times and freezes the classified result', () => {
   const { race, frames } = createCompletedRaceFixture({ track: 'harbor' });
   assert.equal(race.state, 'finished');
   assert.equal(race.allFinished, true);

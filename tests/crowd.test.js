@@ -48,3 +48,32 @@ test('empty crowds and a single person with no optional accessories are safe',()
  const crowd=createCrowd();crowd.add(0,0,0,0,false,()=>.6);crowd.render(scene);crowd.update(1,{x:0,z:0,speed:20});
  assert.ok(scene.children.every(m=>m.instanceMatrix.array.every(Number.isFinite)));crowd.dispose();
 });
+
+test('animated cheering keeps both arm bones at anatomical lengths without snapping at activation',()=>{
+ const rng=random();
+ for(let gesture=0;gesture<5;gesture++)for(const seated of [true,false]){
+  const person={...spectatorProfile(0,0,0,0,seated,rng),gesture};
+  for(const excitement of [0,.001,.07,.081,.25,.65,1])for(const time of [0,.2,1,4]){
+   const pose=spectatorPose(person,time,excitement);
+   for(const {shoulder,elbow,hand} of pose.arms){
+    assert.ok(Math.abs(Math.hypot(...elbow.map((v,i)=>v-shoulder[i]))-.285)<1e-8);
+    assert.ok(Math.abs(Math.hypot(...hand.map((v,i)=>v-elbow[i]))-.265)<1e-8);
+   }
+  }
+  const before=spectatorPose(person,2,.079).arms,after=spectatorPose(person,2,.081).arms;
+  assert.ok(before.every((arm,i)=>Math.hypot(...arm.hand.map((v,j)=>v-after[i].hand[j]))<.01),'a small excitement change cannot snap a wrist to a full cheering pose');
+ }
+});
+
+test('spectators have garment silhouettes and personalised reaction timing within the same bounded draw set',()=>{
+ const rng=random(),crowd=createCrowd({low:true}),scene=new THREE.Scene();
+ const people=Array.from({length:90},(_,i)=>crowd.add(i*.8,0,i%3,0,i%2===0,rng));
+ assert.equal(new Set(people.map(p=>p.garment)).size,3);
+ assert.ok(people.some(p=>p.shorts)&&people.some(p=>p.scarf));
+ assert.ok(new Set(people.map(p=>p.reactionDistance)).size>80);
+ crowd.render(scene);crowd.update(.1,{x:0,z:0,speed:30});
+ assert.ok(scene.children.length<=10);
+ assert.ok(people.some(p=>p.parts.some(part=>part.faceDetail&&!part.kind.includes('heads'))));
+ assert.ok(scene.children.every(m=>Array.from(m.instanceMatrix.array).every(Number.isFinite)));
+ crowd.dispose();
+});
