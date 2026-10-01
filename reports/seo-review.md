@@ -49,6 +49,8 @@ The Google homepage inspection reports **URL is not on Google** and **URL is unk
 
 Production checks confirmed HTTP 200 for the home page, guide, credits, sitemap and robots file; both ownership tags and six-build `VideoGame` metadata are present in the deployed home page. The sitemap parses as XML and lists four canonical URLs. A further request using a Googlebot user-agent also returned HTTP 200 with `Content-Type: application/xml`; this local request does not establish that Google's own crawler can fetch it and does not resolve the console's reported error.
 
+A final, single retry after all deployments completed on 1 October 2026 produced another explicit **Sitemap submitted successfully** confirmation; the sitemap report still showed **Couldn't fetch**, with zero discovered pages. The refreshed homepage inspection remained **URL is unknown to Google**. One **Request indexing** retry completed its eligibility test and returned the same “We had a problem submitting your indexing request. Please try again later” error. No further request or processing poll was made; successful indexing submission and indexing remain unconfirmed.
+
 ## Follow-up
 
 Recheck Google sitemap processing and Bing's crawl results later; the external processing window was not waited out during release checks. Retry Google's failed homepage indexing request later and inspect the guide URL after processing. A submitted sitemap or indexing request is a discovery signal, not a guarantee of crawling, indexing, ranking or a particular search presentation. Retain the ownership tags after verification.
