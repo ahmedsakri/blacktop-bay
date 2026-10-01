@@ -1,17 +1,17 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 240"><defs>
  <linearGradient id="chrome" x1="0" y1="0" x2="0.15" y2="1" gradientUnits="objectBoundingBox"><stop stop-color="#FFFFFF"/><stop offset=".3" stop-color="#F6F3FF"/><stop offset=".48" stop-color="#8A8295"/><stop offset=".5" stop-color="#FFFFFF"/><stop offset=".78" stop-color="#DCD7E5"/><stop offset="1" stop-color="#FFFFFF"/></linearGradient>
- <linearGradient id="cyan" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#FFFFCB"/><stop offset=".36" stop-color="#FFF71E"/><stop offset="1" stop-color="#FFF71E"/></linearGradient>
+ <linearGradient id="cyan" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#DCD7E5"/><stop offset=".36" stop-color="#9246FF"/><stop offset="1" stop-color="#9246FF"/></linearGradient>
  <linearGradient id="dark" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#021439"/><stop offset=".5" stop-color="#110017"/><stop offset="1" stop-color="#021439"/></linearGradient>
- <linearGradient id="edge" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#FFFFFF"/><stop offset=".27" stop-color="#9146FF"/><stop offset=".5" stop-color="#110017"/><stop offset=".8" stop-color="#FFF71E"/><stop offset="1" stop-color="#9146FF"/></linearGradient>
+ <linearGradient id="edge" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#FFFFFF"/><stop offset=".27" stop-color="#9246FF"/><stop offset=".5" stop-color="#110017"/><stop offset=".8" stop-color="#FFF71E"/><stop offset="1" stop-color="#9246FF"/></linearGradient>
  <pattern id="check" width="28" height="28" patternUnits="userSpaceOnUse"><path d="M0 0h14v14H0zm14 14h14v14H14z" fill="#FFFFFF"/><path d="M14 0h14v14H14zM0 14h14v14H0z" fill="#021439"/></pattern>
  <filter id="glow"><feGaussianBlur stdDeviation="3"/></filter>
  </defs><g class="emblem" transform="translate(10 8)">
  <path d="M30 26 180 26 194 53 156 168 92 209 28 177 8 76Z" fill="#110017" opacity=".8" transform="translate(0 6)"/>
  <path class="shield" d="M30 26 180 26 194 53 156 168 92 209 28 177 8 76Z" fill="url(#dark)" stroke="url(#edge)" stroke-width="4"/>
- <path d="m37 37 134 0 8 19-34 104-54 35-52-27-18-90Z" fill="#110017" stroke="#9146FF" stroke-opacity=".36"/>
+ <path d="m37 37 134 0 8 19-34 104-54 35-52-27-18-90Z" fill="#110017" stroke="#9246FF" stroke-opacity=".36"/>
  <path d="M39 39h128l6 16H28Z" fill="url(#check)"/>
  <path d="M52 65 153 65 143 87 98 87 105 75 78 75 58 130 84 130 96 102 137 102 130 123 106 123 102 136 147 136 136 157 49 157 33 137Z" fill="url(#chrome)"/>
  <path class="apex" d="m105 88 29-16-13 32-41 76 0-22 25-70Z" fill="url(#cyan)"/>
- <path d="m27 109 20-7-10 28-22 7Zm132-24 20-7-9 28-20 7Z" fill="#9146FF"/>
+ <path d="m27 109 20-7-10 28-22 7Zm132-24 20-7-9 28-20 7Z" fill="#9246FF"/>
  <path class="road-trace" d="M26 76 45 43h116l11 16-34 94-48 34-43-25-14-25" fill="none" stroke="#FFF71E" stroke-width="2"/>
  </g></svg>

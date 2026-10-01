@@ -8,7 +8,7 @@
 }
 .menu .button span,.garage .button span,.dialog .button span,.orientation-card .button span,.upgrade-buy span{font:inherit;letter-spacing:inherit;margin:0}
 .menu .button.secondary,.garage .button.secondary,.dialog .button.secondary,.orientation-card .button.secondary{
- background:transparent url('/assets/ui/button-secondary.svg') center/100% 100% no-repeat;color:#e4f5ff;border:0;box-shadow:none;
+ background:transparent url('/assets/ui/button-secondary.svg?v=violet-primary-1') center/100% 100% no-repeat;color:#e4f5ff;border:0;box-shadow:none;
 }
 .menu .button.primary,.garage .button.primary,.dialog .button.primary,.orientation-card .button.primary,.upgrade-buy:not(:disabled){
  background:transparent url('/assets/ui/button-primary.svg') center/100% 100% no-repeat;color:var(--race-button-ink);border:0;box-shadow:none;text-shadow:none;
@@ -18,7 +18,7 @@
  filter:brightness(1.16);transform:translateY(-1px);box-shadow:none;
 }
 .menu .button.primary:hover,.garage .button.primary:hover,.dialog .button.primary:hover,.orientation-card .button.primary:hover,.upgrade-buy:not(:disabled):hover{background:transparent url('/assets/ui/button-primary.svg') center/100% 100% no-repeat}
-.menu .button.secondary:hover,.garage .button.secondary:hover,.dialog .button.secondary:hover{background:transparent url('/assets/ui/button-secondary.svg') center/100% 100% no-repeat}
+.menu .button.secondary:hover,.garage .button.secondary:hover,.dialog .button.secondary:hover{background:transparent url('/assets/ui/button-secondary.svg?v=violet-primary-1') center/100% 100% no-repeat}
 .menu .button:active,.garage .button:active,.dialog .button:active,.orientation-card .button:active,.upgrade-buy:not(:disabled):active{transform:translateY(1px);filter:brightness(.94)}
 .menu .button:focus-visible,.garage .button:focus-visible,.dialog .button:focus-visible,.upgrade-buy:focus-visible{outline:3px solid var(--race-button-focus);outline-offset:3px}
 .menu .button.primary:focus-visible,.garage .button.primary:focus-visible,.dialog .button.primary:focus-visible{outline-color:#f8fbff;box-shadow:0 0 0 5px #152b38}
@@ -66,7 +66,7 @@
  .garage-actions .button .ui-icon{width:15px;height:15px}
 }
 #dialog .dialog-actions .button.primary,#dialog .dialog-actions .button.primary:hover{background:transparent url('/assets/ui/button-primary.svg') center/100% 100% no-repeat;color:#110017;border:0;box-shadow:none}
-#dialog .dialog-actions .button.secondary,#dialog .dialog-actions .button.secondary:hover{background:transparent url('/assets/ui/button-secondary.svg') center/100% 100% no-repeat;border:0;color:#e4f5ff;box-shadow:none}
+#dialog .dialog-actions .button.secondary,#dialog .dialog-actions .button.secondary:hover{background:transparent url('/assets/ui/button-secondary.svg?v=violet-primary-1') center/100% 100% no-repeat;border:0;color:#e4f5ff;box-shadow:none}
 .touch-steer-track>.ui-icon{width:16px;height:16px}
 @media(max-height:520px) and (orientation:landscape){
  .menu-copy{top:74px}.menu h1{font-size:40px;line-height:.94;margin:10px 0 2px}.menu #how{margin:0;min-height:44px}
@@ -85,7 +85,7 @@
 .dialog[data-kind="privacy"] .privacy-controls .button{flex:1;min-height:48px;min-width:140px;font:800 italic 16px 'Barlow Condensed';padding:12px 17px}
 
 /* Equal workshop actions keep the race action as the garage's primary CTA. */
-.garage-workshop #open-paint{margin:0;background:transparent url('/assets/ui/button-secondary.svg') center/100% 100% no-repeat;border:0;min-height:48px}
+.garage-workshop #open-paint{margin:0;background:transparent url('/assets/ui/button-secondary.svg?v=violet-primary-1') center/100% 100% no-repeat;border:0;min-height:48px}
 .garage-workshop #paint-label{display:none}
 
 .menu footer a .ui-icon{width:11px;height:11px;vertical-align:middle;margin-left:3px}

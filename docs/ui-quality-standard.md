@@ -8,8 +8,8 @@ Use an original futuristic motorsport interface inspired by the clarity and ener
 
 | Role | Exact colour | Intended use |
 | --- | --- | --- |
-| Primary | `#FFF71E` | Race and other primary actions; key active indicators |
-| Violet | `#9146FF` | Supporting emphasis, selected panels, controlled glow |
+| Dominant accent | `#9246FF` | UI framing, selected panels, active surfaces, controlled glow |
+| Secondary highlight | `#FFF71E` | Important CTAs, key active indicators, sparing high-energy emphasis |
 | Base | `#110017` | Main dark background |
 | Navy panel | `#021439` | Cards, dialogs, controls |
 | White | `#FFFFFF` | Readable primary text and neutral icons |
@@ -17,7 +17,7 @@ Use an original futuristic motorsport interface inspired by the clarity and ener
 | Lime | `#C3FB13` | Sparing completed-upgrade status emphasis |
 | Gold | `#FFD700` | Rewards, credits, podium emphasis |
 
-Use the shared theme and button system instead of adding conflicting screen-specific primary colours. Keep dark text on yellow actions. Check muted labels and disabled states against their actual backgrounds. Never convey selection, danger, or progress through colour alone.
+Use the shared theme and button system instead of adding conflicting screen-specific primary colours. Keep the dark base dominant across each screen, with violet as the main accent and yellow reserved for priority moments. Keep dark text on yellow actions and white text on violet actions. Do not use violet for small body text on dark surfaces. Check muted labels and disabled states against their actual backgrounds. Never convey selection, danger, or progress through colour alone.
 
 Use self-hosted illustrated SVG icons from the shared sprite. Icons must keep consistent size, alignment, and stroke; do not substitute emoji, platform-dependent glyphs, or unlabeled browser symbols. Decorative icons are hidden from assistive technology, while icon-only controls have clear accessible names. Keep Barlow Condensed for racing display hierarchy and readable UI type for supporting text. A generic `.button span` rule must not enlarge labels or affect every nested element.
 

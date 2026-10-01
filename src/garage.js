@@ -24,7 +24,7 @@ export function createGarage(renderer, { low = false } = {}) {
   platform.position.y=.018;
   platform.receiveShadow=true;
   anchor.add(platform);
-  const line = new THREE.Mesh(new THREE.RingGeometry(4.28,4.30,128),new THREE.MeshBasicMaterial({color:'#9146FF'}));
+  const line = new THREE.Mesh(new THREE.RingGeometry(4.28,4.30,128),new THREE.MeshBasicMaterial({color:'#9246FF'}));
   line.rotation.x=-Math.PI/2;
   line.position.y=.038;
   anchor.add(line);
