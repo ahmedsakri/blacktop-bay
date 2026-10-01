@@ -1,3 +1,6 @@
+# Public game, guide, privacy page and rendering assets are crawlable.
+# This rule also covers compliant AI crawlers without a more specific group.
 User-agent: *
 Allow: /
+
 Sitemap: https://blacktop-bay.web.app/sitemap.xml

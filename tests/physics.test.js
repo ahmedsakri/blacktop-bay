@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { TRACK, projectOnTrack, sampleTrack } from '../src/track.js';
-import { createRace, startRace, stepRace, resetCar } from '../src/physics.js';
+import { createRace, startRace, stepRace, resetCar, getUpgradeStats, setTrack } from '../src/physics.js';
+import { createCompletedRaceFixture } from '../scripts/qa-race-fixture.js';
 
 const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 const wrapAngle = (angle) => Math.atan2(Math.sin(angle), Math.cos(angle));
@@ -26,7 +27,7 @@ function followCircuit(race) {
   const curvature = Math.abs(wrapAngle(Math.atan2(far.tx, far.tz) - Math.atan2(near.tx, near.tz))) / 19;
   const targetSpeed = Math.min(36, Math.sqrt(12 / Math.max(0.004, curvature)));
   const error = wrapAngle(Math.atan2(aim.x - race.car.x, aim.z - race.car.z) - race.car.yaw);
-  return { steer: clamp(error * 2.9, -1, 1), throttle: 1, brake: race.car.speed > targetSpeed + 1 };
+  return { steer: clamp(-error * 2.9, -1, 1), throttle: 1, brake: race.car.speed > targetSpeed + 1 };
 }
 
 test('the circuit is a smooth, periodic metre-scale road with consistent normals', () => {
@@ -74,10 +75,43 @@ test('braking stops the vehicle without creating reverse thrust', () => {
   assert.ok(race.car.forwardSpeed >= -1e-9);
 });
 
+test('positive steering turns driver-right and negative steering turns driver-left at every heading', () => {
+  // Define screen right independently of track normals: forward × world up.
+  for (const yaw of [0, Math.PI / 4, Math.PI / 2, Math.PI, -Math.PI / 2, -Math.PI + 0.01]) {
+    const right = { x: -Math.cos(yaw), z: Math.sin(yaw) };
+    for (const steer of [-1, 1]) {
+      const race = raceAt(110, 12);
+      Object.assign(race.car, { yaw, vx: Math.sin(yaw) * 12, vz: Math.cos(yaw) * 12 });
+      const start = { x: race.car.x, z: race.car.z };
+      advance(race, { steer, throttle: 1 }, 0.2);
+      const headingRight = Math.sin(race.car.yaw) * right.x + Math.cos(race.car.yaw) * right.z;
+      const displacementRight = (race.car.x - start.x) * right.x + (race.car.z - start.z) * right.z;
+      assert.ok(headingRight * steer > 0.075, `heading ${yaw}, input ${steer} must visibly turn the correct way`);
+      assert.ok(displacementRight * steer > 0.015, `heading ${yaw}, input ${steer} must move the correct way`);
+      assert.equal(Math.sign(race.car.steering), steer, 'animation keeps the public input sign');
+      assert.equal(race.collision, false);
+    }
+  }
+});
+
+test('a short steering tap changes direction and settles after release without continuing a turn', () => {
+  for (const steer of [-1, 1]) {
+    const race = raceAt(110, 18);
+    const initialYaw = race.car.yaw;
+    advance(race, { steer, throttle: 1 }, 0.15);
+    const tapAngle = Math.abs(wrapAngle(race.car.yaw - initialYaw));
+    assert.ok(tapAngle > 0.035 && tapAngle < 0.09, 'a 150 ms tap should provide a small useful heading change');
+    advance(race, { steer: 0, throttle: 1 }, 0.55);
+    assert.ok(Math.abs(race.car.yawRate) < 0.025, 'turning should settle promptly after release');
+    assert.ok(Math.abs(wrapAngle(race.car.yaw - initialYaw)) < 0.2, 'a short tap must remain controllable');
+    assert.equal(race.collision, false);
+  }
+});
+
 test('handbrake produces real lateral slip and grip steering produces far less', () => {
   const grip = raceAt(110, 28), drift = raceAt(110, 28);
-  advance(grip, { throttle: 1, steer: 0.75 }, 0.6);
-  advance(drift, { throttle: 1, steer: 0.75, handbrake: true }, 0.6);
+  advance(grip, { throttle: 1, steer: -0.75 }, 0.6);
+  advance(drift, { throttle: 1, steer: -0.75, handbrake: true }, 0.6);
   assert.ok(Math.abs(drift.car.lateralSpeed) > Math.abs(grip.car.lateralSpeed) * 2);
   assert.ok(Math.abs(drift.car.slipAngle) > 0.2);
   assert.equal(drift.car.drifting, true);
@@ -88,9 +122,9 @@ test('handbrake produces real lateral slip and grip steering produces far less',
 
 test('controlled drift points bank after straightening and braking', () => {
   const race = raceAt(110, 28);
-  advance(race, { throttle: 1, steer: 0.75, handbrake: true }, 0.75);
+  advance(race, { throttle: 1, steer: -0.75, handbrake: true }, 0.75);
   assert.ok(race.driftPoints > 15);
-  advance(race, { throttle: 0, steer: -1, brake: true }, 1.5);
+  advance(race, { throttle: 0, steer: 1, brake: true }, 1.5);
   assert.ok(race.score > 15);
   assert.equal(race.driftPoints, 0);
   assert.equal(race.combo, 1);
@@ -122,6 +156,27 @@ test('barriers contain the car, reduce speed, and discard an unbanked combo', ()
   assert.ok(race.car.speed < 18);
   assert.equal(race.driftPoints, 0);
   assert.equal(race.combo, 1);
+});
+
+test('a head-on barrier impact can be steered away from either side without recovery', () => {
+  const point = sampleTrack(110);
+  for (const side of [-1, 1]) {
+    const race = raceAt(110, 15);
+    Object.assign(race.car, {
+      x: point.x + point.nx * side * 6.7, z: point.z + point.nz * side * 6.7,
+      yaw: Math.atan2(point.nx * side, point.nz * side),
+      vx: point.nx * side * 15, vz: point.nz * side * 15,
+    });
+    advance(race, { throttle: 1, steer: side }, 2);
+    assert.ok(race.car.speed > 7, 'holding escape steering should promptly restore useful speed');
+    assert.ok(Math.abs(wrapAngle(race.car.yaw - Math.atan2(point.tx, point.tz))) < 0.3);
+    advance(race, { throttle: 1 }, 0.6);
+    assert.ok(projectOnTrack(race.car.x, race.car.z).distance < 6, 'releasing steering should drive back onto the road');
+    assert.equal(race.recoveries, 0);
+    assert.equal(race.completedLaps, 0);
+    assert.equal(race.score, 0);
+    assert.ok(race.progress < 0.02, 'the steering aid cannot skip checkpoints or award distance');
+  }
 });
 
 test('recovery restores the last valid road position without awarding lap progress', () => {
@@ -195,8 +250,9 @@ test('invalid inputs and large frame gaps remain finite and bound catch-up work'
   }
 });
 
-test('a scripted driver completes all three real laps with checkpoints and stable timing', () => {
+test('a solo scripted driver completes all three real laps with checkpoints and stable timing', () => {
   const race = createRace(); startRace(race);
+  race.rivals = []; // Isolate the original handling benchmark from passing traffic.
   let collisions = 0;
   for (let frame = 0; frame < 120 * 190 && race.state === 'racing'; frame++) {
     stepRace(race, followCircuit(race), 1 / 120);
@@ -217,3 +273,97 @@ test('a scripted driver completes all three real laps with checkpoints and stabl
   assert.equal(JSON.stringify(race), finished);
   assert.equal(resetCar(race), false);
 });
+
+function tunedRace(upgrades = {}, speed = 20) {
+  const race = createRace({ vehicle: 'coupe', track: 'harbor', upgrades }); startRace(race); race.rivals = [];
+  const p = sampleTrack(110);
+  Object.assign(race.car, { x: p.x, z: p.z, yaw: Math.atan2(p.tx, p.tz), vx: p.tx * speed, vz: p.tz * speed, speed, forwardSpeed: speed });
+  race._lastTrackS = p.s; race._safeS = p.s; race._trackIndex = p.index;
+  return race;
+}
+
+test('upgrade levels are snapshotted, validated and retained at the start without upgrading AI', () => {
+  const levels = { engine: 99, tyres: -1, nitro: 5, handling: 2.5 };
+  const race = createRace({ upgrades: levels }); const firstId = race.raceId;
+  levels.nitro = 0;
+  assert.deepEqual(race.upgrades, { engine: 5, tyres: 0, nitro: 5, handling: 0 });
+  startRace(race);
+  assert.notEqual(race.raceId, firstId, 'each real start has a distinct reward identity');
+  assert.equal(race.upgrades.nitro, 5); assert.equal(race.nitro.capacity, 4.75);
+  for (const rival of race.rivals) assert.deepEqual(rival.upgrades, { engine: 0, tyres: 0, nitro: 0, handling: 0 });
+  assert.deepEqual(JSON.parse(JSON.stringify(race)), race);
+  assert.equal(createRace({ vehicle: '__proto__' }).vehicle, 'coupe');
+  assert.ok(Object.values(getUpgradeStats('__proto__', { engine: Infinity })).every(Number.isFinite));
+});
+
+test('each upgrade increases its speed ceiling and measured straight-road performance', () => {
+  for (const component of ['engine', 'tyres', 'handling', 'nitro']) {
+    const base = tunedRace({}, 40), upgraded = tunedRace({ [component]: 5 }, 40);
+    const controls = { throttle: 1, nitro: component === 'nitro' };
+    advance(base, controls, 0.3); advance(upgraded, controls, 0.3);
+    assert.equal(base.collision, false); assert.equal(upgraded.collision, false);
+    assert.ok(upgraded.car.speed > base.car.speed + 0.05, `${component} must improve measured speed, not just its displayed rating`);
+    assert.ok(upgraded.specs.topSpeed > base.specs.topSpeed);
+  }
+  const base = tunedRace({}, 0), engine = tunedRace({ engine: 5 }, 0);
+  advance(base, { throttle: 1 }, 0.7); advance(engine, { throttle: 1 }, 0.7);
+  assert.ok(engine.car.speed > base.car.speed * 1.25);
+});
+
+test('tyre upgrades reduce real lateral slip and stopping distance', () => {
+  const base = tunedRace({}, 24), tyres = tunedRace({ tyres: 5 }, 24);
+  for (const race of [base, tyres]) {
+    race.car.vx += Math.cos(race.car.yaw) * 4;
+    race.car.vz -= Math.sin(race.car.yaw) * 4;
+    advance(race, {}, 0.2);
+  }
+  assert.ok(Math.abs(tyres.car.lateralSpeed) < Math.abs(base.car.lateralSpeed) * 0.6);
+  const normalBrakes = tunedRace({}, 24), upgradedBrakes = tunedRace({ tyres: 5 }, 24);
+  const start = { x: normalBrakes.car.x, z: normalBrakes.car.z };
+  advance(normalBrakes, { brake: true }, 0.7); advance(upgradedBrakes, { brake: true }, 0.7);
+  assert.ok(Math.hypot(upgradedBrakes.car.x - start.x, upgradedBrakes.car.z - start.z)
+    < Math.hypot(normalBrakes.car.x - start.x, normalBrakes.car.z - start.z) * 0.92);
+});
+
+test('handling upgrades respond to a short right tap and settle steering faster after release', () => {
+  const base = tunedRace({}, 24), handling = tunedRace({ handling: 5 }, 24), yaw = base.car.yaw;
+  advance(base, { throttle: 1, steer: 1 }, 0.18); advance(handling, { throttle: 1, steer: 1 }, 0.18);
+  assert.ok(wrapAngle(yaw - handling.car.yaw) > wrapAngle(yaw - base.car.yaw) * 1.2);
+  const before = [base.car.steering, handling.car.steering];
+  advance(base, { throttle: 1 }, 0.15); advance(handling, { throttle: 1 }, 0.15);
+  assert.ok(handling.car.steering / before[1] < base.car.steering / before[0]);
+  assert.equal(handling.collision, false);
+});
+
+test('nitro upgrades hold more charge and recharge faster without creating free reset fuel', () => {
+  const base = tunedRace({}, 24), nitro = tunedRace({ nitro: 5 }, 24);
+  assert.equal(nitro.nitro.capacity, base.nitro.capacity + 1.75);
+  base.nitro.charge = nitro.nitro.charge = 0;
+  advance(base, { throttle: 1 }, 0.5); advance(nitro, { throttle: 1 }, 0.5);
+  assert.ok(nitro.nitro.charge > base.nitro.charge * 1.3);
+  const charge = nitro.nitro.charge;
+  resetCar(nitro);
+  assert.equal(nitro.nitro.charge, charge);
+  assert.equal(nitro.upgrades.nitro, 5);
+});
+
+for (const vehicle of ['sprint', 'endurance', 'formula']) {
+  for (const track of ['harbor', 'dockyard', 'coast']) {
+    test(`${vehicle} completes ${track} at both stock and maximum upgrade levels`, () => {
+      const times = [];
+      for (const level of [0, 5]) {
+        const upgrades = { engine: level, tyres: level, nitro: level, handling: level };
+        const { race } = createCompletedRaceFixture({ vehicle, track, upgrades });
+        assert.equal(race.vehicle, vehicle, 'the new ID must not fall back to Apex GT');
+        assert.deepEqual(race.upgrades, upgrades);
+        assert.equal(race.completedLaps, 3);
+        assert.equal(race.recoveries, 0);
+        assert.equal(race.allFinished, true);
+        assert.ok(race.leaderboard.every(row => row.finished && Number.isFinite(row.finishTime)));
+        times.push(race.elapsed);
+      }
+      assert.ok(times[1] < times[0], 'upgrades should improve an actual complete race with the same scripted driver');
+      setTrack('harbor');
+    });
+  }
+}

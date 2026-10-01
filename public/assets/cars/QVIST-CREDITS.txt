@@ -1,0 +1,31 @@
+BLACKTOP BAY — QVIST FORMULA CONCEPT MODEL
+
+Original work: “F1 2026 concept (polygon model)”
+Author: Qvist_designs — https://sketchfab.com/Qvist_Designs
+Source: https://sketchfab.com/3d-models/f1-2026-concept-polygon-model-ea3bde709b1e4dc9b0ec8557d106ed42
+License: Creative Commons Attribution 4.0 International (CC BY 4.0)
+License URL: https://creativecommons.org/licenses/by/4.0/
+Full license: CC-BY-4.0.txt
+
+Model obtained from the publicly redistributed original and adaptation in:
+https://github.com/filan214/F1---2026-Car-Details
+Original file: dist/models/f1_2026_concept_polygon_model.glb
+Original SHA-256: 004c7a1c8d7be153f85c5565a38aeec57db8feaa220aabcc6b7b0bbea6b49d02
+
+Prior adaptation by the APEX / filan214 project: regrouped the original geometry
+into sixteen named display assemblies, cut illustrative seams through fused
+bodywork, assigned red and graphite materials, removed uniform vertex colours,
+and baked orientation. This is a concept surface, not official team CAD or a
+complete mechanical assembly.
+
+Blacktop Bay preparation: welded duplicate vertices; simplified each assembly
+with meshoptimizer through glTF Transform v4.5.1; retained all sixteen named
+nodes, source attribution and license metadata. High version: 146,054 triangles
+(relative error limit 0.003). Low version: 60,348 triangles (limit 0.008).
+No textures or real racing-team liveries were added. Runtime scale/orientation,
+materials and wheel pivots are adjusted for the game. The Vortex P1 and
+Vortex X builds use this geometry with fictional names, handling and liveries.
+
+No endorsement by Qvist_designs, the APEX project, any racing team, Formula One
+or the FIA is implied. Include this credit and the license link in the game's
+accessible credits in addition to distributing this file with the models.

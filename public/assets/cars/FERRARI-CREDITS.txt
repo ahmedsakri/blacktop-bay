@@ -1,0 +1,39 @@
+BLACKTOP BAY — GT MODEL SOURCE AND MODIFICATION NOTICE
+
+Original work: Ferrari 458 Italia
+Original creator: vicent091036
+Original source: https://sketchfab.com/models/57bf6cc56931426e87494f554df1dab6
+Original creator attribution in the official Three.js car example:
+https://github.com/mrdoob/three.js/blob/dev/examples/webgl_materials_car.html
+
+License: Creative Commons Attribution 4.0 International (CC BY 4.0)
+https://creativecommons.org/licenses/by/4.0/
+Full license text is distributed alongside these files in CC-BY-4.0.txt.
+
+License evidence: the official Three.js media-license audit lists
+"gltf/ferrari.glb | CC-BY 4.0, External License":
+https://github.com/mrdoob/three.js/issues/23089#issuecomment-1001258942
+The original Sketchfab listing was unavailable when checked on 2026-10-01.
+Attribution and license are retained from the official Three.js redistribution
+and its maintainer's published license audit.
+
+Redistributed source asset:
+https://github.com/mrdoob/three.js/blob/dev/examples/models/gltf/ferrari.glb
+
+Distributed adaptations: gt-base.glb and gt-base-low.glb
+Adapted for Blacktop Bay by AppsOverFlow, 2026.
+The Three.js Draco edition was decoded; geometry was welded and simplified
+with glTF Transform and meshoptimizer into two browser-oriented detail levels.
+The approximately 150,332- and 63,781-triangle editions retain named nodes,
+source materials and surface normals. The files require no runtime decoder.
+The original model contained no image textures.
+
+The Apex GT, Apex Sprint, Torque R and Torque RS in-game builds further adjust scale, orientation and materials, animate
+wheel assemblies, and add original fixed racing roofs, roll cages, aero and liveries. These game
+variants, their names and handling are fictional. They are based on the
+credited Ferrari 458 Italia mesh, not claimed to be wholly original models.
+
+No affiliation with or endorsement by the original creator, Ferrari,
+Three.js, any manufacturer or racing team is implied. CC BY attribution
+does not grant trademark rights. Blacktop Bay does not use the source as an
+endorsement or add manufacturer/team branding to its fictional variants.

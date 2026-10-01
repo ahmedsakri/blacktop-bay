@@ -1,11 +1,24 @@
 // A closed coastal circuit in the x/z plane. Tangents point in race direction;
-// normals point to the driver's right. Distances and positions are metres.
+// normals point to +local X (the driver's left). Distances and positions are metres.
 const CONTROL_POINTS = [
   [-125, -115], [-35, -142], [70, -137], [147, -99],
   [156, -36], [126, 9], [87, 4], [74, 44],
   [128, 73], [113, 126], [39, 144], [-16, 101],
   [-73, 113], [-140, 89], [-159, 35], [-111, -3],
   [-73, -2], [-69, -48], [-127, -61],
+];
+const CIRCUITS = [
+  { id: 'harbor', name: 'Harbor Flow', description: 'Waterfront sweepers and a twisting inland section.', points: CONTROL_POINTS },
+  { id: 'dockyard', name: 'Dockyard Technical', description: 'Tight dockside turns reward braking and precise exits.', points: [
+    [-140, -125], [-45, -140], [80, -136], [155, -98], [156, -25],
+    [98, -35], [56, -73], [2, -67], [-10, -13], [62, 14], [131, 31],
+    [149, 100], [87, 141], [0, 139], [-57, 85], [-135, 112], [-164, 50],
+    [-119, 4], [-75, -5], [-88, -62], [-143, -68],
+  ] },
+  { id: 'coast', name: 'Coast Run', description: 'A fast, open coastal loop built for long nitro runs.', points: [
+    [-150, -115], [-55, -155], [70, -155], [165, -111], [181, -20],
+    [167, 73], [105, 142], [7, 160], [-90, 145], [-170, 85], [-185, -4],
+  ] },
 ];
 const COUNT = 440;
 const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
@@ -20,15 +33,15 @@ function catmull(p0, p1, p2, p3, t) {
   ));
 }
 
-function buildTrack() {
+function buildTrack({ id, name, description, points }) {
   const dense = [];
-  const pointCount = CONTROL_POINTS.length;
+  const pointCount = points.length;
   for (let segment = 0; segment < pointCount; segment++) {
     for (let step = 0; step < 64; step++) {
       const [x, z] = catmull(
-        CONTROL_POINTS[(segment - 1 + pointCount) % pointCount],
-        CONTROL_POINTS[segment], CONTROL_POINTS[(segment + 1) % pointCount],
-        CONTROL_POINTS[(segment + 2) % pointCount], step / 64,
+        points[(segment - 1 + pointCount) % pointCount],
+        points[segment], points[(segment + 1) % pointCount],
+        points[(segment + 2) % pointCount], step / 64,
       );
       dense.push({ x, z, s: 0 });
     }
@@ -57,18 +70,22 @@ function buildTrack() {
     sample.nz = -sample.tx;
   });
   return {
-    samples, length, width: 16,
+    id, name, description, samples, length, width: 16,
     spawn: { x: samples[0].x, z: samples[0].z, yaw: Math.atan2(samples[0].tx, samples[0].tz) },
   };
 }
 
-export const TRACK = buildTrack();
+const layouts = new Map(CIRCUITS.map((circuit) => [circuit.id, buildTrack(circuit)]));
+export const TRACKS = [...layouts.values()].map(({ id, name, description, length, width }) => ({ id, name, description, length, width }));
+export let TRACK = layouts.get('harbor');
+export function getTrack(id = TRACK.id) { return layouts.get(id) || layouts.get('harbor'); }
+export function setTrack(id) { TRACK = getTrack(id); return TRACK; }
 
-export function sampleTrack(distance) {
-  const s = wrap(Number.isFinite(distance) ? distance : 0, TRACK.length);
-  const position = s / TRACK.length * TRACK.samples.length;
-  const index = Math.min(TRACK.samples.length - 1, Math.floor(position));
-  const a = TRACK.samples[index], b = TRACK.samples[(index + 1) % TRACK.samples.length];
+export function sampleTrack(distance, track = TRACK) {
+  const s = wrap(Number.isFinite(distance) ? distance : 0, track.length);
+  const position = s / track.length * track.samples.length;
+  const index = Math.min(track.samples.length - 1, Math.floor(position));
+  const a = track.samples[index], b = track.samples[(index + 1) % track.samples.length];
   const fraction = position - index;
   let tx = a.tx + (b.tx - a.tx) * fraction;
   let tz = a.tz + (b.tz - a.tz) * fraction;
@@ -77,16 +94,16 @@ export function sampleTrack(distance) {
   return { x: a.x + (b.x - a.x) * fraction, z: a.z + (b.z - a.z) * fraction, tx, tz, nx: tz, nz: -tx, s, index, distance: 0, signedDistance: 0 };
 }
 
-export function projectOnTrack(x, z, hint = 0) {
+export function projectOnTrack(x, z, hint = 0, track = TRACK) {
   let nearest = null;
   let bestSquared = Infinity;
-  const count = TRACK.samples.length;
+  const count = track.samples.length;
   // Inspecting the whole loop makes this safe for recovery, arbitrary camera
   // queries, and distant points; the hint just supplies a stable first candidate.
   const start = wrap(Number.isFinite(hint) ? Math.floor(hint) : 0, count);
   for (let offset = 0; offset < count; offset++) {
     const index = (start + offset) % count;
-    const a = TRACK.samples[index], b = TRACK.samples[(index + 1) % count];
+    const a = track.samples[index], b = track.samples[(index + 1) % count];
     const dx = b.x - a.x, dz = b.z - a.z;
     const t = clamp(((x - a.x) * dx + (z - a.z) * dz) / (dx * dx + dz * dz || 1), 0, 1);
     const px = a.x + dx * t, pz = a.z + dz * t;
@@ -96,7 +113,7 @@ export function projectOnTrack(x, z, hint = 0) {
       nearest = { index, t, x: px, z: pz };
     }
   }
-  const sample = sampleTrack((nearest.index + nearest.t) / count * TRACK.length);
+  const sample = sampleTrack((nearest.index + nearest.t) / count * track.length, track);
   const distance = Math.sqrt(bestSquared);
   const side = (x - nearest.x) * sample.nx + (z - nearest.z) * sample.nz;
   return { ...sample, x: nearest.x, z: nearest.z, index: nearest.index, distance, signedDistance: distance * Math.sign(side) };

@@ -125,20 +125,20 @@ export function createWorld(renderer, { low = false } = {}) {
   #include <colorspace_fragment>
  }` })); sea.rotation.x = -Math.PI / 2; sea.position.y = -.65; scene.add(sea);
 
- const asphalt = canvasTexture(512, 512, (c, w, h) => {
+ const asphalt = canvasTexture(low ? 512 : 1024, low ? 512 : 1024, (c, w, h) => {
   c.fillStyle = '#474b50'; c.fillRect(0, 0, w, h);
   const pixels = c.getImageData(0, 0, w, h);
-  for (let i = 0; i < pixels.data.length; i += 4) { const v = 52 + rng() * 36; pixels.data[i] = v; pixels.data[i + 1] = v + 3; pixels.data[i + 2] = v + 6; }
+  for (let i = 0; i < pixels.data.length; i += 4) { const v = 40 + rng() * 43; pixels.data[i] = v; pixels.data[i + 1] = v + 3; pixels.data[i + 2] = v + 6; }
   c.putImageData(pixels, 0, 0);
   for (let i = 0; i < 100; i++) { c.strokeStyle = `rgba(10,17,23,${rng() * .13})`; c.lineWidth = 1 + rng() * 2; c.beginPath(); const x = rng() * w, y = rng() * h; c.moveTo(x, y); c.lineTo(x + rng() * 8 - 4, y + 20 + rng() * 70); c.stroke(); }
  }); asphalt.wrapS = asphalt.wrapT = THREE.RepeatWrapping; asphalt.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
  const base = new THREE.Mesh(roadGeometry(27), new THREE.MeshStandardMaterial({ color: '#303a43', roughness: .9 })); base.position.y = -.10; scene.add(base);
- const road = new THREE.Mesh(roadGeometry(TRACK.width), new THREE.MeshStandardMaterial({ color: '#535964', map: asphalt, bumpMap: asphalt, bumpScale: .018, roughness: .63, metalness: .05, envMapIntensity: .1 })); road.position.y = .011; road.receiveShadow = true; scene.add(road);
+ const road = new THREE.Mesh(roadGeometry(TRACK.width), new THREE.MeshStandardMaterial({ color: '#b5bbc2', map: asphalt, bumpMap: asphalt, bumpScale: .036, roughness: .86, metalness: .015, envMapIntensity: .16 })); road.position.y = .011; road.receiveShadow = true; scene.add(road);
  const wetShader = {
   name: 'RainPolishedAsphalt', uniforms: { color: { value: null }, tDiffuse: { value: null }, textureMatrix: { value: null } },
   vertexShader: `uniform mat4 textureMatrix;varying vec4 vUv;varying vec3 vWorld;void main(){vUv=textureMatrix*vec4(position,1.);vWorld=(modelMatrix*vec4(position,1.)).xyz;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
   fragmentShader: `uniform vec3 color;uniform sampler2D tDiffuse;varying vec4 vUv;varying vec3 vWorld;${noiseGLSL}
-  void main(){vec2 q=vWorld.xz;float fine=noise21(q*7.);float wet=smoothstep(.29,.70,fbm(q*.24));vec4 projected=vUv;projected.xy+=vec2(noise21(q*3.1)-.5,noise21(q*4.2+8.)-.5)*.0012*projected.w;vec2 sampleUV=projected.xy/projected.w;float softness=.0008+(1.-wet)*.0015;vec3 reflected=texture2D(tDiffuse,sampleUV).rgb*.5;reflected+=(texture2D(tDiffuse,sampleUV+vec2(softness,0)).rgb+texture2D(tDiffuse,sampleUV-vec2(softness,0)).rgb+texture2D(tDiffuse,sampleUV+vec2(0,softness)).rgb+texture2D(tDiffuse,sampleUV-vec2(0,softness)).rgb)*.125;float grazing=pow(1.-clamp(normalize(cameraPosition-vWorld).y,0.,1.),2.);float alpha=(.045+wet*.30)*(.32+grazing*.68);gl_FragColor=vec4(reflected*vec3(.81,.88,.97)*( .9+fine*.1),alpha);
+  void main(){vec2 q=vWorld.xz;float fine=noise21(q*7.);float wet=smoothstep(.29,.70,fbm(q*.24));vec4 projected=vUv;projected.xy+=vec2(noise21(q*3.1)-.5,noise21(q*4.2+8.)-.5)*.0012*projected.w;vec2 sampleUV=projected.xy/projected.w;float softness=.0008+(1.-wet)*.0015;vec3 reflected=texture2D(tDiffuse,sampleUV).rgb*.5;reflected+=(texture2D(tDiffuse,sampleUV+vec2(softness,0)).rgb+texture2D(tDiffuse,sampleUV-vec2(softness,0)).rgb+texture2D(tDiffuse,sampleUV+vec2(0,softness)).rgb+texture2D(tDiffuse,sampleUV-vec2(0,softness)).rgb)*.125;float grazing=pow(1.-clamp(normalize(cameraPosition-vWorld).y,0.,1.),2.);float alpha=(.008+wet*.14)*(.22+grazing*.78);gl_FragColor=vec4(reflected*vec3(.81,.88,.97)*( .9+fine*.1),alpha);
    #include <tonemapping_fragment>
    #include <colorspace_fragment>
   }`
@@ -163,21 +163,63 @@ export function createWorld(renderer, { low = false } = {}) {
   if (step % 7 === 0) { const o = TRACK.width / 2 + 2.4, x = v.x + v.nx * o, z = v.z + v.nz * o; posts.push({ x, y: 3.75, z, sx: .105, sy: 7.5, sz: .105 }); segment(arms, [x, 7.3, z], [x - v.nx * 1.65, 7.65, z - v.nz * 1.65], .08); bulbs.push({ x: x - v.nx * 1.65, y: 7.59, z: z - v.nz * 1.65, sx: .75, sy: .065, sz: .32, ry: angle }); }
   if (step % 5 === 0) {
    const ahead = sampleTrack(s + 24), bend = Math.atan2(ahead.tx * v.tz - ahead.tz * v.tx, ahead.tx * v.tx + ahead.tz * v.tz);
-   for (const side of [-1, 1]) { const o = side * (TRACK.width / 2 + .355); const panel = { x: v.x + v.nx * o, y: .58, z: v.z + v.nz * o, ry: angle + (side === 1 ? -Math.PI / 2 : Math.PI / 2) }; (Math.abs(bend) < .10 ? straightMarkers : bend > 0 ? chevrons : leftChevrons).push(panel); }
+   for (const side of [-1, 1]) {
+    const o = side * (TRACK.width / 2 + .355), straight = Math.abs(bend) < .10;
+    // +local X is driver-left, so positive yaw curvature needs a LEFT glyph.
+    // Face approaching traffic, angled inward, rather than showing mirrored
+    // backs of parallel barrier signs. Local panel +X then reads driver-right
+    // on either road edge, independent of the side on which it is mounted.
+    const panel = { x: v.x + v.nx * o, y: .58, z: v.z + v.nz * o, ry: straight ? angle + (side === 1 ? -Math.PI / 2 : Math.PI / 2) : angle + Math.PI + side * Math.PI / 4 };
+    (straight ? straightMarkers : bend > 0 ? leftChevrons : chevrons).push(panel);
+   }
   }
  }
  instances(scene, box, new THREE.MeshStandardMaterial({ color: '#bbc2c9', roughness: .82 }), barriers); instances(scene, box, metal, rails); instances(scene, box, new THREE.MeshStandardMaterial({ color: '#24313d', roughness: .9 }), joints); instances(scene, box, white, dashes); instances(scene, box, metal, posts); instances(scene, new THREE.CylinderGeometry(1, 1, 1, 6), metal, arms); instances(scene, box, warm, bulbs); instances(scene, box, metal, railingUprights);
  for (const side of [-1, 1]) { scene.add(ribbon(side * 13.1, .055, .93, metal)); scene.add(ribbon(side * 13.1, .035, .49, metal)); }
  const leftPanelTexture = panelTexture.clone(); leftPanelTexture.wrapS = THREE.RepeatWrapping; leftPanelTexture.repeat.x = -1; leftPanelTexture.needsUpdate = true;
- instances(scene, new THREE.PlaneGeometry(1.75, .65), new THREE.MeshBasicMaterial({ map: panelTexture, side: THREE.DoubleSide, toneMapped: false }), chevrons);
- instances(scene, new THREE.PlaneGeometry(1.75, .65), new THREE.MeshBasicMaterial({ map: leftPanelTexture, side: THREE.DoubleSide, toneMapped: false }), leftChevrons);
+ instances(scene, new THREE.PlaneGeometry(1.75, .65), new THREE.MeshBasicMaterial({ map: panelTexture, side: THREE.FrontSide, toneMapped: false }), chevrons);
+ instances(scene, new THREE.PlaneGeometry(1.75, .65), new THREE.MeshBasicMaterial({ map: leftPanelTexture, side: THREE.FrontSide, toneMapped: false }), leftChevrons);
  instances(scene, new THREE.PlaneGeometry(.075, .58), cyan, straightMarkers);
+ // Painted kerbs, grid boxes and braking boards make the course read as a
+ // deliberate asphalt circuit. Markings remain above the thin puddle layer.
+ const kerbs=[], gridMarks=[];
+ for(let distance=5;distance<TRACK.length;distance+=1.35){
+  const p=sampleTrack(distance),ahead=sampleTrack(distance+12);
+  const bend=Math.atan2(ahead.tx*p.tz-ahead.tz*p.tx,ahead.tx*p.tx+ahead.tz*p.tz);
+  if(Math.abs(bend)<.055)continue;
+  const side=Math.sign(bend),offset=side*(TRACK.width/2-.9);
+  kerbs.push({x:p.x+p.nx*offset,z:p.z+p.nz*offset,y:.064,sx:.72,sy:.028,sz:1.34,ry:Math.atan2(p.tx,p.tz),color:Math.floor(distance/1.35)%2?'#dcded8':'#ce4838'});
+ }
+ instances(scene,box,new THREE.MeshStandardMaterial({color:'white',roughness:.89}),kerbs);
  const finish = sampleTrack(0), checkers = [];
- for (let z = 0; z < 3; z++) for (let x = 0; x < 16; x++) checkers.push({ x: finish.x + finish.nx * (x - 7.5) + finish.tx * z, z: finish.z + finish.nz * (x - 7.5) + finish.tz * z, y: .061, sx: 1, sy: .006, sz: 1, ry: Math.atan2(finish.tx, finish.tz), color: (x + z) % 2 ? '#101923' : '#a7b4b8' });
- instances(scene, box, new THREE.MeshBasicMaterial({ color: 'white' }), checkers);
- const finishArch = new THREE.Group(); finishArch.position.set(finish.x, 0, finish.z); finishArch.rotation.y = Math.atan2(finish.tx, finish.tz);
- for (const side of [-1, 1]) { const p = new THREE.Mesh(new THREE.BoxGeometry(.32, 7, .35), metal); p.position.set(side * 9, 3.5, 0); finishArch.add(p); }
- const cross = new THREE.Mesh(new THREE.BoxGeometry(18.5, .6, .45), metal); cross.position.y = 7; finishArch.add(cross); const line = new THREE.Mesh(new THREE.BoxGeometry(17.5, .025, .47), cyan); line.position.y = 6.77; finishArch.add(line); scene.add(finishArch);
+ for (let z=0;z<2;z++)for(let x=0;x<32;x++)checkers.push({x:finish.x+finish.nx*(x-15.5)*.5+finish.tx*z*.5,z:finish.z+finish.nz*(x-15.5)*.5+finish.tz*z*.5,y:.061,sx:.5,sy:.006,sz:.5,ry:Math.atan2(finish.tx,finish.tz),color:(x+z)%2?'#17202a':'#d8ddd9'});
+ instances(scene,box,new THREE.MeshBasicMaterial({color:'white'}),checkers);
+ for(let row=0;row<4;row++){
+  const p=sampleTrack(5+row*7),angle=Math.atan2(p.tx,p.tz);
+  for(const side of [-1,1]){
+   const offset=side*3.2;
+   gridMarks.push({x:p.x+p.nx*offset,z:p.z+p.nz*offset,y:.057,sx:2.6,sy:.006,sz:.10,ry:angle});
+   for(const edge of [-1,1])gridMarks.push({x:p.x+p.nx*(offset+edge*1.3)+p.tx,z:p.z+p.nz*(offset+edge*1.3)+p.tz,y:.057,sx:.10,sy:.006,sz:2,ry:angle});
+  }
+ }
+ instances(scene,box,white,gridMarks);
+ const finishArch=new THREE.Group();finishArch.position.set(finish.x,0,finish.z);finishArch.rotation.y=Math.atan2(finish.tx,finish.tz);
+ for(const side of [-1,1]){
+  const upright=new THREE.Mesh(new THREE.BoxGeometry(.6,7.8,.65),metal);upright.position.set(side*9.5,3.9,0);finishArch.add(upright);
+  const foot=new THREE.Mesh(new THREE.BoxGeometry(1.15,.7,1.5),concrete);foot.position.set(side*9.5,.35,0);finishArch.add(foot);
+  for(const z of [-.36,.36]){const led=new THREE.Mesh(new THREE.BoxGeometry(.09,6.8,.04),cyan);led.position.set(side*9.5,3.9,z);finishArch.add(led);}
+ }
+ const header=new THREE.Mesh(new THREE.BoxGeometry(20.1,1.55,.72),metal);header.position.y=7.35;finishArch.add(header);
+ const finishArt=canvasTexture(2048,256,(c,w,h)=>{
+  c.fillStyle='#07121b';c.fillRect(0,0,w,h);
+  c.fillStyle='#65e3f1';c.fillRect(0,0,w,5);c.fillRect(0,h-5,w,5);
+  c.font='italic 800 92px Arial';c.textAlign='center';c.fillStyle='#eef8ff';c.fillText('BLACKTOP BAY',w/2,107);
+  c.font='700 37px Arial';c.fillStyle='#61ddeb';c.fillText('START / FINISH  ·  WATERFRONT RACING',w/2,180);
+  for(const start of [26,w-282])for(let y=0;y<4;y++)for(let x=0;x<5;x++){c.fillStyle=(x+y)%2?'#152a38':'#d5e4e8';c.fillRect(start+x*46,36+y*46,46,46);}
+ });finishArt.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());
+ const bannerMaterial=new THREE.MeshBasicMaterial({map:finishArt,toneMapped:false});
+ for(const side of [-1,1]){const banner=new THREE.Mesh(new THREE.PlaneGeometry(19.7,1.45),bannerMaterial);banner.position.set(0,7.35,side*.37);if(side<0)banner.rotation.y=Math.PI;finishArch.add(banner);}
+ const underside=new THREE.Mesh(new THREE.BoxGeometry(18.7,.035,.75),cyan);underside.position.y=6.55;finishArch.add(underside);scene.add(finishArch);
 
  // Window cells are scaled in metres inside the instanced shader, so tall
  // buildings gain floors rather than stretching the same facade image.
@@ -242,6 +284,6 @@ export function createWorld(renderer, { low = false } = {}) {
  for (let x = -10; x < 9; x += 2.6) for (const side of [-1, 1]) portholes.push({ x, y: .65, z: side * 3.25, sx: .36, sy: .25, sz: .06 });
  instances(boat, box, metal, boatRails); instances(boat, box, glass, portholes);
  const mast = new THREE.Mesh(new THREE.CylinderGeometry(.07, .12, 8, 8), boatWhite); mast.position.set(-2, 8.5, 0); boat.add(mast); boat.position.set(-42, -.8, 25); boat.rotation.y = .2; scene.add(boat);
- const startLights = []; for (let i = 0; i < 3; i++) { const m = new THREE.Mesh(new THREE.SphereGeometry(.2, 12, 8), new THREE.MeshBasicMaterial({ color: '#ff674c' })); m.position.set(-1 + i, 7.1, .35); finishArch.add(m); startLights.push(m); }
+ const startLights = []; for (let i = 0; i < 3; i++) { const m = new THREE.Mesh(new THREE.SphereGeometry(.2, 12, 8), new THREE.MeshBasicMaterial({ color: '#ff674c' })); m.position.set(-.9 + i*.9, 6.20, -.40); finishArch.add(m); startLights.push(m); }
  return { scene, reflection, sun, startLights, update(time, car) { sea.material.uniforms.time.value = time; boat.position.y = -.8 + Math.sin(time * .7) * .065; if (car) { sun.position.set(car.x - 150, 72, car.z + 130); sun.target.position.set(car.x, 0, car.z); } } };
 }

@@ -6,46 +6,96 @@
       name="viewport"
       content="width=device-width,initial-scale=1,viewport-fit=cover"
     />
+    <meta name="google-adsense-account" content="ca-pub-7947050514009599" />
+    <meta name="google-site-verification" content="MVksP1BKzZeDBEt2hMa1NDzucJcgohpkwcTVNynpOsU" />
+    <meta name="msvalidate.01" content="EF8EF5B503FE7522D9132204FA0D1115" />
     <meta name="theme-color" content="#08121e" />
-    <meta
-      name="description"
-      content="A coastal arcade racer from AppsOverFlow. Chase your best time across a waterfront circuit with a red sports coupe, responsive drifting and keyboard or touch controls."
-    />
+    <meta name="description" content="Race three AI rivals in Blacktop Bay, a free 3D browser racer. Choose six race builds and three circuits, earn credits, and upgrade engine, tyres, nitro and handling." />
     <meta name="robots" content="index,follow,max-image-preview:large" />
     <link rel="canonical" href="https://blacktop-bay.web.app/" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Blacktop Bay — Own the corner." />
-    <meta
-      property="og:description"
-      content="Three laps. One waterfront. Your next best. Play an original 3D coastal drift racer by AppsOverFlow."
-    />
+    <meta property="og:description" content="Choose from six GT and Formula race builds and race three AI rivals across three circuits. Free 3D browser racing by AppsOverFlow." />
     <meta property="og:url" content="https://blacktop-bay.web.app/" />
     <meta
       property="og:image"
       content="https://blacktop-bay.web.app/assets/blacktop-bay-gameplay.png"
     />
+    <meta property="og:image:alt" content="An actual Blacktop Bay waterfront racing gameplay screenshot" />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Blacktop Bay — Free 3D Racing Game" />
+    <meta name="twitter:description" content="Six race builds, three circuits and three AI rivals. Earn credits and upgrade your car. Free browser racing." />
+    <meta name="twitter:image" content="https://blacktop-bay.web.app/assets/blacktop-bay-gameplay.png" />
     <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "VideoGame",
-        "name": "Blacktop Bay",
-        "url": "https://blacktop-bay.web.app/",
-        "description": "A free 3D coastal arcade racer with three-lap time trials, drift scoring and a personal-best ghost.",
-        "genre": ["Racing", "Arcade"],
-        "gamePlatform": "Web browser",
-        "playMode": "SinglePlayer",
-        "author": {
-          "@type": "Organization",
-          "name": "AppsOverFlow",
-          "url": "https://appsoverflow.web.app/"
-        },
-        "inLanguage": "en",
-        "isAccessibleForFree": true
-      }
+{
+  "@context": "https://schema.org",
+  "@type": "VideoGame",
+  "@id": "https://blacktop-bay.web.app/#game",
+  "name": "Blacktop Bay",
+  "url": "https://blacktop-bay.web.app/",
+  "description": "Free single-player 3D browser racing from AppsOverFlow: six GT and Formula race builds, three asphalt circuits, three AI opponents, three-lap races, nitro, drift scoring and five-level car upgrades bought with earned race credits.",
+  "image": "https://blacktop-bay.web.app/assets/blacktop-bay-gameplay.png",
+  "screenshot": "https://blacktop-bay.web.app/assets/blacktop-bay-gameplay.png",
+  "genre": [
+    "Racing",
+    "Arcade"
+  ],
+  "gamePlatform": "Web browser",
+  "operatingSystem": "Any",
+  "applicationCategory": "GameApplication",
+  "applicationSubCategory": "3D racing game",
+  "browserRequirements": "A browser with WebGL 2 enabled and an internet connection to load the game.",
+  "playMode": "https://schema.org/SinglePlayer",
+  "numberOfPlayers": {
+    "@type": "QuantitativeValue",
+    "minValue": 1,
+    "maxValue": 1
+  },
+  "featureList": [
+    "6 race builds: Apex GT, Apex Sprint, Torque R, Torque RS, Vortex P1 and Vortex X",
+    "3 circuits: Harbor Flow, Dockyard Technical and Coast Run",
+    "3 AI opponents and 3 laps per race",
+    "Keyboard and touch controls",
+    "Rechargeable nitro and drift scoring",
+    "5 upgrade levels each for Engine, Tyres, Nitro and Handling",
+    "Earned race credits and permanent upgrades saved locally per car",
+    "Local records for each car and circuit"
+  ],
+  "author": {
+    "@type": "Organization",
+    "@id": "https://appsoverflow.web.app/#organization",
+    "name": "AppsOverFlow",
+    "url": "https://appsoverflow.web.app/"
+  },
+  "publisher": {
+    "@id": "https://appsoverflow.web.app/#organization"
+  },
+  "inLanguage": "en",
+  "isAccessibleForFree": true,
+  "offers": {
+    "@type": "Offer",
+    "url": "https://blacktop-bay.web.app/",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "dateModified": "2026-10-01",
+  "mainEntityOfPage": "https://blacktop-bay.web.app/",
+  "subjectOf": [
+    {
+      "@type": "WebPage",
+      "url": "https://blacktop-bay.web.app/guide/",
+      "name": "Blacktop Bay game guide"
+    },
+    {
+      "@type": "WebPage",
+      "url": "https://blacktop-bay.web.app/credits/",
+      "name": "Blacktop Bay credits and model licenses"
+    }
+  ]
+}
     </script>
     <title>Blacktop Bay — AppsOverFlow</title>
-    <link rel="icon" href="/assets/mark.svg" type="image/svg+xml" />
+    <link rel="icon" href="/assets/mark.svg?v=2" type="image/svg+xml" />
   </head>
   <body>
     <a class="skip" href="#start">Skip to race controls</a>
@@ -54,19 +104,67 @@
       aria-label="Three-dimensional waterfront racing circuit"
     ></div>
     <div class="vignette" aria-hidden="true"></div>
-    <div id="loading" role="status">
-      <svg viewBox="0 0 100 60" aria-hidden="true">
-        <path fill-rule="evenodd" d="M10 49 27 11h35c21 0 23 13 7 20 10 8-2 18-18 18H10Zm28-29-3 7h22c8 0 12-7 3-7H38Zm-7 15-3 7h24c8 0 12-7 3-7H31Z" /></svg
-      ><span>WARMING UP THE COAST</span>
+    <svg
+      class="speed-lines"
+      id="speed-lines"
+      viewBox="0 0 1280 720"
+      preserveAspectRatio="none"
+      aria-hidden="true"
+    >
+      <g fill="none" stroke="url(#speed-fade)" stroke-width="1">
+        <path
+          d="M0 78 224 204M0 245 193 288M0 466 231 423M0 679 249 519M1280 70 1081 198M1280 261 1094 297M1280 480 1072 433M1280 677 1050 520"
+        />
+      </g>
+      <defs>
+        <linearGradient id="speed-fade">
+          <stop stop-color="#9cdae8" />
+          <stop offset=".5" stop-color="#b8edf4" stop-opacity="0" />
+          <stop offset="1" stop-color="#9cdae8" />
+        </linearGradient>
+      </defs>
+    </svg>
+    <div id="loading" role="status" aria-label="Loading Blacktop Bay">
+      <div class="loader-grid" aria-hidden="true"></div>
+      <div class="loader-content">
+        <p class="loader-kicker">APPSOVERFLOW PRESENTS</p>
+        <img
+          class="loader-logo"
+          src="/assets/logo-loader.svg"
+          alt="Blacktop Bay"
+          width="900"
+          height="300"
+        />
+        <div class="loader-diagnostics">
+          <span id="loading-status">IGNITION SEQUENCE</span
+          ><span id="loading-percent">0%</span>
+        </div>
+        <div
+          class="loader-track"
+          id="loading-progress"
+          role="progressbar"
+          aria-label="Game loading"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          aria-valuenow="0"
+        >
+          <i id="loading-fill"></i>
+        </div>
+        <div class="loader-caption">
+          <span>PRECISION. POWER. A LITTLE SIDEWAYS.</span
+          ><span>01 / COASTAL RUN</span>
+        </div>
+      </div>
     </div>
     <header class="topbar">
-      <a class="wordmark" href="#" aria-label="Game home" id="home-link"
-        ><svg viewBox="0 0 100 60" aria-hidden="true">
-          <path fill-rule="evenodd" d="M10 49 27 11h35c21 0 23 13 7 20 10 8-2 18-18 18H10Zm28-29-3 7h22c8 0 12-7 3-7H38Zm-7 15-3 7h24c8 0 12-7 3-7H31Z" /></svg
-        ><span
-          ><strong data-brand>BLACKTOP BAY</strong
-          ><small>BY APPSOVERFLOW</small></span
-        ></a
+      <a class="wordmark" href="#" aria-label="Blacktop Bay home" id="home-link"
+        ><img
+          class="brand-logo"
+          src="/assets/logo-compact.svg"
+          alt="Blacktop Bay"
+          width="860"
+          height="150"
+        /><small>BY APPSOVERFLOW</small></a
       >
       <div class="top-actions">
         <button
@@ -118,36 +216,86 @@
             Chase the night.<br /><em>Own the corner.</em>
           </h1>
           <p class="intro">
-            A redline. A coastline. A little sideways.<br />Three laps between
-            you and your next best.
+            Six race builds. Three circuits. One finish line.<br />Outdrive the
+            rivals. Make the coast yours.
           </p>
           <div class="track-facts">
-            <span><b>01</b> HARBOR AFTERGLOW</span><span><b>03</b> LAPS</span
+            <span><b>04</b> RACERS</span><span><b>03</b> LAPS</span
             ><span><b id="track-km">1.2</b> KM</span>
           </div>
-          <button id="start" class="button primary">
-            LET’S DRIVE <span aria-hidden="true">↗</span></button
-          ><button class="text-button" id="how">
+          <label class="circuit-picker" for="circuit-select"
+            ><span>YOUR CIRCUIT</span
+            ><select id="circuit-select" aria-label="Choose circuit"></select
+            ><small id="circuit-description"></small
+          ></label>
+          <div class="home-actions">
+            <button id="start" class="button primary">
+              RACE NOW <span aria-hidden="true">↗</span></button
+            ><button id="open-garage" class="button secondary">
+              GARAGE <span aria-hidden="true">⌁</span>
+            </button>
+          </div>
+          <button class="text-button" id="how">
             How to find your line <span aria-hidden="true">→</span>
           </button>
           <p class="best-time" id="menu-best">YOUR FIRST NIGHT STARTS HERE.</p>
         </div>
         <div class="car-spec">
           <span class="spec-line"></span>
-          <p>THE COUPE</p>
-          <strong>Built for the <em>long way home.</em></strong>
-          <div>
-            REAR-WHEEL DRIVE <span>·</span> WET ASPHALT <span>·</span> YOU
+          <p id="selected-car-type">YOUR CAR · GT CIRCUIT RACER</p>
+          <strong id="selected-car-name">Apex GT</strong>
+          <div id="selected-car-tagline">
+            BALANCED. SHARP. READY FOR YOUR LINE.
           </div>
         </div>
         <footer>
           <a href="https://appsoverflow.web.app/" target="_blank" rel="noopener"
             >AppsOverFlow ↗</a
-          ><span>MADE FOR ONE MORE LAP.</span
+          ><span><a href="/guide/">Game guide</a> · <a href="/credits/">Credits</a></span
           ><button id="privacy-link">Privacy</button>
         </footer>
       </section>
+      <section id="garage" class="garage" aria-label="Car collection" hidden>
+        <div class="garage-intro">
+          <p class="eyebrow">THE COLLECTION · 06 RACE BUILDS</p>
+          <h2>Find your <em>edge.</em></h2>
+          <p>Different character. Same hunger for the finish.</p>
+        </div>
+        <div class="garage-spec">
+          <span id="garage-class"></span>
+          <h3 id="garage-name" aria-live="polite"></h3>
+          <p id="garage-tagline"></p>
+          <dl id="garage-specs"></dl>
+          <div class="garage-workshop">
+            <span class="garage-wallet" id="garage-wallet"></span>
+            <button id="open-upgrades" class="button primary">Upgrade car <span aria-hidden="true">↗</span></button>
+          </div>
+        </div>
+        <button id="garage-angle" class="garage-orbit">
+          Drag the car to inspect <span aria-hidden="true">↔</span> · Rotate
+          view
+        </button>
+        <div class="garage-bottom">
+          <div
+            id="garage-cars"
+            class="garage-cars"
+            role="group"
+            aria-label="Select one of six race builds. Swipe or use Tab to explore."
+          ></div>
+          <div class="garage-actions">
+            <button id="garage-back" class="button secondary">BACK</button
+            ><button id="garage-race" class="button primary">
+              RACE THIS CAR ↗
+            </button>
+          </div>
+        </div>
+      </section>
       <section id="hud" aria-label="Race information" hidden>
+        <div class="race-position">
+          <span>POSITION</span>
+          <div><strong id="position">4</strong><small>/ 4</small></div>
+          <ol id="rival-order" aria-label="Live race order"></ol>
+        </div>
         <div class="drift-score">
           <span id="drift-label">FIND YOUR FLOW</span
           ><strong id="combo">DRIFT <em>×1</em></strong
@@ -166,7 +314,7 @@
             height="280"
             aria-label="Circuit map"
           ></canvas
-          ><span id="ghost-label">CYAN · PACE CAR</span>
+          ><span id="ghost-label">YOU · 3 RIVALS</span>
         </div>
         <div class="speedo">
           <svg viewBox="0 0 160 160" aria-hidden="true">
@@ -177,9 +325,23 @@
             <b id="speed">0</b><span>KM/H</span><small id="gear">N</small>
           </div>
         </div>
+        <div class="nitro-gauge">
+          <div>
+            <strong id="nitro-status">NITRO READY</strong
+            ><span id="nitro-amount">100%</span>
+          </div>
+          <div class="nitro-track"><i id="nitro-fill"></i></div>
+          <small>HOLD SHIFT · RECHARGE AS YOU DRIVE</small>
+        </div>
+        <div class="steer-feedback" aria-hidden="true">
+          <span id="steer-left">◀</span>
+          <div class="steer-rail"><i id="steer-needle"></i></div>
+          <span id="steer-right">▶</span>
+        </div>
         <div class="drive-hint">
           <kbd>←</kbd><kbd>→</kbd> STEER <span>·</span> <kbd>SPACE</kbd> DRIFT
-          <span>·</span> <kbd>↓</kbd> BRAKE
+          <span>·</span> <kbd>↓</kbd> BRAKE <span>·</span>
+          <kbd>SHIFT</kbd> NITRO
         </div>
         <button id="recover" class="recover" title="Reset to the road (R)">
           Reset car <span aria-hidden="true">↺</span>
@@ -193,6 +355,13 @@
           ><button data-input="right" aria-label="Steer right">›</button>
         </div>
         <div class="pedals">
+          <button
+            data-input="nitro"
+            class="nitro-pedal"
+            aria-label="Hold for nitro boost"
+          >
+            <span>ϟ</span><small>NITRO</small>
+          </button>
           <button data-input="brake" aria-label="Brake">
             <span>Ⅱ</span><small>BRAKE</small></button
           ><button
@@ -226,6 +395,28 @@
           <div class="dialog-actions" id="dialog-actions"></div>
         </section>
       </div>
+      <section
+        id="consent-banner"
+        class="consent-banner"
+        aria-label="Privacy choices"
+        hidden
+      >
+        <div>
+          <strong>Your race. Your choice.</strong>
+          <p>
+            Allow gameplay analytics to help us improve the circuits and
+            controls. No names or email addresses are sent.
+            <a href="/privacy/">Privacy details</a>
+          </p>
+        </div>
+        <div class="consent-actions">
+          <button id="consent-decline" class="button secondary">
+            ESSENTIAL ONLY</button
+          ><button id="consent-accept" class="button primary">
+            ALLOW ANALYTICS
+          </button>
+        </div>
+      </section>
       <div id="unsupported" class="unsupported" hidden>
         <h2>Let’s get you on the road.</h2>
         <p>

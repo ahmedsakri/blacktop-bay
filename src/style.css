@@ -1398,3 +1398,573 @@ body.touch-mode .recover {
     max-width: 240px;
   }
 }
+
+/* Motorsport identity and motion system. */
+@font-face {
+  font-family: "Racing Sans One";
+  src: url("/assets/racing-sans-one.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Barlow Condensed";
+  src: url("/assets/barlow-condensed-extrabold-italic.woff2") format("woff2");
+  font-weight: 800;
+  font-style: italic;
+  font-display: swap;
+}
+.wordmark {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+  text-shadow: none;
+  padding: 0;
+}
+.wordmark .brand-logo {
+  width: 260px;
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 4px 12px #0006);
+}
+.wordmark small {
+  font-size: 6px;
+  letter-spacing: 2.4px;
+  padding-left: 46px;
+  margin-top: 2px;
+  color: #a5bdcc;
+}
+.menu h1,
+.dialog h2,
+.result-number {
+  font-family: "Racing Sans One", Arial, sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  letter-spacing: -1.1px;
+}
+.menu h1 {
+  font-size: clamp(44px, 4.9vw, 80px);
+  line-height: 1.02;
+  text-transform: uppercase;
+}
+.menu h1 em {
+  font-style: normal;
+  background: linear-gradient(110deg, #b4fbff, #43e6f4 55%, #20bed7);
+  background-clip: text;
+  color: transparent;
+}
+.button {
+  position: relative;
+  overflow: hidden;
+  font-family: "Barlow Condensed", Arial, sans-serif;
+  font-style: italic;
+  font-size: 20px;
+  letter-spacing: 1.1px;
+  padding: 12px 28px;
+  min-height: 56px;
+  border-radius: 3px;
+  transition:
+    transform 0.2s,
+    background 0.2s,
+    box-shadow 0.2s;
+}
+.button.primary {
+  background: linear-gradient(120deg, #86f4fc, #3cdaef 65%, #18bfdd);
+  box-shadow: 0 6px 30px #23cce82c;
+  clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
+}
+.button.primary:after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  bottom: -50%;
+  left: -35%;
+  width: 25%;
+  transform: skewX(-25deg);
+  background: linear-gradient(90deg, transparent, #fff8, transparent);
+  transition: left 0.65s;
+}
+.button.primary:hover:after {
+  left: 130%;
+}
+.button:hover {
+  transform: translateY(-2px);
+}
+.button:active {
+  transform: translateY(1px) scale(0.98);
+}
+.speedo b,
+.race-clock b,
+.race-clock time,
+.drift-score strong,
+.countdown {
+  font-family: "Barlow Condensed", Arial, sans-serif;
+  font-weight: 800;
+  font-style: italic;
+}
+.speedo b {
+  font-size: 58px;
+}
+.race-clock time {
+  font-size: 31px;
+  letter-spacing: 1px;
+}
+.drift-score strong {
+  font-size: 30px;
+  letter-spacing: 0.5px;
+}
+.drift-score {
+  transition:
+    filter 0.3s,
+    color 0.3s;
+}
+.drift-active .drift-score {
+  filter: drop-shadow(0 0 12px #31def779);
+  color: #f0fdff;
+}
+.drift-active .drift-score em {
+  color: #ff9474;
+}
+.drift-active .combo-meter i {
+  background: #ff785b;
+}
+.drift-active .combo-meter {
+  box-shadow: 0 0 10px #ff624566;
+}
+.countdown {
+  font-size: 144px;
+  line-height: 1;
+  color: #f5ffff;
+}
+.steer-feedback {
+  position: absolute;
+  bottom: 85px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #8cb2c666;
+  font-size: 10px;
+}
+.steer-feedback span.active {
+  color: #85f4ff;
+  text-shadow: 0 0 12px #50eaff;
+}
+.steer-rail {
+  width: 76px;
+  height: 2px;
+  background: #afd7e033;
+  position: relative;
+}
+.steer-rail:before {
+  content: "";
+  position: absolute;
+  width: 1px;
+  height: 8px;
+  left: 50%;
+  top: -3px;
+  background: #bbd6e76b;
+}
+.steer-rail i {
+  width: 6px;
+  height: 6px;
+  position: absolute;
+  left: calc(50% - 3px);
+  top: -2px;
+  border-radius: 50%;
+  background: #5dedf7;
+  box-shadow: 0 0 10px #32d6ef;
+  transition: transform 0.1s linear;
+}
+.speed-lines {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.25s;
+  mix-blend-mode: screen;
+}
+.speed-lines path {
+  stroke-dasharray: 80 340;
+  animation: velocity-streak 0.8s linear infinite;
+}
+@keyframes velocity-streak {
+  to {
+    stroke-dashoffset: -420;
+  }
+}
+.vignette {
+  transition: box-shadow 0.12s;
+}
+.is-colliding .vignette {
+  box-shadow: inset 0 0 90px #ff63324d;
+}
+#loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+  overflow: hidden;
+  background: radial-gradient(
+    ellipse at 50% 54%,
+    #123349 0%,
+    #091724 35%,
+    #040c13 78%
+  );
+  transition:
+    opacity 0.65s,
+    visibility 0.65s;
+}
+#loading.loaded {
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+}
+.loader-content {
+  position: relative;
+  width: min(760px, 88vw);
+  text-align: center;
+  z-index: 1;
+  transform: translateY(-4%);
+}
+.loader-logo {
+  width: 100%;
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 18px 40px #000a);
+}
+.loader-kicker {
+  font-family: Manrope, sans-serif;
+  font-size: 8px;
+  letter-spacing: 5px;
+  color: #789dad;
+  font-weight: 800;
+  margin: 0 0 10px;
+}
+.loader-diagnostics {
+  display: flex;
+  justify-content: space-between;
+  margin: 24px auto 11px;
+  width: 80%;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 12px;
+  color: #aad5e1;
+}
+#loading .loader-diagnostics span {
+  font-size: 11px;
+  letter-spacing: 2px;
+}
+#loading #loading-percent {
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+  color: #59e8f3;
+}
+.loader-track {
+  height: 3px;
+  background: #34576955;
+  overflow: hidden;
+  width: 80%;
+  margin: auto;
+  transform: skewX(-20deg);
+}
+.loader-track i {
+  display: block;
+  width: 0;
+  height: 100%;
+  background: linear-gradient(90deg, #215b78, #66f0f8);
+  box-shadow: 0 0 20px #4bf0ff;
+  transition: width 0.4s ease;
+}
+.loader-caption {
+  display: flex;
+  justify-content: space-between;
+  width: 80%;
+  margin: 14px auto 0;
+}
+#loading .loader-caption span {
+  font-family: Manrope, sans-serif;
+  font-size: 6px;
+  letter-spacing: 1.8px;
+  color: #608293;
+}
+.loader-grid {
+  position: absolute;
+  inset: 0;
+  opacity: 0.2;
+  background:
+    linear-gradient(115deg, transparent 40%, #4cb4d422 49%, transparent 57%),
+    repeating-linear-gradient(
+      125deg,
+      transparent,
+      transparent 99px,
+      #6eb5d015 100px,
+      #6eb5d015 101px
+    );
+  animation: loader-light 2s ease-out both;
+}
+@keyframes loader-light {
+  from {
+    transform: translateX(-25%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 0.2;
+  }
+}
+.is-ready .menu-copy > * {
+  animation: grid-arrival 0.85s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.is-ready .menu-copy > h1 {
+  animation-delay: 0.07s;
+}
+.is-ready .menu-copy > .intro {
+  animation-delay: 0.14s;
+}
+.is-ready .menu-copy > .track-facts {
+  animation-delay: 0.2s;
+}
+.is-ready .menu-copy > .button {
+  animation-delay: 0.26s;
+}
+.is-ready .menu-copy > .text-button {
+  animation-delay: 0.32s;
+}
+.is-ready .menu-copy > .best-time {
+  animation-delay: 0.38s;
+}
+.is-ready .car-spec {
+  animation: grid-arrival 1s 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes grid-arrival {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+body.touch-mode .steer-feedback {
+  bottom: 35px;
+}
+.car-spec strong {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 22px;
+  font-style: italic;
+  font-weight: 800;
+  letter-spacing: 0.25px;
+}
+.car-spec p {
+  color: #71dce9;
+}
+.car-spec .spec-line {
+  background: linear-gradient(90deg, transparent, #53d2e2);
+}
+@media (max-width: 900px) {
+  .wordmark .brand-logo {
+    width: 225px;
+  }
+  .menu h1 {
+    font-size: 52px;
+  }
+  .menu-copy {
+    width: 53%;
+  }
+}
+@media (max-width: 600px) {
+  .wordmark .brand-logo {
+    width: 180px;
+  }
+  .wordmark small {
+    font-size: 5px;
+    padding-left: 31px;
+    letter-spacing: 1.6px;
+  }
+  .menu h1 {
+    font-size: 39px;
+    letter-spacing: -1px;
+  }
+  .menu-copy {
+    width: auto;
+  }
+  .speedo b {
+    font-size: 45px;
+  }
+  .race-clock time {
+    font-size: 26px;
+  }
+  .drift-score strong {
+    font-size: 24px;
+  }
+  .dialog .button {
+    font-size: 18px;
+  }
+  .loader-content {
+    width: 94vw;
+  }
+  .loader-kicker {
+    font-size: 6px;
+    letter-spacing: 3px;
+    margin-bottom: 18px;
+  }
+  .loader-diagnostics {
+    margin-top: 24px;
+    width: 84%;
+  }
+  #loading .loader-diagnostics span {
+    font-size: 8px;
+    letter-spacing: 1px;
+  }
+  .loader-track,
+  .loader-caption {
+    width: 84%;
+  }
+  #loading .loader-caption span {
+    font-size: 5px;
+    letter-spacing: 0.8px;
+  }
+  .button {
+    font-size: 21px;
+  }
+  .countdown {
+    font-size: 104px;
+  }
+}
+@media (max-width: 360px) {
+  .wordmark .brand-logo {
+    width: 153px;
+  }
+  .wordmark small {
+    font-size: 4px;
+    padding-left: 27px;
+  }
+  .menu h1 {
+    font-size: 33px;
+  }
+  .menu-copy {
+    bottom: 60px;
+  }
+  .in-race .wordmark .brand-logo {
+    width: 145px;
+  }
+  .top-actions {
+    gap: 2px;
+  }
+  .steer-feedback {
+    display: none;
+  }
+}
+@media (max-height: 540px) and (orientation: landscape) {
+  .wordmark .brand-logo {
+    width: 195px;
+  }
+  .wordmark small {
+    font-size: 5px;
+    padding-left: 35px;
+  }
+  .menu h1 {
+    font-size: 37px;
+  }
+  .menu .button {
+    font-size: 19px;
+    padding: 9px 19px;
+  }
+  .car-spec strong {
+    font-size: 18px;
+  }
+  .speedo b {
+    font-size: 45px;
+  }
+  .race-clock time {
+    font-size: 26px;
+  }
+  .drift-score strong {
+    font-size: 25px;
+  }
+  .countdown {
+    font-size: 92px;
+  }
+  .loader-content {
+    width: min(600px, 70vw);
+  }
+  .loader-logo {
+    max-height: 175px;
+  }
+  .loader-kicker {
+    margin-bottom: 0;
+    font-size: 6px;
+  }
+  .loader-diagnostics {
+    margin-top: 10px;
+  }
+  .loader-caption {
+    margin-top: 8px;
+  }
+  body.touch-mode .steer-feedback {
+    bottom: 27px;
+  }
+  .dialog .button {
+    font-size: 17px;
+  }
+}
+@media (max-height: 430px) and (orientation: landscape) {
+  .menu h1 {
+    font-size: 34px;
+  }
+  .menu-copy {
+    top: 73px;
+  }
+  .track-facts {
+    margin: 10px 0;
+  }
+  .car-spec {
+    bottom: 15%;
+  }
+  .menu .button {
+    font-size: 18px;
+    padding: 7px 17px;
+    min-height: 43px;
+  }
+  .loader-logo {
+    max-height: 150px;
+  }
+}
+@media (max-height: 350px) and (orientation: landscape) {
+  .menu-copy {
+    top: 61px;
+  }
+  .menu h1 {
+    font-size: 31px;
+  }
+  .loader-logo {
+    max-height: 120px;
+  }
+  .loader-caption {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .speed-lines {
+    display: none;
+  }
+  #loading.loaded {
+    transition: none;
+  }
+  .loader-grid {
+    animation: none;
+  }
+  .is-ready .menu-copy > *,
+  .is-ready .car-spec {
+    animation: none;
+  }
+  .button:hover,
+  .button:active {
+    transform: none;
+  }
+}
