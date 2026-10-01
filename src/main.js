@@ -1671,7 +1671,7 @@ function tick(now) {
   if (statusElement.dataset.kind !== status.kind) {
     statusElement.dataset.kind = status.kind;
     const symbol = status.kind === 'lap' ? 'flag' : status.kind === 'crash' ? 'steering' : status.kind === 'recovered' ? 'check' : 'restart';
-    $('race-feedback-icon').setAttribute('href', `/assets/ui/race-icons.svg#${symbol}`);
+    $('race-feedback-icon').setAttribute('href', `/assets/ui/race-icons.svg?v=20261002-2#${symbol}`);
   }
   if ($('race-feedback-title').textContent !== status.title) $('race-feedback-title').textContent = status.title;
   if ($('race-feedback-detail').textContent !== status.detail) $('race-feedback-detail').textContent = status.detail;
