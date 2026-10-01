@@ -28,3 +28,18 @@ The independent review found and fixed a retry path that could overwrite the pre
 ## Verification limits
 
 This audit checks HTTP responses, published assets, metadata and targeted code behavior. It does not establish search-engine indexing, visual rendering, race behavior, or live popup transfer behavior. The live cross-origin Safari transfer smoke test remains pending because the Mac was locked during this audit. The AppsOverFlow deployment was reported complete by the release coordinator; its separate audit is maintained by the AppsOverFlow agent.
+
+## Published state and remaining account work
+
+Camber Reign is live at https://camber-reign.web.app/. AppsOverFlow is live with its new listing at https://appsoverflow.web.app/projects/camber-reign/. Both repositories have been pushed to their main branches; the game repository is now https://github.com/ahmedsakri/camber-reign and the local checkout is `/Users/ahmedsakri/Documents/Personal/Games/camber-reign`.
+
+The new logo and lobby were inspected at 1280×800 desktop, 390×844 portrait, 844×390 landscape and 568×320 compact landscape. The transfer page was checked at 390px and 320px, and header/footer links now have at least 44px touch height. Live transfer opening/cancellation was checked, but the in-app browser did not expose the popup as an automatable tab; no saved data was imported during that check.
+
+The Mac locked during Safari account work. The following service actions remain incomplete and must not be described as done:
+
+- GTM: container `GTM-PZHDLVK8` renamed **Camber Reign — AppsOverFlow**. Workspace 3 contains the rebrand import prepared from a fresh current export:2 renamed tags,2 renamed triggers,new production hostname and game_name. Eight workspace changes are ready but **not published**; published version 2 still targets the old hostname. Publish and verify on the new site after unlocking.
+- GA4: property 556906819 in account 408407374,measurement ID `G-RC925EV263`, still needs the property/stream names and stream website URL updated. Preserve these identifiers and reporting history.
+- AdSense: new site ownership metadata and ads.txt are live for `pub-7947050514009599`; the new site still needs adding and review request. No approval is implied.
+- Search Console/Bing: verification metadata, canonicals, robots and 73-page sitemap are live; the new properties, sitemap submissions and Search Console Change of Address are not yet completed. No actual indexing claim is made.
+
+Safari remains open to the existing GTM workspace and GA4 admin for continuation after the user unlocks the Mac.

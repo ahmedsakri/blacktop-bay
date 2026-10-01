@@ -201,7 +201,7 @@ Local: http://127.0.0.1:4180/. Production output: `dist/`.
 
 No player account, name or email is required. GA4 `G-RC925EV263` loads through dedicated GTM `GTM-PZHDLVK8` only after analytics consent on the production hostname. Advertising consent stays denied. Query strings and page fragments are excluded from analytics page locations. Users can revoke consent in Privacy. AdSense metadata and ads.txt support the review request; no advertising script or ad unit is active. See the live privacy notice for details.
 
-Google/Bing verification tags, robots.txt, sitemap.xml and crawlable guide/privacy/credits pages are included. VideoGame, FAQPage and HowTo JSON-LD describe visible facts. Structured data does not guarantee rankings, rich results or AI citations. External console submission results are recorded in `reports/seo-review.md`.
+Google/Bing verification tags, robots.txt, sitemap.xml and crawlable guide/privacy/credits pages are included. VideoGame, FAQPage and HowTo JSON-LD describe visible facts. Structured data does not guarantee rankings, rich results or AI citations. Earlier console submission results are recorded in `reports/seo-review.md`. The Camber Reign migration status and pending Google/Bing account actions are recorded in `reports/camber-reign-release-audit-2026-10-02.md`; new-domain console submissions and GTM publication remain pending while Safari is locked.
 
 ## Credits and validation
 
@@ -209,7 +209,7 @@ Original game code, nine original tracks, branding and racing adaptations: AppsO
 
 The automated suite covers driving, lap guards, rivals, all circuits, nitro, upgrades, payments, storage and analytics privacy. The earlier 36-car/34-circuit update, crash/recovery checks and physical-device limitations are documented in `reports/manufacturer-circuits-controls-release.md`. Earlier expansion checks and review limits are documented in `reports/expansion-release.md`; `reports/release-checks.md` preserves the earlier release evidence. Phone viewport emulation does not establish performance on every physical phone.
 
-Deployment targets only Firebase Hosting site `camber-reign` in project `echo-heist`, never other shared-project sites.
+The standard deployment targets Firebase Hosting site `camber-reign` in project `echo-heist`. The separate `firebase.legacy.json` configuration maintains redirects and the explicit save-transfer bridge on the former `blacktop-bay` site; it does not redeploy the game there. Keep these redirects available for existing players and search engines. No unrelated shared-project sites are included.
 
 ## Manufacturer collection and expressive crowd
 
