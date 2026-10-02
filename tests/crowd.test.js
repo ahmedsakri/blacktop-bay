@@ -26,8 +26,8 @@ test('pause and reduced motion freeze crowd transforms, with bounded mobile batc
  for(let i=0;i<100;i++)crowd.add(i%10,0,Math.floor(i/10),0,i%2===0,rng);
  crowd.render(scene);
  assert.equal(scene.userData.spectatorCount,100);
- assert.equal(scene.children.filter(m=>m.isInstancedMesh).length,10,'distant crowd stays ten batched draws');assert.equal(scene.children.filter(m=>m.isSkinnedMesh).length,6,'foreground is a fixed six-mesh mobile pool');
- assert.ok(scene.children.every(m=>m.isInstancedMesh||m.isSkinnedMesh));
+ assert.equal(scene.children.filter(m=>m.isInstancedMesh).length,10,'distant crowd stays ten batched draws');assert.equal(scene.children.filter(m=>m.name==='near-spectator').length,6,'foreground is a fixed six-mesh mobile pool');
+ assert.ok(scene.children.every(m=>m.isInstancedMesh||m.name==='near-spectator'));
  const initial=matrices(scene);
  crowd.update(.2,{x:0,z:0,speed:20},{paused:true});assert.deepEqual(matrices(scene),initial);
  crowd.update(.4,{x:0,z:0,speed:20},{reducedMotion:true});const still=matrices(scene);crowd.update(.45,{x:0,z:0,speed:20},{reducedMotion:true});assert.deepEqual(matrices(scene),still);
@@ -69,10 +69,11 @@ test('spectators have garment silhouettes and personalised reaction timing withi
  const rng=random(),crowd=createCrowd({low:true}),scene=new THREE.Scene();
  const people=Array.from({length:90},(_,i)=>crowd.add(i*.8,0,i%3,0,i%2===0,rng));
  assert.equal(new Set(people.map(p=>p.garment)).size,3);
- assert.ok(people.some(p=>p.shorts)&&people.some(p=>p.scarf));
+ assert.ok(people.some(p=>p.shorts)&&people.some(p=>p.longHair));
+ assert.equal(new Set(people.map(p=>p.lookVariant)).size,6,'distant wardrobes match all six textured variants');
  assert.ok(new Set(people.map(p=>p.reactionDistance)).size>80);
  crowd.render(scene);crowd.update(.1,{x:0,z:0,speed:30});
- assert.ok(scene.children.filter(m=>m.isInstancedMesh).length<=10);assert.ok(scene.children.filter(m=>m.isSkinnedMesh).length<=6);
+ assert.ok(scene.children.filter(m=>m.isInstancedMesh).length<=10);assert.ok(scene.children.filter(m=>m.name==='near-spectator').length<=6);
  assert.ok(people.some(p=>p.parts.some(part=>part.faceDetail&&!part.kind.includes('heads'))));
  assert.ok(scene.children.filter(m=>m.isInstancedMesh).every(m=>Array.from(m.instanceMatrix.array).every(Number.isFinite)));
  crowd.dispose();
@@ -103,8 +104,8 @@ test('shared clothing and skin textures keep the ten-draw budget and release GPU
  const trousers=scene.children.find(mesh=>mesh.name==='race-spectators-trousers');
  assert.ok(torso.material.map&&torso.material.bumpMap&&head.material.map&&trousers.material.map);
  assert.notEqual(torso.material.map,head.material.map);assert.notEqual(torso.material.map,trousers.material.map);
- const textures=new Set(scene.children.flatMap(mesh=>[mesh.material.map,mesh.material.bumpMap]).filter(Boolean));
- assert.equal(textures.size,6);assert.ok(scene.children.filter(m=>m.isInstancedMesh).length<=10);assert.ok(scene.children.filter(m=>m.isSkinnedMesh).length<=6);
+ const textures=new Set(scene.children.flatMap(mesh=>[mesh.material?.map,mesh.material?.bumpMap]).filter(Boolean));
+ assert.equal(textures.size,6);assert.ok(scene.children.filter(m=>m.isInstancedMesh).length<=10);assert.ok(scene.children.filter(m=>m.name==='near-spectator').length<=6);
  assert.ok([...textures].every(texture=>texture.image.width===64&&texture.image.height===64));
  const counts=new Map([...textures].map(texture=>[texture,0]));
  for(const texture of textures)texture.addEventListener('dispose',()=>counts.set(texture,counts.get(texture)+1));

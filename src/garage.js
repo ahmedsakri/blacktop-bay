@@ -1,6 +1,5 @@
 import * as THREE from 'three';
-import {createEnvironmentResource} from './environment-resource.js';
-import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { createStudioEnvironment } from './studio-environment.js';
 
 // The set is static and separately buildable so its clearance and draw-call
 // budget can be checked without allocating a renderer or changing car materials.
@@ -15,15 +14,26 @@ export function createGarageSet({ low = false } = {}) {
     shader.fragmentShader = 'varying vec3 studioPosition;\n' + shader.fragmentShader;
     shader.fragmentShader = shader.fragmentShader.replace('#include <roughnessmap_fragment>', `#include <roughnessmap_fragment>
       float radial=length(studioPosition.xz)*145.;
-      float grain=(.5+.5*sin(radial))*max(0.,1.-fwidth(radial)*.33);
+      float grain=(.5+.5*sin(radial))*max(0.,1.-fwidth(radial)*1.5);
       roughnessFactor+=grain*.016;`);
   };
   graphite.customProgramCacheKey = () => 'garage-machined-turntable-v1';
   const violet = new THREE.MeshBasicMaterial({ color: '#9246FF', toneMapped: false });
   const seam = new THREE.MeshBasicMaterial({ color: '#323039' });
-  const floor = new THREE.Mesh(new THREE.PlaneGeometry(140, 140), new THREE.MeshStandardMaterial({
-    color: '#26252c', roughness: .62, metalness: .14,
-  }));
+  const concrete = new THREE.MeshStandardMaterial({color:'#3d3e44',roughness:.65,metalness:.08});
+  concrete.onBeforeCompile = shader => {
+    shader.vertexShader='varying vec2 floorPosition;\n'+shader.vertexShader;
+    shader.vertexShader=shader.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\nfloorPosition=position.xy;');
+    shader.fragmentShader='varying vec2 floorPosition;\n'+shader.fragmentShader;
+    shader.fragmentShader=shader.fragmentShader.replace('#include <color_fragment>',`#include <color_fragment>
+      vec2 tile=abs(fract(floorPosition/3.)-.5);
+      float seam=smoothstep(.493-fwidth(floorPosition.x/3.),.5,max(tile.x,tile.y));
+      float grain=fract(sin(dot(floor(floorPosition*350.),vec2(12.9898,78.233)))*43758.5453);
+      float fade=1.-smoothstep(.005,.02,length(fwidth(floorPosition)));
+      diffuseColor.rgb*=1.-seam*.25+(grain-.5)*.10*fade;`);
+  };
+  concrete.customProgramCacheKey=()=> 'garage-concrete-v2';
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(140, 140), concrete);
   floor.name = 'garage-floor'; floor.rotation.x = -Math.PI / 2;
   floor.position.y = .006; floor.receiveShadow = true; set.add(floor);
   const platform = new THREE.Mesh(new THREE.CylinderGeometry(4.35, 4.4, .035, low ? 80 : 128), graphite);
@@ -81,7 +91,17 @@ export function createGarageSet({ low = false } = {}) {
         float rib=1.-smoothstep(.013,.022+fwidth(uv.x)*12.,min(bay,1.-bay));
         float vertical=smoothstep(.055,.13,uv.y)*(1.-smoothstep(.80,.97,uv.y));
         colour*=.56+.44*vertical;
-        colour=mix(colour,vec3(.027,.020,.037),rib*.90);
+        // A steel-lined studio, with luminous inset bands rather than an
+        // unbroken purple wall. Soft upper washes reveal the vertical fins.
+        float display=smoothstep(.19,.215,uv.y)*(1.-smoothstep(.53,.55,uv.y));
+        float wallLight=.03+.08*pow(1.-abs(uv.y-.65),3.);
+        vec3 steel=vec3(wallLight*.80,wallLight*.84,wallLight);
+        float flute=abs(fract(uv.x*180.)-.5);
+        steel*=.85+.15*smoothstep(.05,.40,flute);
+        colour=mix(steel,colour*.85,display);
+        float trim=(1.-smoothstep(.001,.004+fwidth(uv.y),abs(uv.y-.55)));
+        colour=mix(colour,vec3(.70,.76,.85),trim*.8);
+        colour=mix(colour,vec3(.020,.021,.025),rib*.95);
         gl_FragColor=vec4(colour,1.);
         #include <colorspace_fragment>
       }`,
@@ -124,11 +144,9 @@ export function createGarage(renderer, { low = false } = {}) {
   const scene = new THREE.Scene();
   scene.background = new THREE.Color('#110017');
   scene.fog = new THREE.Fog('#110017', 16, 48);
-  const environment=createEnvironmentResource(scene,()=>{
-    if(renderer.getContext?.().isContextLost())return null;
-    const room=new RoomEnvironment(),pmrem=new THREE.PMREMGenerator(renderer);
-    try{return pmrem.fromScene(room,.04,.1,100,{size:low?128:256});}finally{room.dispose();pmrem.dispose();}
-  });environment.rebuild();scene.environmentIntensity=.45;
+  const environment=createStudioEnvironment(renderer,scene,{low});
+  scene.environmentIntensity=.78;
+  scene.environmentRotation.y=.6;
   const anchor = createGarageSet({ low }); scene.add(anchor);
   const gallery = anchor.getObjectByName('garage-led-gallery');
   scene.add(new THREE.HemisphereLight('#e3efff', '#404047', .55));

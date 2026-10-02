@@ -3,6 +3,7 @@ import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {sampleTrack,projectOnTrack,TRACKS} from './track.js';
 import {VENUE_REGIONS} from './showcase-lighting.js';
 import {originalLandmarkLayout} from './original-venues.js';
+import {setWorldSurfaceUV} from './track-surface-materials.js';
 
 // These are authored sectors on the game's original arcade routes. Fractions
 // describe the driving line, never claim surveyed real-world road geometry.
@@ -63,10 +64,11 @@ export function applyShowcaseSurface(road,track){
   shader.vertexShader='attribute vec2 roadSurface; varying vec2 vRoadSurface;\n'+shader.vertexShader;
   shader.vertexShader=shader.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\nvRoadSurface=roadSurface;');
   shader.fragmentShader='varying vec2 vRoadSurface;\n'+shader.fragmentShader;
-  shader.fragmentShader=shader.fragmentShader.replace('#include <roughnessmap_fragment>','#include <roughnessmap_fragment>\nroughnessFactor=clamp(vRoadSurface.x,.55,.96);');
+  // Preserve the fine PBR roughness map underneath the authored sector grade.
+  shader.fragmentShader=shader.fragmentShader.replace('#include <roughnessmap_fragment>','#include <roughnessmap_fragment>\nroughnessFactor=clamp(vRoadSurface.x*roughnessFactor/max(roughness,.01),.55,.96);');
   shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>','#include <map_fragment>\ndiffuseColor.rgb*=1.-vRoadSurface.y*.19;');
  };
- road.material.customProgramCacheKey=()=> 'authored-showcase-road-v1';
+ road.material.customProgramCacheKey=()=> 'authored-showcase-road-v2';
  road.userData.surfaceSectors=showcase.sectors.map(({s,roughness,wear})=>({s,roughness,wear}));
 }
 export function showcaseLayout(track,{stands=[]}={}){
@@ -95,11 +97,11 @@ function signageTexture(site,track){
  c.fillStyle='#9246ff';c.fillRect(140,155,580,3);
  const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;return texture;
 }
-export function createShowcaseVenue(scene,track,{low=false,stands=[],crowd,rng=Math.random}={}){
+export function createShowcaseVenue(scene,track,{low=false,stands=[],crowd,rng=Math.random,surfaces}={}){
  const sites=showcaseLayout(track,{stands});if(!sites.length)return null;
  const root=new THREE.Group();root.name='showcase-authored-sectors';scene.add(root);
  const mats={steel:new THREE.MeshStandardMaterial({color:'#405264',metalness:.65,roughness:.43}),
-  concrete:new THREE.MeshStandardMaterial({color:'#a7aaa1',roughness:.91}),
+  concrete:new THREE.MeshStandardMaterial({color:'#a7aaa1',roughness:.91,map:surfaces?.concreteColor||null,normalMap:surfaces?.concreteNormal||null,normalScale:new THREE.Vector2(.18,.18)}),
   timber:new THREE.MeshStandardMaterial({color:'#705344',roughness:.87}),
   roof:new THREE.MeshStandardMaterial({color:'#34474d',roughness:.68}),
   red:new THREE.MeshStandardMaterial({color:'#a95643',roughness:.72}),
@@ -225,7 +227,7 @@ export function createShowcaseVenue(scene,track,{low=false,stands=[],crowd,rng=M
  const batches=new Map();root.updateMatrixWorld(true);
  const geometryStats={sourceTriangles:parts.reduce((sum,p)=>sum+(p.geometry.index?.count??p.geometry.attributes.position.count)/3,0),batchedTriangles:0,fallbackBatches:0};
  for(const part of parts){const siteKey=String(part.userData.sector),key=siteKey+part.material.uuid+':'+Object.keys(part.geometry.attributes).sort().join(',');
-  const g=part.geometry.index?part.geometry.toNonIndexed():part.geometry.clone();g.applyMatrix4(part.matrixWorld);
+  const g=part.geometry.index?part.geometry.toNonIndexed():part.geometry.clone();g.applyMatrix4(part.matrixWorld);if(surfaces&&part.material===mats.concrete)setWorldSurfaceUV(g,3);
   if(!batches.has(key))batches.set(key,{material:part.material,geometries:[]});batches.get(key).geometries.push(g);part.removeFromParent();
  }
  for(const {material,geometries}of batches.values()){

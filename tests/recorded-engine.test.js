@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { createRecordedEngine, recordedEngineFrame, recordingForVehicle, RECORDING_BUDGET } from '../src/recorded-engine.js';
-import { ENGINE_RECORDINGS, RECORDING_CARS } from '../src/recorded-engine-manifest.js';
+import { ENGINE_RECORDINGS, RECORDING_CARS, RECORDING_MIXES } from '../src/recorded-engine-manifest.js';
 import { MANUFACTURER_VEHICLES } from '../src/manufacturer-vehicles.js';
 import { createAudio } from '../src/audio.js';
 
@@ -40,7 +40,7 @@ test('shipping recordings preserve explicit provenance, exact asset hashes and b
   assert.equal(createHash('sha256').update(bytes).digest('hex'),entry.sha256);
   assert.equal(bytes.length,entry.bytes);assert.ok(bytes.length<=RECORDING_BUDGET.downloadBytes);total+=bytes.length;
   assert.equal(bytes.toString('ascii',0,4),'RIFF');assert.equal(bytes.readUInt16LE(22),1);assert.equal(bytes.readUInt16LE(34),16);assert.equal(bytes.readUInt32LE(24),24000);
-  assert.ok(['CC0-1.0','CC-BY-3.0'].includes(source.license));assert.ok(source.author&&source.title&&source.sourceVehicle);assert.match(source.sourceUrl,/^https:\/\/(freesound.org|bigsoundbank.com)\//);assert.match(source.use,/proxy/);
+  assert.ok(['CC0-1.0','CC-BY-3.0','CC-BY-4.0'].includes(source.license));assert.ok(source.author&&source.title&&source.sourceVehicle);assert.match(source.sourceUrl,/^https:\/\/(freesound.org|bigsoundbank.com|commons.wikimedia.org)\//);assert.match(source.use,/proxy/);
   for(const layer of entry.layers){
    const start=Math.round(layer.start*24000),end=Math.round(layer.end*24000);let power=0,peak=0;
    for(let i=start;i<end;i++){const value=bytes.readInt16LE(44+i*2)/32768;power+=value*value;peak=Math.max(peak,Math.abs(value));}
@@ -48,9 +48,23 @@ test('shipping recordings preserve explicit provenance, exact asset hashes and b
    assert.ok(Math.abs(bytes.readInt16LE(44+start*2)-bytes.readInt16LE(44+(end-1)*2))<=1,'loop endpoint is continuous');
   }
  }
- assert.equal(total,585872);assert.equal(total,data.totalBytes);
- for(const [id,recording] of Object.entries(RECORDING_CARS)){assert.ok(car(id),id);assert.notEqual(car(id).powertrain,'electric');assert.ok(ENGINE_RECORDINGS[recording]);}
- assert.equal(recordingForVehicle(car('rimac-nevera')),null);assert.equal(recordingForVehicle(car('audi-r18')),null);
+ assert.equal(total,2240104);assert.equal(total,data.totalBytes);
+ assert.deepEqual(Object.keys(RECORDING_CARS).sort(),MANUFACTURER_VEHICLES.map(vehicle=>vehicle.id).sort());
+ assert.deepEqual(Object.keys(RECORDING_MIXES).sort(),Object.keys(RECORDING_CARS).sort());
+ for(const [id,recording] of Object.entries(RECORDING_CARS)){
+  assert.ok(car(id),id);assert.ok(ENGINE_RECORDINGS[recording]);assert.equal(recordingForVehicle(car(id)).id,recording);
+  assert.equal(ENGINE_RECORDINGS[recording].kind==='electric',car(id).powertrain==='electric');
+  const source=data.recordings.find(entry=>entry.id===recording);assert.ok(source.cars.includes(id));
+  assert.ok(RECORDING_MIXES[id][2]>0&&RECORDING_MIXES[id][2]<=1);
+ }
+ assert.equal(Object.keys(ENGINE_RECORDINGS).length,14);
+ assert.equal(new Set(data.recordings.map(entry=>entry.sha256)).size,14,'families use genuinely different recordings');
+ assert.equal(new Set(data.recordings.map(entry=>entry.sourceSha256)).size,14);
+ assert.equal(recordingForVehicle({id:'unsupported-car'}),null);
+ assert.equal(recordingForVehicle({id:'mclaren-p1-gtr',powertrain:'electric'}),null,'never play combustion loops on an electric vehicle');
+ const diesel=data.recordings.find(entry=>entry.id==='bmw-diesel');assert.equal(diesel.additionalSources.length,2);
+ for(const extra of diesel.additionalSources){assert.equal(extra.license,'CC0-1.0');assert.match(extra.sourceSha256,/^[a-f0-9]{64}$/);assert.ok(diesel.layers.some(layer=>layer.sourceFile===extra.sourceFile));}
+ assert.equal(data.recordings.find(entry=>entry.id==='tesla-electric').sourceFamily,'electric');
 });
 
 test('adjacent rev bands crossfade at constant power, bounded pitch, and load/impact focus remain smooth',()=>{
@@ -136,4 +150,52 @@ test('actual createAudio preserves gesture/mixer/page gates and drops engine mas
  audio.setPageActive(true);const engineBus=body.connections[0].connections[0].connections[0];assert.ok(engineBus.gain.value>0);audio.setEngineVolume(0);assert.equal(engineBus.gain.value,0);
  audio.setMuted(true);assert.equal(context.nodes[0].gain.value,0);
  audio.dispose();assert.equal(context.state,'closed');assert.ok(context.sources.filter(source=>source.started).every(source=>source.stopped===1));
+});
+
+
+test('all 33 catalogue cars decode their actual recording and keep the same cache, request and voice bounds',async()=>{
+ const {context,engine}=setup();engine.setAudible(true);
+ for(const vehicle of MANUFACTURER_VEHICLES){
+  engine.update(vehicle,motion);await settled(engine);engine.update(vehicle,motion);
+  const status=engine.status();assert.equal(status.active,RECORDING_CARS[vehicle.id],vehicle.id);
+  assert.equal(status.voices,ENGINE_RECORDINGS[status.active].layers.length);
+  assert.ok(status.voices<=3);assert.ok(status.cacheBanks<=3);assert.ok(status.decodedBytes<=RECORDING_BUDGET.decodedBytes);
+  assert.deepEqual(status.failed,[]);assert.ok(context.sources.filter(source=>!source.stopped).length<=3);
+ }
+ engine.dispose();assert.equal(engine.status().voices,0);assert.equal(engine.status().decodedBytes,0);
+});
+
+test('electric driving recordings stay silent at rest, have no exhaust boost and never exceed the prior mix gain',async()=>{
+ for(const id of ['rimac-concept-one','rimac-nevera']){
+  const selected=recordingForVehicle(car(id)),mix=RECORDING_MIXES[id];
+  assert.equal(recordedEngineFrame(selected,{rev:0,load:1},mix).gain,0);
+  let previous=0;
+  for(let rev=0;rev<=1;rev+=.005){
+   const frame=recordedEngineFrame(selected,{rev,load:1},mix);
+   assert.equal(frame.exhaust,0);assert.ok(frame.gain>=previous-1e-12);assert.ok(frame.gain<.21);
+   assert.ok(frame.gain-previous<.025);previous=frame.gain;
+   assert.ok(frame.layers.every(layer=>layer.rate>=.82&&layer.rate<=1.3));
+  }
+  const {engine}=setup();engine.setAudible(true);engine.update(car(id),{rev:0,load:1});await settled(engine);
+  assert.equal(engine.update(car(id),{rev:0,load:1}),0,'procedural sound is not ducked by a silent recording');
+  assert.ok(engine.update(car(id),motion)>0);engine.dispose();
+ }
+ assert.notDeepEqual(RECORDING_MIXES['rimac-concept-one'],RECORDING_MIXES['rimac-nevera']);
+ for(const vehicle of MANUFACTURER_VEHICLES)for(let rev=0;rev<=1;rev+=.01){
+  const frame=recordedEngineFrame(recordingForVehicle(vehicle),{rev,load:1},RECORDING_MIXES[vehicle.id]);
+  assert.ok(Number.isFinite(frame.gain)&&frame.gain<=.420001,vehicle.id);assert.ok(frame.layers.length<=3);
+ }
+});
+
+test('an electric request also obeys actual createAudio mute, pause and page lifecycle gates',async()=>{
+ const context=new Context();context.state='suspended';let fetches=0;
+ const audio=createAudio({contextFactory:()=>context,recordedEngineOptions:{fetchImpl:async url=>{fetches++;return diskFetch(url);}}});
+ const state={running:true,vehicle:'rimac-nevera',speed:25,throttle:1,raceId:45};
+ audio.update(state);assert.equal(fetches,0);await audio.unlock();audio.setMuted(true);audio.update(state);assert.equal(fetches,0);
+ audio.setMuted(false);audio.setEngineVolume(0);audio.update(state);assert.equal(fetches,0);
+ audio.setEngineVolume(1);audio.setPageActive(false);audio.update(state);assert.equal(fetches,0);
+ audio.setPageActive(true);audio.update(state);for(let i=0;i<100&&audio.recordingStatus().pending;i++)await new Promise(resolve=>setTimeout(resolve,2));
+ assert.equal(audio.recordingStatus().active,'tesla-electric');assert.equal(fetches,1);
+ const output=context.nodes.find(node=>node.connections.includes(context.destination));
+ audio.update({...state,running:false});assert.equal(output.gain.value,0);audio.dispose();
 });

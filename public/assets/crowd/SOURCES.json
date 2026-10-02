@@ -1,0 +1,114 @@
+{
+  "title": "Camber Reign realistic spectator wardrobe",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "author": "MakeHuman community; fitted, retargeted and optimized for Camber Reign",
+  "sourceAssetPack": "https://files.makehumancommunity.org/asset_packs/makehuman_system_assets/makehuman_system_assets_cc0.zip",
+  "sourceCatalog": "https://static.makehumancommunity.org/assets/assetpacks/makehuman_system_assets.html",
+  "permissionExplanation": "https://static.makehumancommunity.org/makehuman/faq/are_makehuman_files_free.html",
+  "authoringTool": {
+    "name": "MPFB 2.0.17",
+    "repository": "https://github.com/makehumancommunity/mpfb2",
+    "commit": "80919fa4682335c41847f761a4d79dcad4124732",
+    "assetLicense": "https://github.com/makehumancommunity/mpfb2/blob/v2.0.17/LICENSE.ASSETS.md",
+    "note": "Only CC0 exported assets are distributed. MPFB authoring code is not shipped."
+  },
+  "sourceComponents": {
+    "body": "MakeHuman base human and game_engine skeleton; young adult macro targets",
+    "skin": [
+      "young_caucasian_male",
+      "young_african_male",
+      "young_asian_male",
+      "young_african_female",
+      "young_caucasian_female",
+      "young_asian_female"
+    ],
+    "eyes": "low-poly",
+    "eyebrows": "eyebrow001",
+    "hair": [
+      "short01",
+      "short02",
+      "short04",
+      "afro01",
+      "bob01",
+      "ponytail01"
+    ],
+    "clothes": [
+      "male_casualsuit01",
+      "male_casualsuit06",
+      "male_casualsuit03",
+      "female_casualsuit01",
+      "female_casualsuit02",
+      "female_sportsuit01"
+    ],
+    "shoes": [
+      "shoes01",
+      "shoes02",
+      "shoes03"
+    ],
+    "facialTargets": [
+      "mouth-open",
+      "eye-left-closure",
+      "eye-right-closure"
+    ]
+  },
+  "modifications": [
+    "Fitted six different adult bodies and outfits",
+    "Removed invisible body helper volumes and covered skin",
+    "Decimated body to 10500 triangles and hair to at most3600 triangles",
+    "Baked clothing, eyes and skin into 1024px opaque JPEG albedo atlas",
+    "Retained 512px alpha-cutout hair/eyebrow textures",
+    "Transferred sparse cheering and blinking expression targets",
+    "Exported GLB with four normalized skinning weights per vertex"
+  ],
+  "files": [
+    {
+      "file": "spectator-blue-shirt.glb",
+      "bytes": 1510256,
+      "sha256": "550055617801c70a651a96d1a72ad1272b410158995972643ac55d5f9fbc65a5",
+      "triangles": 14099,
+      "meshDraws": 3,
+      "joints": 53
+    },
+    {
+      "file": "spectator-denim.glb",
+      "bytes": 1495632,
+      "sha256": "3d8c65f455c9557e5e8c9fa936ec260a07293faf63a95ea4e6910ea3c0d7ebe0",
+      "triangles": 12883,
+      "meshDraws": 3,
+      "joints": 53
+    },
+    {
+      "file": "spectator-light-tee.glb",
+      "bytes": 1323780,
+      "sha256": "9d625e52eee4411e69f9f3fcf1364a68a2c1ec4801373fcd64828ff8705ee549",
+      "triangles": 14036,
+      "meshDraws": 3,
+      "joints": 53
+    },
+    {
+      "file": "spectator-sport.glb",
+      "bytes": 1492756,
+      "sha256": "b85ad3bf7dce4639ea50d8af9c88f90a1379cb0f42f56a28b7ce9338ebdc1448",
+      "triangles": 14098,
+      "meshDraws": 3,
+      "joints": 53
+    },
+    {
+      "file": "spectator-striped-shirt.glb",
+      "bytes": 1361208,
+      "sha256": "72c58f07c32f55a3f8d18db626ef750dedfe4ae9797bce2436cc5380f9cd14a3",
+      "triangles": 11741,
+      "meshDraws": 3,
+      "joints": 53
+    },
+    {
+      "file": "spectator-summer.glb",
+      "bytes": 1508504,
+      "sha256": "82ddb478cf53747489898544fdba41c840bec9c439cf760df0134d3e2c3428aa",
+      "triangles": 14098,
+      "meshDraws": 3,
+      "joints": 53
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+/* The collection and wallet live in the header's layout, not over the canvas. */
+.wordmark .brand-mark { display:none; }
+body:not(.in-race):not(.in-garage) .topbar {
+  background:#100b16f5; gap:20px;
+}
+body:not(.in-race):not(.in-garage) .top-actions { display:flex; align-items:center; gap:10px; }
+.topbar #open-garage, .topbar #how {
+  display:flex; align-items:center; justify-content:center; flex:none;
+  height:44px; min-height:44px; border:1px solid #ffffff38; border-radius:0;
+  padding:0 14px; gap:10px; color:#fff; background:#26212e; cursor:pointer;
+}
+.topbar #open-garage { border-bottom:3px solid #9246ff; font:800 italic 19px/1 'Barlow Condensed'; }
+.topbar #open-garage .ui-icon { width:27px; height:27px; }
+.topbar #open-garage small { font:800 11px/1 Manrope; margin-left:7px; color:#dfcaff; }
+.topbar #how { width:44px; padding:0; }
+.topbar #how .ui-icon { width:25px; height:25px; }
+.topbar #hq-wallet {
+  position:static; inset:auto; transform:none; flex:none; min-width:122px;
+  height:44px; min-height:44px; padding:0 14px; gap:10px; margin:0;
+  border:0; border-inline:1px solid #ffffff30; border-radius:0;
+  display:flex; align-items:center; background:transparent;
+}
+.topbar #hq-wallet>.ui-icon { width:30px; height:30px; flex:none; color:#fff71e; }
+.topbar #hq-wallet small { font:800 9px/1.3 Manrope; color:#ded5e8; letter-spacing:.8px; }
+.topbar #hq-wallet strong { font:800 italic 26px/1 'Barlow Condensed'; color:#fff71e; }
+.topbar #hq-wallet .hq-wallet-upgrade { display:none; }
+.topbar :is(#open-garage,#how,#hq-wallet):hover { background:#382044; }
+.topbar :is(#open-garage,#how,#hq-wallet):focus-visible { outline:3px solid #fff71e; outline-offset:3px; }
+.in-race .topbar :is(#open-garage,#hq-wallet,#how),
+.in-garage .topbar :is(#open-garage,#hq-wallet,#how) { display:none; }
+#menu:before { display:none; }
+#menu .lobby-nav { grid-template-columns:repeat(4,minmax(0,1fr)); }
+#menu footer { font-size:11px; }
+@media(max-width:1000px) {
+  body:not(.in-race):not(.in-garage) .wordmark .brand-logo { width:190px; }
+  body:not(.in-race):not(.in-garage) .topbar { gap:12px; }
+  body:not(.in-race):not(.in-garage) .top-actions { gap:7px; }
+  .topbar #hq-wallet { min-width:105px; padding-inline:10px; }
+}
+@media(max-width:750px) and (orientation:portrait), (max-width:700px) and (orientation:landscape) {
+  body:not(.in-race):not(.in-garage) .topbar { padding-inline:max(10px,var(--safe-left,0px)) max(10px,var(--safe-right,0px)); gap:8px; }
+  body:not(.in-race):not(.in-garage) .wordmark { min-width:44px; width:44px; height:44px; flex:none; }
+  body:not(.in-race):not(.in-garage) .wordmark .brand-logo { display:none; }
+  body:not(.in-race):not(.in-garage) .wordmark .brand-mark { display:block; width:44px; height:44px; }
+  body:not(.in-race):not(.in-garage) .top-actions { flex:1; justify-content:flex-end; gap:6px; }
+  .topbar #open-garage { padding-inline:10px; gap:6px; font-size:17px; }
+  .topbar #open-garage .ui-icon { width:24px; height:24px; }
+  .topbar #open-garage small { margin-left:4px; font-size:10px; }
+  .topbar #hq-wallet { min-width:86px; padding-inline:8px; gap:7px; }
+  .topbar #hq-wallet>.ui-icon { width:25px; height:25px; }
+  .topbar #hq-wallet small { font-size:8px; letter-spacing:0; }
+  .topbar #hq-wallet strong { font-size:23px; }
+}
+@media(max-width:750px) and (orientation:portrait) {
+  body:not(.in-race):not(.in-garage) .topbar :is(#sound,#fullscreen) { display:none; }
+  #menu { padding-top:82px; }
+}
+@media(max-width:360px) and (orientation:portrait) {
+  .topbar #open-garage { padding-inline:7px; }
+  .topbar #open-garage .ui-icon { display:none; }
+  .topbar #hq-wallet { padding-inline:6px; min-width:82px; }
+}
+
+.topbar #hq-credit-compact { display:none; }
+@media(max-width:750px) {
+  .topbar #hq-credit-value { display:none; }
+  .topbar #hq-credit-compact { display:block; }
+}

@@ -1,5 +1,6 @@
 import * as THREE from 'three';
-import {createSpectatorCharacter, CHARACTER_LIMITS} from './spectator-character.js';
+import {CHARACTER_LIMITS} from './spectator-character.js';
+import {createNearSpectator, createSpectatorLibrary, SPECTATOR_ASSETS} from './realistic-spectator.js';
 
 const TAU = Math.PI * 2;
 const SHIRTS = ['#e7e4db', '#f5c444', '#9e392f', '#486e92', '#425c51', '#303d58', '#ad8171', '#826893', '#cbd2cf', '#3c3547'];
@@ -198,8 +199,9 @@ function spectatorShoeGeometry(low) {
 /** A shared, articulated crowd. Ten distant instanced draws plus a fixed near-mesh pool;
  * a capped foreground group animates at 30/60 Hz, the rest at 15/24 Hz.
  * Per-spectator motion stops when paused or when reduced motion is requested. */
-export function createCrowd({low = false, reducedMotion = false} = {}) {
+export function createCrowd({low = false, reducedMotion = false, spectatorLibrary} = {}) {
  const people = [], batches = new Map(), characters = [];
+ const library=spectatorLibrary||createSpectatorLibrary();
  let scene, lastTime = 0, motionTime = 0, previousTick = -Infinity, previousForegroundTick=-Infinity, disposed = false;
  const detail = low ? 6 : 8;
  const sphere = new THREE.SphereGeometry(1, 6, low ? 3 : 4);
@@ -349,6 +351,11 @@ export function createCrowd({low = false, reducedMotion = false} = {}) {
   add(x,floor,z,yaw,seated,rng=Math.random,{role='spectator',palette,gesture}={}){
    if(scene)throw new Error('Add spectators before rendering the crowd');
    const person=spectatorProfile(x,floor,z,yaw,seated,rng);
+   person.lookVariant=people.length%SPECTATOR_ASSETS.length;
+   // The distant palette echoes the textured foreground wardrobes, reducing
+   // colour popping at the bounded near-mesh transition.
+   Object.assign(person,SPECTATOR_ASSETS[person.lookVariant]);
+   person.cap=false;person.sunglasses=false;person.scarf=false;
    if(Array.isArray(palette)&&palette.length&&palette.every(value=>/^#[a-f0-9]{6}$/i.test(value)))person.shirt=pick(palette,rng);
    if(Number.isInteger(gesture)&&gesture>=0&&gesture<=4)person.gesture=gesture;
    if(role==='marshal'){person.role='marshal';person.shirt='#e97938';person.garment=2;person.pants='#233844';person.shorts=false;person.scarf=false;person.cap=true;person.gesture=rng()>.55?3:1;person.shirtLight='#e3e6cf';}
@@ -369,10 +376,10 @@ export function createCrowd({low = false, reducedMotion = false} = {}) {
    scene.userData.spectatorCount=people.length;
    scene.userData.crowd={people:people.length,baseDrawCalls:[...batches.values()].filter(b=>b.mesh).length,drawCalls:[...batches.values()].filter(b=>b.mesh).length,animated:!reducedMotion,maxUpdateHz:low?30:60,
     backgroundUpdateHz:low?15:24,foregroundLimit:low?10:20,foregroundAnimated:0,sharedTextures:textures.length,characterLimit:low?CHARACTER_LIMITS.mobile:CHARACTER_LIMITS.desktop,activeCharacters:0};
-   // Allocate the bounded original mesh pool once. Reassignment changes bone
-   // matrices and palette uniforms only: no per-frame geometry or texture loads.
-   for(const person of people.slice(0,low?CHARACTER_LIMITS.mobile:CHARACTER_LIMITS.desktop)){
-    const character=createSpectatorCharacter(person,{low});character.template=person;character.person=null;character.mesh.visible=false;characters.push(character);scene.add(character.mesh);
+   // Fixed near slots share six textured CC0 assets, decoded two at a time.
+   // Each has an immediate original fallback; no request can block race start.
+   for(const person of people.filter(person=>person.role!=='marshal').slice(0,low?CHARACTER_LIMITS.mobile:CHARACTER_LIMITS.desktop)){
+    const character=createNearSpectator(person,{low,library,index:person.lookVariant});character.template=person;character.person=null;character.mesh.visible=false;characters.push(character);scene.add(character.mesh);
    }
   },
   update(time,car,{paused=false,reducedMotion:reduce=reducedMotion}={}){
@@ -390,24 +397,26 @@ export function createCrowd({low = false, reducedMotion = false} = {}) {
    for(const person of people){
     person.viewDistance=car?Math.hypot(person.x-car.x,person.z-car.z):0;
     const near=person.viewDistance<(low?18:26);
-    if(person.viewDistance<(low?14:22))foreground.push(person);
+    if(person.viewDistance<(low?CHARACTER_LIMITS.mobileDistance:CHARACTER_LIMITS.desktopDistance))foreground.push(person);
     const inRange=person.viewDistance<(low?76:130);
     if(inRange)visiblePeople++;
     if(person.nearFace!==near||person.inRange!==inRange){person.nearFace=near;person.inRange=inRange;faceLodChanged=true;}
    }
-   const desiredCharacters=people.filter(person=>person.inRange&&person.viewDistance<(low?CHARACTER_LIMITS.mobileDistance:CHARACTER_LIMITS.desktopDistance)+(person.authoredCharacter?2:0))
+   const desiredCharacters=people.filter(person=>person.role!=='marshal'&&person.inRange&&person.viewDistance<(low?CHARACTER_LIMITS.mobileDistance:CHARACTER_LIMITS.desktopDistance)+(person.authoredCharacter?2:0))
     .sort((left,right)=>(left.viewDistance-(left.authoredCharacter?2:0))-(right.viewDistance-(right.authoredCharacter?2:0))).slice(0,characters.length);
    const desiredSet=new Set(desiredCharacters);
    for(const character of characters)if(character.person&&!desiredSet.has(character.person)){
     character.person.authoredCharacter=false;character.person=null;character.mesh.visible=false;faceLodChanged=true;
    }
    for(const person of desiredCharacters)if(!person.authoredCharacter){
-    const wardrobeCost=item=>Math.abs(item.template.garment-person.garment)*2+Number(item.template.cap!==person.cap)+Number(item.template.longHair!==person.longHair)+Number(item.template.sunglasses!==person.sunglasses);
+    const wardrobeCost=item=>Number(item.template.lookVariant!==person.lookVariant)*20+Math.abs(item.template.garment-person.garment)*2+Number(item.template.longHair!==person.longHair);
     const character=characters.filter(item=>!item.person).sort((a,b)=>wardrobeCost(a)-wardrobeCost(b))[0];if(!character)break;
     character.person=person;person.authoredCharacter=true;character.mesh.visible=true;
     character.update(person,spectatorPose(person,motionTime,person.reaction||0));faceLodChanged=true;
    }
-   scene.userData.crowd.activeCharacters=desiredCharacters.length;scene.userData.crowd.drawCalls=scene.userData.crowd.baseDrawCalls+desiredCharacters.length;
+   scene.userData.crowd.activeCharacters=desiredCharacters.length;scene.userData.crowd.drawCalls=scene.userData.crowd.baseDrawCalls+characters.filter(item=>item.person).reduce((sum,item)=>sum+item.drawCalls,0);
+   scene.userData.crowd.texturedCharacters=characters.filter(item=>item.person&&item.kind==='textured').length;
+   scene.userData.crowd.assetLoading=library.status;
    const foregroundSet=new Set(foreground.sort((left,right)=>left.viewDistance-right.viewDistance).slice(0,low?10:20));
    scene.userData.crowd.foregroundAnimated=reduce?0:foregroundSet.size;
    scene.userData.crowd.visiblePeople=visiblePeople;
@@ -449,7 +458,7 @@ export function createCrowd({low = false, reducedMotion = false} = {}) {
    if(changed)for(const batch of batches.values())if(batch.mesh)batch.mesh.instanceMatrix.needsUpdate=true;
   },
   get count(){return people.length;},
-  dispose(){if(disposed)return;disposed=true;for(const character of characters)character.dispose();for(const batch of batches.values()){batch.mesh?.removeFromParent();batch.geometry.dispose();}
+  dispose(){if(disposed)return;disposed=true;for(const character of characters)character.dispose();library.dispose();for(const batch of batches.values()){batch.mesh?.removeFromParent();batch.geometry.dispose();}
    for(const texture of textures)texture.dispose();for(const appearance of [material,skinMaterial,shirtMaterial,trouserMaterial,hairMaterial])appearance.dispose();},
  };
 }

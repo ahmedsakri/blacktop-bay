@@ -4,6 +4,7 @@ import { sampleTrack, projectOnTrack } from './track.js';
 import { getTrackObstacles } from './track-obstacles.js';
 import {coastalGroundingLayout} from './coastal-foundations.js';
 import { broadleafCrownGeometry } from './vegetation-geometry.js';
+import {setWorldSurfaceUV} from './track-surface-materials.js';
 
 export const DESTINATION_PROFILES = Object.freeze({
   'fuji-skyline': {background:'#8daebf',fog:'#aebdc0',fogDensity:.00065,sky:'#d6e7ef',sun:'#fff1d9',sunlight:1.5,ground:'#546749',vegetation:'woodland',towers:0},
@@ -13,10 +14,10 @@ export const DESTINATION_PROFILES = Object.freeze({
 });
 
 /** Original mesh scenery, including load-bearing viaduct piers and real ramps. */
-export function createMountainVenue(scene, track, {low=false,landmarks=[]}={}) {
+export function createMountainVenue(scene, track, {low=false,landmarks=[],surfaces}={}) {
   if (!track.elevationProfile) return;
   const group=new THREE.Group();group.name=`destination-${track.id}`;scene.add(group);
-  const concrete=new THREE.MeshStandardMaterial({color:'#8f9690',roughness:.85});
+  const concrete=new THREE.MeshStandardMaterial({color:'#8f9690',roughness:.85,map:surfaces?.concreteColor||null,normalMap:surfaces?.concreteNormal||null,normalScale:new THREE.Vector2(.18,.18)});
   const stone=new THREE.MeshStandardMaterial({color:'#596967',roughness:1});
   const snow=new THREE.MeshStandardMaterial({color:'#e9efeb',roughness:.82});
   const cherry=new THREE.MeshStandardMaterial({color:'#deb1ba',vertexColors:true,roughness:1});
@@ -44,7 +45,7 @@ export function createMountainVenue(scene, track, {low=false,landmarks=[]}={}) {
       for(const index of [0,1,2,2,1,3]){const p=points[index];bankPositions.push(p.x,p.y,p.z);}
     }
   }
-  if(bankPositions.length){const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(bankPositions,3));g.computeVertexNormals();const bank=new THREE.Mesh(g,new THREE.MeshStandardMaterial({color:track.id==='san-francisco-hills'?'#5f6259':'#526453',roughness:1,side:THREE.DoubleSide}));bank.receiveShadow=true;group.add(bank);}
+  if(bankPositions.length){const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(bankPositions,3));g.computeVertexNormals();setWorldSurfaceUV(g,90);const bank=new THREE.Mesh(g,new THREE.MeshStandardMaterial({color:track.id==='san-francisco-hills'?'#a3a699':'#9aab89',roughness:1,map:surfaces?.terrainColor||null,side:THREE.DoubleSide}));bank.receiveShadow=true;group.add(bank);}
   // The summit is a scene landmark with a separate snow cap, outside the route.
   if(track.id==='fuji-skyline') {
   const mountain=mesh(new THREE.ConeGeometry(390,380,low?28:48,6),stone,80,170,-790);
@@ -92,7 +93,20 @@ export function createMountainVenue(scene, track, {low=false,landmarks=[]}={}) {
       const coping=new THREE.Mesh(new THREE.BoxGeometry(12,.2,14),concrete);coping.position.y=-.1;house.add(coping);
       const wall=new THREE.Mesh(new THREE.BoxGeometry(8,10+(i%3)*2,10),houseMaterials[i%4]);wall.position.y=(10+(i%3)*2)/2;house.add(wall);
       const roof=new THREE.Mesh(new THREE.ConeGeometry(7,4,4),steel);roof.position.y=12+(i%3)*2;roof.rotation.y=Math.PI/4;house.add(roof);
-      for(const dx of [-2,2])for(const y of [3,7]){const w=new THREE.Mesh(new THREE.BoxGeometry(1.3,2,.12),windowMat);w.position.set(dx,y,5.07);house.add(w);}
+      const detail=(w,h,d,x,y,z,mat=concrete,flat=false)=>{const m=new THREE.Mesh(flat?new THREE.PlaneGeometry(w,h):new THREE.BoxGeometry(w,h,d),mat);m.position.set(x,y,z);house.add(m);return m;};
+      for(const dx of [-2,2])for(const y of [3,7]){
+        // Actual projecting bay, glazing, casings and sill: the nearby homes
+        // should read as lived-in architecture from the driving camera.
+        detail(1.70,2.35,.46,dx,y,5.15,houseMaterials[i%4]);
+        detail(1.3,2,.07,dx,y,5.415,windowMat,low);
+        for(const side of [-1,1])detail(.13,2.24,.16,dx+side*.74,y,5.45,concrete,low);
+        detail(1.77,.14,.55,dx,y-1.13,5.50,concrete,low);detail(1.7,.16,.4,dx,y+1.16,5.50,concrete,low);
+        detail(1.3,.055,.08,dx,y,5.48,concrete,low);detail(.055,2,.08,dx,y,5.48,concrete,low);
+      }
+      detail(1.36,2.6,.10,0,1.43,5.06,windowMat,low);detail(2.5,.18,1.35,0,2.9,5.43,steel);
+      for(const x of [-1.1,1.1])detail(.10,2.85,.10,x,1.42,5.93,steel);
+      for(let y=3.95;y<10+(i%3)*2;y+=3.3)detail(8.35,.16,10.3,0,y,0);
+      detail(8.6,.22,10.65,0,10+(i%3)*2,0);
     }
   }
   // Elevated runs use different bridge architecture, not a panorama swap.
@@ -145,7 +159,7 @@ export function createMountainVenue(scene, track, {low=false,landmarks=[]}={}) {
     const bounds=new THREE.Box3().setFromObject(item),center=bounds.getCenter(new THREE.Vector3()),size=bounds.getSize(new THREE.Vector3());
     const distantLandmark=Math.max(size.x,size.y,size.z)>90||item.material===concrete||item.material===red;
     const key=item.material.uuid+':'+Object.keys(item.geometry.attributes).sort().join(',');
-    const geometry=item.geometry.index?item.geometry.toNonIndexed():item.geometry.clone();geometry.applyMatrix4(item.matrixWorld);
+    const geometry=item.geometry.index?item.geometry.toNonIndexed():item.geometry.clone();geometry.applyMatrix4(item.matrixWorld);if(surfaces&&item.material===concrete)setWorldSurfaceUV(geometry,3);
     if(!batches.has(key))batches.set(key,{material:item.material,items:[],triangles:0,distantLandmark:false});
     const batch=batches.get(key);batch.items.push({geometry,sector:`${center.x>=centerX?1:0}:${center.z>=centerZ?1:0}`});
     batch.triangles+=geometry.attributes.position.count/3;batch.distantLandmark||=distantLandmark;old.push(item);

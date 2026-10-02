@@ -4,7 +4,7 @@ import { TRACK, sampleTrack, projectOnTrack } from './track.js';
 import { RIVAL_GRID } from './rivals.js';
 import { cornerApproachMarkers } from './track-details.js';
 import { createCrowd } from './crowd.js';
-import { createTracksideServices } from './trackside-services.js';
+import { createTracksideServices,tracksideServiceLayout } from './trackside-services.js';
 import { broadleafCrownGeometry, coniferBoughGeometry } from './vegetation-geometry.js';
 import { createMountainVenue, DESTINATION_PROFILES } from './mountain-venue.js';
 import { ORIGINAL_VENUE_PROFILES, originalLandmarkLayout, createOriginalLandmarks } from './original-venues.js';
@@ -14,6 +14,8 @@ import { createCinematicBackdrop, CINEMATIC_BACKDROP_GLSL } from './cinematic-ba
 import {venueLighting} from './showcase-lighting.js';
 import {createCoastalGrounding} from './coastal-foundations.js';
 import {createEnvironmentResource} from './environment-resource.js';
+import {createTrackSurfaceLibrary,roadSurfaceMaterial,concreteSurfaceMaterial,barrierProfileGeometry,architecturalFacadeMaterial} from './track-surface-materials.js';
+import {createArchitecturalDetails,createTerrainRelief,createRoadEdgeDetails,streetscapeLayout,createWaterfrontGrounding} from './track-world-detail.js';
 
 const TAU = Math.PI * 2;
 const ORIGINAL_VENUES = new Set(['harbor', 'dockyard', 'coast', 'summit', 'grandprix']);
@@ -67,20 +69,30 @@ function canvasTexture(width, height, draw) {
 }
 // Both the driving surface and the reflector wind upwards. The reflector's
 // local +Z plane rotates to world +Y; its UVs retain metres along the track.
-function roadGeometry(width, flat = false) {
+function roadGeometry(width, flat = false, metres = false) {
  const positions = [], uv = [], indices = [], samples = TRACK.samples;
  for (let i = 0; i <= samples.length; i++) {
   const v = samples[i % samples.length], s = i === samples.length ? TRACK.length : v.s;
-  for (const side of [-1, 1]) { const x = v.x + v.nx * width * .5 * side, z = v.z + v.nz * width * .5 * side; positions.push(x, flat ? -z : (v.y || 0), flat ? 0 : z); uv.push((side + 1) / 2, s / 14); }
+  for (const side of [-1, 1]) { const x = v.x + v.nx * width * .5 * side, z = v.z + v.nz * width * .5 * side; positions.push(x, flat ? -z : (v.y || 0), flat ? 0 : z); uv.push(metres ? (side+1)*width/6 : (side+1)/2, metres ? s/3 : s/14); }
   if (i < samples.length) { const j = i * 2; indices.push(j, j + 2, j + 1, j + 1, j + 2, j + 3); }
  }
  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3)); g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); g.setIndex(indices); g.computeVertexNormals(); return g;
 }
 function ribbon(offset, width, height, material) {
- const positions = [], indices = [];
- for (let i = 0; i <= TRACK.samples.length; i++) { const v = TRACK.samples[i % TRACK.samples.length]; for (const w of [-width / 2, width / 2]) positions.push(v.x + v.nx * (offset + w), height + (v.y || 0), v.z + v.nz * (offset + w)); if (i < TRACK.samples.length) { const j = i * 2; indices.push(j, j + 2, j + 1, j + 1, j + 2, j + 3); } }
- const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3)); g.setIndex(indices); g.computeVertexNormals(); return new THREE.Mesh(g, material);
+ const positions = [], uv = [], indices = [];
+ for (let i = 0; i <= TRACK.samples.length; i++) {
+  const v = TRACK.samples[i % TRACK.samples.length], distance=i===TRACK.samples.length?TRACK.length:v.s;
+  for (const w of [-width/2,width/2]) {positions.push(v.x+v.nx*(offset+w),height+(v.y||0),v.z+v.nz*(offset+w));uv.push((w+width/2)/3,distance/3);}
+  if (i < TRACK.samples.length) {const j=i*2;indices.push(j,j+2,j+1,j+1,j+2,j+3);}
+ }
+ const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));g.setIndex(indices);g.computeVertexNormals();return new THREE.Mesh(g,material);
 }
+function terrainUV(geometry,centerX=0,centerZ=0,metres=90) {
+ const p=geometry.attributes.position,uv=new Float32Array(p.count*2);
+ for(let i=0;i<p.count;i++){uv[i*2]=(p.getX(i)+centerX)/metres;uv[i*2+1]=(-p.getY(i)+centerZ)/metres;}
+ geometry.setAttribute('uv',new THREE.BufferAttribute(uv,2));return geometry;
+}
+
 function instances(scene, geo, mat, list) {
  return createSpatialInstances(scene,geo,mat,list);
 }
@@ -132,32 +144,13 @@ function palmFrondGeometry() {
  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3)); g.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3)); g.computeVertexNormals(); return g;
 }
 
-function facadeMaterial() {
- const material = new THREE.MeshStandardMaterial({ color: '#506877', metalness: .48, roughness: .42 });
- material.onBeforeCompile = shader => {
-  shader.vertexShader = 'varying vec2 vFacade; varying float vTowerSeed;\n' + shader.vertexShader;
-  shader.vertexShader = shader.vertexShader.replace('#include <begin_vertex>', `#include <begin_vertex>
-    vec3 facadeScale=vec3(length(instanceMatrix[0].xyz),length(instanceMatrix[1].xyz),length(instanceMatrix[2].xyz));
-    float faceWidth=abs(normal.x)>.5?facadeScale.z:facadeScale.x;
-    vFacade=vec2(uv.x*faceWidth/2.5,uv.y*facadeScale.y/3.2);
-    vTowerSeed=instanceMatrix[3].x*.13+instanceMatrix[3].z*.07;
-  `);
-  shader.fragmentShader = `varying vec2 vFacade;varying float vTowerSeed;${noiseGLSL}
-    vec3 windowLight(){vec2 cell=floor(vFacade),f=fract(vFacade);float seed=hash21(cell+vTowerSeed);float window=step(.19,f.x)*step(f.x,.73)*step(.21,f.y)*step(f.y,.77);float on=step(.69,seed)*window*step(.18,hash21(vec2(cell.y,vTowerSeed)));vec3 tint=mix(vec3(.09,.25,.38),vec3(.9,.34,.075),step(.18,hash21(cell*.13+floor(vTowerSeed))));return tint*on*(.27+seed*.48);}
-  ` + shader.fragmentShader;
-  shader.fragmentShader = shader.fragmentShader.replace('#include <map_fragment>', `#include <map_fragment>
-    vec2 facadeFraction=fract(vFacade);float pane=step(.16,facadeFraction.x)*step(facadeFraction.x,.77)*step(.18,facadeFraction.y)*step(facadeFraction.y,.8);
-    diffuseColor.rgb*=mix(vec3(.36,.46,.55),vec3(.085,.14,.21),pane);
-  `);
-  shader.fragmentShader = shader.fragmentShader.replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\ntotalEmissiveRadiance+=windowLight()*.68;');
- };
- material.customProgramCacheKey = () => 'blacktop-bay-facade-v2'; return material;
-}
 
 export function createWorld(renderer, { low = false, reducedMotion = false } = {}) {
  const summit = TRACK.id === 'summit', grandPrix = TRACK.id === 'grandprix', venue = getVenueProfile(TRACK);
  const rng = random(), crowdRng = random(124), crowd = createCrowd({low, reducedMotion}), scene = new THREE.Scene(); scene.background = new THREE.Color(venue.background); scene.fog = new THREE.FogExp2(venue.fog,venue.fogDensity);
  scene.userData.venueEnvironment={type:venue.environment,original:venue.original,night:venue.night,water:venue.water};
+ const surfaces=createTrackSurfaceLibrary({low,anisotropy:renderer.capabilities.getMaxAnisotropy()});scene.userData.trackSurfaces=surfaces.status;
+ const frontageBuildings=[],terrainOccupied=[];
  scene.add(new THREE.HemisphereLight(venue.sky,venue.bounce,venue.ambient));
  const sun = new THREE.DirectionalLight(venue.sun,venue.sunlight); sun.position.set(-180,venue.sunHeight,130); sun.castShadow = true; sun.shadow.mapSize.set(low ? 1024 : 2048, low ? 1024 : 2048); Object.assign(sun.shadow.camera, { left: -20, right: 20, top: 20, bottom: -20, near: 1, far: 360 }); sun.shadow.bias = -.00065; sun.shadow.normalBias = .015; scene.add(sun, sun.target);
  const fill = new THREE.DirectionalLight(venue.fill,venue.fillIntensity); fill.position.set(20, 45, -30); scene.add(fill);
@@ -227,24 +220,6 @@ export function createWorld(renderer, { low = false, reducedMotion = false } = {
   #include <colorspace_fragment>
  }` })); sea.rotation.x = -Math.PI / 2; sea.position.y = -.65; sea.visible=venue.water; scene.add(sea);
 
- const asphalt = canvasTexture(low ? 512 : 1024, low ? 512 : 1024, (c, w, h) => {
-  c.fillStyle = '#474b50'; c.fillRect(0, 0, w, h);
-  const pixels = c.getImageData(0, 0, w, h);
-  for (let i = 0; i < pixels.data.length; i += 4) { const aggregate=rng(),v = 48 + aggregate * 25 + (aggregate>.987?14:0); pixels.data[i] = v; pixels.data[i + 1] = v + 3; pixels.data[i + 2] = v + 6; }
-  c.putImageData(pixels, 0, 0);
-  // Fine aggregate sits inside larger resurfacing variation. Long understated
-  // rubber bands read as driven asphalt instead of uniform glittery gravel.
-  for(let patch=0;patch<18;patch++){
-   c.fillStyle=`rgba(12,17,23,${.025+rng()*.045})`;
-   c.fillRect(rng()*w,rng()*h,w*(.10+rng()*.28),h*(.12+rng()*.48));
-  }
-  for(const lane of [.33,.67]){
-   const band=c.createLinearGradient((lane-.075)*w,0,(lane+.075)*w,0);
-   band.addColorStop(0,'rgba(9,14,18,0)');band.addColorStop(.5,'rgba(9,14,18,.075)');band.addColorStop(1,'rgba(9,14,18,0)');
-   c.fillStyle=band;c.fillRect((lane-.075)*w,0,w*.15,h);
-  }
-  for (let i = 0; i < 100; i++) { c.strokeStyle = `rgba(10,17,23,${rng() * .13})`; c.lineWidth = 1 + rng() * 2; c.beginPath(); const x = rng() * w, y = rng() * h; c.moveTo(x, y); c.lineTo(x + rng() * 8 - 4, y + 20 + rng() * 70); c.stroke(); }
- }); asphalt.wrapS = asphalt.wrapT = THREE.RepeatWrapping; asphalt.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
  const base = new THREE.Mesh(roadGeometry(TRACK.width + 11), new THREE.MeshStandardMaterial({ color: venue.environment==='desert'?'#736855':'#303a43', roughness: .9 })); base.position.y = -.10; scene.add(base);
  if(TRACK.scenery==='breakwater'){
   // A submerged sea-wall foundation gives the causeway thickness at water level.
@@ -252,12 +227,12 @@ export function createWorld(renderer, { low = false, reducedMotion = false } = {
   for(let s=0;s<TRACK.length;s+=5){const p=sampleTrack(s);foundations.push({x:p.x,y:-.56,z:p.z,sx:TRACK.width+10.9,sy:.90,sz:5.12,ry:Math.atan2(p.tx,p.tz)});}
   instances(scene,box,new THREE.MeshStandardMaterial({color:'#555e61',roughness:.96}),foundations);
  }
- const road = new THREE.Mesh(roadGeometry(TRACK.width), new THREE.MeshStandardMaterial({ color: '#b5bbc2', map: asphalt, bumpMap: asphalt, bumpScale: .012, roughness: .86, metalness: .015, envMapIntensity: .16 })); road.position.y = .011; road.receiveShadow = true; applyShowcaseSurface(road,TRACK); scene.add(road);
+ const road = new THREE.Mesh(roadGeometry(TRACK.width,false,true),roadSurfaceMaterial(surfaces.maps)); road.position.y = .011; road.receiveShadow = true; applyShowcaseSurface(road,TRACK); scene.add(road);
  const wetShader = {
   name: 'RainPolishedAsphalt', uniforms: { color: { value: null }, tDiffuse: { value: null }, textureMatrix: { value: null } },
   vertexShader: `uniform mat4 textureMatrix;varying vec4 vUv;varying vec3 vWorld;void main(){vUv=textureMatrix*vec4(position,1.);vWorld=(modelMatrix*vec4(position,1.)).xyz;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
   fragmentShader: `uniform vec3 color;uniform sampler2D tDiffuse;varying vec4 vUv;varying vec3 vWorld;${noiseGLSL}
-  void main(){vec2 q=vWorld.xz;float fine=noise21(q*7.);float wet=smoothstep(.29,.70,fbm(q*.24));vec4 projected=vUv;projected.xy+=vec2(noise21(q*3.1)-.5,noise21(q*4.2+8.)-.5)*.0012*projected.w;vec2 sampleUV=projected.xy/projected.w;float softness=.0008+(1.-wet)*.0015;vec3 reflected=texture2D(tDiffuse,sampleUV).rgb*.5;reflected+=(texture2D(tDiffuse,sampleUV+vec2(softness,0)).rgb+texture2D(tDiffuse,sampleUV-vec2(softness,0)).rgb+texture2D(tDiffuse,sampleUV+vec2(0,softness)).rgb+texture2D(tDiffuse,sampleUV-vec2(0,softness)).rgb)*.125;float grazing=pow(1.-clamp(normalize(cameraPosition-vWorld).y,0.,1.),2.);float alpha=(.008+wet*.14)*(.22+grazing*.78);gl_FragColor=vec4(reflected*vec3(.81,.88,.97)*( .9+fine*.1),alpha);
+  void main(){vec2 q=vWorld.xz;float fine=noise21(q*7.);float wet=smoothstep(.29,.70,fbm(q*.24));vec4 projected=vUv;projected.xy+=vec2(noise21(q*3.1)-.5,noise21(q*4.2+8.)-.5)*.0012*projected.w;vec2 sampleUV=projected.xy/projected.w;float softness=.0008+(1.-wet)*.0015;vec3 reflected=texture2D(tDiffuse,sampleUV).rgb*.5;reflected+=(texture2D(tDiffuse,sampleUV+vec2(softness,0)).rgb+texture2D(tDiffuse,sampleUV-vec2(softness,0)).rgb+texture2D(tDiffuse,sampleUV+vec2(0,softness)).rgb+texture2D(tDiffuse,sampleUV-vec2(0,softness)).rgb)*.125;float grazing=pow(1.-clamp(normalize(cameraPosition-vWorld).y,0.,1.),2.);float alpha=(.004+wet*.038)*(.18+grazing*.82);gl_FragColor=vec4(reflected*vec3(.81,.88,.97)*( .9+fine*.1),alpha);
    #include <tonemapping_fragment>
    #include <colorspace_fragment>
   }`
@@ -265,7 +240,7 @@ export function createWorld(renderer, { low = false, reducedMotion = false } = {
  const reflection = new Reflector(roadGeometry(TRACK.width, true), { textureWidth: low ? 512 : 1024, textureHeight: low ? 512 : 1024, color: 0x708699, multisample: low ? 0 : 2, clipBias: .003, shader: wetShader }); reflection.rotation.x = -Math.PI / 2; reflection.position.y = .026; reflection.material.transparent = true; reflection.material.depthWrite = false; reflection.renderOrder = 0; reflection.visible=!TRACK.elevationProfile&&venue.environment!=='desert'&&venue.environment!=='parkland'; scene.add(reflection);
  const white = new THREE.MeshBasicMaterial({ color: '#97a7aa' }), cyan = new THREE.MeshBasicMaterial({ color: '#34d8e9', toneMapped: false }), concrete = new THREE.MeshStandardMaterial({ color: '#596571', roughness: .82 }), metal = new THREE.MeshStandardMaterial({ color: '#15212c', metalness: .72, roughness: .35 }), warm = new THREE.MeshBasicMaterial({ color: '#ffd19a', toneMapped: false });
  warm.color.multiplyScalar(2.4); cyan.color.multiplyScalar(1.5);
- const sidewalk = new THREE.MeshStandardMaterial({ color:venue.environment==='desert'?'#8e7c61':venue.environment==='parkland'?'#586455':'#34424b', roughness: .92 });
+ const sidewalk=concreteSurfaceMaterial(surfaces.maps,{color:venue.environment==='desert'?'#b4a384':venue.environment==='parkland'?'#929887':'#a1aaab'});
  for (const side of [-1, 1]) { scene.add(ribbon(side * (TRACK.width / 2 + 3.1), 4.6, -.02, sidewalk)); scene.add(ribbon(side * (TRACK.width / 2 - .5), .10, .049, white)); scene.add(ribbon(side * (TRACK.width / 2 + .62), .038, 1.06, cyan)); }
  const barriers = [], rails = [], dashes = [], posts = [], bulbs = [], arms = [], chevrons = [], leftChevrons = [], straightMarkers = [], joints = [], railingUprights = [];
  const panelTexture = canvasTexture(256, 128, c => { c.fillStyle = '#091b25'; c.fillRect(0, 0, 256, 128); c.strokeStyle = '#35e1f2'; c.lineWidth = 17; for (let x = 60; x < 200; x += 70) { c.beginPath(); c.moveTo(x, 30); c.lineTo(x + 34, 64); c.lineTo(x, 98); c.stroke(); } });
@@ -273,7 +248,7 @@ export function createWorld(renderer, { low = false, reducedMotion = false } = {
   const v = sampleTrack(s), angle = Math.atan2(v.tx, v.tz), step = Math.floor(s / 5),gradePose={rx:-Math.atan(v.grade||0),order:'YXZ'};
   for (const side of [-1, 1]) {
    const o = side * (TRACK.width / 2 + .7), x = v.x + v.nx * o, z = v.z + v.nz * o;
-   barriers.push({ x, z, y: v.y+.49, sx: .66, sy: .98, sz: 4.97, ry: angle,...gradePose, color: step % 7 === 0 ? '#6b747d' : '#515d68' });
+   barriers.push({ x, z, y: v.y+.49, sx: .66, sy: .98, sz: 4.97, ry: angle,...gradePose, color: step % 7 === 0 ? '#b0b6b1' : '#d3d3c9' });
    rails.push({ x, z, y: v.y+1.085, sx: .14, sy: .09, sz: 5.05, ry: angle,...gradePose });
    joints.push({ x, z, y: v.y+.43, sx: .68, sy: .8, sz: .028, ry: angle,...gradePose });
    if (step % 2 === 0) { const edge = side * (TRACK.width / 2 + 5.1); railingUprights.push({ x: v.x + v.nx * edge, z: v.z + v.nz * edge, y: v.y+.46, sx: .07, sy: .96, sz: .07 }); }
@@ -293,7 +268,7 @@ export function createWorld(renderer, { low = false, reducedMotion = false } = {
    }
   }
  }
- instances(scene, box, new THREE.MeshStandardMaterial({ color: '#bbc2c9', roughness: .82 }), barriers); instances(scene, box, metal, rails); instances(scene, box, new THREE.MeshStandardMaterial({ color: '#24313d', roughness: .9 }), joints); instances(scene, box, white, dashes); instances(scene, box, metal, posts); instances(scene, new THREE.CylinderGeometry(1, 1, 1, 6), metal, arms); instances(scene, box, warm, bulbs); instances(scene, box, metal, railingUprights);
+ instances(scene,barrierProfileGeometry(),concreteSurfaceMaterial(surfaces.maps,{color:'#b8bdba'}),barriers); instances(scene, box, metal, rails); instances(scene, box, new THREE.MeshStandardMaterial({ color: '#24313d', roughness: .9 }), joints); instances(scene, box, white, dashes); instances(scene, box, metal, posts); instances(scene, new THREE.CylinderGeometry(1, 1, 1, 6), metal, arms); instances(scene, box, warm, bulbs); instances(scene, box, metal, railingUprights);
  for (const side of [-1, 1]) { scene.add(ribbon(side * (TRACK.width / 2 + 5.1), .055, .93, metal)); scene.add(ribbon(side * (TRACK.width / 2 + 5.1), .035, .49, metal)); }
  const leftPanelTexture = panelTexture.clone(); leftPanelTexture.wrapS = THREE.RepeatWrapping; leftPanelTexture.repeat.x = -1; leftPanelTexture.needsUpdate = true;
  instances(scene, new THREE.PlaneGeometry(1.75, .65), new THREE.MeshBasicMaterial({ map: panelTexture, side: THREE.FrontSide, toneMapped: false }), chevrons);
@@ -439,22 +414,19 @@ export function createWorld(renderer, { low = false, reducedMotion = false } = {
   }
   if (i % 3 === 0) shoreLights.push({ x: x - width * .45, z: z - depth * .51, y: 4.2, sx: .3, sy: .22, sz: .4 });
  }
- instances(scene, box, facadeMaterial(), towers); instances(scene, box, new THREE.MeshStandardMaterial({ color: '#202e3b', roughness: .72 }), podiums); instances(scene, box, metal, roofEquipment); instances(scene, box, new THREE.MeshBasicMaterial({ color: '#527f94' }), caps); instances(scene, box, warm, shoreLights);
- const land = new THREE.Mesh(new THREE.RingGeometry(venue.original?216:venue.radius+30,venue.groundRadius,100), new THREE.MeshStandardMaterial({ color:venue.ground, roughness: 1 })); land.rotation.x = -Math.PI / 2; land.position.set(venue.original?0:venue.centerX,-.28,venue.original?0:venue.centerZ); scene.add(land);
+ instances(scene, box, architecturalFacadeMaterial({night:venue.night}), towers); instances(scene, box, new THREE.MeshStandardMaterial({ color: '#202e3b', roughness: .72 }), podiums); instances(scene, box, metal, roofEquipment); instances(scene, box, new THREE.MeshBasicMaterial({ color: '#527f94' }), caps); instances(scene, box, warm, shoreLights);
+ frontageBuildings.push(...towers.filter(b=>projectOnTrack(b.x,b.z).distance<180&&b.y-b.sy/2<.5).slice(0,low?16:28));
+ terrainOccupied.push(...towers.map(b=>({x:b.x,z:b.z,radius:Math.hypot(b.sx,b.sz)/2+4})));
+ const land = new THREE.Mesh(terrainUV(new THREE.RingGeometry(venue.original?216:venue.radius+30,venue.groundRadius,100),venue.original?0:venue.centerX,venue.original?0:venue.centerZ,venue.environment==='urban'?3:90), new THREE.MeshStandardMaterial({ color:venue.environment==='urban'?'#929a9b':'#c6c9b5',map:venue.environment==='urban'?surfaces.maps.concreteColor:surfaces.maps.terrainColor, roughness: 1 })); land.rotation.x = -Math.PI / 2; land.position.set(venue.original?0:venue.centerX,-.28,venue.original?0:venue.centerZ); scene.add(land);
  if(!venue.original&&!venue.water){
   // Inland venues have continuous terrain under the whole route: no hidden
   // waterfront infield or yachts appearing beside a desert/permanent circuit.
-  const terrainNoise=canvasTexture(256,256,(c,w,h)=>{
-   const pixels=c.createImageData(w,h);
-   for(let i=0;i<pixels.data.length;i+=4){const shade=175+rng()*65;pixels.data[i]=shade;pixels.data[i+1]=shade;pixels.data[i+2]=shade;pixels.data[i+3]=255;}
-   c.putImageData(pixels,0,0);
-  });terrainNoise.wrapS=terrainNoise.wrapT=THREE.RepeatWrapping;terrainNoise.repeat.set(110,110);
-  const terrain=new THREE.Mesh(new THREE.CircleGeometry(venue.groundRadius,96),new THREE.MeshStandardMaterial({color:venue.ground,map:terrainNoise,roughness:1}));
+  const terrain=new THREE.Mesh(terrainUV(new THREE.CircleGeometry(venue.groundRadius,96),venue.centerX,venue.centerZ,venue.environment==='urban'?3:90),new THREE.MeshStandardMaterial({color:venue.environment==='urban'?'#929a9b':'#c6c9b5',map:venue.environment==='urban'?surfaces.maps.concreteColor:surfaces.maps.terrainColor,roughness:1}));
   terrain.name='venue-terrain';terrain.rotation.x=-Math.PI/2;terrain.position.set(venue.centerX,-.16,venue.centerZ);terrain.receiveShadow=true;scene.add(terrain);
  }
  if(!venue.original&&(!venue.water||TRACK.scenery==='breakwater'||venue.vegetation==='street-trees')){
   const foliage=[],treeTrunks=[],rocks=[],cityBlocks=[],cityRoofs=[];
-  const decorations=venueSceneryLayout(TRACK,{low});scene.userData.venueDecorationCount=decorations.length;
+  const decorations=venueSceneryLayout(TRACK,{low});scene.userData.venueDecorationCount=decorations.length;terrainOccupied.push(...decorations);
   if(TRACK.id==='san-francisco-hills')createCoastalGrounding(scene,TRACK,decorations);
   for(const item of decorations){
    const {x,z,radius,height,yaw,shade}=item;
@@ -475,7 +447,8 @@ export function createWorld(renderer, { low = false, reducedMotion = false } = {
   }
   if(rocks.length)instances(scene,new THREE.DodecahedronGeometry(1,1),new THREE.MeshStandardMaterial({color:'white',roughness:1}),rocks);
   if(cityBlocks.length){
-   instances(scene,box,facadeMaterial(),cityBlocks);
+   frontageBuildings.unshift(...cityBlocks);
+   instances(scene,box,architecturalFacadeMaterial({night:venue.night}),cityBlocks);
    instances(scene,box,new THREE.MeshStandardMaterial({color:'white',roughness:.65,metalness:.35}),cityRoofs);
   }
   if(venue.environment==='desert'&&TRACK.scenery!=='copper-canyon'){
@@ -490,6 +463,15 @@ export function createWorld(renderer, { low = false, reducedMotion = false } = {
   }
  }
  const landmarks=createOriginalLandmarks(scene,TRACK,{low,stands:standLayouts});
+ terrainOccupied.push(...tracksideServiceLayout(TRACK,{low,stands:standLayouts,landmarks:[...(scene.userData.originalLandmarks||[]),...showcaseSites]}));
+ const streetSites=streetscapeLayout(TRACK,venue,{low,occupied:[...terrainOccupied,...standLayouts.map(s=>({...s,radius:16})),...(scene.userData.originalLandmarks||[]),...showcaseSites]});
+ instances(scene,box,concreteSurfaceMaterial(surfaces.maps,{color:'#d2cec1'}),streetSites.map(b=>({...b,color:b.frontageTint})));
+ frontageBuildings.unshift(...streetSites);terrainOccupied.push(...streetSites);
+ const quay=venue.water?createWaterfrontGrounding(scene,TRACK,[...streetSites,...towers],concreteSurfaceMaterial(surfaces.maps,{color:'#7f8a88'})):null;
+ const frontage=createArchitecturalDetails(scene,frontageBuildings.slice(0,low?32:52),{low,night:venue.night,concreteMap:surfaces.maps.concreteColor,concreteNormal:surfaces.maps.concreteNormal});
+ const relief=createTerrainRelief(scene,TRACK,venue,{low,map:surfaces.maps.terrainColor,occupied:[...terrainOccupied,...standLayouts.map(s=>({...s,radius:16})),...(scene.userData.originalLandmarks||[]),...showcaseSites]});
+ const edgeDetails=createRoadEdgeDetails(scene,TRACK,{low});
+ scene.userData.trackWorldDetail={frontages:frontage.userData,streets:streetSites,quays:quay?.userData,relief:relief.userData,edges:edgeDetails.userData};
  createTracksideServices(scene,TRACK,{low,stands:standLayouts,landmarks:[...(scene.userData.originalLandmarks||[]),...showcaseSites],crowd,rng:crowdRng});
  const mountainPositions = [], mountainIndices = [];
  const ridgeSegments = 320;
@@ -604,8 +586,8 @@ export function createWorld(renderer, { low = false, reducedMotion = false } = {
   const nameboard = new THREE.Mesh(new THREE.PlaneGeometry(28, 3.5), new THREE.MeshBasicMaterial({ map: identity }));nameboard.rotation.y = Math.PI / 2;nameboard.position.set(-18.80, 6.65, 0);paddock.add(nameboard);
  }
  // Three synchronized twin-lamp columns use the existing countdown hook.
- createMountainVenue(scene, TRACK, {low,landmarks:showcaseSites});
- createShowcaseVenue(scene,TRACK,{low,stands:standLayouts,crowd,rng:crowdRng});
+ createMountainVenue(scene, TRACK, {low,landmarks:showcaseSites,surfaces:surfaces.maps});
+ createShowcaseVenue(scene,TRACK,{low,stands:standLayouts,crowd,rng:crowdRng,surfaces:surfaces.maps});
  const lampHousing = new THREE.Mesh(new THREE.BoxGeometry(3.55, 1.13, .42), metal); lampHousing.position.set(0, 5.83, -.08); finishArch.add(lampHousing);
  const startLights = [];
  for (let i = 0; i < 3; i++) {
@@ -619,6 +601,6 @@ export function createWorld(renderer, { low = false, reducedMotion = false } = {
  crowd.render(scene);
  const detail=createDistanceDetail(scene,{low});scene.userData.distanceDetail=detail.stats;
  let motionTime=0,lastWorldTime=null;
- return { scene, reflection, sun, startLights, backdrop, rebuildEnvironment:environment.rebuild,disposeEnvironment:environment.dispose, setQuality:settings=>detail.setQuality(settings), update(time, car, motion = {}) {
+ return { scene, reflection, sun, startLights, backdrop, surfaces,disposeCrowd:()=>crowd.dispose?.(),disposeSurfaceTextures:surfaces.dispose,rebuildEnvironment:environment.rebuild,disposeEnvironment:environment.dispose, setQuality:settings=>detail.setQuality(settings), update(time, car, motion = {}) {
  const dt=lastWorldTime===null?0:Math.max(0,Math.min(.1,time-lastWorldTime));lastWorldTime=time;if(!motion.paused&&!(motion.reducedMotion??reducedMotion))motionTime+=dt;detail.update(time,car); backdrop.update(time,{reducedMotion:motion.reducedMotion??reducedMotion});fallbackRidge.material.opacity=1-backdrop.uniforms.cinematicAmount.value;fallbackRidge.visible=fallbackRidge.material.opacity>.001;crowd.update(time, car, motion); landmarks.update(time,{paused:motion.paused,reducedMotion:motion.reducedMotion??reducedMotion}); sea.material.uniforms.time.value = motionTime; boat.position.y = -.8 + Math.sin(motionTime * .7) * .065; if (car) { sun.position.set(car.x - 150,venue.sunHeight+(car.y||0),car.z + 130); sun.target.position.set(car.x, car.y||0, car.z); } } };
 }

@@ -12,16 +12,33 @@ specs = [
  ('porsche-911', 'porsche-55727.mp3', [(0.15,1.4,.10),(4.35,1.45,.55),(2.25,1.5,.95)]),
  ('mustang-idle', 'mustang-119449.mp3', [(4.0,2.1,.10)]),
  ('aston-acceleration', 'aston-0600.wav', [(0.2,1.1,.15),(1.4,1.1,.80)]),
+ ('huracan-v10', 'huracan-564375.mp3', [(11.5,1.4,.10),(16.5,1.35,.55),(26.15,1.15,.95)]),
+ ('murcielago-v12', 'murcielago-112075.mp3', [(4.0,1.4,.10),(33.0,1.3,.55),(44.6,1.3,.90)]),
+ ('ferrari-classic-v12', 'ferrari-v12-43483.mp3', [(6.7,1.35,.10),(1.7,1.35,.55),(3.3,1.35,.95)]),
+ ('honda-na-i4', 'honda-f20c.ogg', [(24.0,1.3,.10),(7.0,1.3,.50),(51.0,1.3,.95)]),
+ ('audi-turbo-i4', 'audi-i4-425384.mp3', [(1.1,1.35,.10),(11.0,1.35,.50),(18.0,1.35,.95)]),
+ ('volvo-turbo-i5', 'volvo-i5-95838.mp3', [(11.0,1.5,.10),(20.0,1.3,.80)]),
+ ('mercedes-i6', 'mercedes-i6-433603.mp3', [(4.4,1.15,.15),(3.8,1.1,.55),(2.7,1.15,.95)]),
+ ('chevrolet-v6', 'chevy-v6-351962.mp3', [(11.0,1.35,.10),(1.0,1.35,.50),(4.0,1.35,.95)]),
+ ('bmw-diesel', 'diesel-401550.mp3', [(.3,1.3,.10),(.3,1.3,.55,'diesel-401547.mp3'),(.25,1.3,.95,'diesel-401549.mp3')]),
+ ('tesla-electric', 'tesla-761685.mp3', [(.25,1.1,.10),(1.9,1.1,.55),(3.65,1.1,.95)]),
 ]
 args.output.mkdir(parents=True,exist_ok=True)
 results=[]
 for ident,filename,ranges in specs:
  source=args.sources/filename
- raw=subprocess.check_output(['ffmpeg','-v','error','-i',str(source),'-ac','1','-ar',str(RATE),'-af','highpass=f=65,lowpass=f=5800','-f','f32le','-'])
- values=array.array('f'); values.frombytes(raw)
+ decoded={}
+ def samples(name):
+  if name not in decoded:
+   raw=subprocess.check_output(['ffmpeg','-v','error','-i',str(args.sources/name),'-ac','1','-ar',str(RATE),'-af','highpass=f=65,lowpass=f=5800','-f','f32le','-'])
+   decoded[name]=array.array('f'); decoded[name].frombytes(raw)
+  return decoded[name]
  packed=[]; layers=[]
- for start,length,rev in ranges:
+ for span in ranges:
+  start,length,rev=span[:3]; source_name=span[3] if len(span)>3 else filename
+  values=samples(source_name)
   x=list(values[round(start*RATE):round((start+length)*RATE)])
+  if len(x)!=round(length*RATE): raise ValueError(f'{ident}: source interval exceeds {source_name}')
   average=sum(x)/len(x); x=[v-average for v in x]
   n=round(min(.10,length*.09)*RATE)
   # Rotate the loop through a cosine overlap, retaining real recorded cycles.
@@ -34,7 +51,9 @@ for ident,filename,ranges in specs:
   rms=math.sqrt(sum(v*v for v in out)/len(out)); peak=max(abs(v) for v in out)
   gain=min(.18/max(rms,1e-9),.66/max(peak,1e-9)); out=[v*gain for v in out]
   begin=len(packed)/RATE; packed.extend(round(max(-1,min(1,v))*32767) for v in out)
-  layers.append({'start':round(begin,6),'end':round(len(packed)/RATE,6),'rev':rev,'sourceStart':start,'sourceDuration':length})
+  layer={'start':round(begin,6),'end':round(len(packed)/RATE,6),'rev':rev,'sourceStart':start,'sourceDuration':length}
+  if source_name!=filename: layer['sourceFile']=source_name
+  layers.append(layer)
  target=args.output/(ident+'-v1.wav')
  with wave.open(str(target),'wb') as f:
   f.setnchannels(1);f.setsampwidth(2);f.setframerate(RATE);f.writeframes(struct.pack('<'+'h'*len(packed),*packed))

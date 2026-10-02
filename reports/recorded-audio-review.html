@@ -2,21 +2,25 @@
 <html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Recorded audio review — local only</title>
 <style>body{margin:0;background:#110017;color:white;font:16px system-ui;padding:24px;max-width:1080px}button{background:#FFF71E;color:#110017;border:0;min-height:48px;padding:12px 20px;font:inherit;font-weight:700}article{border:1px solid #9246FF;background:#021439;padding:16px;margin:16px 0}audio{width:100%}pre{white-space:pre-wrap;overflow-wrap:anywhere}a{color:#FFF71E}.note{color:#d3c4e1}</style>
 <h1>Recorded engine mix review</h1><p class="note">Local review fixture. Rendering uses the actual Web Audio graph and shipping WAV banks. Audio plays only when you press a player’s Play button. This is not physical phone, headphone, heat or battery validation.</p>
-<button id="render">Render four driving sequences</button><p id="status" role="status">Ready. No audio has started.</p><div id="results"></div><pre id="diagnostics"></pre>
+<button id="render">Render all 33 cars</button> <button id="render-families">Review 14 recording families</button> <label><input id="compare" type="checkbox" checked> Compare with synthesis-only mix</label><p id="status" role="status">Ready. No audio has started.</p><div id="results"></div><pre id="diagnostics"></pre>
 <script type="module">
 import {createAudio} from '/src/audio.js';
+import {MANUFACTURER_VEHICLES} from '/src/manufacturer-vehicles.js';
+import {RECORDING_CARS,ENGINE_RECORDINGS} from '/src/recorded-engine-manifest.js';
 const button=document.querySelector('#render'),status=document.querySelector('#status'),results=document.querySelector('#results'),diagnostics=document.querySelector('#diagnostics');
-const choices=[['Ferrari recording / McLaren P1 GTR','mclaren-p1-gtr'],['Porsche recording / 930 Turbo','porsche-930-turbo'],['Mustang idle texture / Mercedes-AMG GT','mercedes-amg-gt'],['Aston acceleration / One-77','aston-martin-one-77']];
+const choices=MANUFACTURER_VEHICLES.map(car=>[car.name,car.id]);
+const familyButton=document.querySelector('#render-families');
+const objectUrls=[];
 const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 function wav(buffer){const length=buffer.length,channels=buffer.numberOfChannels,bytes=new ArrayBuffer(44+length*channels*2),view=new DataView(bytes);const text=(offset,value)=>[...value].forEach((letter,i)=>view.setUint8(offset+i,letter.charCodeAt(0)));text(0,'RIFF');view.setUint32(4,36+length*channels*2,true);text(8,'WAVE');text(12,'fmt ');view.setUint32(16,16,true);view.setUint16(20,1,true);view.setUint16(22,channels,true);view.setUint32(24,buffer.sampleRate,true);view.setUint32(28,buffer.sampleRate*channels*2,true);view.setUint16(32,channels*2,true);view.setUint16(34,16,true);text(36,'data');view.setUint32(40,length*channels*2,true);for(let i=0;i<length;i++)for(let c=0;c<channels;c++)view.setInt16(44+(i*channels+c)*2,Math.round(Math.max(-1,Math.min(1,buffer.getChannelData(c)[i]))*32767),true);return new Blob([bytes],{type:'audio/wav'});}
-async function render(vehicle){
+async function render(vehicle,recorded=true){
  const context=new OfflineAudioContext(2,48000*13,48000);let time=0;
  const proxy=new Proxy(context,{get(target,key){if(key==='currentTime')return time;if(key==='state')return 'running';if(['resume','suspend','close'].includes(key))return async()=>{};const value=Reflect.get(target,key,target);return typeof value==='function'?value.bind(target):value;}});
- const sound=createAudio({contextFactory:()=>proxy,lifecycleOptions:{schedule:()=>0,cancel(){}}});
+ const sound=createAudio({contextFactory:()=>proxy,lifecycleOptions:{schedule:()=>0,cancel(){}},...(recorded?{}:{recordedEngineOptions:{fetchImpl:async()=>{throw new Error('Deliberate synthesis-only comparison');}}})});
  const base={running:true,vehicle,speed:0,throttle:1,raceId:1,listener:{x:0,y:0,z:0,heading:0},rivals:[]};
  if(!await sound.unlock())throw new Error('Offline audio graph did not unlock');sound.update(base);
  for(let attempt=0;attempt<160&&sound.recordingStatus().pending;attempt++)await wait(50);
- const loaded=sound.recordingStatus();if(!loaded.active||loaded.failed.length)throw new Error('Recorded bank did not load: '+JSON.stringify(loaded));
+ const loaded=sound.recordingStatus();if(recorded&&(!loaded.active||loaded.failed.length))throw new Error('Recorded bank did not load: '+JSON.stringify(loaded));
  for(let frame=0;frame<13*60;frame++){
   time=frame/60;const state={...base,speed:time<6?time/6*50:time<8?50-(time-6)*9:32+(time-8)*2,throttle:time>=6&&time<7?0:1,brake:time>=7&&time<8?.4:0,nitro:time>=8&&time<10,nitroMode:time>=9?'perfect':'normal',running:time<11};
   if(time>=10)state.impact={id:1,kind:'crash',strength:.65,source:'barrier'};
@@ -27,5 +31,26 @@ async function render(vehicle){
  const report={vehicle,...loaded,peak,rms:Math.sqrt(power/(11*48000*2)),tailPeak,finite:true,withinPeakBudget:peak<.98,pauseTailSilent:tailPeak<.0001};sound.dispose();
  return {output,report};
 }
-button.addEventListener('click',async()=>{button.disabled=true;results.replaceChildren();const reports=[];try{for(const [label,vehicle] of choices){status.textContent='Rendering '+label;const {output,report}=await render(vehicle);reports.push(report);const article=document.createElement('article'),title=document.createElement('h2'),player=document.createElement('audio'),link=document.createElement('a'),note=document.createElement('p');title.textContent=label;player.controls=true;player.preload='none';player.src=URL.createObjectURL(wav(output));link.href=player.src;link.download=vehicle+'-audio-review.wav';link.textContent='Download rendered WAV';note.textContent='0–6s acceleration · 6–8s lift/brake · 8–10s Nitro/Perfect · 10s impact · 11–13s pause';article.append(title,note,player,link);results.append(article);diagnostics.textContent=JSON.stringify(reports,null,2);}status.textContent=reports.every(item=>item.withinPeakBudget&&item.pauseTailSilent)?'PASS — four recorded banks rendered; finite output, no clipping threshold exceeded, pause tails silent.':'REVIEW — inspect output metrics';}catch(error){status.textContent='ERROR — '+error.message;}finally{button.disabled=false;}});
+async function run(selectedChoices){
+ button.disabled=familyButton.disabled=true;results.replaceChildren();objectUrls.splice(0).forEach(url=>URL.revokeObjectURL(url));
+ const reports=[],compare=document.querySelector('#compare').checked;
+ try{
+  for(const [label,vehicle] of selectedChoices){
+   status.textContent='Rendering '+(reports.length+1)+' / '+selectedChoices.length+' — '+label;
+   const {output,report}=await render(vehicle);
+   if(compare){const baseline=await render(vehicle,false);report.synthesisOnlyRms=baseline.report.rms;report.synthesisOnlyPeak=baseline.report.peak;report.relativeRms=report.rms/baseline.report.rms;report.withinMixBudget=report.relativeRms<=1.25;}
+   report.bankMatches=report.active===RECORDING_CARS[vehicle];report.bounded=report.voices<=3&&report.fetches===1&&report.cacheBanks===1;
+   reports.push(report);
+   const article=document.createElement('article'),title=document.createElement('h2'),player=document.createElement('audio'),link=document.createElement('a'),note=document.createElement('p'),metrics=document.createElement('p');
+   title.textContent=label+' — '+report.active;player.controls=true;player.preload='none';player.src=URL.createObjectURL(wav(output));objectUrls.push(player.src);link.href=player.src;link.download=vehicle+'-audio-review.wav';link.textContent='Download rendered WAV';
+   note.textContent='0–6s acceleration · 6–8s lift/brake · 8–10s Nitro/Perfect · 10s impact · 11–13s pause';
+   metrics.textContent='Peak '+report.peak.toFixed(4)+' · RMS '+report.rms.toFixed(4)+(compare?' · synthesis-only RMS ratio '+report.relativeRms.toFixed(3):'')+' · '+report.voices+' voices · pause tail '+report.tailPeak.toExponential(2);
+   article.append(title,note,metrics,player,link);results.append(article);diagnostics.textContent=JSON.stringify(reports,null,2);
+  }
+  const pass=reports.every(item=>item.withinPeakBudget&&item.pauseTailSilent&&item.bankMatches&&item.bounded&&item.withinMixBudget!==false);
+  status.textContent=(pass?'PASS':'REVIEW')+' — '+reports.length+' cars / '+new Set(reports.map(item=>item.active)).size+' banks rendered; '+(pass?'finite output, bounded mix/resources and silent pause tails.':'inspect output metrics.');
+ }catch(error){status.textContent='ERROR — '+error.message;}finally{button.disabled=familyButton.disabled=false;}
+}
+button.addEventListener('click',()=>run(choices));
+familyButton.addEventListener('click',()=>run(Object.keys(ENGINE_RECORDINGS).map(bank=>choices.find(([,id])=>RECORDING_CARS[id]===bank))));
 </script></html>

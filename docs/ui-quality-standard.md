@@ -17,6 +17,8 @@ Use an original futuristic motorsport interface inspired by the clarity and ener
 | Lime | `#C3FB13` | Sparing completed-upgrade status emphasis |
 | Gold | `#FFD700` | Rewards, credits, podium emphasis |
 
+The lobby Garage shortcut belongs in the top header strip beside race credits. Keep the lower navigation for race modes, career and circuits. On narrow phones, retain a visible Garage label and wallet without shrinking controls below 44 px; volume remains available through Controls and sound, and fullscreen remains available in landscape and the race orientation prompt.
+
 Use the shared theme and button system instead of adding conflicting screen-specific primary colours. Keep the dark base dominant across each screen, with violet as the main accent and yellow reserved for priority moments. Keep dark text on yellow actions and white text on violet actions. Do not use violet for small body text on dark surfaces. Check muted labels and disabled states against their actual backgrounds. Never convey selection, danger, or progress through colour alone.
 
 Use self-hosted illustrated SVG icons from the shared sprite. Icons must keep consistent size, alignment, and stroke; do not substitute emoji, platform-dependent glyphs, or unlabeled browser symbols. Decorative icons are hidden from assistive technology, while icon-only controls have clear accessible names. Keep Barlow Condensed for racing display hierarchy and readable UI type for supporting text. A generic `.button span` rule must not enlarge labels or affect every nested element.

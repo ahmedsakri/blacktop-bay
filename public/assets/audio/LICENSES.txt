@@ -1,52 +1,134 @@
 Camber Reign — recorded engine texture sources
-Provenance and exact edits: ENGINE-SOURCES.json
+Provenance and exact source intervals: ENGINE-SOURCES.json
 Derivative loop banks: engines/*.wav
 Checked 2 October 2026.
 
+All sources below permit redistribution and adaptation under CC0 or CC BY.
+Each bank was modified by AppsOverFlow: selected source intervals, mono
+24 kHz PCM16 conversion, 65 Hz high-pass / 5.8 kHz low-pass filtering,
+DC removal, cosine loop overlap, endpoint correction and amplitude
+normalization. Runtime pitch, rev bands, gain and load EQ are authored.
+Retain the relevant title, author, source, license and modification notice
+when redistributing a CC BY derivative. No recorder or manufacturer
+endorsement is implied. Source previews are not original recording masters.
+
 ferrari-355-v1.wav
-Adapted from “ferrari355underhood4.mp3” by enginemusic, copyright 1997 as
-stated by the recorder; published on Freesound 4 November 2007.
+Adapted from “ferrari355underhood4.mp3” by enginemusic.
 https://freesound.org/people/enginemusic/sounds/43484/
-Creative Commons Attribution 3.0 Unported (CC BY 3.0)
-https://creativecommons.org/licenses/by/3.0/
+CC-BY-3.0: https://creativecommons.org/licenses/by/3.0/
 https://creativecommons.org/licenses/by/3.0/legalcode
-Original describes a Ferrari 355 Spider underhood recording, with one
-microphone by the intake and one by the valve cover. The redistributed
-file is a derivative of the publicly available HQ MP3 preview. Modified
-by AppsOverFlow: selected segments, mono downmix, resampling, filtering,
-DC and loop-seam correction, overlap and amplitude normalization.
-Retain this source/author/license credit when redistributing the derivative.
-No endorsement by the recorder, Ferrari or other manufacturers is implied.
+Copyright 1997 as stated by enginemusic.
+Recorded in 1997 inside a Ferrari 355 Spider engine compartment with Core Sound binaural microphones and Sony D8 DAT; one microphone by intake and one by valve cover. Public HQ MP3 preview, not the original master.
+Adapted proxy texture blended with original synthesis; not a recording of the represented game model. BMW F22 Eurofighter uses an authored V8 drift-build proxy; the visual asset does not document its precise engine build.
 
 porsche-911-v1.wav
 Adapted from “porsche_911.wav” by mharo.
 https://freesound.org/people/mharo/sounds/55727/
-CC0 1.0 Universal: https://creativecommons.org/publicdomain/zero/1.0/
-Original is described as a Porsche 911 street recording in Barcelona.
-Year, variant and microphone position are unspecified. Derived from the
-public HQ MP3 preview using the same processing steps above.
+CC0-1.0: https://creativecommons.org/publicdomain/zero/1.0/
+Porsche 911 recorded in a Barcelona street. Public HQ MP3 preview of the WAV; no claim about engine generation or microphone position.
+Adapted proxy texture blended with original synthesis; not a recording of the represented game model.
 
 mustang-idle-v1.wav
 Adapted from “Ford Mustang Engine (1985).wav” by lmbubec.
 https://freesound.org/people/lmbubec/sounds/119449/
-CC0 1.0 Universal: https://creativecommons.org/publicdomain/zero/1.0/
-Original describes idling and engine shutdown. Cylinder count is not
-asserted by the source page. Derived from the public HQ MP3 preview with
-the same processing steps above; only the idle portion is used.
+CC0-1.0: https://creativecommons.org/publicdomain/zero/1.0/
+Ford Mustang idling before engine shutdown. Public HQ MP3 preview; cylinder count is not asserted by the source description.
+Adapted proxy texture blended with original synthesis; not a recording of the represented game model.
 
 aston-acceleration-v1.wav
-Adapted from “Acceleration Aston Martin”, sound 0600,
-by Joseph SARDIN / BigSoundBank.
+Adapted from “Acceleration Aston Martin” by Joseph SARDIN / BigSoundBank.
 https://bigsoundbank.com/acceleration-aston-martin-s0600.html
-CC0 1.0 Universal: https://creativecommons.org/publicdomain/zero/1.0/
-Source permissions: https://bigsoundbank.com/licenses.html
-Original is an outdoor acceleration recording; the Aston Martin model,
-cylinder count and microphone position are unspecified. Derived from the
-public WAV with the same processing steps above.
+CC0-1.0: https://creativecommons.org/publicdomain/zero/1.0/
+Outdoor acceleration recording, sound 0600. Source does not identify the model, cylinder count or recording microphone position.
+Adapted proxy texture blended with original synthesis; not a recording of the represented game model.
 
-All banks are adapted sound textures for an arcade mix. The game's car
-mappings are proxies: none of these banks is claimed to have been recorded
-from the exact represented game model. Playback speed and normalized-rev
-bands are authored, not measured RPM. Where no suitable bank is assigned,
-Camber Reign retains its original procedural voice. Nitro, impact and tyre
-layers and the Liquid Lines lobby soundtrack remain original synthesis.
+huracan-v10-v1.wav
+Adapted from “Lamborghini Sounds” by JaimeLopes.
+https://freesound.org/people/JaimeLopes/sounds/564375/
+CC-BY-4.0: https://creativecommons.org/licenses/by/4.0/
+https://creativecommons.org/licenses/by/4.0/legalcode
+Recorded on Tascam DR-07 internal microphones while entering, starting and driving a Huracán EVO Spyder. Door/start transients are omitted; public HQ MP3 preview.
+Family proxy for the game Huracán (variant unspecified), 2004 Gallardo and Audi R8/R8 LMS. No claim that the custom R8 uses this exact engine.
+
+murcielago-v12-v1.wav
+Adapted from “Lambo idle and rev.mp3” by cheesepuff.
+https://freesound.org/people/cheesepuff/sounds/112075/
+CC0-1.0: https://creativecommons.org/publicdomain/zero/1.0/
+Author identifies their own Lamborghini-dealer video; tags identify Murciélago LP-670 SuperVeloce and V12. Public HQ MP3 preview. Final loud rev around 60 seconds excluded.
+Modern V12 family proxy for Aventador, Zonda, GMA T.50 and Enzo. Veyron uses a deliberately lower, darker multi-cylinder proxy; this is not a W16 recording.
+
+ferrari-classic-v12-v1.wav
+Adapted from “ferrari340america2.mp3” by enginemusic.
+https://freesound.org/people/enginemusic/sounds/43483/
+CC-BY-3.0: https://creativecommons.org/licenses/by/3.0/
+https://creativecommons.org/licenses/by/3.0/legalcode
+Recorded around 1997 at RPM Motorsports in Vergennes, Vermont; Sony D8 DAT and Audio-Technica ATM10. Public HQ MP3 preview, not original master.
+Classic V12 family proxy for Ferrari 250 GTO and Countach. The Testarossa uses a classic twelve-cylinder texture adaptation; not a recording of its flat-12.
+
+honda-na-i4-v1.wav
+Adapted from “2002-Honda-F20C.ogg” by Tyler Riddle.
+https://commons.wikimedia.org/wiki/File:2002-Honda-F20C.ogg
+CC-BY-3.0: https://creativecommons.org/licenses/by/3.0/
+https://creativecommons.org/licenses/by/3.0/legalcode
+Uploader-owned recording with an Audio-Technica Proformance P735 in the engine bay, M-Audio FastTrack at 48 kHz/24-bit and REAPER. Derived from original published Ogg Vorbis file.
+Naturally aspirated four-cylinder family proxy for Lotus Elise; not a Lotus or Toyota recording.
+
+audi-turbo-i4-v1.wav
+Adapted from “audi a4 allroad 20TFSI engine rpm ramp fast mono.wav” by Soundholder.
+https://freesound.org/people/Soundholder/sounds/425384/
+CC-BY-3.0: https://creativecommons.org/licenses/by/3.0/
+https://creativecommons.org/licenses/by/3.0/legalcode
+Engine RPM ramp from the author Soundholder vehicle library free sample. Public HQ MP3 preview.
+Small turbo-engine texture proxy for BMW i8 (actual turbo inline-three hybrid) and Porsche 919 (actual turbo V4 hybrid), alongside original hybrid synthesis. Neither cylinder arrangement is asserted to match.
+
+volvo-turbo-i5-v1.wav
+Adapted from “RG Volvo Engine.wav” by cmusounddesign.
+https://freesound.org/people/cmusounddesign/sounds/95838/
+CC-BY-4.0: https://creativecommons.org/licenses/by/4.0/
+https://creativecommons.org/licenses/by/4.0/legalcode
+Source states 2.4 five-cylinder turbo engine, underhood microphone suspended about eight inches above turbocharger heat shield. Public HQ MP3 preview.
+Turbo five-cylinder family proxy for Audi Quattro rally; source is a Volvo road engine, not an Audi rally recording.
+
+mercedes-i6-v1.wav
+Adapted from “EXTERIOR - 1995 MERCEDES E320 FULL THROTTLE PASS BY R-L.wav” by douglasbruce@look.ca.
+https://freesound.org/people/douglasbruce@look.ca/sounds/433603/
+CC0-1.0: https://creativecommons.org/publicdomain/zero/1.0/
+Exterior full-throttle high-speed pass of a 1995 Mercedes E320. Public HQ MP3 preview. Edited pass-by bands retain some exterior motion/road texture; this is not a stationary RPM sweep.
+Inline-six family proxy for BMW M3 E46. Recording layer fades away at standstill because this is a driving take.
+
+chevrolet-v6-v1.wav
+Adapted from “CarV6AcceleratingInsideCabin.wav” by CLaforet.
+https://freesound.org/people/CLaforet/sounds/351962/
+CC-BY-4.0: https://creativecommons.org/licenses/by/4.0/
+https://creativecommons.org/licenses/by/4.0/legalcode
+Recorded in the cabin with a Tascam DR-40 during hard acceleration. Public HQ MP3 preview. Silence separators between takes are excluded.
+V6 family proxy for Nissan GT-R; not its turbocharged VR38 or exhaust recording. Existing authored induction layer supplies the turbo character.
+
+bmw-diesel-v1.wav
+Adapted from “SFX_Car_Engine_Inside_Idle.wav” by GiocoSound.
+https://freesound.org/people/GiocoSound/sounds/401550/
+CC0-1.0: https://creativecommons.org/publicdomain/zero/1.0/
+Three cabin recordings (idle, medium and high RPM), Earthworks QTC30 and Oktava MK-012-01. Public HQ MP3 previews.
+Diesel texture proxy for Audi R18, whose V6 race diesel/hybrid is not represented by an exact recording.
+Additional take: “SFX_Car_Engine_Inside_RPMMed.wav” by GiocoSound
+https://freesound.org/people/GiocoSound/sounds/401547/
+CC0-1.0: https://creativecommons.org/publicdomain/zero/1.0/
+Additional take: “SFX_Car_Engine_Inside_RPMHigh.wav” by GiocoSound
+https://freesound.org/people/GiocoSound/sounds/401549/
+CC0-1.0: https://creativecommons.org/publicdomain/zero/1.0/
+
+tesla-electric-v1.wav
+Adapted from “Acceleration of an electric car” by justVova.
+https://freesound.org/people/justVova/sounds/761685/
+CC0-1.0: https://creativecommons.org/publicdomain/zero/1.0/
+Source identifies full-throttle Tesla Model S Plaid acceleration. Public HQ MP3 preview contains the combined recorded electric-car motor/road sound, not an isolated laboratory motor stem.
+Electric-car family proxy for Rimac Concept One and Nevera. No Tesla-to-Rimac or exact motor/AVAS authenticity claim; recording fades to zero at standstill.
+
+All 33 game cars have a selected recorded texture. Family/model adaptation
+is explicit; recordings were not made of every exact game model. Electric
+Rimacs use an electric Tesla recording, never a combustion source. W16,
+flat-12 and specialized hybrid race engines use disclosed proxies. Actual
+source RPM and microphone placement are stated only where documented.
+The original synthesis remains a fallback for blocked/failed decoding.
+Nitro, impact, tyre layers and the Liquid Lines lobby soundtrack remain
+original synthesis; Liquid Lines remains the only lobby music.

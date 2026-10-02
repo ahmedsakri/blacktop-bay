@@ -3,7 +3,9 @@ import * as THREE from 'three';
 // Original Camber Reign character asset. A single indexed, articulated mesh per
 // nearby spectator, authored as anatomical cross-sections, not stacked objects.
 // All 18 joints share one draw and one material. This asset has no external art.
-export const CHARACTER_LIMITS=Object.freeze({mobile:6,desktop:10,mobileDistance:18,desktopDistance:25,maxTriangles:8500});
+// The widest current roads put front-row seats 18.53m from their centreline.
+// A 22m phone radius makes them reachable while retaining the six-slot budget.
+export const CHARACTER_LIMITS=Object.freeze({mobile:6,desktop:10,mobileDistance:22,desktopDistance:25,maxTriangles:8500});
 const B={torso:0,head:1,neck:2,hip:3,leftUpper:4,leftLower:5,leftHand:6,rightUpper:7,rightLower:8,rightHand:9,leftThigh:10,leftShin:11,leftFoot:12,rightThigh:13,rightShin:14,rightFoot:15,phone:16,cap:17};
 const TAU=Math.PI*2, up=new THREE.Vector3(0,1,0), direction=new THREE.Vector3();
 const colorCache=new Map();

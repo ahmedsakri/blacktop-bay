@@ -1,0 +1,23 @@
+Camber Reign track surface derivatives
+
+All source surface assets below are CC0 1.0 Universal:
+https://creativecommons.org/publicdomain/zero/1.0/
+https://polyhaven.com/license
+
+Asphalt 02 — Rob Tuytel
+https://polyhaven.com/a/asphalt_02
+Used for asphalt-color, asphalt-normal and asphalt-roughness.
+
+Concrete Wall 003 — Dimitrios Savva (photography), Rico Cilliers (processing)
+https://polyhaven.com/a/concrete_wall_003
+Used for concrete-color and concrete-normal.
+
+Rocky Terrain 02 — Amal Kumar
+https://polyhaven.com/a/rocky_terrain_02
+Used for terrain-color.
+
+Changes: resized from reviewed 1K JPEG source maps and encoded as WebP,
+with smaller mobile derivatives. No branding or other game's artwork is used.
+See provenance.json for exact source URLs, source hashes, output hashes,
+dimensions and colour-space annotations. CC0 assets are free/public-domain
+resources from Poly Haven, not exclusive assets belonging to Camber Reign.

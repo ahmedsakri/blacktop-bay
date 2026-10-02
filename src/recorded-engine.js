@@ -1,14 +1,15 @@
-import { ENGINE_RECORDINGS, RECORDING_CARS } from './recorded-engine-manifest.js';
+import { ENGINE_RECORDINGS, RECORDING_CARS, RECORDING_MIXES } from './recorded-engine-manifest.js';
 
 export const RECORDING_BUDGET = Object.freeze({ banks: 3, decodedBytes: 3 * 1024 * 1024, downloadBytes: 256 * 1024, voices: 3, timeoutMs: 8000 });
 const clamp = (value, low, high) => Math.max(low, Math.min(high, Number.isFinite(value) ? value : low));
 export function recordingForVehicle(vehicle = {}) {
-  if (vehicle.powertrain === 'electric') return null;
-  return ENGINE_RECORDINGS[RECORDING_CARS[vehicle.id]] || null;
+  const bank = ENGINE_RECORDINGS[RECORDING_CARS[vehicle.id]];
+  if (!bank || (vehicle.powertrain && (vehicle.powertrain === 'electric') !== (bank.kind === 'electric'))) return null;
+  return bank;
 }
 
 /** Authored normalized-rev blend; source RPMs were not measured. */
-export function recordedEngineFrame(bank, motion = {}) {
+export function recordedEngineFrame(bank, motion = {}, mix = [1, 1, 1]) {
   if (!bank) return { layers: [], cutoff: 0, gain: 0 };
   const rev = clamp(motion.rev, 0, 1), load = clamp(motion.load, 0, 1), torque = clamp(motion.torque ?? 1, 0, 1);
   const weights = bank.layers.map(() => 0);
@@ -21,8 +22,15 @@ export function recordedEngineFrame(bank, motion = {}) {
       weights[i] = Math.cos(phase * Math.PI / 2); weights[i + 1] = Math.sin(phase * Math.PI / 2); break;
     }
   }
-  return { gain: (.13 + .29 * load) * torque * clamp(motion.focus ?? 1, .75, 1), cutoff: 900 + 2300 * rev + 1400 * load, exhaust: .4 + .6 * load,
-    layers: bank.layers.map((layer, i) => ({ gain: weights[i], rate: clamp(1 + (rev - layer.rev) * .42, .82, 1.3) })) };
+  const electric = bank.kind === 'electric';
+  // Driving takes contain road/motor motion: do not loop that sound at a standstill.
+  const rolling = clamp((rev - .015) / .14, 0, 1);
+  const presence = bank.movingOnly ? rolling * rolling * (3 - 2 * rolling) : 1;
+  const pitch = clamp(mix[0], .88, 1.1), tone = clamp(mix[1], .8, 1.1), level = clamp(mix[2], 0, 1);
+  return { gain: (electric ? .09 + .22 * load : .13 + .29 * load) * torque * clamp(motion.focus ?? 1, .75, 1) * level * presence,
+    cutoff: (electric ? 1600 + 2200 * rev + 700 * load : 900 + 2300 * rev + 1400 * load) * tone,
+    exhaust: electric ? 0 : .4 + .6 * load, presence,
+    layers: bank.layers.map((layer, i) => ({ gain: weights[i], rate: clamp((1 + (rev - layer.rev) * .42) * pitch, .82, 1.3) })) };
 }
 
 async function boundedBytes(response, limit) {
@@ -139,7 +147,7 @@ export function createRecordedEngine({ context, destination, fetchImpl = globalT
     if (!wanted) return 0;
     pump();
     if (!active || active.id !== selected?.id) return 0;
-    const frame = recordedEngineFrame(active, motion);
+    const frame = recordedEngineFrame(active, motion, RECORDING_MIXES[vehicle.id]);
     blend += (1 - blend) * (1 - Math.exp(-clamp(dt, 0, .1) / .18));
     target(output.gain, frame.gain * blend);
     target(filter.frequency, frame.cutoff, .11);
@@ -148,7 +156,7 @@ export function createRecordedEngine({ context, destination, fetchImpl = globalT
       target(voices[i].gain.gain, frame.layers[i].gain, .08);
       target(voices[i].source.playbackRate, frame.layers[i].rate, .07);
     }
-    return blend;
+    return blend * frame.presence;
   }
   function dispose() {
     if (disposed) return; disposed = true; wanted = false; generation++;

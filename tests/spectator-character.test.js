@@ -44,7 +44,7 @@ test('foreground pool reuses geometry, bounds draws and returns every spectator 
  for(const low of [true,false]){
   const crowd=createCrowd({low}),scene=new THREE.Scene(),random=rng();
   for(let i=0;i<150;i++)crowd.add(i*.6,0,0,0,i%2===0,random);
-  crowd.render(scene);const meshes=scene.children.filter(m=>m.isSkinnedMesh),geometries=meshes.map(m=>m.geometry);
+  crowd.render(scene);const wrappers=scene.children.filter(m=>m.name==='near-spectator'),meshes=wrappers.map(m=>m.children[0]),geometries=meshes.map(m=>m.geometry);
   assert.equal(meshes.length,low?6:10);assert.equal(scene.children.filter(m=>m.isInstancedMesh).length,10);
   for(const [frame,x] of [0,20,40,60,80,1000,0].entries()){
    crowd.update((frame+1)*.2,{x,z:2,speed:20});assert.deepEqual(meshes.map(m=>m.geometry),geometries);

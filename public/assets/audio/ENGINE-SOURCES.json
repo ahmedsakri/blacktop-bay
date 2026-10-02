@@ -1,6 +1,6 @@
 {
-  "version": 1,
-  "totalBytes": 585872,
+  "version": 2,
+  "totalBytes": 2240104,
   "recordings": [
     {
       "id": "ferrari-355",
@@ -50,9 +50,10 @@
         "mclaren-p1-gtr",
         "ferrari-458-italia",
         "mclaren-650s-gt3",
-        "koenigsegg-one-1"
+        "koenigsegg-one-1",
+        "bmw-f22-eurofighter"
       ],
-      "use": "Adapted proxy texture blended with original synthesis; not a recording of the represented game model."
+      "use": "Adapted proxy texture blended with original synthesis; not a recording of the represented game model. BMW F22 Eurofighter uses an authored V8 drift-build proxy; the visual asset does not document its precise engine build."
     },
     {
       "id": "porsche-911",
@@ -175,6 +176,514 @@
         "aston-martin-one-77"
       ],
       "use": "Adapted proxy texture blended with original synthesis; not a recording of the represented game model."
+    },
+    {
+      "id": "huracan-v10",
+      "file": "huracan-v10-v1.wav",
+      "bytes": 172844,
+      "sha256": "bdbe916f5dadcf1261e98ecc33d751269f791e7991513629a158817aa30b798f",
+      "duration": 3.6,
+      "sampleRate": 24000,
+      "sourceFile": "huracan-564375.mp3",
+      "sourceSha256": "7acbaaebe75f756dcb09dcc1ffacc5a134a9202e979388dfc6928301ca5438ba",
+      "layers": [
+        {
+          "start": 0.0,
+          "end": 1.3,
+          "rev": 0.1,
+          "sourceStart": 11.5,
+          "sourceDuration": 1.4
+        },
+        {
+          "start": 1.3,
+          "end": 2.55,
+          "rev": 0.55,
+          "sourceStart": 16.5,
+          "sourceDuration": 1.35
+        },
+        {
+          "start": 2.55,
+          "end": 3.6,
+          "rev": 0.95,
+          "sourceStart": 26.15,
+          "sourceDuration": 1.15
+        }
+      ],
+      "title": "Lamborghini Sounds",
+      "author": "JaimeLopes",
+      "sourceVehicle": "Lamborghini Huracán EVO Spyder V10",
+      "sourceFamily": "V10",
+      "license": "CC-BY-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "sourceUrl": "https://freesound.org/people/JaimeLopes/sounds/564375/",
+      "downloadUrl": "https://cdn.freesound.org/previews/564/564375_628040-hq.mp3",
+      "provenance": "Recorded on Tascam DR-07 internal microphones while entering, starting and driving a Huracán EVO Spyder. Door/start transients are omitted; public HQ MP3 preview.",
+      "checked": "2026-10-02",
+      "adaptation": "Mono 24 kHz PCM, 65 Hz high-pass / 5.8 kHz low-pass, selected source intervals, cosine loop overlap, DC/seam correction and peak/RMS normalization. In-game pitch, RPM blend and load EQ are authored, not measured.",
+      "use": "Family proxy for the game Huracán (variant unspecified), 2004 Gallardo and Audi R8/R8 LMS. No claim that the custom R8 uses this exact engine.",
+      "cars": [
+        "audi-r8",
+        "lamborghini-gallardo",
+        "lamborghini-huracan",
+        "audi-r8-lms-gt3"
+      ]
+    },
+    {
+      "id": "murcielago-v12",
+      "file": "murcielago-v12-v1.wav",
+      "bytes": 177644,
+      "sha256": "d96340c4c22e68d4714069101f4bfbae1ef496191868e2a656b0f5371c39bc65",
+      "duration": 3.7,
+      "sampleRate": 24000,
+      "sourceFile": "murcielago-112075.mp3",
+      "sourceSha256": "3704b0a9fb95b455c3438f4af60958a93e6b637cbdd4147597144dd1c4fdf640",
+      "layers": [
+        {
+          "start": 0.0,
+          "end": 1.3,
+          "rev": 0.1,
+          "sourceStart": 4.0,
+          "sourceDuration": 1.4
+        },
+        {
+          "start": 1.3,
+          "end": 2.5,
+          "rev": 0.55,
+          "sourceStart": 33.0,
+          "sourceDuration": 1.3
+        },
+        {
+          "start": 2.5,
+          "end": 3.7,
+          "rev": 0.9,
+          "sourceStart": 44.6,
+          "sourceDuration": 1.3
+        }
+      ],
+      "title": "Lambo idle and rev.mp3",
+      "author": "cheesepuff",
+      "sourceVehicle": "Lamborghini Murciélago LP 670 SuperVeloce V12",
+      "sourceFamily": "V12",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "sourceUrl": "https://freesound.org/people/cheesepuff/sounds/112075/",
+      "downloadUrl": "https://cdn.freesound.org/previews/112/112075_682033-hq.mp3",
+      "provenance": "Author identifies their own Lamborghini-dealer video; tags identify Murciélago LP-670 SuperVeloce and V12. Public HQ MP3 preview. Final loud rev around 60 seconds excluded.",
+      "checked": "2026-10-02",
+      "adaptation": "Mono 24 kHz PCM, 65 Hz high-pass / 5.8 kHz low-pass, selected source intervals, cosine loop overlap, DC/seam correction and peak/RMS normalization. In-game pitch, RPM blend and load EQ are authored, not measured.",
+      "use": "Modern V12 family proxy for Aventador, Zonda, GMA T.50 and Enzo. Veyron uses a deliberately lower, darker multi-cylinder proxy; this is not a W16 recording.",
+      "cars": [
+        "lamborghini-aventador",
+        "pagani-zonda-c12",
+        "bugatti-veyron",
+        "gma-t50",
+        "ferrari-enzo"
+      ]
+    },
+    {
+      "id": "ferrari-classic-v12",
+      "file": "ferrari-classic-v12-v1.wav",
+      "bytes": 180044,
+      "sha256": "f0277a95ac71c70a2f8e58423b0837efb8ed779b6aa8ac7569264e4cd5bf3c62",
+      "duration": 3.75,
+      "sampleRate": 24000,
+      "sourceFile": "ferrari-v12-43483.mp3",
+      "sourceSha256": "99613b1bcd85cae1b84e661adcf7807797ef18604ad096d6a6644e008d36589a",
+      "layers": [
+        {
+          "start": 0.0,
+          "end": 1.25,
+          "rev": 0.1,
+          "sourceStart": 6.7,
+          "sourceDuration": 1.35
+        },
+        {
+          "start": 1.25,
+          "end": 2.5,
+          "rev": 0.55,
+          "sourceStart": 1.7,
+          "sourceDuration": 1.35
+        },
+        {
+          "start": 2.5,
+          "end": 3.75,
+          "rev": 0.95,
+          "sourceStart": 3.3,
+          "sourceDuration": 1.35
+        }
+      ],
+      "title": "ferrari340america2.mp3",
+      "author": "enginemusic",
+      "sourceVehicle": "Ferrari 340 America 4-litre V12",
+      "sourceFamily": "V12",
+      "license": "CC-BY-3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
+      "sourceUrl": "https://freesound.org/people/enginemusic/sounds/43483/",
+      "downloadUrl": "https://cdn.freesound.org/previews/43/43483_462458-hq.mp3",
+      "provenance": "Recorded around 1997 at RPM Motorsports in Vergennes, Vermont; Sony D8 DAT and Audio-Technica ATM10. Public HQ MP3 preview, not original master.",
+      "checked": "2026-10-02",
+      "adaptation": "Mono 24 kHz PCM, 65 Hz high-pass / 5.8 kHz low-pass, selected source intervals, cosine loop overlap, DC/seam correction and peak/RMS normalization. In-game pitch, RPM blend and load EQ are authored, not measured.",
+      "use": "Classic V12 family proxy for Ferrari 250 GTO and Countach. The Testarossa uses a classic twelve-cylinder texture adaptation; not a recording of its flat-12.",
+      "cars": [
+        "ferrari-250-gto",
+        "ferrari-testarossa",
+        "lamborghini-countach-lp500s"
+      ]
+    },
+    {
+      "id": "honda-na-i4",
+      "file": "honda-na-i4-v1.wav",
+      "bytes": 172844,
+      "sha256": "1409b1b5a04bb8425904b6235c99e96192d5e174f9d03a6ea8994232ba01b877",
+      "duration": 3.6,
+      "sampleRate": 24000,
+      "sourceFile": "honda-f20c.ogg",
+      "sourceSha256": "aed190fa3717cdc922809da0b4a2b4d0eb11c505e3457bd0cc9b5d175025f7c2",
+      "layers": [
+        {
+          "start": 0.0,
+          "end": 1.2,
+          "rev": 0.1,
+          "sourceStart": 24.0,
+          "sourceDuration": 1.3
+        },
+        {
+          "start": 1.2,
+          "end": 2.4,
+          "rev": 0.5,
+          "sourceStart": 7.0,
+          "sourceDuration": 1.3
+        },
+        {
+          "start": 2.4,
+          "end": 3.6,
+          "rev": 0.95,
+          "sourceStart": 51.0,
+          "sourceDuration": 1.3
+        }
+      ],
+      "title": "2002-Honda-F20C.ogg",
+      "author": "Tyler Riddle",
+      "sourceVehicle": "2002 Honda F20C naturally aspirated inline-four",
+      "sourceFamily": "I4",
+      "license": "CC-BY-3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:2002-Honda-F20C.ogg",
+      "downloadUrl": "https://upload.wikimedia.org/wikipedia/commons/0/0d/2002-Honda-F20C.ogg",
+      "provenance": "Uploader-owned recording with an Audio-Technica Proformance P735 in the engine bay, M-Audio FastTrack at 48 kHz/24-bit and REAPER. Derived from original published Ogg Vorbis file.",
+      "checked": "2026-10-02",
+      "adaptation": "Mono 24 kHz PCM, 65 Hz high-pass / 5.8 kHz low-pass, selected source intervals, cosine loop overlap, DC/seam correction and peak/RMS normalization. In-game pitch, RPM blend and load EQ are authored, not measured.",
+      "use": "Naturally aspirated four-cylinder family proxy for Lotus Elise; not a Lotus or Toyota recording.",
+      "cars": [
+        "lotus-elise"
+      ]
+    },
+    {
+      "id": "audi-turbo-i4",
+      "file": "audi-turbo-i4-v1.wav",
+      "bytes": 180044,
+      "sha256": "8b5ebae44162a50773d74085f808d7e10655bca3ed8e22d1a7c2c04c603d3047",
+      "duration": 3.75,
+      "sampleRate": 24000,
+      "sourceFile": "audi-i4-425384.mp3",
+      "sourceSha256": "98a787c614a45154d7145dc47d4c9e9b377a6a6249e95920fedb15ed785639b4",
+      "layers": [
+        {
+          "start": 0.0,
+          "end": 1.25,
+          "rev": 0.1,
+          "sourceStart": 1.1,
+          "sourceDuration": 1.35
+        },
+        {
+          "start": 1.25,
+          "end": 2.5,
+          "rev": 0.5,
+          "sourceStart": 11.0,
+          "sourceDuration": 1.35
+        },
+        {
+          "start": 2.5,
+          "end": 3.75,
+          "rev": 0.95,
+          "sourceStart": 18.0,
+          "sourceDuration": 1.35
+        }
+      ],
+      "title": "audi a4 allroad 20TFSI engine rpm ramp fast mono.wav",
+      "author": "Soundholder",
+      "sourceVehicle": "Audi A4 Allroad 2.0 TFSI turbo inline-four",
+      "sourceFamily": "turbo-I4",
+      "license": "CC-BY-3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
+      "sourceUrl": "https://freesound.org/people/Soundholder/sounds/425384/",
+      "downloadUrl": "https://cdn.freesound.org/previews/425/425384_4421503-hq.mp3",
+      "provenance": "Engine RPM ramp from the author Soundholder vehicle library free sample. Public HQ MP3 preview.",
+      "checked": "2026-10-02",
+      "adaptation": "Mono 24 kHz PCM, 65 Hz high-pass / 5.8 kHz low-pass, selected source intervals, cosine loop overlap, DC/seam correction and peak/RMS normalization. In-game pitch, RPM blend and load EQ are authored, not measured.",
+      "use": "Small turbo-engine texture proxy for BMW i8 (actual turbo inline-three hybrid) and Porsche 919 (actual turbo V4 hybrid), alongside original hybrid synthesis. Neither cylinder arrangement is asserted to match.",
+      "cars": [
+        "bmw-i8",
+        "porsche-919-hybrid"
+      ]
+    },
+    {
+      "id": "volvo-turbo-i5",
+      "file": "volvo-turbo-i5-v1.wav",
+      "bytes": 124844,
+      "sha256": "570a64d32b1647a0cb770609b96fea8ff5b967ff70a49e49bdbb2c11adbd90dc",
+      "duration": 2.6,
+      "sampleRate": 24000,
+      "sourceFile": "volvo-i5-95838.mp3",
+      "sourceSha256": "c5c31b5277b30b40a024d1f1714a21aac3e944efd67deeed52380feeb24cfeb6",
+      "layers": [
+        {
+          "start": 0.0,
+          "end": 1.4,
+          "rev": 0.1,
+          "sourceStart": 11.0,
+          "sourceDuration": 1.5
+        },
+        {
+          "start": 1.4,
+          "end": 2.6,
+          "rev": 0.8,
+          "sourceStart": 20.0,
+          "sourceDuration": 1.3
+        }
+      ],
+      "title": "RG Volvo Engine.wav",
+      "author": "cmusounddesign",
+      "sourceVehicle": "Volvo 2.4 turbo inline-five",
+      "sourceFamily": "turbo-I5",
+      "license": "CC-BY-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "sourceUrl": "https://freesound.org/people/cmusounddesign/sounds/95838/",
+      "downloadUrl": "https://cdn.freesound.org/previews/95/95838_1059930-hq.mp3",
+      "provenance": "Source states 2.4 five-cylinder turbo engine, underhood microphone suspended about eight inches above turbocharger heat shield. Public HQ MP3 preview.",
+      "checked": "2026-10-02",
+      "adaptation": "Mono 24 kHz PCM, 65 Hz high-pass / 5.8 kHz low-pass, selected source intervals, cosine loop overlap, DC/seam correction and peak/RMS normalization. In-game pitch, RPM blend and load EQ are authored, not measured.",
+      "use": "Turbo five-cylinder family proxy for Audi Quattro rally; source is a Volvo road engine, not an Audi rally recording.",
+      "cars": [
+        "audi-quattro-rally"
+      ]
+    },
+    {
+      "id": "mercedes-i6",
+      "file": "mercedes-i6-v1.wav",
+      "bytes": 148892,
+      "sha256": "39f4949d192af45fb43cd8d2a518bb56bc03ec0513cf2d7cedd5f8cb2d0c4291",
+      "duration": 3.101,
+      "sampleRate": 24000,
+      "sourceFile": "mercedes-i6-433603.mp3",
+      "sourceSha256": "1550dca7026fecd9e3df0812d2889fd26706eec949bfce1e0661f9f5b8391c45",
+      "layers": [
+        {
+          "start": 0.0,
+          "end": 1.05,
+          "rev": 0.15,
+          "sourceStart": 4.4,
+          "sourceDuration": 1.15
+        },
+        {
+          "start": 1.05,
+          "end": 2.051,
+          "rev": 0.55,
+          "sourceStart": 3.8,
+          "sourceDuration": 1.1
+        },
+        {
+          "start": 2.051,
+          "end": 3.101,
+          "rev": 0.95,
+          "sourceStart": 2.7,
+          "sourceDuration": 1.15
+        }
+      ],
+      "title": "EXTERIOR - 1995 MERCEDES E320 FULL THROTTLE PASS BY R-L.wav",
+      "author": "douglasbruce@look.ca",
+      "sourceVehicle": "1995 Mercedes E320 inline-six",
+      "sourceFamily": "I6",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "sourceUrl": "https://freesound.org/people/douglasbruce@look.ca/sounds/433603/",
+      "downloadUrl": "https://cdn.freesound.org/previews/433/433603_7581660-hq.mp3",
+      "provenance": "Exterior full-throttle high-speed pass of a 1995 Mercedes E320. Public HQ MP3 preview. Edited pass-by bands retain some exterior motion/road texture; this is not a stationary RPM sweep.",
+      "checked": "2026-10-02",
+      "adaptation": "Mono 24 kHz PCM, 65 Hz high-pass / 5.8 kHz low-pass, selected source intervals, cosine loop overlap, DC/seam correction and peak/RMS normalization. In-game pitch, RPM blend and load EQ are authored, not measured.",
+      "use": "Inline-six family proxy for BMW M3 E46. Recording layer fades away at standstill because this is a driving take.",
+      "cars": [
+        "bmw-m3-e46"
+      ]
+    },
+    {
+      "id": "chevrolet-v6",
+      "file": "chevrolet-v6-v1.wav",
+      "bytes": 180044,
+      "sha256": "d58a1209610af66e47f05fbb714eca3a189d6261a8c36faa87cd7907dd794b86",
+      "duration": 3.75,
+      "sampleRate": 24000,
+      "sourceFile": "chevy-v6-351962.mp3",
+      "sourceSha256": "f17b35c0c7ea84f1064ce5eb12219b348252de26cc046cb6a5dcbcdc4be232d7",
+      "layers": [
+        {
+          "start": 0.0,
+          "end": 1.25,
+          "rev": 0.1,
+          "sourceStart": 11.0,
+          "sourceDuration": 1.35
+        },
+        {
+          "start": 1.25,
+          "end": 2.5,
+          "rev": 0.5,
+          "sourceStart": 1.0,
+          "sourceDuration": 1.35
+        },
+        {
+          "start": 2.5,
+          "end": 3.75,
+          "rev": 0.95,
+          "sourceStart": 4.0,
+          "sourceDuration": 1.35
+        }
+      ],
+      "title": "CarV6AcceleratingInsideCabin.wav",
+      "author": "CLaforet",
+      "sourceVehicle": "Chevrolet Traverse V6",
+      "sourceFamily": "V6",
+      "license": "CC-BY-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "sourceUrl": "https://freesound.org/people/CLaforet/sounds/351962/",
+      "downloadUrl": "https://cdn.freesound.org/previews/351/351962_2384040-hq.mp3",
+      "provenance": "Recorded in the cabin with a Tascam DR-40 during hard acceleration. Public HQ MP3 preview. Silence separators between takes are excluded.",
+      "checked": "2026-10-02",
+      "adaptation": "Mono 24 kHz PCM, 65 Hz high-pass / 5.8 kHz low-pass, selected source intervals, cosine loop overlap, DC/seam correction and peak/RMS normalization. In-game pitch, RPM blend and load EQ are authored, not measured.",
+      "use": "V6 family proxy for Nissan GT-R; not its turbocharged VR38 or exhaust recording. Existing authored induction layer supplies the turbo character.",
+      "cars": [
+        "nissan-gt-r-2018"
+      ]
+    },
+    {
+      "id": "bmw-diesel",
+      "file": "bmw-diesel-v1.wav",
+      "bytes": 172844,
+      "sha256": "4726aa629b76f78e39d7629fd590553767c78a09df7c11cd3e8acd908149a8b4",
+      "duration": 3.6,
+      "sampleRate": 24000,
+      "sourceFile": "diesel-401550.mp3",
+      "sourceSha256": "c29188142340e0f0eb0f51efac641736ce6944d36b4867e2cb5d9747054810e8",
+      "layers": [
+        {
+          "start": 0.0,
+          "end": 1.2,
+          "rev": 0.1,
+          "sourceStart": 0.3,
+          "sourceDuration": 1.3
+        },
+        {
+          "start": 1.2,
+          "end": 2.4,
+          "rev": 0.55,
+          "sourceStart": 0.3,
+          "sourceDuration": 1.3,
+          "sourceFile": "diesel-401547.mp3"
+        },
+        {
+          "start": 2.4,
+          "end": 3.6,
+          "rev": 0.95,
+          "sourceStart": 0.25,
+          "sourceDuration": 1.3,
+          "sourceFile": "diesel-401549.mp3"
+        }
+      ],
+      "title": "SFX_Car_Engine_Inside_Idle.wav",
+      "author": "GiocoSound",
+      "sourceVehicle": "BMW 120d diesel inline-four",
+      "sourceFamily": "diesel-I4",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "sourceUrl": "https://freesound.org/people/GiocoSound/sounds/401550/",
+      "downloadUrl": "https://cdn.freesound.org/previews/401/401550_5820033-hq.mp3",
+      "provenance": "Three cabin recordings (idle, medium and high RPM), Earthworks QTC30 and Oktava MK-012-01. Public HQ MP3 previews.",
+      "checked": "2026-10-02",
+      "adaptation": "Mono 24 kHz PCM, 65 Hz high-pass / 5.8 kHz low-pass, selected source intervals, cosine loop overlap, DC/seam correction and peak/RMS normalization. In-game pitch, RPM blend and load EQ are authored, not measured.",
+      "use": "Diesel texture proxy for Audi R18, whose V6 race diesel/hybrid is not represented by an exact recording.",
+      "cars": [
+        "audi-r18"
+      ],
+      "additionalSources": [
+        {
+          "title": "SFX_Car_Engine_Inside_RPMMed.wav",
+          "author": "GiocoSound",
+          "sourceFile": "diesel-401547.mp3",
+          "sourceSha256": "9f2595faabe5ebcb5a97f900c79b86dc3728c224eff97f3f8223d087faf403f6",
+          "sourceUrl": "https://freesound.org/people/GiocoSound/sounds/401547/",
+          "downloadUrl": "https://cdn.freesound.org/previews/401/401547_5820033-hq.mp3",
+          "license": "CC0-1.0",
+          "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+        },
+        {
+          "title": "SFX_Car_Engine_Inside_RPMHigh.wav",
+          "author": "GiocoSound",
+          "sourceFile": "diesel-401549.mp3",
+          "sourceSha256": "36fb4db368aa4330877707bb4b4970a6f7c7d51a2dc8f9bd3c75d931239822ff",
+          "sourceUrl": "https://freesound.org/people/GiocoSound/sounds/401549/",
+          "downloadUrl": "https://cdn.freesound.org/previews/401/401549_5820033-hq.mp3",
+          "license": "CC0-1.0",
+          "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+        }
+      ]
+    },
+    {
+      "id": "tesla-electric",
+      "file": "tesla-electric-v1.wav",
+      "bytes": 144188,
+      "sha256": "bba167ef041df8ffc4f2569c706ac2202ba355960c3693fc93b441e07ca30e82",
+      "duration": 3.003,
+      "sampleRate": 24000,
+      "sourceFile": "tesla-761685.mp3",
+      "sourceSha256": "829df9ee2a528c982765c6955a6da60256b27c5806af28ca0359da194c94fe0b",
+      "layers": [
+        {
+          "start": 0.0,
+          "end": 1.001,
+          "rev": 0.1,
+          "sourceStart": 0.25,
+          "sourceDuration": 1.1
+        },
+        {
+          "start": 1.001,
+          "end": 2.002,
+          "rev": 0.55,
+          "sourceStart": 1.9,
+          "sourceDuration": 1.1
+        },
+        {
+          "start": 2.002,
+          "end": 3.003,
+          "rev": 0.95,
+          "sourceStart": 3.65,
+          "sourceDuration": 1.1
+        }
+      ],
+      "title": "Acceleration of an electric car",
+      "author": "justVova",
+      "sourceVehicle": "Tesla Model S Plaid electric",
+      "sourceFamily": "electric",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "sourceUrl": "https://freesound.org/people/justVova/sounds/761685/",
+      "downloadUrl": "https://cdn.freesound.org/previews/761/761685_13088347-hq.mp3",
+      "provenance": "Source identifies full-throttle Tesla Model S Plaid acceleration. Public HQ MP3 preview contains the combined recorded electric-car motor/road sound, not an isolated laboratory motor stem.",
+      "checked": "2026-10-02",
+      "adaptation": "Mono 24 kHz PCM, 65 Hz high-pass / 5.8 kHz low-pass, selected source intervals, cosine loop overlap, DC/seam correction and peak/RMS normalization. In-game pitch, RPM blend and load EQ are authored, not measured.",
+      "use": "Electric-car family proxy for Rimac Concept One and Nevera. No Tesla-to-Rimac or exact motor/AVAS authenticity claim; recording fades to zero at standstill.",
+      "cars": [
+        "rimac-concept-one",
+        "rimac-nevera"
+      ]
     }
   ]
 }

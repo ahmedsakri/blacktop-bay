@@ -34,6 +34,7 @@ import { commitTourAdvance, recoverTourAdvance } from './tour-transaction.js';
 import { registerPWA, canInstallPWA, requestInstallPWA } from './pwa.js';
 import './mobile-viewport.css';
 import './player-tools.css';
+import './header-strip.css';
 import { logoLoaderMarkup, bindLogoLoader, mountLogoLoader } from "./logo-loader.js";
 import { loadCampaign, persistCampaign, getCampaignEvent, canStartCampaignEvent, recordCampaignResult } from "./driver-campaign.js";
 import { loadMastery, persistMastery, recordMasteryResult } from "./car-mastery.js";
@@ -389,6 +390,8 @@ async function prepareOpponents(seed, onProgress = () => {}) {
 }
 function updateWallet(){
   $('hq-credit-value').textContent=progression.credits.toLocaleString();
+  if($('hq-credit-compact')) $('hq-credit-compact').textContent=progression.credits < 10000 ? progression.credits.toLocaleString() : new Intl.NumberFormat('en',{notation:'compact',maximumFractionDigits:1}).format(progression.credits);
+  $('hq-wallet').title=`${progression.credits.toLocaleString()} race credits. Open upgrades`;
   $('hq-wallet').setAttribute('aria-label',`${progression.credits.toLocaleString()} race credits. Open upgrades`);
 }
 function updateRaceOptions(){
@@ -1541,7 +1544,13 @@ window.addEventListener("blur", () => {
 window.addEventListener('pagehide', event => {
   clearInput();
   sound.setPageActive?.(false);
-  if (!event.persisted) world?.backdrop?.dispose();
+  if (!event.persisted) {
+    world?.backdrop?.dispose();
+    world?.disposeCrowd?.();
+    world?.disposeSurfaceTextures?.();
+    world?.disposeEnvironment?.();
+    garageStudio?.disposeEnvironment?.();
+  }
 });
 window.addEventListener('pageshow',()=>sound.setPageActive?.(graphicsState==='ready'));
 for (const name of ['pointerup', 'pointercancel']) window.addEventListener(name, event => {
@@ -2104,6 +2113,9 @@ if (import.meta.env.DEV) {
   window.__blacktopBayQA = Object.freeze({
     snapshot: () => ({
       recordedAudio: sound.recordingStatus(),
+      studioLighting: garageStudio?.scene.userData.studioLighting,
+      crowd: structuredClone(world?.scene.userData.crowd || {}),
+      surfaces: structuredClone(world?.surfaces?.status || {}),
       mode, graphicsState, quality:{...adaptiveQuality.status,settings:adaptiveQuality.settings,geometry:{...loadedGeometry}},renderer:renderer?{...renderer.info.render,memory:{...renderer.info.memory}}:null,school:school?{index:school.index,active:school.active}:null,controls:structuredClone(preferences.controls),ghostVisible:ghostModel?.group.visible||false,
       raceId:race.raceId, wreck:race.wreck ? structuredClone(race.wreck) : null, air:race.air ? structuredClone(race.air) : null, pickupEvent:race.pickupEvent ? structuredClone(race.pickupEvent) : null,
       input: {...input, steer: analogSteering, steeringMode},
