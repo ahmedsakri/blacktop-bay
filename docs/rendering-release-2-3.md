@@ -1,6 +1,6 @@
 # Rendering releases 2–3
 
-The renderer preserves the existing 33 licensed silhouettes, player controls and authored material roles. This release reduces actual distant submission work and heavy texture residency, prepares maps/programs before reveal, and coordinates the three showcase environments. Geometry and download measurements below are reproducible file measurements, not physical-phone performance results.
+The renderer preserves the existing 33 licensed silhouettes, player controls and authored material roles. This release reduces actual distant submission work and heavy texture residency, prepares maps/programs before reveal, and coordinates all 38 environments with regional grades while retaining the three showcase overrides. Geometry and download measurements below are reproducible file measurements, not physical-phone performance results.
 
 ## Adaptive rendering and preparation
 
@@ -49,6 +49,8 @@ Reproduce with `node scripts/prepare-compressed-cars.mjs --toktx /path/to/toktx`
 
 ## Showcase and finish changes
 
+All 38 circuits now use regional lighting and three safe sector terraces. Near spectators have a bounded articulated mesh pool. [Catalogue-wide scenery and spectator completion](world-and-spectator-completion.md) records the subsequent work; the original three showcase refinements below remain intact.
+
 Harbor Flow, Fuji Skyline and San Francisco Hills share authored sky tint, fog, sun/fill colour and reflection intensity profiles. Once the existing panorama loads, one bounded reflection map rebuild captures that same graded sky. There is no per-frame environment capture. Low-detail environment maps use a 128-pixel PMREM cube source, high detail 256. Both world and garage own their complete reflection render targets and expose synchronous `rebuildEnvironment()` and idempotent `disposeEnvironment()`; replacement is installed before the old target is disposed. Context restoration regenerates these resources before play resumes.
 
 Harbor sails gain visible tension edges; Fuji pavilions gain ridge/eave trim and timber braces; San Francisco shelters gain fascia, braces and readable twelve-mark clocks. Added pieces join the existing sector/material batches, retaining the existing 19/21/27 respective sector draw ceilings. The three viewing terraces retain 24 low-detail or 42 high-detail spectators total; coordinated regional clothing and one filming observer per terrace use existing instanced anatomy, proximity animation and motion limits. Grandstand sound metadata now includes the actual track height.
@@ -61,7 +63,7 @@ All 33 cars now receive individual art-directed clearcoat profiles: restrained r
 
 The corrective decoder regression executes the actual JS/Wasm under disabled JavaScript string generation. All 241 shipping images match the stock decoder in ASTC across every mip; one image per car additionally covers ETC1, ETC2, BC1, BC3, BC7 M6 and the runtime BPTC choice BC7 M5, for 373 compared image/format chains and 3,655 mip payloads. Metadata, actual Meshopt-decoded geometry/UV streams, material roles, source credits, dimensions/mips and hashes are checked for every derivative. Worker-style initialization and error reporting are also exercised. This comparison does not measure physical-device decode latency.
 
-Targeted automated tests cover severe-frame adaptation, bounded GPU batches, cancellation/context restoration, byte-limited idle caching, compressed failure fallback, all generated asset contracts, finish restoration, environment ownership and batched showcase geometry. The local `reports/rendering-upgrade-review.html` fixture uses production shaders and supports three circuits, six flagship selections, near/distant geometry and KTX2 capability diagnostics. It remains excluded from the production build. Browser gameplay/recovery checks are recorded separately by the release coordinator; a fixture and desktop touch simulation are not physical-phone FPS, temperature or battery measurements.
+Targeted automated tests cover severe-frame adaptation, bounded GPU batches, cancellation/context restoration, byte-limited idle caching, compressed failure fallback, all generated asset contracts, finish restoration, environment ownership and batched showcase geometry. The local `reports/rendering-upgrade-review.html` fixture uses production shaders and supports all 38 circuits, six flagship selections, near/distant geometry and KTX2 capability diagnostics. It remains excluded from the production build. Browser gameplay/recovery checks are recorded separately by the release coordinator; a fixture and desktop touch simulation are not physical-phone FPS, temperature or battery measurements.
 
 ### Catalogue completion audit — 2 October 2026
 
