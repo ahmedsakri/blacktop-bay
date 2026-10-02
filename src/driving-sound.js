@@ -43,17 +43,64 @@ export function drivingVoice(vehicle = {}) {
     cutoff:voice.cutoff*(character?.brightness||1)*brightness,electric};
 }
 
-export function nitroSoundFrame({active=false,age=0,speed=0,electric=false}={}) {
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const number=(v,f=0)=>Number.isFinite(Number(v))?Number(v):f;
+
+// A rounded exhaust pulse has finite harmonics instead of the full sawtooth
+// spectrum. The overtone is quieter and rolls off faster than the main body.
+export function engineSpectrum(overtone=false) {
+ const coefficients=overtone?[0,1,.23,.07,.018,.006]:[0,1,.48,.22,.105,.049,.021,.009,.003];
+ return {real:new Float32Array(coefficients.length),imag:Float32Array.from(coefficients)};
+}
+
+export function createEngineSoundMotion() {
+ let gear=0,shift=0,load=0,rev=0,pitch=0,identity=null,wasRunning=false;
+ return {update(state={},dt=1/60){
+  const voice=state.voice||drivingVoice(),speed=clamp(number(state.speed),0,100),top=Math.max(10,number(state.topSpeed,55));
+  const step=clamp(number(dt,1/60),0,.1),running=Boolean(state.running),key=`${state.vehicleId||''}:${state.raceId||''}`;
+  const threshold=index=>voice.gears===1?top:top*(.20+.78*index/(voice.gears-1));
+  const throttle=clamp(number(state.throttle,1),0,1),brake=clamp(number(state.brake),0,1);
+  const reseed=key!==identity||(running&&!wasRunning);
+  if(reseed){
+   gear=0;while(gear<voice.gears-1&&speed>threshold(gear)+.5)gear++;
+   load=throttle*(1-brake);shift=0;identity=key;
+  }
+  const previous=gear;
+  if(running&&!reseed){
+   if(gear<voice.gears-1&&speed>threshold(gear)+.5)gear++;
+   else if(gear>0&&speed<threshold(gear-1)-1.5)gear--;
+  }
+  if(gear!==previous)shift=.16;else shift=Math.max(0,shift-step);
+  const lower=gear?threshold(gear-1)*.66:0,upper=threshold(gear);
+  const rawRev=clamp((speed-lower)/(upper-lower),0,1.08);
+  const rawPitch=voice.idle+rawRev*voice.range+clamp(number(state.drift),0,1)*voice.range*.025;
+  if(reseed){rev=rawRev;pitch=rawPitch;}
+  else {
+   rev+=(rawRev-rev)*(1-Math.exp(-step/ .10));
+   pitch+=(rawPitch-pitch)*(1-Math.exp(-step/(shift>0?.082:.10)));
+   load+=(throttle*(1-brake)-load)*(1-Math.exp(-step/(throttle>load?.09:.065)));
+  }
+  wasRunning=running;
+  // Torque opens and closes smoothly around a shift; avoid an amplitude step.
+  const torque=1-.18*Math.sin(Math.PI*shift/.16);
+  return {gear,pitch,rev,load,torque,shifting:shift>0};
+ }};
+}
+
+export function nitroSoundFrame({active=false,age=0,speed=0,electric=false,mode='normal'}={}) {
   const elapsed=Number.isFinite(age)?Math.max(0,age):0;
   const velocity=Number.isFinite(speed)?Math.max(0,Math.min(100,speed)):0;
-  // A rounded ignition pulse opens into low turbine thrust. Most of the
-  // earlier broadband hiss and 1 kHz whine are removed from the Nitro layer.
-  const attack=Math.exp(-elapsed*10),open=1-Math.exp(-elapsed*48);
-  return {air:active?.052*open:0,airCutoff:460+velocity*4.3,
-    coreFrequency:155+velocity*.92+(electric?18:0),coreGain:active?.045*open:0,
-    lowFrequency:51+velocity*.20+attack*26,
-    lowGain:active?(electric?.090:.105)*open*(1+attack*.32):0,
-    impact:active?attack*open*.11:0,
-    release:active?0:.027,
+  // Breath-like pressure onset decays into a soft, low thrust bed. A quieter
+  // sine core supplies weight without a sustained triangle-wave siren.
+  const attack=Math.exp(-elapsed*8),open=1-Math.exp(-elapsed*30);
+  // Perfect timing is a cleaner, higher turbine interval. Full-charge burst
+  // has a deeper pressure body. Modes change timbre, not just overall loudness.
+  const perfect=mode==='perfect',burst=mode==='burst';
+  return {air:active?(.022+attack*.038)*open*(perfect?.78:burst?1.10:1):0,airCutoff:340+velocity*2.2+(perfect?55:0),
+    coreFrequency:105+velocity*.24+(electric?9:0)+(perfect?12:burst?-6:0),coreGain:active?.012*open*(perfect?1.08:1):0,
+    lowFrequency:48+velocity*.08+attack*8-(burst?4:0),
+    lowGain:active?(electric?.061:.068)*open*(1+attack*.40)*(burst?1.14:perfect?.94:1):0,
+    impact:active?attack*open*.066*(burst?1.10:perfect?.85:1):0,
+    release:active?0:.021*(burst?1.10:1),
   };
 }

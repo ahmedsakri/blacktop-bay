@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import {PerspectiveCamera, Vector3} from 'three';
 import {createRaceFeedback, impactCameraOffset} from '../src/race-feedback.js';
 import {createRace, startRace, resetCar} from '../src/physics.js';
 
@@ -124,12 +125,31 @@ test('lap clocks round through minute boundaries without showing sixty seconds',
 
 
 test('directional impact cue follows the actual contact side relative to the car', () => {
-  for (const [yaw,nx,nz,edge] of [[0,-1,0,'right'],[0,1,0,'left'],[0,0,-1,'front'],[0,0,1,'rear'],[Math.PI/2,0,1,'right']]) {
+  for (const [yaw,nx,nz,edge] of [[0,-1,0,'left'],[0,1,0,'right'],[0,0,-1,'front'],[0,0,1,'rear'],[Math.PI/2,0,1,'left']]) {
     const feedback = createRaceFeedback(), race = {...raceFixture(), car: {yaw}};
     race.impact = {id: 1, kind: 'crash', source: 'barrier', strength: .8, remaining: .8, nx, nz};
     const first = feedback.read(race, {now: 10});
     assert.equal(first.edge, edge);
     assert.equal(feedback.read(race, {now: 30}).edge, edge, 'cue remains on the same edge while it fades');
+  }
+});
+
+test('left and right contact cues match the actual chase-camera projection at every heading', () => {
+  for (const yaw of [0, Math.PI / 2, Math.PI, -Math.PI / 2, .73]) {
+    const forward = new Vector3(Math.sin(yaw), 0, Math.cos(yaw));
+    const localX = new Vector3(Math.cos(yaw), 0, -Math.sin(yaw));
+    const camera = new PerspectiveCamera(50, 16 / 9, .1, 100);
+    camera.position.copy(forward).multiplyScalar(-7); camera.position.y = 3;
+    const target = forward.clone().multiplyScalar(4); target.y = .8;
+    camera.lookAt(target); camera.updateMatrixWorld();
+    for (const side of [-1, 1]) {
+      const contact = localX.clone().multiplyScalar(side); contact.y = .5;
+      const projected = contact.clone().project(camera);
+      assert.ok(Math.abs(projected.x) > .1, 'the contact must sit clearly beside the car');
+      const race = {...raceFixture(), car: {yaw}, impact: {id: 1, kind: 'crash',
+        source: 'barrier', strength: .8, remaining: .8, nx: -contact.x, nz: -contact.z}};
+      assert.equal(createRaceFeedback().read(race, {now: 10}).edge, projected.x > 0 ? 'right' : 'left');
+    }
   }
 });
 
@@ -153,4 +173,17 @@ test('recovery waiting for a safe gap does not show a frozen countdown or invent
   assert.equal(result.kind,'waiting');assert.equal(result.title,'Finding a clear gap');
   assert.equal(result.detail,'Waiting for space behind you');assert.doesNotMatch(result.detail,/\ds/);
   assert.deepEqual(race,before);assert.equal(feedback.read(race,{now:3100}).announcement,'');
+});
+
+test('collectibles and landed stunts give truthful one-time notices; wreck recovery takes priority',()=>{
+  const feedback=createRaceFeedback(),race={...raceFixture(),elapsed:1,pickupEvent:{id:1,kind:'nitro',amount:.9,capacity:3.6}};
+  let notice=feedback.read(race);assert.equal(notice.title,'Nitro collected');assert.equal(notice.detail,'+25% charge');assert.ok(notice.announcement);
+  assert.equal(feedback.read(race).announcement,'');
+  race.air={event:{id:2,kind:'landing',stunt:'barrel',airtime:1.1}};race.elapsed=2;
+  notice=feedback.read(race);assert.equal(notice.title,'Barrel roll complete');assert.ok(notice.announcement);
+  race.wreck={id:1,phase:'impact'};notice=feedback.read(race);assert.equal(notice.title,'Wrecked');assert.match(notice.announcement,/Severe impact/);
+  assert.equal(feedback.read(race).announcement,'');
+  race.wreck.phase='none';race.elapsed=5;assert.equal(feedback.read(race).kind,'none');
+  race.raceId='next-race';race.elapsed=0;race.air=null;race.pickupEvent.id=1;
+  assert.equal(feedback.read(race).title,'Nitro collected');
 });

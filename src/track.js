@@ -1,5 +1,6 @@
 import { GRAND_PRIX_CIRCUITS } from './grand-prix-circuits.js';
 import { ORIGINAL_CIRCUITS } from './original-circuits.js';
+import { MOUNTAIN_CIRCUITS, elevationAt } from './mountain-circuit.js';
 
 // A closed coastal circuit in the x/z plane. Tangents point in race direction;
 // normals point to +local X (the driver's left). Distances and positions are metres.
@@ -79,6 +80,7 @@ function buildTrack({ id, name, description, points, width = 16, ...metadata }) 
     samples.push({ x: a.x + (b.x - a.x) * fraction, z: a.z + (b.z - a.z) * fraction, s });
   }
   samples.forEach((sample, i) => {
+    sample.y = elevationAt(sample.s / length, metadata.elevationProfile);
     const a = samples[(i - 1 + COUNT) % COUNT], b = samples[(i + 1) % COUNT];
     const magnitude = Math.hypot(b.x - a.x, b.z - a.z);
     sample.tx = (b.x - a.x) / magnitude;
@@ -86,14 +88,21 @@ function buildTrack({ id, name, description, points, width = 16, ...metadata }) 
     sample.nx = sample.tz;
     sample.nz = -sample.tx;
   });
+  samples.forEach((sample, i) => {
+    const a=samples[(i-1+COUNT)%COUNT],b=samples[(i+1)%COUNT];
+    sample.grade=(b.y-a.y)/(2*length/COUNT);
+    sample.ty=sample.grade/Math.hypot(1,sample.grade);
+  });
   return {
     series: 'original', region: 'Camber Reign', layoutKind: 'original',
     ...metadata, id, name, description, samples, length, width,
-    spawn: { x: samples[0].x, z: samples[0].z, yaw: Math.atan2(samples[0].tx, samples[0].tz) },
+    ramps: (metadata.rampFractions || []).map(({fraction,...ramp})=>({...ramp,s:fraction*length})),
+    obstacles: (metadata.obstacleFractions || []).map(({fraction,...obstacle})=>({...obstacle,s:fraction*length})),
+    spawn: { x: samples[0].x, y:samples[0].y, z: samples[0].z, yaw: Math.atan2(samples[0].tx, samples[0].tz) },
   };
 }
 
-const layouts = new Map([...CIRCUITS, ...GRAND_PRIX_CIRCUITS, ...ORIGINAL_CIRCUITS].map((circuit) => [circuit.id, buildTrack(circuit)]));
+const layouts = new Map([...CIRCUITS, ...GRAND_PRIX_CIRCUITS, ...ORIGINAL_CIRCUITS, ...MOUNTAIN_CIRCUITS].map((circuit) => [circuit.id, buildTrack(circuit)]));
 export const TRACKS = [...layouts.values()].map(({ samples, spawn, ...descriptor }) => descriptor);
 export let TRACK = layouts.get('harbor');
 export function getTrack(id = TRACK.id) { return layouts.get(id) || layouts.get('harbor'); }
@@ -109,10 +118,12 @@ export function sampleTrack(distance, track = TRACK) {
   let tz = a.tz + (b.tz - a.tz) * fraction;
   const magnitude = Math.hypot(tx, tz) || 1;
   tx /= magnitude; tz /= magnitude;
-  return { x: a.x + (b.x - a.x) * fraction, z: a.z + (b.z - a.z) * fraction, tx, tz, nx: tz, nz: -tx, s, index, distance: 0, signedDistance: 0 };
+  return { x: a.x + (b.x - a.x) * fraction, y:a.y+(b.y-a.y)*fraction,
+    grade:a.grade+(b.grade-a.grade)*fraction, ty:a.ty+(b.ty-a.ty)*fraction,
+    z: a.z + (b.z - a.z) * fraction, tx, tz, nx: tz, nz: -tx, s, index, distance: 0, signedDistance: 0 };
 }
 
-export function projectOnTrack(x, z, hint = 0, track = TRACK) {
+export function projectOnTrack(x, z, hint = 0, track = TRACK, height) {
   let nearest = null;
   let bestSquared = Infinity;
   const count = track.samples.length;
@@ -125,14 +136,15 @@ export function projectOnTrack(x, z, hint = 0, track = TRACK) {
     const dx = b.x - a.x, dz = b.z - a.z;
     const t = clamp(((x - a.x) * dx + (z - a.z) * dz) / (dx * dx + dz * dz || 1), 0, 1);
     const px = a.x + dx * t, pz = a.z + dz * t;
-    const squared = (x - px) ** 2 + (z - pz) ** 2;
+    const py=a.y+(b.y-a.y)*t;
+    const squared = (x - px) ** 2 + (z - pz) ** 2 + (Number.isFinite(height) ? Math.max(0, Math.abs(height-py)-3)**2 : 0);
     if (squared < bestSquared) {
       bestSquared = squared;
       nearest = { index, t, x: px, z: pz };
     }
   }
   const sample = sampleTrack((nearest.index + nearest.t) / count * track.length, track);
-  const distance = Math.sqrt(bestSquared);
+  const distance = Math.hypot(x-nearest.x,z-nearest.z);
   const side = (x - nearest.x) * sample.nx + (z - nearest.z) * sample.nz;
   return { ...sample, x: nearest.x, z: nearest.z, index: nearest.index, distance, signedDistance: distance * Math.sign(side) };
 }

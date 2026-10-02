@@ -1,6 +1,7 @@
 import { icon } from './icons.js';
 import { VEHICLES } from './vehicles.js';
 import { getUpgradeStats } from './physics.js';
+import { getCarSetup, loadSetups } from './car-setups.js';
 import { circuitMapMarkup } from './collection-ui.js';
 import { getTrack } from './track.js';
 import { LATEST_CAR_IDS } from './car-releases.js';
@@ -33,7 +34,7 @@ export function hasCarFilters({query = '', family = 'all', brand = 'all', favori
 export function clearCarFilters(view = {}) {
   return {...view, query: '', family: 'all', brand: 'all', favoritesOnly: false};
 }
-export function findCars({ query = '', family = 'all', brand = 'all', sort = 'latest', favoritesOnly = false, favorites = new Set(), progression = {} } = {}) {
+export function findCars({ query = '', family = 'all', brand = 'all', sort = 'latest', favoritesOnly = false, favorites = new Set(), progression = {}, setupState = loadSetups() } = {}) {
   const terms = query.trim().split(/\s+/).map(searchText).filter(Boolean);
   return VEHICLES.filter(car => (family === 'all' || car.family === family)
     && (brand === 'all' || car.brand === brand)
@@ -43,7 +44,7 @@ export function findCars({ query = '', family = 'all', brand = 'all', sort = 'la
       if (sort === 'name') return a.name.localeCompare(b.name);
       if (sort === 'speed' || sort === 'handling') {
         const key = sort === 'speed' ? 'topSpeed' : 'handling';
-        return getUpgradeStats(b.id, progression.cars?.[b.id])[key] - getUpgradeStats(a.id, progression.cars?.[a.id])[key]
+        return getUpgradeStats(b.id, progression.cars?.[b.id], getCarSetup(setupState, b.id))[key] - getUpgradeStats(a.id, progression.cars?.[a.id], getCarSetup(setupState, a.id))[key]
           || a.name.localeCompare(b.name);
       }
       return (releaseOrder.get(a.id) ?? LATEST_CAR_IDS.length) - (releaseOrder.get(b.id) ?? LATEST_CAR_IDS.length)
@@ -55,7 +56,7 @@ export function carLibraryMarkup() {
   <div class="library-filter-row"><div class="library-families" role="group" aria-label="Browse car families">${['all', ...(new Set(VEHICLES.map(car => car.family)).size > 1 ? new Set(VEHICLES.map(car => car.family)) : [])].map(family => `<button type="button" data-library-family="${family}" aria-pressed="${family === 'all'}">${family === 'all' ? 'All cars' : family === 'gt' ? 'GT' : family[0].toUpperCase() + family.slice(1)}<span>${family === 'all' ? VEHICLES.length : VEHICLES.filter(car => car.family === family).length}</span></button>`).join('')}</div><button id="favorites-only" type="button" aria-pressed="false">${icon('star')} Favourites</button></div>
   <div class="library-summary"><p id="library-count" role="status" aria-live="polite"></p><div class="library-summary-actions"><label><input type="checkbox" id="compare-cars" /> Compare with your car</label><button id="clear-car-filters" type="button" disabled>Clear filters</button></div></div>
   <div id="car-library-grid" class="car-library-grid"></div><div id="library-empty" class="library-empty" hidden><strong>No cars in this view.</strong><p>Try another search, or star a car to save it to your favourites.</p><button id="reset-car-search" class="button secondary" type="button">SHOW ALL CARS</button></div>
-  <p class="library-note">All cars are ready to race. Performance figures and comparisons include your saved upgrades and describe this arcade game. Images show original model finishes. Independent car representations; no manufacturer affiliation.</p>`;
+  <p class="library-note">All cars are ready to race. Performance figures and comparisons include your saved upgrades and selected car setup, and describe this arcade game. Images show original model finishes. Independent car representations; no manufacturer affiliation.</p>`;
 }
 const PERFORMANCE_METRICS = [
   {key: 'topSpeed', label: 'Top speed', unit: 'km/h', scale: 3.6, digits: 1, displayDigits: 0},
@@ -63,9 +64,9 @@ const PERFORMANCE_METRICS = [
   {key: 'handling', label: 'Handling', unit: '×', scale: 1, digits: 2, displayDigits: 2},
   {key: 'nitroCapacity', label: 'Nitro', unit: 'sec', scale: 1, digits: 1, displayDigits: 1},
 ];
-export function carLibraryCard(car, { selected, favorites = new Set(), progression = {}, compare = false } = {}) {
-  const stats = getUpgradeStats(car.id, progression.cars?.[car.id]);
-  const current = getUpgradeStats(selected, progression.cars?.[selected]);
+export function carLibraryCard(car, { selected, favorites = new Set(), progression = {}, compare = false, setupState = loadSetups() } = {}) {
+  const stats = getUpgradeStats(car.id, progression.cars?.[car.id], getCarSetup(setupState, car.id));
+  const current = getUpgradeStats(selected, progression.cars?.[selected], getCarSetup(setupState, selected));
   const currentCar = VEHICLES.find(candidate => candidate.id === selected);
   const ratings = PERFORMANCE_METRICS.map(({key, label, unit, scale, displayDigits}) =>
     `<span><span>${label}</span><b>${(stats[key] * scale).toFixed(displayDigits)}</b> <small>${unit}</small></span>`).join('');

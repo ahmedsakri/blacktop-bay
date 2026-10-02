@@ -112,7 +112,9 @@ test('sustained wall creep above the old speed threshold recovers behind validat
  assert.equal(race.recoveries,1,'barrier creep must not continue indefinitely');
  assert.ok(previous.speed>2,'this is a moving wheel-speed stall, not the existing stopped-car case');
  assert.equal(previous.stuck,0);assert.equal(race.recovery.reason,'stuck');
- assert.ok(Math.abs(race._lapDistance-(previous.distance-8))<1e-7);
+ assert.ok(Math.abs(race.recovery.fromS-race.recovery.toS-8)<1e-7);
+ assert.ok(Math.abs(race._lapDistance-race.recovery.toS)<1e-7);
+ assert.ok(race._lapDistance<previous.distance-7.9,'only this frame’s genuine movement precedes the eight-metre retreat');
  assert.ok(race._nextCheckpoint<=previous.checkpoint);assert.equal(race.completedLaps,0);
  assert.equal(race.car.speed,0);assert.equal(race.score,0);
 });
@@ -120,8 +122,8 @@ test('sustained wall creep above the old speed threshold recovers behind validat
 test('a driver can cancel a pending wall-creep recovery with brake or leave the wall normally',()=>{
  for(const input of [{throttle:1,brake:true},{throttle:1,handbrake:true},{throttle:0}]){
   const race=createRace({track:'breakwater',mode:'time-attack'});startRace(race);
-  for(let i=0;i<30*120&&race._wallStallTime<1.8;i++)stepRace(race,{throttle:1},1/120);
-  assert.ok(race._wallStallTime>=1.8);assert.equal(race.recoveries,0);
+  for(let i=0;i<30*120&&Math.max(race._wallStallTime,race._wallCreepTime)<1.8;i++)stepRace(race,{throttle:1},1/120);
+  assert.ok(Math.max(race._wallStallTime,race._wallCreepTime)>=1.8);assert.equal(race.recoveries,0);
   advance(race,input,3);
   assert.equal(race.recoveries,0);assert.equal(race._wallStallTime,0);assert.notEqual(race.recovery.phase,'waiting');
  }
@@ -175,4 +177,27 @@ test('the recovered player still has to drive the gates and can finish a complet
  }
  assert.equal(displaced,true);assert.equal(race.recoveries,1);assert.equal(race.state,'finished');assert.equal(race.completedLaps,3);assert.equal(race.lapTimes.length,3);
  assert.ok(race.lapTimes.every(time=>time>40),'all laps require a complete physical circuit');assert.equal(race.raceProgress,1);
+});
+
+test('Fuji walking-speed rail pressure cannot reset the recovery clock through tiny forward progress',()=>{
+ const race=createRace({track:'fuji-skyline',vehicle:'lamborghini-huracan',mode:'time-attack'});startRace(race);
+ let creepStarted=null,before;
+ for(let i=0;i<45*120&&!race.recoveries;i++){
+  before={distance:race._lapDistance,checkpoint:race._nextCheckpoint,charge:race.nitro.charge};
+  stepRace(race,{throttle:1},1/120);
+  if(race._wallCreepTime>0&&creepStarted===null)creepStarted=race.elapsed;
+ }
+ assert.ok(creepStarted>20,'fixture reproduces the slow rail-crawl after the first bend');
+ assert.equal(race.recoveries,1);assert.ok(race.elapsed-creepStarted<2.81);
+ assert.ok(race._lapDistance<=before.distance-7.9);assert.ok(race._nextCheckpoint<=before.checkpoint);
+ assert.equal(race.completedLaps,0);assert.equal(race.nitro.charge,before.charge);
+});
+
+test('steering away from a slow Fuji barrier releases the car before any automatic recovery',()=>{
+ const race=createRace({track:'fuji-skyline',vehicle:'lamborghini-huracan',mode:'time-attack'});startRace(race);const track=getTrack(race.track);
+ for(let i=0;i<40*120&&race._wallCreepTime<.5;i++)stepRace(race,{throttle:1},1/120);
+ assert.ok(race._wallCreepTime>=.5);const before=projectOnTrack(race.car.x,race.car.z,race._trackIndex,track,race.car.y);
+ const steer=Math.sign(before.signedDistance);advance(race,{throttle:1,steer},1.8);
+ const after=projectOnTrack(race.car.x,race.car.z,race._trackIndex,track,race.car.y);
+ assert.ok(after.distance<before.distance-2);assert.ok(race.car.speed>10);assert.equal(race.recoveries,0);assert.equal(race._wallCreepTime,0);
 });

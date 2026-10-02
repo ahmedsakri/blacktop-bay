@@ -50,5 +50,16 @@ test('every preview routes to its own garage, uses a real portrait and displays 
   assert.ok(markup.includes('10 of 20 upgrade levels installed'));
   assert.ok(markup.includes('YOUR CURRENT CAR'));
  }
- const stock=carPreviewMarkup('ferrari-enzo');assert.ok(stock.includes('Stock setup'));
+ const stock=carPreviewMarkup('ferrari-enzo');assert.ok(stock.includes('No upgrade levels installed · Factory balance'));
 });
+
+ test('preview uses the selected car setup and keeps every real setup stat bar within its shared scale',()=>{
+  for(const car of VEHICLES)for(const setup of ['balanced','grip','sprint','endurance']){
+   const upgrades={engine:5,tyres:5,handling:5,nitro:5},setupState={version:1,cars:{[car.id]:setup}};
+   const stats=getUpgradeStats(car.id,upgrades,setup);
+   const markup=carPreviewMarkup(car.id,{progression:{cars:{[car.id]:upgrades}},setupState});
+   for(const [key,scale,digits,unit] of [['topSpeed',3.6,0,'KM/H'],['acceleration',1,1,'M/S²'],['handling',1,2,'×'],['nitroCapacity',1,1,'SEC']])
+    assert.ok(markup.includes(`${(stats[key]*scale).toFixed(digits)} <small>${unit}`),`${car.id}/${setup}/${key}`);
+   for(const match of markup.matchAll(/--stat-fill:([\d.]+)%/g))assert.ok(Number(match[1])>0&&Number(match[1])<=100);
+  }
+ });

@@ -12,10 +12,10 @@ const wrapAngle=a=>Math.atan2(Math.sin(a),Math.cos(a));
 const orient=(a,b,c)=>(b.x-a.x)*(c.z-a.z)-(b.z-a.z)*(c.x-a.x);
 
 test('four authored routes extend the existing catalogue without replacing old IDs',()=>{
-  assert.equal(TRACKS.length,34);
-  assert.equal(new Set(TRACKS.map(t=>t.id)).size,34);
-  assert.equal(TRACKS.filter(t=>t.series==='original').length,9);
-  assert.deepEqual(TRACKS.slice(-4).map(t=>t.id),['breakwater','copper-canyon','cedar-ridge','neon-freight']);
+  assert.equal(TRACKS.length,38);
+  assert.equal(new Set(TRACKS.map(t=>t.id)).size,38);
+  assert.equal(TRACKS.filter(t=>t.series==='original').length,13);
+  assert.deepEqual(TRACKS.slice(30,34).map(t=>t.id),['breakwater','copper-canyon','cedar-ridge','neon-freight']);
   assert.equal(TRACKS.slice(0,30).filter(t=>t.series==='grand-prix').length,25);
   for(const c of ORIGINAL_CIRCUITS){
     const track=getTrack(c.id);

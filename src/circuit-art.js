@@ -11,7 +11,7 @@ export function circuitArtGeometry(track) {
  const scale=140/Math.max(maxX-minX,maxZ-minZ,1),cx=(minX+maxX)/2,cz=(minZ+maxZ)/2;
  const point=p=>({x:decimal(90+(p.x-cx)*scale),y:decimal(90+(p.z-cz)*scale),rotation:decimal(-Math.atan2(p.tx,p.tz)*180/Math.PI),s:p.s});
  // Every second simulation sample preserves the detailed silhouette while
- // keeping thirty-four inline cards light enough for phones.
+ // keeping thirty-eight inline cards light enough for phones.
  const points=source.filter((_,index)=>index%2===0).map(point);
  const path=points.map((p,index)=>`${index?'L':'M'}${p.x},${p.y}`).join(' ')+'Z';
  const directions=[.22,.52,.78].map(fraction=>{

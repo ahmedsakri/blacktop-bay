@@ -10,6 +10,12 @@ export function normalizeSteeringSensitivity(value) {
   return Number.isFinite(value) ? Math.max(.65, Math.min(1.5, value)) : 1;
 }
 
+// Browser/OS shortcuts must not become fresh race input. Release handlers still
+// run regardless of modifiers so a previously held control cannot get stuck.
+export function isDrivingShortcut(event = {}) {
+  return Boolean(event?.ctrlKey || event?.metaKey || event?.altKey || event?.isComposing);
+}
+
 export function createDrivingInputs() {
   const owners = new Map();
   return {
@@ -47,7 +53,9 @@ export function resolveDriveControls(input = {}, {steeringSensitivity = 1} = {})
   const sensitivity = normalizeSteeringSensitivity(steeringSensitivity);
   const adjustedAnalog = Math.sign(analog) * Math.abs(analog) ** (1 / sensitivity);
   return {
-    steer: Math.max(-1, Math.min(1, adjustedAnalog + Number(held('right')) - Number(held('left')))),
+    // An explicit arrow/key/pad direction wins over a connected analogue stick.
+    // Both digital directions mean neutral, even if that stick is deflected.
+    steer: held('right') || held('left') ? Number(held('right')) - Number(held('left')) : adjustedAnalog,
     throttle: brake ? 0 : 1,
     brake,
     handbrake: held('drift'),

@@ -3,6 +3,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { MANUFACTURER_ASSETS } from './manufacturer-asset-manifest.js';
 import { configureManufacturerPaint } from './manufacturer-paint.js';
+import { createChassisMotion } from './chassis-motion.js';
 
 // This module downloads only the requested car. Geometry and texture images are
 // immutable cache resources; every displayed car owns its mutable materials.
@@ -211,7 +212,7 @@ export function createManufacturerCar({assetId, vehicle, color, low = false, gho
     original.scale.set(1, 1, 1);
     rolling.add(original);
     const configuredRadius = typeof manifest.wheelRadius === 'number' ? manifest.wheelRadius : manifest.wheelRadius?.[name];
-    return {pivot, rolling, baseYaw: pivot.rotation.y, angle: 0, front: name.includes('_front_'),
+    return {pivot, rolling, baseY:pivot.position.y, baseYaw: pivot.rotation.y, angle: 0, front: name.includes('_front_'),
       radius: Math.max(.15, finite(configuredRadius, size.y / 2 || .33)), width: Math.max(.12, size.x)};
   });
   const rear = wheels.filter(wheel => !wheel.front);
@@ -234,20 +235,22 @@ export function createManufacturerCar({assetId, vehicle, color, low = false, gho
   template.references++;
   template.lastUsed = ++useCounter;
   let lastTime = null, disposed = false;
-  const update = ({speed = 0, steering = 0, brake = 0, time = 0} = {}) => {
+  const suspension = createChassisMotion();
+  const update = ({speed = 0, actualSpeed=speed, steering = 0, brake = 0, time = 0, air, impact, active=true,paused=false,raceId} = {}) => {
     if (disposed) return;
     time = finite(time, lastTime ?? 0);
     const dt = lastTime === null ? 0 : THREE.MathUtils.clamp(time - lastTime, 0, .06);
     lastTime = time;
     speed = finite(speed);
     const steer = -THREE.MathUtils.clamp(finite(steering), -1, 1) * .40;
+    const body=suspension.update({speed:actualSpeed,steering,brake,air,impact,active,paused,raceId},dt);
     for (const wheel of wheels) {
       wheel.angle = (wheel.angle + speed * dt / wheel.radius) % (Math.PI * 2);
       wheel.rolling.rotation.x = wheel.angle;
       wheel.pivot.rotation.y = wheel.baseYaw + (wheel.front ? steer : 0);
+      wheel.pivot.position.y = wheel.baseY + (wheel.front?body.front:body.rear)*.3;
     }
-    chassis.rotation.z = THREE.MathUtils.lerp(chassis.rotation.z,
-      -steer * THREE.MathUtils.clamp(Math.abs(speed) / 28, 0, 1) * .018, Math.min(1, dt * 8));
+    chassis.rotation.z=body.roll;chassis.rotation.x=body.pitch;chassis.position.y=body.heave;
     const braking = THREE.MathUtils.clamp(finite(Number(brake)), 0, 1);
     for (const lamp of brakeLights) {
       lamp.material.emissive.copy(lamp.emissive).lerp(BRAKE_COLOR, braking);

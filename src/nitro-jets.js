@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {vehiclePoint} from './vehicle-pose.js';
 
 // Two intersecting tapered planes per verified tailpipe. Unlike camera-facing
 // particle cores the jet always points backwards along the car's own heading.
@@ -23,18 +24,19 @@ export function createNitroJets(scene, {low=false}={}) {
   });
   const mesh=new THREE.InstancedMesh(geometry,material,4);mesh.name='nitro-directional-jets';mesh.count=0;
   mesh.frustumCulled=false;mesh.renderOrder=3;mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);scene.add(mesh);
-  const transform=new THREE.Object3D();let strength=0;
+  const transform=new THREE.Object3D(),point={x:0,y:0,z:0};let strength=0;
   return {mesh,
     update(car,exhausts,dt,{active=false,reducedMotion=false,time=0}={}){
       if(reducedMotion||!car||!exhausts.length){this.clear();return;}
       strength+=(Number(active)-strength)*(1-Math.exp(-Math.max(0,dt)*(active?21:15)));
       uniforms.strength.value=strength;uniforms.time.value=time;
       mesh.visible=strength>.008;mesh.count=mesh.visible?Math.min(4,exhausts.length):0;
-      const speed=Math.max(0,Math.min(80,car.speed||0)),s=Math.sin(car.yaw),c=Math.cos(car.yaw);
+      const speed=Math.max(0,Math.min(80,car.speed||0));
       for(let i=0;i<mesh.count;i++){
         const outlet=exhausts[i],width=low?.17:.19,length=(.85+speed*.023)*( .65+strength*.35);
-        transform.position.set(car.x+c*outlet.x+s*outlet.z,outlet.y,car.z-s*outlet.x+c*outlet.z);
-        transform.rotation.set(0,car.yaw,0);transform.scale.set(width,width,length);transform.updateMatrix();mesh.setMatrixAt(i,transform.matrix);
+        vehiclePoint(car,outlet.x,outlet.y,outlet.z,point);
+        transform.position.set(point.x,point.y,point.z);
+        transform.rotation.set(-(car.pitch||0),car.yaw,car.roll||0,'YXZ');transform.scale.set(width,width,length);transform.updateMatrix();mesh.setMatrixAt(i,transform.matrix);
       }
       mesh.instanceMatrix.needsUpdate=true;
     },

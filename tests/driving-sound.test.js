@@ -1,16 +1,16 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {drivingVoice,nitroSoundFrame} from '../src/driving-sound.js';
+import {drivingVoice,nitroSoundFrame,createEngineSoundMotion,engineSpectrum} from '../src/driving-sound.js';
 import {VEHICLES} from '../src/vehicles.js';
 
 test('boost opens gently into low turbine thrust with restrained air and a short release',()=>{
  const silent=nitroSoundFrame({active:true,age:0,speed:35});
- const onset=nitroSoundFrame({active:true,age:.05,speed:35});
+ const onset=nitroSoundFrame({active:true,age:.08,speed:35});
  const sustain=nitroSoundFrame({active:true,age:1,speed:35});
  const off=nitroSoundFrame({active:false,speed:35});
  assert.ok(onset.impact>sustain.impact*1000&&onset.lowGain>sustain.lowGain);
- assert.equal(silent.impact,0);assert.equal(silent.lowGain,0);assert.ok(onset.air<sustain.air);
- assert.ok(sustain.air<.06&&sustain.coreFrequency<300&&sustain.coreGain>0);
+ assert.equal(silent.impact,0);assert.equal(silent.lowGain,0);assert.ok(onset.air>sustain.air,'initial whoosh recedes so it cannot mask the engine');
+ assert.ok(sustain.air<.025&&sustain.coreFrequency<150&&sustain.coreGain>0&&sustain.coreGain<.015);
  assert.equal(off.air,0);assert.equal(off.lowGain,0);assert.equal(off.impact,0);assert.ok(off.release>0);
  for(const value of Object.values(nitroSoundFrame({active:true,age:Infinity,speed:NaN})))assert.ok(Number.isFinite(value));
 });
@@ -51,10 +51,55 @@ test('Nitro envelopes remain finite and bounded at extreme speeds and ages witho
   assert.ok(sound.air>=0&&sound.air<=.3);
   assert.ok(sound.impact>=0&&sound.impact<=.16);
   assert.ok(sound.lowGain>=0&&sound.lowGain<=.145);
-  assert.ok(sound.airCutoff>=460&&sound.airCutoff<=890);
-  assert.ok(sound.coreFrequency>=155&&sound.coreFrequency<=265);
-  assert.ok(sound.lowFrequency>=51&&sound.lowFrequency<=97);
+  assert.ok(sound.airCutoff>=340&&sound.airCutoff<=560);
+  assert.ok(sound.coreFrequency>=105&&sound.coreFrequency<=138);
+  assert.ok(sound.lowFrequency>=48&&sound.lowFrequency<=64);
   if(active)assert.equal(sound.release,0);
   else {assert.equal(sound.air,0);assert.equal(sound.impact,0);assert.equal(sound.lowGain,0);}
  }
+});
+
+test('engine load, gear transitions and their rounded harmonic spectrum are bounded across every car',()=>{
+ for(const vehicle of VEHICLES){
+  const voice=drivingVoice(vehicle),engine=createEngineSoundMotion(),state={running:true,voice,vehicleId:vehicle.id,topSpeed:vehicle.handling.topSpeed,throttle:1};
+  let previous=engine.update({...state,speed:0},.02),shifts=0;
+  for(let speed=.1;speed<=vehicle.handling.topSpeed+1;speed+=.1){
+   const frame=engine.update({...state,speed},.02);
+   assert.ok(Object.values(frame).every(value=>typeof value==='boolean'||Number.isFinite(value)),vehicle.id);
+   assert.ok(Math.abs(frame.pitch-previous.pitch)<voice.range*.22,`${vehicle.id}: smooth gear transition`);
+   assert.ok(frame.torque>=.82&&frame.torque<=1);
+   if(frame.gear>previous.gear)shifts++;
+   previous=frame;
+  }
+  assert.equal(shifts,voice.gears-1,vehicle.id);
+ }
+ for(const overtone of [false,true]){
+  const wave=engineSpectrum(overtone);assert.equal(wave.real[0],0);assert.equal(wave.imag[0],0);
+  assert.ok(wave.imag.length<=10);assert.ok(wave.imag.at(-1)<.01);
+  for(let i=2;i<wave.imag.length;i++)assert.ok(wave.imag[i]<wave.imag[i-1]);
+ }
+});
+
+test('same-speed pause resume retains the chosen gear without false shifts or throttle steps',()=>{
+ const engine=createEngineSoundMotion(),voice=drivingVoice(),state={running:true,voice,vehicleId:'test',raceId:1,speed:40,topSpeed:55,throttle:1};
+ const before=engine.update(state,.02);assert.ok(before.gear>=3);
+ engine.update({...state,running:false},.02);
+ const resumed=engine.update(state,.02);assert.equal(resumed.gear,before.gear);assert.equal(resumed.pitch,before.pitch);assert.equal(resumed.shifting,false);
+ const coast=engine.update({...state,throttle:0},.02);assert.ok(coast.load>0&&coast.load<1);
+ let settled;for(let i=0;i<50;i++)settled=engine.update({...state,throttle:0},.02);assert.ok(settled.load<1e-5);
+ for(const speed of [NaN,Infinity,-Infinity])assert.ok(Number.isFinite(engine.update({...state,speed},Infinity).pitch));
+});
+
+test('normal, perfect and full-charge burst have distinct bounded timbres rather than a simple volume increase',()=>{
+ const normal=nitroSoundFrame({active:true,age:1,speed:45});
+ const perfect=nitroSoundFrame({active:true,age:1,speed:45,mode:'perfect'});
+ const burst=nitroSoundFrame({active:true,age:1,speed:45,mode:'burst'});
+ assert.ok(perfect.air<normal.air&&perfect.coreFrequency>normal.coreFrequency&&perfect.lowGain<normal.lowGain);
+ assert.ok(burst.lowFrequency<normal.lowFrequency&&burst.lowGain>normal.lowGain);
+ for(const mode of ['normal','perfect','burst'])for(const age of [0,.02,.1,.3,1,50])for(const speed of [0,35,100,Infinity]) {
+  const frame=nitroSoundFrame({active:true,age,speed,mode});
+  assert.ok(Object.values(frame).every(Number.isFinite));assert.ok(frame.lowGain<=.145&&frame.air<.065&&frame.coreGain<.055);
+  assert.ok(frame.coreFrequency<300&&frame.lowFrequency>=44);
+ }
+ assert.deepEqual(nitroSoundFrame({mode:'unknown'}),nitroSoundFrame());
 });

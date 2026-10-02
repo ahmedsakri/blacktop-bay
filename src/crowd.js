@@ -124,33 +124,98 @@ function taperedLimbGeometry(detail, compact = false) {
  ],detail);
 }
 
+// Original seamless woven cotton, denim and skin micro-surfaces. Neutral maps
+// multiply each person's authored colour rather than replacing skin diversity.
+// Kept tiny and shared across the entire crowd; no per-person image requests.
+export function spectatorSurfacePixels(kind='cotton',size=128) {
+ const dimension=Math.max(16,Math.min(128,Number.isFinite(size)?Math.floor(size):128));
+ const rgba=new Uint8Array(dimension*dimension*4),height=new Uint8Array(rgba.length);
+ const hash=(x,y)=>{let v=Math.imul(x+37,374761393)^Math.imul(y+53,668265263);v=Math.imul(v^(v>>>13),1274126177);return ((v^(v>>>16))>>>0)/4294967296;};
+ for(let y=0;y<dimension;y++)for(let x=0;x<dimension;x++) {
+  const u=x/dimension,v=y/dimension,grain=hash(x,y)-.5;
+  let value,relief;
+  if(kind==='skin') {
+   const pore=hash(Math.floor(x/2),Math.floor(y/2))>.94?-4:0;
+   value=249+grain*4+pore;relief=128+grain*16+pore*2;
+  }else{
+   const twill=kind==='denim'?Math.sin((x+y)*Math.PI/3):Math.cos(x*Math.PI)*Math.sin(y*Math.PI);
+   const thread=Math.sin(u*TAU*16)*Math.sin(v*TAU*16);
+   const fold=Math.sin(u*TAU*2+Math.sin(v*TAU)*.5)*Math.cos(v*TAU);
+   value=kind==='denim'?225+twill*9+grain*8+fold*5:238+thread*5+grain*5+fold*4;
+   relief=128+twill*23+thread*13+grain*12;
+  }
+  const offset=(y*dimension+x)*4;
+  for(let channel=0;channel<3;channel++){rgba[offset+channel]=Math.round(value);height[offset+channel]=Math.round(relief);}
+  rgba[offset+3]=height[offset+3]=255;
+ }
+ return {size:dimension,rgba,height};
+}
+
+function spectatorSurfaceTexture(pixels,size,isColor) {
+ let texture;
+ // Canvas is used in the browser. DataTexture keeps headless geometry checks
+ // independent of a DOM and remains a safe fallback if a 2D context is absent.
+ try {
+  const canvas=globalThis.document?.createElement?.('canvas');
+  if(canvas){canvas.width=canvas.height=size;const ctx=canvas.getContext?.('2d');if(ctx?.createImageData){const image=ctx.createImageData(size,size);image.data.set(pixels);ctx.putImageData(image,0,0);texture=new THREE.CanvasTexture(canvas);}}
+ }catch{/* A graphics fallback must not prevent the race from loading. */}
+ if(!texture){texture=new THREE.DataTexture(pixels,size,size,THREE.RGBAFormat);texture.needsUpdate=true;}
+ texture.colorSpace=isColor?THREE.SRGBColorSpace:THREE.NoColorSpace;
+ texture.wrapS=texture.wrapT=THREE.RepeatWrapping;
+ texture.magFilter=THREE.LinearFilter;texture.minFilter=THREE.LinearMipmapLinearFilter;texture.generateMipmaps=true;
+ texture.anisotropy=2;return texture;
+}
+
+function tailoredTorsoGeometry(low) {
+ const geometry=new THREE.LatheGeometry([
+  new THREE.Vector2(.163,0),new THREE.Vector2(.171,.04),new THREE.Vector2(.155,.18),
+  new THREE.Vector2(.158,.27),new THREE.Vector2(.185,.39),new THREE.Vector2(.207,.465),
+  new THREE.Vector2(.192,.513),new THREE.Vector2(.142,.553),new THREE.Vector2(.064,.582),
+ ],low?8:14),positions=geometry.attributes.position;
+ for(let i=0;i<positions.count;i++){
+  const x=positions.getX(i),y=positions.getY(i),z=positions.getZ(i),angle=Math.atan2(z,x);
+  const hem=Math.exp(-Math.pow((y-.04)*25,2)),waist=Math.exp(-Math.pow((y-.22)*12,2));
+  const fold=(Math.sin(y*39+angle*4)*.0022+Math.cos(angle*7+y*9)*.0015)*(hem+waist*.6+.25);
+  const chest=y>.28&&z>0?Math.sin(Math.min(1,(y-.28)/.30)*Math.PI)*.008:0;
+  positions.setXYZ(i,x+Math.cos(angle)*fold,y,z+Math.sin(angle)*fold+chest);
+ }
+ geometry.computeVertexNormals();return geometry;
+}
+
+function spectatorShoeGeometry(low) {
+ const geometry=new THREE.SphereGeometry(1,low?8:12,low?5:8),positions=geometry.attributes.position;
+ for(let i=0;i<positions.count;i++){
+  const x=positions.getX(i),y=positions.getY(i),z=positions.getZ(i);
+  positions.setXYZ(i,x*(z<-.15?.83:1),Math.max(-.60,y)*(z>.25?.72:1),z);
+ }
+ geometry.computeVertexNormals();return geometry;
+}
+
 /** A shared, articulated crowd. Ten instanced draws regardless of stand count;
- * nearby people animate at 15/24 Hz, distant people keep their authored poses.
+ * a capped foreground group animates at 30/60 Hz, the rest at 15/24 Hz.
  * Per-spectator motion stops when paused or when reduced motion is requested. */
 export function createCrowd({low = false, reducedMotion = false} = {}) {
  const people = [], batches = new Map();
- let scene, lastTime = 0, motionTime = 0, previousTick = -Infinity, disposed = false;
+ let scene, lastTime = 0, motionTime = 0, previousTick = -Infinity, previousForegroundTick=-Infinity, disposed = false;
  const detail = low ? 6 : 8;
  const sphere = new THREE.SphereGeometry(1, 6, low ? 3 : 4);
  const limb = taperedLimbGeometry(detail,low);
- const torso = new THREE.LatheGeometry([
-  new THREE.Vector2(.163, 0),new THREE.Vector2(.171,.04),new THREE.Vector2(.163,.20),
-  new THREE.Vector2(.164,.28),new THREE.Vector2(.196,.43),new THREE.Vector2(.209,.485),
-  new THREE.Vector2(.181,.535),new THREE.Vector2(.127,.565),new THREE.Vector2(.064,.582),
- ],low?8:14);
- // Tiny irregular garment folds are part of the surface, not noisy textures.
- const tp=torso.attributes.position;
- for(let i=0;i<tp.count;i++){
-  const x=tp.getX(i),y=tp.getY(i),z=tp.getZ(i),fold=Math.sin(y*45+Math.atan2(z,x)*3)*.0028*(1-y/.65);
-  tp.setXYZ(i,x+Math.sign(x)*fold,y,z+Math.sign(z)*fold);
- }torso.computeVertexNormals();
+ const torso = tailoredTorsoGeometry(low);
  const geometries = {
-  torso,skin:sphere,limbs:limb,trousers:taperedLimbGeometry(low?6:8,true),shoes:sphere.clone(),
+  torso,skin:sphere,limbs:limb,trousers:taperedLimbGeometry(low?6:8,true),shoes:spectatorShoeGeometry(low),
   hair:sweptHairGeometry(low?10:16),hairBack:sphere.clone(),details:new THREE.BoxGeometry(1,1,1),
   heads:spectatorHeadGeometry(low?10:18,low?7:12),collars:new THREE.TorusGeometry(1,.11,3,low?8:12),
  };
- const material=new THREE.MeshStandardMaterial({color:'white',roughness:.90,metalness:0});
- const skinMaterial=new THREE.MeshStandardMaterial({color:'white',roughness:.66,metalness:0});
+ const textures=[];
+ const surface=(kind,roughness,bumpScale)=>{
+  const pixels=spectatorSurfacePixels(kind,low?64:128);
+  const map=spectatorSurfaceTexture(pixels.rgba,pixels.size,true),bumpMap=spectatorSurfaceTexture(pixels.height,pixels.size,false);
+  textures.push(map,bumpMap);map.repeat.set(kind==='skin'?1:2,kind==='skin'?1:2);bumpMap.repeat.copy(map.repeat);
+  return new THREE.MeshStandardMaterial({color:'white',roughness,metalness:0,map,bumpMap,bumpScale});
+ };
+ const material=new THREE.MeshStandardMaterial({color:'white',roughness:.84,metalness:0});
+ const skinMaterial=surface('skin',.74,.0007),shirtMaterial=surface('cotton',.96,.0022),trouserMaterial=surface('denim',.95,.0028);
+ const hairMaterial=new THREE.MeshStandardMaterial({color:'white',roughness:.78,metalness:0});
  for (const [name,geometry] of Object.entries(geometries))batches.set(name,{geometry,entries:[],mesh:null});
 
  function element(person, kind, position, scale, tint, rotation = [0,0,0], segmentEnd = null) {
@@ -238,6 +303,9 @@ export function createCrowd({low = false, reducedMotion = false} = {}) {
    segment('limbs',shoulder,mixPoint(shoulder,elbow,person.garment===1?.98:.56),.068*w,person.shirt);
    part('skin',elbow,[.036*w,.037,.034],person.skin);
    segment('limbs',elbow,hand,.041*w,person.garment===1?person.shirt:person.skin);
+   const cuffStart=person.garment===1?mixPoint(elbow,hand,.83):mixPoint(shoulder,elbow,.50);
+   const cuffEnd=person.garment===1?mixPoint(elbow,hand,.93):mixPoint(shoulder,elbow,.58);
+   segment('limbs',cuffStart,cuffEnd,(person.garment===1?.042:.069)*w,shirtShadow).nearDetail=true;
    part('skin',hand,[.033,.042,.022],person.skin,[0,person.gesture===1?side*.7:0,side*.12]);
    part('skin',[hand[0]-side*.027,hand[1]-.015,hand[2]+.011],[.011,.023,.011],person.skin,[0,0,side*.25]);
    // Fingers read in nearby waves, then leave the draw entirely at face LOD.
@@ -252,10 +320,11 @@ export function createCrowd({low = false, reducedMotion = false} = {}) {
    segment('trousers',knee,ankle,.059*w,person.shorts?person.skin:person.pants);
    part('shoes',[ankle[0],.051,ankle[2]+.060],[.061,.049,.113],person.shoe);
    part('details',[ankle[0],.026,ankle[2]+.063],[.112,.021,.185],'#d3cdc1');
+   for(let lace=0;lace<3;lace++)part('details',[ankle[0],.084-lace*.004,ankle[2]+.033+lace*.016],[.050,.004,.005],'#d4d0c8',[0,0,side*.04]).nearDetail=true;
   }
   if(person.gesture===3)part('details',[0,hip+.60+pose.breathe,.337],[.083,.133,.014],'#1f252b',[-.08,0,0]);
-  // A restrained collar placket, hem and offset chest emblem interrupt the
-  // uniform plastic-shirt appearance without extra draw calls or textures.
+  // Restrained plackets, seams and emblems complement the shared fabric maps.
+  // Microgeometry is omitted from distant draws rather than merely hidden.
   if(person.garment===1){
    part('details',[pose.sway,hip+.31,pose.lean+.112],[.011,.42,.006],shirtShadow,[pose.torsoTilt,0,0]);
    for(const side of [-1,1])part('details',[pose.sway+side*.095,hip+.23,pose.lean+.108],[.060,.010,.005],shirtShadow,[pose.torsoTilt,0,side*.18]);
@@ -266,6 +335,7 @@ export function createCrowd({low = false, reducedMotion = false} = {}) {
   part('skin',[pose.sway,hip+.032,pose.lean+.103],[.130*w,.003,.006],shirtShadow);
   part('skin',[pose.sway-.068*w,hip+.148,pose.lean+.110],[.064*w,.002,.004],shirtLight,[0,0,-.13]);
   part('details',[.080*w+pose.sway,hip+.417,pose.lean+.111],[.014,.020,.004],shirtLight);
+  for(const side of [-1,1])part('details',[pose.sway+side*.146*w,hip+.21,pose.lean+.063],[.003,.245,.004],shirtShadow,[pose.torsoTilt,side*.2,-side*.025]).nearDetail=true;
 
  }
  return {
@@ -278,49 +348,63 @@ export function createCrowd({low = false, reducedMotion = false} = {}) {
    if(scene)return;scene=target;
    for(const [name,batch] of batches){
     if(!batch.entries.length)continue;
-    const mesh=new THREE.InstancedMesh(batch.geometry,name==='heads'||name==='skin'?skinMaterial:material,batch.entries.length);
+    const appearance=name==='heads'||name==='skin'?skinMaterial:name==='torso'?shirtMaterial:name==='trousers'?trouserMaterial:name==='hair'?hairMaterial:material;
+    const mesh=new THREE.InstancedMesh(batch.geometry,appearance,batch.entries.length);
     mesh.name=`race-spectators-${name}`;mesh.castShadow=false;mesh.receiveShadow=false;
     mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);batch.mesh=mesh;
     for(const entry of batch.entries){write(entry);mesh.setColorAt(entry.index,color.set(entry.tint));}
     mesh.computeBoundingSphere();mesh.boundingSphere.radius+=.4;scene.add(mesh);
    }
    scene.userData.spectatorCount=people.length;
-   scene.userData.crowd={people:people.length,drawCalls:[...batches.values()].filter(b=>b.mesh).length,animated:!reducedMotion,maxUpdateHz:low?15:24};
+   scene.userData.crowd={people:people.length,drawCalls:[...batches.values()].filter(b=>b.mesh).length,animated:!reducedMotion,maxUpdateHz:low?30:60,
+    backgroundUpdateHz:low?15:24,foregroundLimit:low?10:20,foregroundAnimated:0,sharedTextures:textures.length};
   },
   update(time,car,{paused=false,reducedMotion:reduce=reducedMotion}={}){
    if(!scene||disposed)return;
    const dt=Math.max(0,Math.min(.1,time-lastTime));lastTime=time;
    if(paused||reduce)return;
    motionTime+=dt;
-   if(motionTime-previousTick<1/(low?15:24))return;
-   previousTick=motionTime;
+   const fullTick=motionTime-previousTick>=1/(low?15:24);
+   const foregroundTick=motionTime-previousForegroundTick>=1/(low?30:60)-1e-6;
+   if(!fullTick&&!foregroundTick)return;
+   if(fullTick)previousTick=motionTime;
+   if(foregroundTick)previousForegroundTick=motionTime;
    let changed=false,faceLodChanged=false;
+   const foreground=[];
    for(const person of people){
-    const near=!car||Math.hypot(person.x-car.x,person.z-car.z)<(low?38:56);
+    person.viewDistance=car?Math.hypot(person.x-car.x,person.z-car.z):0;
+    const near=person.viewDistance<(low?18:26);
+    if(person.viewDistance<(low?14:22))foreground.push(person);
     if(person.nearFace!==near){person.nearFace=near;faceLodChanged=true;}
    }
+   const foregroundSet=new Set(foreground.sort((left,right)=>left.viewDistance-right.viewDistance).slice(0,low?10:20));
+   scene.userData.crowd.foregroundAnimated=foregroundSet.size;
    if(faceLodChanged){
-    // Pack distant facial microgeometry out of the draw itself, rather than
-    // merely moving thousands of invisible eyes and lips offscreen.
-    const skin=batches.get('skin');let visible=0;
-    for(const entry of skin.entries){
-     entry.drawIndex=entry.faceDetail&&!entry.person.nearFace?-1:visible++;
-     if(entry.drawIndex>=0){write(entry);skin.mesh.setColorAt(entry.drawIndex,color.set(entry.tint));}
+    // Face, finger and garment microgeometry leave each instance draw at LOD.
+    // They keep their stable source index so returning viewers can see them.
+    for(const name of ['skin','limbs','details']){
+     const batch=batches.get(name);let visible=0;
+     for(const entry of batch.entries){
+      entry.drawIndex=(entry.faceDetail||entry.nearDetail)&&!entry.person.nearFace?-1:visible++;
+      if(entry.drawIndex>=0){write(entry);batch.mesh.setColorAt(entry.drawIndex,color.set(entry.tint));}
+     }
+     if(batch.mesh){batch.mesh.count=visible;batch.mesh.instanceColor.needsUpdate=true;}
     }
-    if(skin.mesh){skin.mesh.count=visible;skin.mesh.instanceColor.needsUpdate=true;}
     changed=true;
    }
    for(const person of people){
-    const distance=car?Math.hypot(person.x-car.x,person.z-car.z):0;
+    const distance=person.viewDistance;
     if(distance>(low?76:110))continue;
+    if(foregroundSet.has(person)?!foregroundTick:!fullTick)continue;
+    const elapsed=Math.min(.12,Math.max(0,motionTime-(person.lastPoseTime||0)));person.lastPoseTime=motionTime;
     // Each spectator reacts at a different time as the car approaches their
     // own seat. Reactions ease away instead of snapping when the car passes.
     const nearby=car&&Math.abs(car.speed||0)>3&&distance<(person.reactionDistance||34);
     if(car){const target=Math.atan2(car.x-person.x,car.z-person.z)-person.yaw;
      const angle=Math.atan2(Math.sin(target),Math.cos(target));
-     person.lookYaw+=(Math.max(-.43,Math.min(.43,angle))*.62-person.lookYaw)*.08;
+     person.lookYaw+=(Math.max(-.43,Math.min(.43,angle))*.62-person.lookYaw)*(1-Math.exp(-elapsed*2.5));
     }
-    const response=(nearby?.15:.028)*(person.reactionSpeed||1);
+    const response=1-Math.exp(-elapsed*(nearby?4.8:.85)*(person.reactionSpeed||1));
     person.reaction+=(Number(nearby)-person.reaction)*response;
     const spontaneous=Math.sin(motionTime*.19+person.phase)> .72?.16:0;
     compose(person,motionTime,spontaneous+person.reaction*.84);changed=true;
@@ -328,6 +412,7 @@ export function createCrowd({low = false, reducedMotion = false} = {}) {
    if(changed)for(const batch of batches.values())if(batch.mesh)batch.mesh.instanceMatrix.needsUpdate=true;
   },
   get count(){return people.length;},
-  dispose(){if(disposed)return;disposed=true;for(const batch of batches.values()){batch.mesh?.removeFromParent();batch.geometry.dispose();}material.dispose();skinMaterial.dispose();},
+  dispose(){if(disposed)return;disposed=true;for(const batch of batches.values()){batch.mesh?.removeFromParent();batch.geometry.dispose();}
+   for(const texture of textures)texture.dispose();for(const appearance of [material,skinMaterial,shirtMaterial,trouserMaterial,hairMaterial])appearance.dispose();},
  };
 }

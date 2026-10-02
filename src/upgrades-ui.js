@@ -48,13 +48,13 @@ const components = {
 const formatCredits = value => Math.max(0, Math.floor(Number.isFinite(value) ? value : 0)).toLocaleString();
 export const speedLabel = stats => `${Math.round(stats.topSpeed * 3.6)} km/h`;
 
-export function upgradePanel(state, vehicle) {
-  const car = getVehicle(vehicle), stats = getUpgradeStats(car.id, state?.cars?.[car.id]);
+export function upgradePanel(state, vehicle, setup = 'balanced') {
+  const car = getVehicle(vehicle), stats = getUpgradeStats(car.id, state?.cars?.[car.id], setup);
   const stock = getUpgradeStats(car.id, {}), credits = Number.isSafeInteger(state?.credits) ? Math.max(0, state.credits) : 0;
   let installed = 0;
   const cards = UPGRADE_COMPONENTS.map(component => {
     const spec = components[component], preview = getUpgradePreview(state, car.id, component);
-    const next = getUpgradeStats(car.id, preview.next || preview.current);
+    const next = getUpgradeStats(car.id, preview.next || preview.current, setup);
     const currentMetrics = spec.metrics(stats, stock), nextMetrics = spec.metrics(next, stock);
     installed += preview.level;
     const metricRows = currentMetrics.map(([name, unit, value], i) => `<div class="upgrade-metric"><dt>${name}<small>${unit}</small></dt><dd><span class="upgrade-now"><span class="workshop-sr">Current: </span>${value}</span><span class="upgrade-arrow" aria-hidden="true">${icon('arrow-right')}</span><strong class="upgrade-next"><span class="workshop-sr">${preview.maxed ? 'Installed' : 'Next level'}: </span>${nextMetrics[i][2]}</strong></dd></div>`).join('');

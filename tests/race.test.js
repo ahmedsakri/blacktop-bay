@@ -18,6 +18,9 @@ function drivingRace(vehicle = DEFAULT_VEHICLE_ID, speed = 20) {
 
 test('nitro supplies real acceleration, consumes bounded seconds and requires release after depletion', () => {
   const normal = drivingRace(), boosted = drivingRace();
+  // Measure depletion without the Harbor bottle that this driven line crosses.
+  // Real collection during a boost is covered separately below.
+  normal.pickups = []; boosted.pickups = [];
   advance(normal, { throttle: 1 }, 0.8);
   advance(boosted, { throttle: 1, nitro: true }, 0.8);
   assert.ok(boosted.car.speed > normal.car.speed + 7);
@@ -37,6 +40,23 @@ test('nitro supplies real acceleration, consumes bounded seconds and requires re
   stepRace(boosted, { throttle: 1, nitro: true }, 1 / 120);
   assert.equal(boosted.nitro.active, true);
   assert.ok(boosted.nitro.charge >= 0 && boosted.nitro.charge <= boosted.nitro.capacity);
+});
+
+test('a real pickup before depletion extends a held boost without creating a new boost gesture', () => {
+  const race = drivingRace();
+  advance(race, { throttle: 1, nitro: true }, 0.8);
+  assert.equal(race.pickupEvent.id, 0);
+  const boostEvent = race.nitro.event.id;
+  race.nitro.charge = 0.05;
+  advance(race, { throttle: 1, nitro: true }, 0.2);
+  assert.equal(race.pickupEvent.id, 1, 'the car must actually collect the bottle');
+  assert.ok(Math.abs(race.pickupEvent.amount - race.nitro.capacity * .32) < 1e-9);
+  assert.ok(Math.abs(race.nitro.charge - (0.05 + race.pickupEvent.amount - .2)) < 1e-9);
+  assert.equal(race.nitro.locked, false, 'a refill before exhaustion must not lock the trigger');
+  assert.equal(race.nitro.active, true);
+  assert.equal(race.car.nitroActive, true);
+  assert.equal(race.nitro.mode, 'normal');
+  assert.equal(race.nitro.event.id, boostEvent, 'collection is not a second Nitro press');
 });
 
 test('nitro cannot be farmed at rest, consumed under brakes or refilled by recovery', () => {

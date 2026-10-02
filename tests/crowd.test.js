@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as THREE from 'three';
-import {createCrowd, spectatorProfile, spectatorPose} from '../src/crowd.js';
+import {createCrowd, spectatorProfile, spectatorPose, spectatorSurfacePixels} from '../src/crowd.js';
 const random = () => {let s=37;return()=>((s=Math.imul(s,1664525)+1013904223)>>>0)/4294967296;};
 const matrices=scene=>scene.children.map(mesh=>Array.from(mesh.instanceMatrix.array));
 
@@ -75,5 +75,55 @@ test('spectators have garment silhouettes and personalised reaction timing withi
  assert.ok(scene.children.length<=10);
  assert.ok(people.some(p=>p.parts.some(part=>part.faceDetail&&!part.kind.includes('heads'))));
  assert.ok(scene.children.every(m=>Array.from(m.instanceMatrix.array).every(Number.isFinite)));
+ crowd.dispose();
+});
+
+test('original micro-surfaces are deterministic, bounded and visibly distinct without replacing skin colors',()=>{
+ const cotton=spectatorSurfacePixels('cotton',64),denim=spectatorSurfacePixels('denim',64),skin=spectatorSurfacePixels('skin',64);
+ assert.deepEqual(spectatorSurfacePixels('cotton',64),cotton);
+ assert.notDeepEqual(cotton.rgba,denim.rgba);assert.notDeepEqual(cotton.height,skin.height);
+ for(const surface of [cotton,denim,skin]) {
+  assert.equal(surface.rgba.length,64*64*4);assert.equal(surface.height.length,64*64*4);
+  for(let i=0;i<surface.rgba.length;i+=4){
+   assert.equal(surface.rgba[i],surface.rgba[i+1]);assert.equal(surface.rgba[i+1],surface.rgba[i+2],'neutral maps preserve instance skin/clothing tint');
+   assert.equal(surface.rgba[i+3],255);assert.equal(surface.height[i+3],255);
+  }
+  assert.ok(new Set(surface.rgba).size>8,'maps have actual surface variation');
+ }
+ assert.equal(spectatorSurfacePixels('cotton',Infinity).size,128);
+ assert.equal(spectatorSurfacePixels('cotton',1e6).size,128);
+});
+
+test('shared clothing and skin textures keep the ten-draw budget and release GPU resources exactly once',()=>{
+ const crowd=createCrowd({low:true}),scene=new THREE.Scene(),rng=random();
+ for(let i=0;i<120;i++)crowd.add(i%12,0,Math.floor(i/12),0,i%2===0,rng);
+ crowd.render(scene);
+ const torso=scene.children.find(mesh=>mesh.name==='race-spectators-torso');
+ const head=scene.children.find(mesh=>mesh.name==='race-spectators-heads');
+ const trousers=scene.children.find(mesh=>mesh.name==='race-spectators-trousers');
+ assert.ok(torso.material.map&&torso.material.bumpMap&&head.material.map&&trousers.material.map);
+ assert.notEqual(torso.material.map,head.material.map);assert.notEqual(torso.material.map,trousers.material.map);
+ const textures=new Set(scene.children.flatMap(mesh=>[mesh.material.map,mesh.material.bumpMap]).filter(Boolean));
+ assert.equal(textures.size,6);assert.ok(scene.children.length<=10);
+ assert.ok([...textures].every(texture=>texture.image.width===64&&texture.image.height===64));
+ const counts=new Map([...textures].map(texture=>[texture,0]));
+ for(const texture of textures)texture.addEventListener('dispose',()=>counts.set(texture,counts.get(texture)+1));
+ crowd.dispose();crowd.dispose();assert.ok([...counts.values()].every(count=>count===1));
+});
+
+test('foreground animation is smoother but capped; distant garment details leave the draw',()=>{
+ const crowd=createCrowd({low:true}),scene=new THREE.Scene(),rng=random();
+ const people=Array.from({length:35},(_,i)=>crowd.add(i*.35,0,3,0,false,rng));crowd.render(scene);
+ let nearTicks=0,backgroundTicks=0,lastNear,lastBackground;
+ for(let frame=1;frame<=120;frame++){
+  crowd.update(frame/120,{x:0,z:0,speed:25});
+  if(people[0].lastPoseTime!==lastNear){nearTicks++;lastNear=people[0].lastPoseTime;}
+  if(people[34].lastPoseTime!==lastBackground){backgroundTicks++;lastBackground=people[34].lastPoseTime;}
+  assert.ok(scene.userData.crowd.foregroundAnimated<=10);
+ }
+ assert.ok(nearTicks>backgroundTicks);assert.ok(nearTicks<=31&&backgroundTicks<=16);
+ const details=scene.children.find(mesh=>mesh.name==='race-spectators-details'),nearCount=details.count;
+ crowd.update(1.2,{x:500,z:500,speed:25});assert.ok(details.count<nearCount,'laces and seams should not consume distant instance draws');
+ crowd.update(1.4,{x:0,z:0,speed:25});assert.equal(details.count,nearCount,'foreground detail returns without rebuilding meshes');
  crowd.dispose();
 });

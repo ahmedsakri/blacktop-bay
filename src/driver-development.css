@@ -1,0 +1,86 @@
+.dialog:is([data-kind="campaign"],[data-kind="car-development"]){width:min(1100px,100%);max-width:1100px;max-height:calc(100dvh - 48px);padding:24px;overflow:auto;scrollbar-width:thin;background:#110017;border:1px solid #9246ff;border-radius:0}
+.dialog:is([data-kind="campaign"],[data-kind="car-development"])>.eyebrow{margin-top:0}
+.dialog:is([data-kind="campaign"],[data-kind="car-development"])>.dialog-actions{position:sticky;bottom:-24px;padding:12px 0;background:#110017;z-index:1;border-top:1px solid #9246ff66}
+.dialog:is([data-kind="campaign"],[data-kind="car-development"])>.dialog-actions .button{min-height:44px;min-width:44px;font-size:14px}
+.driver-development{--development-border:rgba(186,154,255,.28);color:#fff;max-width:1100px;margin-inline:auto;text-align:left;min-width:0}
+.driver-development *{box-sizing:border-box}
+.driver-development .development-kicker{display:block;color:#d4c4f2;font-size:11px;font-weight:800;letter-spacing:.15em;line-height:1.5}
+.driver-development h2,.driver-development h3,.driver-development h4{font-family:'Barlow Condensed',sans-serif;text-transform:uppercase;line-height:1.05;letter-spacing:.025em;color:#fff;margin:0}
+.driver-development h2{font-size:clamp(32px,5vw,52px);margin:5px 0 12px}
+.driver-development h2 em{font-style:normal;color:#fff71e}
+.driver-development h3{font-size:30px}.driver-development h4{font-size:25px}
+.driver-development p{color:#d2c9dc;line-height:1.55;font-size:14px;margin:8px 0}
+.driver-development .development-intro{padding-bottom:20px}.driver-development .development-intro>p{max-width:65ch}
+.driver-development .development-summary{display:flex;flex-wrap:wrap;gap:28px;margin-top:20px}
+.driver-development .development-summary>span{font-size:10px;letter-spacing:.09em;font-weight:800;color:#d4c4f2}
+.driver-development .development-summary strong{display:block;font-family:'Barlow Condensed',sans-serif;font-size:36px;color:#fff}
+.driver-development .development-summary small{font-size:20px;color:#c4afd9}
+.driver-development .campaign-recommendation{display:grid;grid-template-columns:1fr 1fr;gap:24px;background:linear-gradient(115deg,#35134f,#021439);border:1px solid #9246ff;border-left:4px solid #fff71e;padding:24px}
+.driver-development .campaign-recommendation h3{margin-top:8px;font-size:36px}
+.driver-development .development-car-name{font-size:13px;display:block;margin-top:16px;color:#fff71e}
+.driver-development .development-objectives{list-style:none;padding:0;margin:0 0 16px;display:grid;gap:12px}
+.driver-development .development-objectives li{display:flex;align-items:flex-start;gap:10px;font-size:13px;line-height:1.4;color:#ece6f4;min-width:0}
+.driver-development .development-objectives li>span:nth-child(2){flex:1;min-width:0;overflow-wrap:anywhere}
+.driver-development .development-objectives b{display:block;font-size:9px;letter-spacing:.09em;margin-bottom:3px;color:#c9b9e0}
+.driver-development .development-goal-mark{display:grid;place-items:center;width:25px;height:25px;background:#110017;border:1px solid var(--development-border);flex:none}
+.driver-development .development-goal-mark .ui-icon{width:14px;height:14px}
+.driver-development .is-earned .development-goal-mark,.driver-development .is-earned .mastery-goal-icon{color:#c3fb13}
+.driver-development .development-earned{font-size:9px;font-weight:800;letter-spacing:.05em;color:#c3fb13;flex:none;margin-top:6px}
+.driver-development .button{min-height:44px;min-width:44px;gap:9px;font:800 14px 'Barlow Condensed',sans-serif;letter-spacing:.05em;white-space:normal;text-align:center}
+.driver-development .button .ui-icon{width:19px;height:19px;flex:none}
+.driver-development button:focus-visible,.driver-development summary:focus-visible{outline:3px solid #fff71e;outline-offset:3px}
+.driver-development .button:disabled{color:#c4b6d1;background:#21132e;opacity:1;border-color:#44334f;cursor:not-allowed}
+.driver-development .development-note{font-size:12px;color:#c3b6d1;line-height:1.6;margin:14px 0}
+.driver-development .campaign-chapters{display:grid;gap:12px;margin-top:24px}
+.driver-development .campaign-chapter{border:1px solid var(--development-border);background:#180b23}
+.driver-development .campaign-chapter>summary{display:flex;align-items:center;gap:14px;cursor:pointer;min-height:70px;padding:12px 16px;list-style:none}
+.driver-development .campaign-chapter>summary::-webkit-details-marker{display:none}
+.driver-development .campaign-chapter>summary>.ui-icon{width:20px;height:20px;margin-left:auto;transition:transform .2s}
+.driver-development .campaign-chapter[open]>summary>.ui-icon{transform:rotate(180deg)}
+.driver-development .campaign-chapter-number{font-family:'Barlow Condensed',sans-serif;font-size:30px;color:#fff71e}
+.driver-development summary strong{display:block;font-family:'Barlow Condensed',sans-serif;font-size:24px;text-transform:uppercase}
+.driver-development summary small{display:block;font-size:11px;color:#c9b9e0;margin-top:3px}
+.driver-development .campaign-chapter-body{padding:0 16px 16px}
+.driver-development .campaign-event-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:16px}
+.driver-development .campaign-event{background:#021439;border:1px solid var(--development-border);padding:16px;display:flex;flex-direction:column;min-width:0}
+.driver-development .campaign-event-heading{margin-bottom:14px}.driver-development .campaign-event h4{margin-top:6px}
+.driver-development .campaign-event p{font-size:12px}
+.driver-development .campaign-event .development-objectives{flex:1}.driver-development .campaign-event .button{width:100%}
+.driver-development .campaign-event.is-complete{border-color:#65742b}
+.driver-development .development-section-heading{display:flex;gap:12px;align-items:baseline;justify-content:space-between;margin:24px 0 14px}
+.driver-development .development-section-heading>span{font-size:10px;letter-spacing:.06em;font-weight:800;color:#d4c4f2;text-align:right}
+.driver-development .car-setup-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.driver-development .car-setup-option{appearance:none;border:1px solid var(--development-border);background:#021439;padding:18px;color:#fff;cursor:pointer;text-align:left;min-width:0;min-height:44px;transition:border-color .2s,background .2s}
+.driver-development .car-setup-option:hover{border-color:#c3a1ff}
+.driver-development .car-setup-option[aria-pressed=true]{border:2px solid #fff71e;padding:17px;background:linear-gradient(120deg,#321449,#021439)}
+.driver-development .car-setup-title{display:flex;align-items:center;gap:10px}.driver-development .car-setup-title .ui-icon{width:24px;height:24px;flex:none}
+.driver-development .car-setup-title strong{font-family:'Barlow Condensed',sans-serif;font-size:24px;text-transform:uppercase;line-height:1.05;flex:1}
+.driver-development .car-setup-title>span{color:#d4c4f2;font-size:9px;font-weight:800;letter-spacing:.05em}
+.driver-development [aria-pressed=true] .car-setup-title>span{color:#fff71e}
+.driver-development .car-setup-focus,.driver-development .car-setup-advantage,.driver-development .car-setup-tradeoff{display:block;font-family:inherit;font-size:12px;line-height:1.5;letter-spacing:0}
+.driver-development .car-setup-focus{color:#d2c9dc;margin-top:10px}.driver-development .car-setup-advantage{color:#fff;margin-top:14px}.driver-development .car-setup-tradeoff{color:#d2c9dc;margin-top:6px}
+.driver-development .development-specs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--development-border);border:1px solid var(--development-border);margin:18px 0}
+.driver-development .development-specs>div{padding:14px;background:#180b23;min-width:0}.driver-development .development-specs dt{font-size:10px;color:#c9b9e0;font-weight:800;letter-spacing:.05em}
+.driver-development .development-specs dd{font:700 29px 'Barlow Condensed',sans-serif;margin:5px 0 0}.driver-development .development-specs small{font-size:10px;color:#c9b9e0}
+.driver-development .car-mastery-goals{padding:0;margin:0;list-style:none;display:grid;gap:8px}
+.driver-development .car-mastery-goals li{display:flex;align-items:center;gap:14px;padding:14px;background:#021439;border:1px solid var(--development-border)}
+.driver-development .mastery-goal-icon{display:grid;place-items:center;flex:none;width:34px;height:34px;color:#d4c4f2}.driver-development .mastery-goal-icon .ui-icon{width:26px;height:26px}
+.driver-development .car-mastery-goals li>div{flex:1;min-width:0}.driver-development .car-mastery-goals strong{font-size:14px}.driver-development .car-mastery-goals p{font-size:12px;margin:4px 0 8px}
+.driver-development .mastery-goal-count{font-size:11px;font-weight:800;white-space:nowrap;color:#d4c4f2}.driver-development .is-earned .mastery-goal-count{color:#c3fb13}
+.driver-development progress{display:block;width:100%;height:4px;border:0;background:#352541;accent-color:#9246ff;appearance:none}
+.driver-development progress::-webkit-progress-bar{background:#352541}.driver-development progress::-webkit-progress-value{background:#9246ff}.driver-development progress::-moz-progress-bar{background:#9246ff}
+.driver-development .is-earned progress{accent-color:#c3fb13}.driver-development .is-earned progress::-webkit-progress-value{background:#c3fb13}.driver-development .is-earned progress::-moz-progress-bar{background:#c3fb13}
+.driver-development.development-result{margin:20px 0;padding:18px;background:#021439;border-left:3px solid #9246ff}
+.driver-development.development-result h3{display:flex;align-items:center;gap:10px;font-size:24px}.driver-development.development-result .ui-icon{width:23px;height:23px}
+.driver-development.development-result ul{padding-left:20px;color:#d4c4f2;font-size:13px;line-height:1.6}
+@media(max-width:760px){.driver-development .campaign-recommendation{grid-template-columns:1fr;padding:18px;gap:18px}.driver-development .campaign-event-list{grid-template-columns:1fr}.driver-development .car-setup-options{grid-template-columns:1fr}.driver-development .development-section-heading{align-items:flex-start;flex-direction:column;gap:7px}.driver-development .development-specs{grid-template-columns:repeat(2,minmax(0,1fr))}.driver-development .campaign-recommendation .button{width:100%}.driver-development .car-mastery-goals li{gap:10px;padding:12px}.driver-development .mastery-goal-icon{width:24px}.driver-development .mastery-goal-count{font-size:10px}}
+@media(max-width:360px){.driver-development .campaign-chapter>summary{padding:12px;gap:10px}.driver-development .campaign-chapter-body{padding:0 10px 10px}.driver-development .campaign-event{padding:12px}.driver-development .development-earned{font-size:8px}.driver-development .car-mastery-goals li{flex-wrap:wrap}.driver-development .mastery-goal-count{margin-left:34px}.driver-development .car-mastery-goals li>div{flex-basis:calc(100% - 44px)}}
+@media(prefers-reduced-motion:reduce){.driver-development *{transition:none!important;animation:none!important}}
+@media(max-width:760px),(max-height:450px){.dialog:is([data-kind="campaign"],[data-kind="car-development"]){max-height:calc(100dvh - 24px);padding:16px}.dialog:is([data-kind="campaign"],[data-kind="car-development"])>.dialog-actions{bottom:-16px}}
+
+.driver-development.workshop-development-link{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin:0 0 20px;padding-bottom:18px;border-bottom:1px solid var(--development-border)}
+.driver-development.workshop-development-link .button{min-height:44px}
+.driver-development .development-specs dd{text-align:left}
+
+/* Keep one visible title; the outer label still names the accessible dialog. */
+.dialog:is([data-kind="campaign"],[data-kind="car-development"])>#dialog-title,.dialog:is([data-kind="campaign"],[data-kind="car-development"])>#dialog-eyebrow{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}

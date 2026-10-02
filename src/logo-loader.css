@@ -1,0 +1,39 @@
+.logo-loader{--loader-violet:#9246FF;--loader-yellow:#FFF71E;position:relative;isolation:isolate;max-width:560px;width:100%;margin:0 auto;color:#fff;text-align:left;box-sizing:border-box}
+.logo-loader__brand{position:relative;width:min(100%,540px);aspect-ratio:3;isolation:isolate;margin:0 auto 16px;overflow:visible}
+.logo-loader__brand>img{display:block;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 14px 22px #0008)}
+.logo-loader__aura{position:absolute;z-index:-1;inset:14% 65% 9% -4%;background:radial-gradient(ellipse,#9246FF55,transparent 70%);opacity:.7;animation:cr-loader-breathe 2.8s ease-in-out infinite}
+.logo-loader__trace{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+.logo-loader__shield{stroke:var(--loader-violet);stroke-width:4;stroke-dasharray:24 76;stroke-linecap:round;animation:cr-loader-circuit 2.6s linear infinite;filter:drop-shadow(0 0 4px #9246FF)}
+.logo-loader__apex{stroke:var(--loader-yellow);stroke-width:2.2;stroke-dasharray:12 88;stroke-linecap:round;animation:cr-loader-circuit 2.6s linear infinite reverse}
+.logo-loader__line{stroke:var(--loader-yellow);stroke-width:5;stroke-dasharray:16 84;animation:cr-loader-circuit 2.6s linear infinite}
+.logo-loader__shine{position:absolute;inset:0;pointer-events:none;background:linear-gradient(110deg,transparent 36%,#FFFFFF88 49%,transparent 60%);background-size:260% 100%;mask:url('/assets/logo.svg?v=camber-reign-1') center/contain no-repeat;-webkit-mask:url('/assets/logo.svg?v=camber-reign-1') center/contain no-repeat;animation:cr-loader-sheen 3.6s ease-in-out infinite;opacity:.5}
+.logo-loader__copy{width:100%;max-width:480px;margin:auto;min-width:0}
+.logo-loader__heading{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:0 0 10px;min-width:0}
+.logo-loader .logo-loader__status{font:700 clamp(17px,2.6vw,22px)/1.15 'Barlow Condensed',sans-serif;color:#fff;letter-spacing:.035em;text-transform:uppercase;margin:0;overflow-wrap:anywhere}
+.logo-loader .logo-loader__count{flex:none;font:700 18px/1.1 'Barlow Condensed',sans-serif;font-variant-numeric:tabular-nums;color:#FFF71E;letter-spacing:.05em}
+.logo-loader__track{height:4px;position:relative;background:#FFFFFF24;overflow:hidden;transform:skewX(-22deg)}
+.logo-loader__track i{display:block;height:100%;background:linear-gradient(90deg,#9246FF 0%,#B981FF 78%,#FFF71E 100%);transition:width .2s ease;transform-origin:left}
+.logo-loader[data-determinate="false"] .logo-loader__track i{animation:cr-loader-pass 1.7s cubic-bezier(.5,0,.25,1) infinite}
+.logo-loader .logo-loader__detail{font:500 12px/1.5 Manrope,sans-serif;color:#d7d0e1;margin:11px 0 0;overflow-wrap:anywhere}
+.logo-loader--compact{max-width:420px;display:grid;grid-template-columns:118px minmax(0,1fr);align-items:center;gap:17px;padding:16px 20px;background:linear-gradient(125deg,#021439ed,#110017f5);border:1px solid #9246FF99;border-left:3px solid #FFF71E;box-shadow:0 10px 50px #0008}
+.logo-loader--compact .logo-loader__brand{margin:0}.logo-loader--compact .logo-loader__status{font-size:17px}.logo-loader--compact .logo-loader__detail{font-size:11px;margin-top:7px}.logo-loader--compact .logo-loader__heading{margin-bottom:8px}.logo-loader--compact .logo-loader__count{font-size:15px}
+#model-loading-notice{position:fixed;top:calc(84px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);width:min(440px,calc(100vw - 32px));z-index:60;pointer-events:none}
+#model-loading-notice:empty{display:none}
+#loading .logo-loader{width:min(620px,calc(100vw - 48px));max-width:620px}
+#loading .logo-loader__brand{width:min(100%,600px);margin:0 auto 24px}
+#loading .logo-loader__trace{width:100%;height:100%;fill:none;animation:none}
+#loading .logo-loader__status{font-size:clamp(20px,3vw,26px);color:#fff;letter-spacing:.04em}
+#loading .logo-loader__count{font-size:19px;color:#FFF71E;letter-spacing:.04em}
+#loading .loader-content{width:auto;max-width:100%;transform:none}
+#loading .loader-kicker{font-size:9px;letter-spacing:.3em;margin:0 0 20px;color:#e0d8eb}
+#loading .loader-caption{display:block;width:auto;margin:24px 0 0;text-align:center}
+#loading .loader-caption span{color:#c7bfd5;font-size:8px;letter-spacing:.18em}
+#loading{transition:opacity .24s,visibility .24s}
+#dialog[data-kind="preparing"] .logo-loader{padding:8px 0 16px}
+@keyframes cr-loader-circuit{to{stroke-dashoffset:-100}}
+@keyframes cr-loader-breathe{50%{opacity:.35;transform:scale(.9)}}
+@keyframes cr-loader-sheen{0%,20%{background-position:140% 0}65%,100%{background-position:-120% 0}}
+@keyframes cr-loader-pass{0%{transform:translateX(-105%)}100%{transform:translateX(465%)}}
+@media(max-width:480px){.logo-loader__brand{margin-bottom:14px}.logo-loader--compact{grid-template-columns:84px minmax(0,1fr);gap:12px;padding:14px}.logo-loader--compact .logo-loader__status{font-size:16px}.logo-loader--compact .logo-loader__detail{font-size:10px}#loading .loader-kicker{font-size:8px}#loading .loader-caption{margin-top:18px}}
+@media(max-height:480px) and (orientation:landscape){#loading .loader-content{padding:16px 0}#loading .loader-kicker{margin:0 0 4px}#loading .logo-loader{width:min(400px,70vw)}#loading .logo-loader__brand{width:300px;max-width:100%;margin-bottom:8px}#loading .logo-loader__status{font-size:18px}#loading .logo-loader__detail{font-size:11px;margin-top:7px}#loading .loader-caption{margin-top:12px}#model-loading-notice{top:calc(60px + env(safe-area-inset-top,0px))}}
+@media(prefers-reduced-motion:reduce){.logo-loader__aura,.logo-loader__shield,.logo-loader__apex,.logo-loader__line,.logo-loader__shine,.logo-loader__track i{animation:none!important;transition:none!important}.logo-loader__shine{display:none}.logo-loader__shield,.logo-loader__apex,.logo-loader__line{stroke-dasharray:none;filter:none}.logo-loader[data-determinate="false"] .logo-loader__track i{width:100%!important;opacity:.6}#loading{transition:none}}

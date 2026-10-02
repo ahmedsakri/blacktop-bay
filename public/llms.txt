@@ -1,15 +1,19 @@
 # Camber Reign
 
-> Camber Reign is a free, single-player 3D browser racing game by AppsOverFlow. Race seven computer-controlled rivals across thirty-four asphalt circuits in one of 33 cars, earn race credits, and upgrade your car. No account, no install, no purchases.
+> Camber Reign is a free, single-player 3D browser racing game by AppsOverFlow. Race seven computer-controlled rivals across thirty-eight asphalt circuits in one of 33 cars, earn race credits, and upgrade your car. No account, no install, no purchases.
 
 ## About the game
 
 Camber Reign runs directly in a modern web browser (WebGL 2 required) at https://camber-reign.web.app/. A single human player races seven computer-controlled opponents — Mira, Jax, Nova, Ren, Kai, Aria and Leo — in an eight-car field over three laps. Gameplay centres on drifting for score, a rechargeable nitro boost, and earning race credits to install permanent, per-car upgrades. Progress is saved locally in the browser; there is no online multiplayer and no real-money payment.
 
+Six Nitro bottles per circuit refill 32% of capacity, capped at a full gauge. Each racer has a separate once-per-lap collection, with an eight-second minimum cooldown. Hold Nitro for normal boost. Release and press again 0.35–0.8 seconds after the first press for Perfect Nitro; a second press within 0.28 seconds of a full-charge start gives a stronger, faster-consuming burst. Keep the second press held. Holding alone never selects an advanced mode.
+
+A severe impact causes a short wreck phase with no drive, then waits for a safe space behind your validated progress. Ordinary heavy hits still allow you to steer away. Optional ramps on the four destination routes have real launch and landing motion; completed barrel rolls refill some Nitro. Road barriers and marked obstacles are solid, while a high enough jump can clear a low obstacle.
+
 ## How to play
 
 - Choose Cars in Race HQ, preview a car and select Open garage. Use Upgrades to spend earned credits on performance, or Paint for free colours and finishes.
-- Choose Circuits, preview one of thirty-four routes and select that circuit to return to Race HQ. Choose Circuit race, Time attack or Three-race tour, then Race Now to start.
+- Choose Circuits, preview one of thirty-eight routes and select that circuit to return to Race HQ. Choose Circuit race, Time attack or Three-race tour, then Race Now to start.
 - Acceleration is automatic. Hold the left or right side of the steering thumbpad, or drag it for fine control; release to center. You can also drag across the race view or use Left/Right or A/D on a keyboard. On a compatible phone, open Pause → Steering → Enable tilt, allow motion access if asked, and use Recenter tilt in your comfortable holding position. Touch steering always overrides tilt, and unavailable or stale sensor data falls back to touch. Turn sharply at speed to drift automatically. Hold Nitro or Shift to boost; release to recharge. Nitro is the only on-screen pedal. Down/S is an optional keyboard brake and Space holds the optional handbrake.
 - Ease the steering back into line after an automatic drift to bank clean drift points; Space is an optional keyboard handbrake.
 - Hold Shift (or the Nitro button) for a boost on clear straights; release to recharge.
@@ -19,7 +23,7 @@ Camber Reign runs directly in a modern web browser (WebGL 2 required) at https:/
 
 ## Circuits
 
-The 34-course collection combines nine original Camber Reign circuits, compact adaptations of all 23 venues on the official 2026 calendar checked on 1 October 2026, and Sakhir and Jeddah as original-calendar bonuses. Playable arcade laps are shorter than the real venues, with widened turns and flattened elevation. Suzuka is explicitly unrolled into a non-crossing course; its real overpass is not reproduced.
+The 38-course collection combines thirteen original Camber Reign circuits, compact adaptations of all 23 venues on the official 2026 calendar checked on 1 October 2026, and Sakhir and Jeddah as original-calendar bonuses. The Grand Prix adaptations have shorter laps, widened turns and flattened elevation. Fuji Skyline, Singapore Afterdark, Norway Fjord Run and San Francisco Hills are separate original destinations with physical climbs, descents and optional ramps. Suzuka is explicitly unrolled into a non-crossing course; its real overpass is not reproduced.
 
 - Harbor Flow — about 1.22 km per lap; beginner-friendly waterfront sweepers.
 - Dockyard Technical — about 1.53 km; a tight sequence of dockside turns.
@@ -30,6 +34,11 @@ The 34-course collection combines nine original Camber Reign circuits, compact a
 - Copper Canyon — about 2.36 km; Carry speed between sandstone mesas, then brake for a broad canyon hairpin and a linked pair of technical turns.
 - Cedar Ridge — about 2.41 km; Find a rhythm through cedar-lined bends, open the throttle on the forest straight, and sweep past timber lodges under the ridgeline.
 - Neon Freight — about 2.26 km; A floodlit freight district with a long loading-yard straight, generous ninety-degree turns and a fast return past container stacks.
+
+- Fuji Skyline — about 3.00 km; mountain viaduct and optional straight/barrel ramps.
+- Singapore Afterdark — about 2.68 km; elevated city expressway and work-zone obstacles.
+- Norway Fjord Run — about 2.14 km; fjord bridge, climbing bends and an optional ramp.
+- San Francisco Hills — about 2.50 km; terraced roads, ramps and waterfront roadworks.
 
 Current-calendar adaptations: Albert Park, Shanghai, Suzuka, Miami, Gilles Villeneuve, Monaco, Barcelona-Catalunya, Red Bull Ring, Silverstone, Spa-Francorchamps, Hungaroring, Zandvoort, Monza, Madring, Baku City, Sepang, Marina Bay, Circuit of the Americas, Hermanos Rodríguez, Interlagos, Las Vegas Strip, Lusail, Yas Marina.
 Original-calendar bonus adaptations: Bahrain International, Jeddah Corniche.
@@ -57,7 +66,7 @@ After a valid lap, a short notice shows the last lap time and the next lap numbe
 - Free to play; no account, no install and no real-money purchases.
 - Runs in a modern web browser; WebGL 2 and an internet connection are required to load.
 - Single-player only: one human racer versus seven computer-controlled opponents (Mira, Jax, Nova, Ren, Kai, Aria and Leo) in an eight-car field over three laps.
-- 33 cars: individually sourced manufacturer representations across 16 brands; 34 asphalt circuits, all available from the start.
+- 33 cars: individually sourced manufacturer representations across 16 brands; 38 asphalt circuits, all available from the start.
 - Each car has five upgrade levels for Engine, Tyres, Nitro and Handling, bought with earned race credits.
 - Progress (records, credits, upgrades and paint) is saved locally in the browser; there is no online multiplayer.
 

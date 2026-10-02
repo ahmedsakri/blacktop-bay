@@ -16,7 +16,7 @@ test('electric car sound rises smoothly without combustion gear drops',async()=>
       pitch=body.frequency.value;
     }
     audio.update({running:true,vehicle:'mclaren-p1-gtr',speed:20});
-    assert.equal(body.type,'triangle','switching back restores the combustion voice');
+    assert.equal(body.type,'custom','switching back restores the rounded combustion spectrum');
   } finally {audio.dispose();env.restore();}
 });
 
@@ -26,29 +26,33 @@ function environment() {
   const saved={AudioContext:globalThis.AudioContext,document:globalThis.document};
   const contexts=[],listeners=new Map();
   class Parameter {
-    value=0;
+    value=0;ramps=[];cancels=[];
     setTargetAtTime(value,time,constant){assert.ok([value,time,constant].every(Number.isFinite));assert.ok(constant>0);this.value=value;}
     setValueAtTime(value,time){assert.ok([value,time].every(Number.isFinite));this.value=value;}
-    linearRampToValueAtTime(value,time){this.setValueAtTime(value,time);}
-    exponentialRampToValueAtTime(value,time){assert.ok(value>0);this.setValueAtTime(value,time);}
+    linearRampToValueAtTime(value,time){this.ramps.push({kind:'linear',value,time});this.setValueAtTime(value,time);}
+    exponentialRampToValueAtTime(value,time){assert.ok(value>0);this.ramps.push({kind:'exponential',value,time});this.setValueAtTime(value,time);}
+    cancelScheduledValues(time){assert.ok(Number.isFinite(time));this.cancels.push(time);}
   }
   class Node {
     connections=[];stops=0;disconnections=0;gain=new Parameter();frequency=new Parameter();Q=new Parameter();
-    delayTime=new Parameter();threshold=new Parameter();knee=new Parameter();ratio=new Parameter();attack=new Parameter();release=new Parameter();
+    delayTime=new Parameter();threshold=new Parameter();knee=new Parameter();ratio=new Parameter();attack=new Parameter();release=new Parameter();pan=new Parameter();
     connect(destination){this.connections.push(destination);return destination;}
     disconnect(){this.disconnections++;}
     start(){this.started=true;}
     stop(){this.stops++;this.onended?.();}
+    setPeriodicWave(wave){this.wave=wave;this.type='custom';}
   }
   class Context {
-    state='suspended';currentTime=0;sampleRate=8000;destination={};oscillators=[];gains=[];compressors=[];all=[];
+    state='suspended';currentTime=0;sampleRate=8000;destination={};oscillators=[];gains=[];compressors=[];panners=[];all=[];
     constructor(){contexts.push(this);}
     make(){const node=new Node();this.all.push(node);return node;}
     createOscillator(){const node=this.make();this.oscillators.push(node);return node;}
+    createPeriodicWave(real,imag){return {real:Array.from(real),imag:Array.from(imag)};}
     createGain(){const node=this.make();this.gains.push(node);return node;}
     createBiquadFilter(){return this.make();}
     createConvolver(){return this.make();}
     createDelay(){return this.make();}
+    createStereoPanner(){const node=this.make();this.panners.push(node);return node;}
     createDynamicsCompressor(){const node=this.make();this.compressors.push(node);return node;}
     createBufferSource(){return this.make();}
     createBuffer(channels,length){const data=new Float32Array(length);return {getChannelData:()=>data};}
@@ -91,11 +95,11 @@ test('combustion and electric manufacturer models produce distinct voices and re
       for(let i=0;i<20;i++)audio.update({running:true,vehicle,speed:20,throttle:1},1/60);
       pitches[vehicle]=body.frequency.value;
       const loadedGain=body.connections[0].gain.value;
-      audio.update({running:true,vehicle,speed:20,throttle:0},1/60);
+      for(let i=0;i<20;i++)audio.update({running:true,vehicle,speed:20,throttle:0},1/60);
       assert.ok(body.connections[0].gain.value<loadedGain*.65,'lifting off audibly unloads the engine');
       assert.ok(harmonic.frequency.value>body.frequency.value*1.9);
-      assert.equal(body.type,vehicle.startsWith('rimac-')?'sine':'triangle');
-      assert.equal(harmonic.type,vehicle.startsWith('rimac-')?'sine':'sawtooth');
+      assert.equal(body.type,vehicle.startsWith('rimac-')?'sine':'custom');
+      assert.equal(harmonic.type,vehicle.startsWith('rimac-')?'sine':'custom');
       audio.dispose();
     }
     for(const id of ['rimac-concept-one','rimac-nevera'])
@@ -107,9 +111,15 @@ test('combustion upshifts drop revs without hunting and Nitro adds a bounded lay
   const env=environment(),audio=createAudio();
   try{
     await audio.unlock();const ctx=env.contexts[0],body=ctx.oscillators.find(node=>node.type==='triangle');
-    const boost=ctx.oscillators.find(node=>node.frequency.value===220),boostGain=boost.connections[0];
-    let previous=0,drops=0;
-    for(let speed=0;speed<55;speed+=.2){audio.update({running:true,vehicle:'mclaren-p1-gtr',speed,throttle:1},.02);if(body.frequency.value<previous-15)drops++;previous=body.frequency.value;}
+    const boost=ctx.oscillators[4],boostGain=boost.connections[0];
+    let previous=0,drops=0,falling=false;
+    for(let speed=0;speed<55;speed+=.2){
+      audio.update({running:true,vehicle:'mclaren-p1-gtr',speed,throttle:1},.02);
+      const nowFalling=body.frequency.value<previous-.2;
+      if(nowFalling&&!falling)drops++;
+      if(previous)assert.ok(Math.abs(body.frequency.value-previous)<12,'gear changes are spread across frames');
+      falling=nowFalling;previous=body.frequency.value;
+    }
     assert.equal(drops,5,'six-speed combustion voice must shift five times during an acceleration run');
     const nodes=ctx.all.length;
     for(let i=0;i<120;i++)audio.update({running:true,vehicle:'mclaren-p1-gtr',speed:30+(i%2)*.02,throttle:1,nitro:true},1/60);
@@ -120,6 +130,25 @@ test('combustion upshifts drop revs without hunting and Nitro adds a bounded lay
     audio.update({running:true,vehicle:'unknown',speed:Infinity,throttle:NaN,drift:NaN},Infinity);
     assert.ok(Number.isFinite(body.frequency.value));
   }finally{audio.dispose();env.restore();}
+});
+
+test('combustion graph uses finite rounded harmonics and resumes without repeated gear-drop sounds',async()=>{
+ const env=environment(),audio=createAudio();
+ try{
+  await audio.unlock();const ctx=env.contexts[0],body=ctx.oscillators[0],harmonic=ctx.oscillators[1];
+  for(let i=0;i<60;i++)audio.update({running:true,vehicle:'ferrari-enzo',speed:40,throttle:1,raceId:7},1/60);
+  assert.equal(body.type,'custom');assert.equal(harmonic.type,'custom');
+  assert.ok(body.wave.imag.length<=10&&harmonic.wave.imag.length<=6,'finite harmonic spectrum replaces sawtooth buzz');
+  assert.ok(body.wave.imag.at(-1)<.01);
+  const frequency=body.frequency.value,loaded=body.connections[0].gain.value;
+  audio.update({running:false,vehicle:'ferrari-enzo',speed:40,raceId:7});
+  for(let i=0;i<20;i++){
+   audio.update({running:true,vehicle:'ferrari-enzo',speed:40,throttle:1,raceId:7},1/60);
+   assert.ok(Math.abs(body.frequency.value-frequency)<1e-6,'resume seeds the correct gear instead of climbing through every gear');
+  }
+  audio.update({running:true,vehicle:'ferrari-enzo',speed:40,throttle:0,raceId:7},1/60);
+  assert.ok(body.connections[0].gain.value<loaded&&body.connections[0].gain.value>loaded*.8,'throttle release eases instead of switching amplitude');
+ }finally{audio.dispose();env.restore();}
 });
 
 test('manufacturer synthesis characters differ while sustained boost reuses all voices and releases on pause',async()=>{
@@ -189,7 +218,8 @@ test('driving and music volume remain independently bounded and every audible pa
   audio.setVolume(0);assert.equal(master.gain.value,0,'zero volume silences engine, Nitro and UI tones through the shared bus');
   audio.beep(880,.1);
   const cue=ctx.oscillators.at(-1);
-  assert.deepEqual(cue.connections[0].connections,[master],'UI tones cannot bypass master volume or compression');
+  assert.deepEqual(cue.connections[0].connections,[ctx.gains[2]],'UI tones respect the dedicated SFX level');
+  assert.deepEqual(ctx.gains[2].connections,[master],'SFX cannot bypass master volume or compression');
   audio.setVolume(1);audio.setMuted(true);audio.setVolume(.6);assert.equal(master.gain.value,0,'moving a slider cannot override mute');
   audio.setMuted(false);assert.equal(master.gain.value,.96);
   globalThis.document.hidden=true;env.listeners.get('visibilitychange')();audio.setVolume(1);assert.equal(master.gain.value,0);
@@ -221,5 +251,53 @@ test('Liquid Lines is the only soundtrack and legacy choices cannot restore remo
   audio.update({running:true,lobby:true});
   const music=ctx.oscillators[7].connections[0].connections[0].connections[0];assert.equal(music.gain.value,0);
   audio.setLobbyStyle('after-hours');assert.equal(music.gain.value,0,'preference migration cannot restart music during a race');
+ }finally{audio.dispose();env.restore();}
+});
+
+test('engine and effects mixers are independent, bounded, and preserve pause, mute and gesture rules',async()=>{
+ const env=environment(),audio=createAudio();
+ try{
+  audio.setEngineVolume(.4);audio.setSfxVolume(.6);audio.setMusicVolume(.3);
+  assert.equal(env.contexts.length,0);
+  await audio.unlock();const ctx=env.contexts[0],engine=ctx.gains[1],sfx=ctx.gains[2],raceSfx=ctx.gains[3];
+  audio.update({running:true,vehicle:'mclaren-p1-gtr',speed:30,nitro:true});
+  assert.equal(engine.gain.value,.4);assert.equal(sfx.gain.value,.6);assert.equal(raceSfx.gain.value,1);
+  audio.setEngineVolume(0);assert.equal(engine.gain.value,0);assert.equal(sfx.gain.value,.6);
+  audio.setSfxVolume(0);audio.setEngineVolume(.8);assert.equal(engine.gain.value,.8);assert.equal(sfx.gain.value,0);
+  for(const [value,engineExpected,sfxExpected] of [[-5,0,0],[5,1,1],[NaN,1,.85],[Infinity,1,.85]]) {
+   audio.setEngineVolume(value);audio.setSfxVolume(value);assert.equal(engine.gain.value,engineExpected);assert.equal(sfx.gain.value,sfxExpected);
+  }
+  audio.update({running:false,lobby:true});assert.equal(engine.gain.value,0);assert.equal(raceSfx.gain.value,0);assert.ok(sfx.gain.value>0,'UI effects remain available outside racing');
+  audio.setMuted(true);assert.equal(sfx.gain.value,0);audio.setSfxVolume(1);assert.equal(sfx.gain.value,0);
+ }finally{audio.dispose();env.restore();}
+});
+
+test('real event IDs trigger one reusable effect, old muted impacts stay silent, and pause cancels tails',async()=>{
+ const env=environment(),audio=createAudio();
+ try{
+  const base={raceId:'race-one',running:true,vehicle:'mclaren-p1-gtr',speed:25,impact:{id:1,kind:'crash',strength:.8,severity:'heavy'}};
+  audio.update(base);await audio.unlock();const ctx=env.contexts[0],nodeCount=ctx.all.length;
+  const ramps=()=>ctx.gains.reduce((sum,gain)=>sum+gain.gain.ramps.length,0);
+  audio.update(base);assert.equal(ramps(),0,'an impact before gesture unlock is not replayed');
+  ctx.currentTime=.1;audio.update({...base,impact:{...base.impact,id:2}});const first=ramps();assert.ok(first>0);
+  for(let i=0;i<30;i++)audio.update({...base,impact:{...base.impact,id:2}});assert.equal(ramps(),first,'one physics event must not sound every frame');
+  audio.setMuted(true);audio.update({...base,impact:{...base.impact,id:3}});audio.setMuted(false);audio.update({...base,impact:{...base.impact,id:3}});assert.equal(ramps(),first,'unmute must not replay an old collision');
+  const cancelledBefore=ctx.gains.reduce((sum,gain)=>sum+gain.gain.cancels.length,0);
+  audio.update({running:false});assert.ok(ctx.gains.reduce((sum,gain)=>sum+gain.gain.cancels.length,0)>cancelledBefore);
+  for(let i=4;i<100;i++){ctx.currentTime+=.015;audio.update({...base,impact:{...base.impact,id:i,severity:i%2?'wreck':'heavy'},pickupEvent:{id:i,kind:'nitro',amount:20,capacity:100}});}
+  assert.equal(ctx.all.length,nodeCount,'many impacts and refills cannot create unbounded sources or graph nodes');
+ }finally{audio.dispose();env.restore();}
+});
+
+test('three reusable stereo rival voices follow real relative position and all stop on pause',async()=>{
+ const env=environment(),audio=createAudio();
+ try{
+  await audio.unlock();const ctx=env.contexts[0],count=ctx.all.length;
+  const base={running:true,raceId:'stereo',speed:30,listener:{x:0,z:0,yaw:0},rivals:[{id:'right',vehicle:'ferrari-enzo',x:8,z:5,speed:35},{id:'left',vehicle:'rimac-nevera',x:-8,z:5,speed:35}]};
+  audio.update(base);assert.equal(ctx.panners.length,3);
+  assert.ok(ctx.panners.some(p=>p.pan.value>.6));assert.ok(ctx.panners.some(p=>p.pan.value<-.6));
+  for(let i=0;i<1000;i++)audio.update({...base,listener:{x:0,z:0,yaw:i*.001},crowd:.5,road:'wet'});
+  assert.equal(ctx.all.length,count);
+  audio.update({running:false});assert.equal(ctx.gains[1].gain.value,0);assert.equal(ctx.gains[3].gain.value,0);
  }finally{audio.dispose();env.restore();}
 });

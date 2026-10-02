@@ -1,0 +1,220 @@
+/* Two thumb zones, with the road left clear. These rules are deliberately
+   scoped to touch racing; the garage and keyboard HUD use their own layouts. */
+.touch-steer-caption,
+.nitro-touch-hint { display: none; }
+
+body.in-race.touch-mode {
+  --race-left: max(20px, calc(env(safe-area-inset-left) + 12px));
+  --race-right: max(20px, calc(env(safe-area-inset-right) + 12px));
+  --race-top: max(16px, calc(env(safe-area-inset-top) + 8px));
+  --race-bottom: max(20px, calc(env(safe-area-inset-bottom) + 12px));
+  --race-nitro-size: 104px;
+  --race-steer-width: 184px;
+}
+
+body.in-race.touch-mode #hud::before {
+  height: 170px;
+  background: linear-gradient(#110017b8, #1100173d 65%, transparent);
+}
+body.in-race.touch-mode #pause {
+  width: 44px; height: 44px;
+  border-color: #ffffffa3;
+  background: #110017a8;
+}
+body.in-race.touch-mode .race-position {
+  left: calc(var(--race-left) + 58px);
+  width: 120px;
+}
+body.in-race.touch-mode .race-position span {
+  width: 31px; font-size: 13px; color: #fff;
+}
+body.in-race.touch-mode .race-position strong { font-size: 32px; }
+body.in-race.touch-mode .race-position b { font-size: 22px; }
+body.in-race.touch-mode .race-position small { font-size: 19px; }
+body.in-race.touch-mode .race-position .lap-line { margin-top: 7px; }
+body.in-race.touch-mode .race-position .lap-line span { font-size: 11px; color: #e2e6ee; }
+body.in-race.touch-mode .race-position .lap-line :is(b, small) { font-size: 14px; color: #fff; }
+
+body.in-race.touch-mode .nitro-gauge {
+  width: clamp(148px, 29vw, 340px);
+  top: calc(var(--race-top) + 8px);
+  height: 16px;
+}
+body.in-race.touch-mode .speedo {
+  top: calc(var(--race-top) - 9px);
+  width: 156px; height: 72px;
+}
+body.in-race.touch-mode .speedo b {
+  font-size: 74px; letter-spacing: -2px;
+}
+body.in-race.touch-mode .speedo span { font-size: 12px; padding-top: 15px; }
+body.in-race.touch-mode .race-clock {
+  top: calc(var(--race-top) + 62px);
+  width: 130px; height: 30px;
+  padding: 3px 10px;
+  background: #110017c9;
+  border-left: 3px solid #9246FF;
+  clip-path: polygon(5% 0, 100% 0, 95% 100%, 0 100%);
+}
+body.in-race.touch-mode .race-clock time { font-size: 23px; }
+body.in-race.touch-mode .race-clock svg { width: 16px; height: 16px; flex: 0 0 16px; }
+body.in-race.touch-mode .mini-map {
+  top: calc(var(--race-top) + 92px);
+  width: 144px;
+  padding: 7px 7px 2px;
+  border-left: 1px solid #ffffff55;
+  background: linear-gradient(90deg, #11001770, #11001718);
+}
+body.in-race.touch-mode .map-heading { padding: 0 1px 3px; color: #fff; }
+body.in-race.touch-mode .map-heading span { font-size: 10px; letter-spacing: .7px; }
+body.in-race.touch-mode .mini-map canvas { opacity: 1; }
+body.in-race.touch-mode .drift-score { top: calc(var(--race-top) + 118px)!important; }
+body.in-race.touch-mode .drift-score > span { font-size: 10px; letter-spacing: .6px; }
+
+/* The 48px puck and range=(width-48)/2 intentionally share one geometry.
+   Decorative children never become separate pointer targets. */
+body.in-race.touch-mode .touch-steer-cue {
+  width: var(--race-steer-width); height: 84px;
+  left: var(--race-left); bottom: var(--race-bottom);
+  padding: 0; border: 1px solid #ffffff80; border-radius: 42px;
+  background: linear-gradient(140deg, #021439d6, #110017d6);
+  box-shadow: inset 0 0 0 5px #ffffff06, 0 3px 16px #0004;
+  opacity: 1; isolation: isolate;
+  pointer-events: auto; touch-action: none;
+  transition: border-color .12s, box-shadow .12s;
+}
+body.in-race.touch-mode .touch-steer-cue.subtle { opacity: 1; }
+body.in-race.touch-mode .touch-steer-cue > * { pointer-events: none; }
+body.in-race.touch-mode #touch-steer-label,
+body.in-race.touch-mode .nitro-touch-hint {
+  position: absolute; bottom: calc(100% + 9px); left: 0; width: 100%;
+  display: block; white-space: nowrap; text-align: center;
+  color: #fff; font: 700 11px/1.2 Manrope, sans-serif; letter-spacing: .65px;
+  text-shadow: 0 1px 3px #000, 0 0 9px #000;
+  pointer-events: none;
+}
+body.in-race.touch-mode .touch-steer-track {
+  height: 58px; margin: 0; padding: 0 15px;
+}
+body.in-race.touch-mode .touch-steer-track::before {
+  left: 25px; right: 25px; height: 2px;
+  background: linear-gradient(90deg, #ffffff24, #ffffff80, #ffffff24);
+}
+body.in-race.touch-mode .touch-steer-track > .ui-icon {
+  width: 24px; height: 24px; color: #fff;
+}
+body.in-race.touch-mode .touch-steer-track i {
+  left: calc(50% - 24px); top: 5px; width: 48px; height: 48px;
+  border: 2px solid #fff; border-radius: 50%;
+  color: #fff; background: #9246FF;
+  box-shadow: 0 2px 10px #0008, inset 0 0 0 4px #11001740;
+}
+body.in-race.touch-mode .touch-steer-track i .ui-icon { width: 28px; height: 28px; }
+body.in-race.touch-mode .touch-steer-caption {
+  position: absolute; left: 0; bottom: 8px; width: 100%; display: block;
+  color: #fff; font: 800 italic 13px/1 "Barlow Condensed", sans-serif; letter-spacing: 2px;
+}
+body.in-race.touch-mode .touch-steer-cue.engaged {
+  border-color: #FFF71E;
+  box-shadow: inset 0 0 0 2px #FFF71E33, 0 3px 16px #0004;
+}
+body.in-race.touch-mode .touch-steer-cue.engaged .touch-steer-track i {
+  color: #110017; background: #FFF71E; border-color: #FFF71E;
+  box-shadow: 0 2px 10px #0008, inset 0 0 0 4px #11001712;
+}
+body.in-race.touch-mode .touch-steer-cue.engaged .touch-steer-track i .ui-icon { color: #110017; }
+
+/* An original solid canister, a continuous charge arc and a restrained halo.
+   Cyan means actual boost is active, rather than merely a finger being held. */
+body.in-race.touch-mode .touch-controls .nitro-pedal {
+  width: var(--race-nitro-size); height: var(--race-nitro-size);
+  min-width: 88px; min-height: 88px;
+  padding: 8px 0 10px; gap: 0;
+  border: 1px solid #ffffffb3;
+  background: radial-gradient(circle at 40% 28%, #293652d9, #110017c9 75%);
+  box-shadow: inset 0 0 0 5px #ffffff08, 0 3px 16px #0004;
+  color: #fff; opacity: 1;
+}
+body.in-race.touch-mode .nitro-pedal .nitro-ring { inset: 0; }
+body.in-race.touch-mode .ring-track { stroke: #ffffff35; stroke-width: 3; }
+body.in-race.touch-mode #nitro-ring-fill { stroke: #FFF71E; stroke-width: 3; stroke-linecap: butt; }
+body.in-race.touch-mode .nitro-pedal .nitro-symbol {
+  width: 51px; height: 51px; stroke-width: 2;
+  transform: rotate(24deg); overflow: visible;
+}
+body.in-race.touch-mode .nitro-shell { fill: currentColor; stroke: currentColor; }
+body.in-race.touch-mode .nitro-bolt { fill: #110017; stroke: none; }
+body.in-race.touch-mode .nitro-speed-lines { stroke-width: 1.5; opacity: .7; }
+body.in-race.touch-mode .nitro-pedal small {
+  font: 800 italic 15px/1 "Barlow Condensed", sans-serif;
+  letter-spacing: 1.4px; color: #fff;
+}
+body.in-race.touch-mode .nitro-pedal.pressed {
+  transform: scale(.97); background: #241440ed;
+  box-shadow: inset 0 0 0 5px #9246FF40, 0 3px 16px #0004;
+}
+body.in-race.touch-mode.nitro-active .touch-controls .nitro-pedal {
+  background: radial-gradient(circle, #147cc2d9, #021439e6 78%);
+  border-color: #c0edff; box-shadow: 0 0 22px #168AFF66, inset 0 0 0 5px #c0edff1a;
+}
+body.in-race.touch-mode.nitro-active #nitro-ring-fill { stroke: #c0edff; }
+body.in-race.touch-mode .nitro-pedal.unavailable {
+  color: #c6d0de; opacity: 1; border-style: dashed; border-color: #a1aab9;
+  background: #110017d9; box-shadow: none;
+}
+body.in-race.touch-mode :is(.touch-steer-cue, .nitro-pedal, #pause):focus-visible {
+  outline: 3px solid #FFF71E; outline-offset: 4px;
+}
+
+@media (max-width: 1000px) and (orientation: landscape) {
+  body.in-race.touch-mode {
+    --race-left: max(18px, calc(env(safe-area-inset-left) + 12px));
+    --race-right: max(18px, calc(env(safe-area-inset-right) + 12px));
+    --race-top: max(12px, calc(env(safe-area-inset-top) + 6px));
+    --race-bottom: max(18px, calc(env(safe-area-inset-bottom) + 10px));
+    --race-nitro-size: 96px; --race-steer-width: 172px;
+  }
+  body.in-race.touch-mode .race-position { width: 112px; }
+  body.in-race.touch-mode .speedo { width: 144px; }
+  body.in-race.touch-mode .speedo b { font-size: 70px; }
+  body.in-race.touch-mode .mini-map { width: 134px; }
+  body.in-race.touch-mode .nitro-pedal .nitro-symbol { width: 47px; height: 47px; }
+}
+@media (max-width: 700px) and (orientation: landscape) {
+  body.in-race.touch-mode {
+    --race-left: max(12px, calc(env(safe-area-inset-left) + 8px));
+    --race-right: max(12px, calc(env(safe-area-inset-right) + 8px));
+    --race-top: max(10px, calc(env(safe-area-inset-top) + 4px));
+    --race-bottom: max(14px, calc(env(safe-area-inset-bottom) + 8px));
+    --race-nitro-size: 88px; --race-steer-width: 156px;
+  }
+  body.in-race.touch-mode .race-position { left: calc(var(--race-left) + 56px); width: 106px; }
+  body.in-race.touch-mode .race-position strong { font-size: 28px; }
+  body.in-race.touch-mode .race-position b { font-size: 20px; }
+  body.in-race.touch-mode .race-position small { font-size: 18px; }
+  body.in-race.touch-mode .race-position span { font-size: 12px; width: 29px; }
+  body.in-race.touch-mode .nitro-gauge { width: 26vw; min-width: 132px; height: 14px; }
+  body.in-race.touch-mode .speedo { width: 116px; height: 56px; top: calc(var(--race-top) - 6px); }
+  body.in-race.touch-mode .speedo b { font-size: 58px; }
+  body.in-race.touch-mode .speedo span { font-size: 11px; padding-top: 11px; }
+  body.in-race.touch-mode .race-clock { top: calc(var(--race-top) + 52px); width: 116px; height: 28px; padding: 3px 6px; }
+  body.in-race.touch-mode .race-clock time { font-size: 21px; }
+  body.in-race.touch-mode .race-clock svg { width: 14px; height: 14px; flex-basis: 14px; }
+  body.in-race.touch-mode .mini-map { top: calc(var(--race-top) + 89px); width: 116px; padding: 5px 5px 1px; }
+  body.in-race.touch-mode .drift-score { top: calc(var(--race-top) + 109px)!important; width: 120px; }
+  body.in-race.touch-mode .drift-score > span { font-size: 10px; }
+  body.in-race.touch-mode .touch-steer-cue { height: 80px; }
+  body.in-race.touch-mode .touch-steer-caption { bottom: 6px; }
+  body.in-race.touch-mode .nitro-pedal .nitro-symbol { width: 42px; height: 42px; }
+  body.in-race.touch-mode .nitro-pedal small { font-size: 14px; }
+  body.in-race.touch-mode .race-feedback { max-width: 45vw; padding: 8px 10px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  body.in-race.touch-mode :is(.touch-steer-cue, .nitro-pedal) { transition: none; }
+  body.in-race.touch-mode .nitro-pedal.pressed { transform: none; }
+}
+@media (forced-colors: active) {
+  body.in-race.touch-mode :is(.touch-steer-cue, .nitro-pedal) { border: 2px solid ButtonText; background: Canvas; color: ButtonText; }
+  body.in-race.touch-mode .touch-steer-track i { background: Highlight; border-color: ButtonText; }
+  body.in-race.touch-mode #nitro-ring-fill { stroke: Highlight; forced-color-adjust: none; }
+}

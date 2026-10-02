@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { findCars, loadFavorites, saveFavorites, findCircuits, circuitLibraryMarkup, carLibraryMarkup, carLibraryCard, hasCarFilters, clearCarFilters, NEW_CARS } from '../src/collection-browser.js';
 import { LATEST_CAR_IDS } from '../src/car-releases.js';
 import { getUpgradeStats } from '../src/physics.js';
+import { getCarSetup } from '../src/car-setups.js';
 import { TRACKS } from '../src/track.js';
 import { VEHICLES } from '../src/vehicles.js';
 
@@ -41,10 +42,10 @@ test('favourites reject corrupt storage and unavailable cars, and report failed 
   assert.equal(loadFavorites({getItem(){throw Error('disabled')}}).size,0);
 });
 test('circuit atlas filters current calendar separately from bonus and original routes', () => {
-  assert.equal(findCircuits(TRACKS).length,34);
+  assert.equal(findCircuits(TRACKS).length,38);
   assert.equal(findCircuits(TRACKS,{series:'current'}).length,23);
   assert.deepEqual(findCircuits(TRACKS,{series:'bonus'}).map(track=>track.id),['sakhir','jeddah']);
-  assert.equal(findCircuits(TRACKS,{series:'original'}).length,9);
+  assert.equal(findCircuits(TRACKS,{series:'original'}).length,13);
   assert.deepEqual(findCircuits(TRACKS,{query:'Suzuka',region:'Asia',series:'current'}).map(track=>track.id),['suzuka']);
   assert.equal(findCircuits(TRACKS,{query:'Suzuka',region:'Europe'}).length,0);
 });
@@ -122,4 +123,23 @@ test('comparison identifies its baseline and all four upgraded driving figures w
   assert.ok(!carLibraryCard(candidate, {selected, compare:false}).includes('class="library-comparison"'));
   assert.ok(!carLibraryCard(candidate, {selected:candidate.id, compare:true}).includes('class="library-comparison"'), 'current car is not compared to itself');
   assert.ok(!carLibraryCard(candidate, {selected:'unavailable', compare:true}).includes('class="library-comparison"'), 'unknown car cannot become a silent baseline');
+});
+
+test('sorting and comparison include each car’s fitted setup without mutating setup or upgrade saves',()=>{
+ const progression={cars:{'lotus-elise':{engine:4,tyres:2,nitro:3,handling:1}}};
+ const setupState={version:1,cars:Object.fromEntries(VEHICLES.map((car,i)=>[car.id,['grip','sprint','endurance'][i%3]]))};
+ const before=JSON.stringify({progression,setupState});
+ for(const sort of ['speed','handling']){
+  const key=sort==='speed'?'topSpeed':'handling',cars=findCars({sort,progression,setupState});
+  const values=cars.map(car=>getUpgradeStats(car.id,progression.cars[car.id],getCarSetup(setupState,car.id))[key]);
+  assert.ok(values.every((value,i)=>i===0||value<=values[i-1]));
+ }
+ const car=VEHICLES.find(car=>car.id==='lotus-elise'),selected='mclaren-senna';
+ const markup=carLibraryCard(car,{selected,progression,setupState,compare:true});
+ const current=getUpgradeStats(selected,progression.cars[selected],getCarSetup(setupState,selected));
+ const stats=getUpgradeStats(car.id,progression.cars[car.id],getCarSetup(setupState,car.id));
+ assert.ok(markup.includes(`<b>${(stats.topSpeed*3.6).toFixed(0)}</b> <small>km/h</small>`));
+ const delta=Number(((stats.topSpeed-current.topSpeed)*3.6).toFixed(1));
+ assert.ok(markup.includes(`${delta>0?'+':''}${delta.toFixed(1)} km/h`));
+ assert.equal(JSON.stringify({progression,setupState}),before);
 });

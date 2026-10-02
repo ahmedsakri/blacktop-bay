@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Blacktop Bay original sound review</title>
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Camber Reign original sound review</title>
 <style>body{background:#110017;color:white;font:16px system-ui;max-width:800px;margin:40px auto;padding:20px}button{padding:16px;background:#fff71e;color:#110017;border:0;border-radius:6px;font:inherit}audio{display:block;width:100%;margin:16px 0}section{border:1px solid #66517c;padding:24px;margin:20px 0}code{overflow-wrap:anywhere}</style>
 <h1>Original sound review</h1><p>Local QA fixture. Render the actual synthesis graph, then listen to its output. Liquid Lines is the approved lobby soundtrack. The previous arrangements have been removed. This fixture does not test a completed race.</p><button id="render">Render audio previews</button><p id="status" role="status">Ready.</p><main id="outputs"></main>
 <script type="module">
@@ -12,11 +12,11 @@ const wav=buffer=>{
  let peak=0,sum=0,jump=0;for(let i=0;i<channel.length;i++){const sample=channel[i];peak=Math.max(peak,Math.abs(sample));sum+=sample*sample;if(i)jump=Math.max(jump,Math.abs(sample-channel[i-1]));view.setInt16(44+i*2,Math.max(-1,Math.min(1,sample))*32767,true);}
  return {blob:new Blob([bytes],{type:'audio/wav'}),peak,rms:Math.sqrt(sum/channel.length),jump};
 };
-async function render(label,seconds,frame,{volume=.75,musicVolume=.65,style='liquid-lines',filename='audio-review.wav'}={}){
+async function render(label,seconds,frame,{volume=.75,musicVolume=.65,engineVolume=1,sfxVolume=.85,style='liquid-lines',filename='audio-review.wav'}={}){
  const context=new OfflineAudioContext(1,Math.round(seconds*24000),24000);let time=0;
  const adapter={get state(){return'running';},get currentTime(){return time;},sampleRate:context.sampleRate,destination:context.destination,close(){return Promise.resolve();}};
- for(const method of ['createGain','createOscillator','createBiquadFilter','createBuffer','createBufferSource','createDynamicsCompressor','createConvolver','createDelay'])adapter[method]=context[method].bind(context);
- const sound=createAudio({contextFactory:()=>adapter});await sound.unlock();sound.setVolume(volume);sound.setMusicVolume(musicVolume);sound.setLobbyStyle(style);
+ for(const method of ['createGain','createOscillator','createPeriodicWave','createBiquadFilter','createBuffer','createBufferSource','createDynamicsCompressor','createConvolver','createDelay','createStereoPanner'])adapter[method]=context[method].bind(context);
+ const sound=createAudio({contextFactory:()=>adapter});await sound.unlock();sound.setVolume(volume);sound.setMusicVolume(musicVolume);sound.setEngineVolume(engineVolume);sound.setSfxVolume(sfxVolume);sound.setLobbyStyle(style);
  for(let tick=0;tick<seconds*60;tick++){time=tick/60;sound.update(frame(time),1/60);}
  const buffer=await context.startRendering(),result=wav(buffer);sound.dispose();
  const section=document.createElement('section'),title=document.createElement('h2'),player=document.createElement('audio'),data=document.createElement('p');
@@ -31,11 +31,12 @@ document.querySelector('#render').onclick=async event=>{
  try{
   for(const style of LOBBY_STYLES){
    status.textContent=`Rendering ${style.name}…`;
-   await render(`${style.name} — ${style.bpm} BPM`,21,t=>({lobby:t<20}),{style:style.id,filename:`blacktop-bay-${style.id}.wav`});
+   await render(`${style.name} — ${style.bpm} BPM`,21,t=>({lobby:t<20}),{style:style.id,filename:`camber-reign-${style.id}.wav`});
   }
-  await render('Refined Nitro — ignition, thrust, release',10,t=>({running:t<9,vehicle:'ferrari-enzo',speed:32+Math.min(t,6)*2,throttle:1,nitro:t>=2&&t<6,drift:0}),{filename:'blacktop-bay-nitro-refined.wav'});
-  await render('Maximum volume Nitro — mix safety check',8,t=>({running:t<7,vehicle:'bugatti-veyron',speed:40,throttle:1,nitro:t>=1&&t<6,drift:t>5?.7:0}),{volume:1,filename:'blacktop-bay-nitro-maximum.wav'});
-  status.textContent='Ready. Liquid Lines and two Nitro previews rendered. Liquid Lines is the only lobby soundtrack.';
+  await render('Acceleration — rounded exhaust and smooth gear changes',16,t=>({running:t<15,vehicle:'ferrari-enzo',speed:t<10?Math.max(0,t-1)*5.5:49.5-(t-10)*4,throttle:t<10?1:0,drift:0,raceId:'acceleration-preview'}),{sfxVolume:0,filename:'camber-reign-acceleration-refined.wav'});
+  await render('Blue Nitro — pressure onset, thrust and release',11,t=>({running:t<10,vehicle:'ferrari-enzo',speed:32+Math.min(t,7)*2,throttle:1,nitro:t>=2&&t<7,drift:0,raceId:'nitro-preview'}),{filename:'camber-reign-nitro-refined.wav'});
+  await render('Maximum volume Nitro — mix safety check',8,t=>({running:t<7,vehicle:'bugatti-veyron',speed:40,throttle:1,nitro:t>=1&&t<6,drift:t>5?.7:0,raceId:'mix-preview'}),{volume:1,filename:'camber-reign-nitro-maximum.wav'});
+  status.textContent='Ready. Liquid Lines, acceleration and two Nitro previews rendered from the actual audio graph.';
  }catch(error){status.textContent=String(error);}finally{event.target.disabled=false;}
 };
 </script></html>

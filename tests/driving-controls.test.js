@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createDrivingInputs, resolveDriveControls, normalizeSteeringSensitivity } from '../src/driving-controls.js';
+import { createDrivingInputs, resolveDriveControls, normalizeSteeringSensitivity, isDrivingShortcut } from '../src/driving-controls.js';
 
 const idle = { left: false, right: false, brake: false, drift: false, nitro: false };
 
@@ -80,16 +80,33 @@ test('analog steering preserves precise fractional input and clamps out-of-range
   }
 });
 
-test('keyboard steering adds to drag steering, saturates, and cancels opposing arrows', () => {
+test('explicit digital steering takes priority over analog and both arrows remain neutral', () => {
   assert.equal(resolveDriveControls({ steer: .6, right: true }).steer, 1);
   assert.equal(resolveDriveControls({ steer: -.6, left: true }).steer, -1);
-  assert.equal(resolveDriveControls({ steer: .6, left: true }).steer, -.4);
-  assert.equal(resolveDriveControls({ steer: -.25, left: true, right: true }).steer, -.25);
+  assert.equal(resolveDriveControls({ steer: .6, left: true }).steer, -1);
+  assert.equal(resolveDriveControls({ steer: -.25, left: true, right: true }).steer, 0);
   const controls = createDrivingInputs();
   controls.press(1, 'left'); controls.press(2, 'right');
   assert.equal(resolveDriveControls(controls.read()).steer, 0);
   controls.release(1);
   assert.equal(resolveDriveControls(controls.read()).steer, 1);
+});
+
+test('both digital directions override opposing analog axes at every sensitivity without interrupting Nitro',()=>{
+  for(const steer of [-1,-.4,0,.4,1])for(const steeringSensitivity of [.65,1,1.5]){
+    assert.equal(resolveDriveControls({steer,right:true},{steeringSensitivity}).steer,1);
+    assert.equal(resolveDriveControls({steer,left:true},{steeringSensitivity}).steer,-1);
+    assert.equal(resolveDriveControls({steer,left:true,right:true},{steeringSensitivity}).steer,0);
+    const controls=resolveDriveControls({steer,right:true,nitro:true},{steeringSensitivity});
+    assert.equal(controls.nitro,true);assert.equal(controls.throttle,1);
+  }
+});
+
+test('browser shortcuts and composed text cannot activate driving, while unmodified and Shift Nitro remain available',()=>{
+  for(const modifier of ['ctrlKey','metaKey','altKey','isComposing'])assert.equal(isDrivingShortcut({[modifier]:true,code:'KeyA'}),true);
+  assert.equal(isDrivingShortcut({code:'KeyA'}),false);
+  assert.equal(isDrivingShortcut({code:'ShiftLeft',shiftKey:true}),false);
+  assert.equal(isDrivingShortcut({code:'ArrowRight',shiftKey:true}),false,'Nitro plus steering remains available');
 });
 
 test('keyboard brake stops automatic acceleration and suppresses held nitro until released', () => {

@@ -106,6 +106,32 @@ test('Nitro jets follow rear outlets and yaw, fade on release, disappear for EVs
  effects.clear();assert.equal(jets.visible,false);
 });
 
+test('airborne Nitro jets stay on the actual tailpipe and follow full pitch and roll',t=>{
+ const outlet={x:.4,y:.5,z:-2.2},{scene,car,run}=boostRig(t,false,[outlet]);
+ Object.assign(car,{x:30,y:17,z:50,yaw:.7,pitch:.32,roll:.6});run(12);
+ const jets=scene.getObjectByName('nitro-directional-jets'),matrix=new THREE.Matrix4();jets.getMatrixAt(0,matrix);
+ const rotation=new THREE.Euler(-car.pitch,car.yaw,car.roll,'YXZ');
+ const expected=new THREE.Vector3(outlet.x,outlet.y,outlet.z).applyEuler(rotation).add(new THREE.Vector3(car.x,car.y,car.z));
+ const actual=new THREE.Vector3().applyMatrix4(matrix);
+ assert.ok(actual.distanceTo(expected)<1e-5,'tailpipe stays anchored above the elevated road');
+ const direction=new THREE.Vector3(0,0,-1).transformDirection(matrix),expectedDirection=new THREE.Vector3(0,0,-1).applyEuler(rotation);
+ assert.ok(direction.distanceTo(expectedDirection)<1e-6,'thrust points backward along the tilted car');
+});
+
+test('sustained tyre marks retain road height across every interpolated segment on a grade',t=>{
+ const {scene,effects,car,run}=boostRig(t,true,[]),pitch=.12,roll=.03;
+ Object.assign(car,{x:0,y:10,z:0,yaw:0,pitch,roll,lateralSpeed:5,drifting:true});
+ const options={nitro:false,wetRoad:false};run(1,options);
+ for(let i=1;i<=12;i++){car.z=i*.6;car.y=10+car.z*Math.tan(pitch);run(1,options);}
+ assert.ok(effects.stats.marks>20,'test includes continuing subdivided marks, not only the first segment');
+ const geometry=scene.getObjectByName('grounded-tyre-marks').geometry,positions=geometry.attributes.position;
+ for(let i=0;i<geometry.drawRange.count;i++){
+  const y=positions.getY(i),z=positions.getZ(i);
+  assert.ok(y>9.5,'no segment drops to ground zero after the first frame');
+  assert.ok(Math.abs(y-(10+z*Math.tan(pitch)+.074))<.05,'marks follow the elevated grade, with only small tyre roll offsets');
+ }
+});
+
 test('dry venue selection suppresses wet spray without suppressing drift smoke or Nitro',t=>{
  const {effects,car,run}=boostRig(t,true);
  car.lateralSpeed=5;car.drifting=true;
@@ -190,4 +216,17 @@ test('a real engine barrier collision supplies the rendered point and rebound di
   const positions=scene.getObjectByName('contact-sparks').geometry.attributes.particlePosition.array;
   assert.ok(Math.hypot(positions[0]-race.impact.x,positions[2]-race.impact.z)<.25,'spark starts at the actual engine contact, not the track centre');
   assert.deepEqual(race,before,'rendering cannot change progression or physics');
+});
+
+test('nearby rival wrecks have real-position sparks without invented tyre paths or doubled player hits',t=>{
+ const {scene,effects,car,run}=impactRig(t);
+ const rival={id:'rival',car:{x:12,y:8,z:2,yaw:0,speed:0},impact:{...hardContact(),x:12,z:2}};
+ run(1,{nitro:false,wetRoad:false,rivals:[rival],raceId:1});
+ assert.equal(effects.stats.impactBursts,1);assert.ok(effects.stats.sparks>0);assert.equal(effects.stats.marks,0);
+ const geometry=scene.getObjectByName('contact-sparks').geometry.attributes.particlePosition;
+ assert.ok(geometry.getY(0)>8);assert.ok(geometry.getX(0)>11,'sparks belong to the rival, not the player');
+ run(1,{nitro:false,wetRoad:false,rivals:[rival],raceId:1});assert.equal(effects.stats.impactBursts,1);
+ effects.clear();Object.assign(rival.car,{x:1,y:0,z:0});rival.impact={...hardContact(),source:'car'};
+ run(1,{nitro:false,wetRoad:false,impact:rival.impact,rivals:[rival],raceId:2});assert.equal(effects.stats.impactBursts,1,'same player/rival contact shares a single burst');
+ effects.clear();run(1,{nitro:false,wetRoad:false,rivals:[rival],raceId:3,reducedMotion:true});assert.equal(effects.stats.sparks,0);assert.equal(effects.stats.debris,0);
 });

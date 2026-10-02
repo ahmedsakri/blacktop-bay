@@ -13,9 +13,9 @@ const origin = 'https://camber-reign.web.app';
 const source = await readFile(new URL('../index.html', import.meta.url), 'utf8');
 const sitemap = await readFile(new URL('../public/sitemap.xml', import.meta.url), 'utf8');
 
-test('all 34 circuits have distinct reversible paths while malformed or unknown routes never select a circuit', () => {
-  assert.equal(TRACKS.length, 34);
-  assert.equal(new Set(TRACKS.map(track => circuitPath(track.id))).size, 34);
+test('all 38 circuits have distinct reversible paths while malformed or unknown routes never select a circuit', () => {
+  assert.equal(TRACKS.length, 38);
+  assert.equal(new Set(TRACKS.map(track => circuitPath(track.id))).size, 38);
   for (const track of TRACKS) {
     assert.equal(circuitFromPath(circuitPath(track.id)), track.id);
     assert.equal(circuitFromPath(circuitPath(track.id).slice(0, -1)), track.id);

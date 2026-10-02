@@ -1,6 +1,6 @@
 # Camber Reign
 
-A free AppsOverFlow browser racer. **Own the corner.** Choose from 33 individually sourced manufacturer car representations across 16 brands, upgrade their performance, and compete against seven rivals across thirty-four asphalt circuits.
+A free AppsOverFlow browser racer. **Own the corner.** Choose from 33 individually sourced manufacturer car representations across 16 brands, upgrade their performance, and compete against seven rivals across thirty-eight asphalt circuits.
 
 [Play Camber Reign](https://camber-reign.web.app/) · [Driver’s guide](https://camber-reign.web.app/guide/) · [Asset credits](https://camber-reign.web.app/credits/)
 
@@ -16,11 +16,16 @@ The Race HQ lobby keeps your selected car on the studio floor, with its current 
 
 Choose **Cars** to open the full 33-car collection. Preview a car using its card or the previous/next controls, then choose **Open garage** to load and select its actual 3D model. The collection distinguishes the preview from your current car. In the garage, use **Upgrades** for performance upgrades, **Paint** for finishes, **Race** to drive or **Back** to return to the lobby. The credit balance at the top of the lobby also opens your current car’s workshop.
 
-Choose **Circuits** in the bottom navigation, or select the circuit name, to open the 34-route collection. Inspect the scenic preview, actual playable route and lap length, then use **Select circuit** to return to Race HQ with that venue. Previewing a card does not start a race. Search, region and series filters narrow the route strip; **Full grid** shows every matching circuit together.
+Choose **Circuits** in the bottom navigation, or select the circuit name, to open the 38-route collection. Inspect the scenic preview, actual playable route and lap length, then use **Select circuit** to return to Race HQ with that venue. Previewing a card does not start a race. Search, region and series filters narrow the route strip; **Full grid** shows every matching circuit together.
 
 Use the steering-wheel control in the top rail for driving help, steering sensitivity and sound levels. The speaker mutes the entire game; fullscreen has its own control. Menus and collections work in portrait, while racing uses landscape on phones.
 
 ## Driving
+
+Six Nitro bottles per circuit refill 32% of capacity, capped at a full gauge. Each racer has a separate once-per-lap collection, with an eight-second minimum cooldown. Hold Nitro for normal boost. Release and press again 0.35–0.8 seconds after the first press for Perfect Nitro; a second press within 0.28 seconds of a full-charge start gives a stronger, faster-consuming burst. Keep the second press held. Holding alone never selects an advanced mode.
+
+A severe impact causes a short wreck phase with no drive, then waits for a safe space behind your validated progress. Ordinary heavy hits still allow you to steer away. Sustained walking-speed pressure against a rail has a 2.8-second recovery timer even when the car inches forward; braking, handbraking or turning away cancels that condition. A real front strike during Burst or Perfect Nitro can knock down an opponent when speed and closing energy are sufficient; ordinary boost, gentle taps and passing alongside cannot. Recovery protection prevents repeated knockdowns. Optional ramps on the four destination routes have real launch and landing motion; completed barrel rolls refill some Nitro. Road barriers and marked obstacles are solid, while a high enough jump can clear a low obstacle.
+
 
 Acceleration is automatic. Hold the left or right side of the steering thumbpad, or drag it for fine control; release to center. You can also drag across the race view or use Left/Right or A/D on a keyboard. On a compatible phone, open Pause → Steering → Enable tilt, allow motion access if asked, and use Recenter tilt in your comfortable holding position. Touch steering always overrides tilt, and unavailable or stale sensor data falls back to touch. Turn sharply at speed to drift automatically. Hold Nitro or Shift to boost; release to recharge. Nitro is the only on-screen pedal. Down/S is an optional keyboard brake and Space holds the optional handbrake.
 
@@ -82,7 +87,7 @@ These 33 artist-made representations span 16 brands and retain their credited id
 | Ferrari Enzo | V12 hypercar | 184 km/h | 3.7 sec |
 | Porsche 919 Hybrid | 2017 endurance racing prototype | 185 km/h | 3.8 sec |
 
-Search the collection by car, manufacturer or style. Accents, spaces and punctuation do not need to match exactly: “Huracan” finds Huracán and “GTR” finds GT-R. Filter by manufacturer or favourites, sort by latest arrivals, speed, handling or name, and use Clear filters to reset the view. Compare with your car shows top speed, acceleration, handling and Nitro differences, including each car’s saved upgrades.
+Search the collection by car, manufacturer or style. Accents, spaces and punctuation do not need to match exactly: “Huracan” finds Huracán and “GTR” finds GT-R. Filter by manufacturer or favourites, sort by latest arrivals, speed, handling or name, and use Clear filters to reset the view. Compare with your car shows top speed, acceleration, handling and Nitro differences, including each car’s saved upgrades and selected setup.
 
 ### Circuits
 
@@ -97,8 +102,12 @@ Search the collection by car, manufacturer or style. Accents, spaces and punctua
 | Copper Canyon | 2.36 km | Carry speed between sandstone mesas, then brake for a broad canyon hairpin and a linked pair of technical turns. |
 | Cedar Ridge | 2.41 km | Find a rhythm through cedar-lined bends, open the throttle on the forest straight, and sweep past timber lodges under the ridgeline. |
 | Neon Freight | 2.26 km | A floodlit freight district with a long loading-yard straight, generous ninety-degree turns and a fast return past container stacks. |
+| Fuji Skyline | 3.00 km | Lake road, mountain climbs, elevated viaduct and two launch ramps. |
+| Singapore Afterdark | 2.68 km | Marina straights, city expressway and solid work-zone barriers. |
+| Norway Fjord Run | 2.14 km | High fjord bridge, forested climbing bends and an optional ramp. |
+| San Francisco Hills | 2.50 km | Terraced city roads, two ramps and waterfront roadworks. |
 
-The 34-course collection combines nine original Camber Reign circuits, compact adaptations of all 23 venues on the official 2026 calendar checked on 1 October 2026, and Sakhir and Jeddah as original-calendar bonuses. Playable arcade laps are shorter than the real venues, with widened turns and flattened elevation. Suzuka is explicitly unrolled into a non-crossing course; its real overpass is not reproduced.
+The 38-course collection combines thirteen original Camber Reign circuits, compact adaptations of all 23 venues on the official 2026 calendar checked on 1 October 2026, and Sakhir and Jeddah as original-calendar bonuses. The Grand Prix adaptations have shorter laps, widened turns and flattened elevation. Fuji Skyline, Singapore Afterdark, Norway Fjord Run and San Francisco Hills are separate original destinations with physical climbs, descents and optional ramps. Suzuka is explicitly unrolled into a non-crossing course; its real overpass is not reproduced.
 
 | Grand Prix venue | Category | Arcade lap | Official venue length |
 | --- | --- | ---: | ---: |
@@ -150,7 +159,7 @@ The visual palette uses electric violet `#9246FF` as the dominant UI accent, yel
 
 The game renders thirty-three individually credited manufacturer car representations across sixteen brands. Road cars, classics, grand tourers and track-focused models retain their actual identities; Audi R8 Custom and GMA T.50 Custom remain labelled artist interpretations. The garage supports drag rotation, keyboard-accessible quarter turns, neutral studio lighting and responsive camera framing. Wheels steer and roll, brake lamps respond and nitro uses model-specific exhaust outlets. Body paint, glass, carbon and rubber use separate physical materials. Mobile and race opponents use reduced-detail geometry. Earlier fictional builds are no longer selectable; their legacy source assets and attribution notices remain in the repository.
 
-All thirty-four circuits have covered spectator stands with animated seated and standing crowds with varied poses, clothing and asynchronous cheering behind the barriers. Bay Grand Prix adds a larger permanent grandstand and pit complex. A full-width checkered stripe, eight numbered starting bays, branded truss gantry and three twin-lamp countdown columns mark the start/finish area.
+All thirty-eight circuits have covered spectator stands with animated seated and standing crowds with varied poses, clothing and asynchronous cheering behind the barriers. Bay Grand Prix adds a larger permanent grandstand and pit complex. A full-width checkered stripe, eight numbered starting bays, branded truss gantry and three twin-lamp countdown columns mark the start/finish area.
 
 A phase-based animated logo loader waits for models, shaders and fonts. Camera inertia, speed-dependent field of view, drift smoke, road spray and skid marks respond to gameplay. Hard collisions emit directional sparks, road grit and dust from the actual contact point, with short tyre scuffs along the distance travelled. A 320 ms directional camera impulse and a brief edge cue make the impact readable without covering the controls. These consume real impact event IDs, including a hit that has already stopped the car; they do not move the vehicle or award progress. Mobile crash pools cap at 36 sparks and 12 fragments, with shared dust and mark pools. SMAA smooths post-processing edges. Reduced motion removes decorative orbit, entrance animation, bank, impact particles, edge flashes and camera impulses while retaining static tyre marks, impact/recovery messages and the camera movement needed to drive.
 
@@ -176,7 +185,9 @@ npm run build
 Local: http://127.0.0.1:4180/. Production output: `dist/`.
 
 - `src/grand-prix-circuits.js`: 25 source-attributed compact venue adaptations; `scripts/prepare-grand-prix-circuits.mjs` regenerates the offline data.
-- `src/physics.js`, `src/track.js`, `src/rivals.js`: fixed-step handling, thirty-four layouts, race opponents, nitro, checkpoints, impact severity and fair player recovery.
+- `src/nitro-system.js`, `src/track-pickups.js`: timed boost modes, actual recharge pickups and per-racer collection fairness.
+- `src/air-motion.js`, `src/track-obstacles.js`, `src/mountain-circuit.js`: authored elevation, ballistic ramps, landing events and solid road hazards.
+- `src/physics.js`, `src/track.js`, `src/rivals.js`: fixed-step handling, thirty-eight layouts, race opponents, nitro, checkpoints, impact severity and fair player recovery.
 - `src/original-circuits.js`, `src/original-venues.js`: four additional authored routes, lighthouse/basalt/mesa/lodge/freight landmarks, safe scenery footprints and bounded instancing.
 - `src/steering-pad.js`, `src/tilt-steering.js`: touch steering ownership, opt-in orientation permission, calibration and touch fallback.
 - `src/progression.js`, `src/upgrades-ui.js`: bounded upgrade levels, credit economy, persistence and workshop previews.
@@ -205,7 +216,7 @@ Google/Bing verification tags, robots.txt, sitemap.xml and crawlable guide/priva
 
 ## Credits and validation
 
-Original game code, nine original tracks, branding and racing adaptations: AppsOverFlow. Manufacturer model sources and authors are credited individually. Retained legacy Formula and GT assets keep their Qvist_designs and vicent091036 / Three.js attribution under CC BY 4.0. Full source URLs, adaptation notes and licences: `public/credits/` and `public/assets/cars/`. Grand Prix outline data: Tomislav Bacinger, MIT; compact arcade modifications by AppsOverFlow, including a non-crossing Suzuka reinterpretation. Three.js is MIT. No manufacturer or motorsport affiliation is implied.
+Original game code, thirteen original tracks, branding and racing adaptations: AppsOverFlow. Manufacturer model sources and authors are credited individually. Retained legacy Formula and GT assets keep their Qvist_designs and vicent091036 / Three.js attribution under CC BY 4.0. Full source URLs, adaptation notes and licences: `public/credits/` and `public/assets/cars/`. Grand Prix outline data: Tomislav Bacinger, MIT; compact arcade modifications by AppsOverFlow, including a non-crossing Suzuka reinterpretation. Three.js is MIT. No manufacturer or motorsport affiliation is implied.
 
 The automated suite covers driving, lap guards, rivals, all circuits, nitro, upgrades, payments, storage and analytics privacy. The earlier 36-car/34-circuit update, crash/recovery checks and physical-device limitations are documented in `reports/manufacturer-circuits-controls-release.md`. Earlier expansion checks and review limits are documented in `reports/expansion-release.md`; `reports/release-checks.md` preserves the earlier release evidence. Phone viewport emulation does not establish performance on every physical phone.
 

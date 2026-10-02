@@ -9,8 +9,8 @@ const wrapAngle = angle => Math.atan2(Math.sin(angle), Math.cos(angle));
 const orient = (a, b, c) => (b.x-a.x)*(c.z-a.z) - (b.z-a.z)*(c.x-a.x);
 
 test('calendar pack has 23 current venues and two clearly categorized original-calendar bonuses', () => {
-  assert.equal(TRACKS.length, 34);
-  assert.equal(new Set(TRACKS.map(track => track.id)).size, 34);
+  assert.equal(TRACKS.length, 38);
+  assert.equal(new Set(TRACKS.map(track => track.id)).size, 38);
   assert.equal(pack.length, 25);
   assert.deepEqual(pack.filter(t => t.calendarStatus === 'current').map(t => t.round), Array.from({length:23}, (_,i) => i+1));
   assert.deepEqual(pack.filter(t => t.calendarStatus === 'original-calendar-bonus').map(t => t.id), ['sakhir','jeddah']);
@@ -43,7 +43,8 @@ test('the five original circuits retain their exact sampled geometry', () => {
     grandprix: 'b01b33b90f55ce3ed898c4df39cd44a7a2e07c86a7dee15f931942910131e4f6',
   };
   for (const [id, hash] of Object.entries(hashes)) {
-    assert.equal(createHash('sha256').update(JSON.stringify(getTrack(id).samples)).digest('hex'), hash);
+    assert.ok(getTrack(id).samples.every(point => point.y === 0 && point.grade === 0 && point.ty === 0), 'legacy flat roads stay flat');
+    assert.equal(createHash('sha256').update(JSON.stringify(getTrack(id).samples.map(({y,grade,ty,...planar}) => planar))).digest('hex'), hash);
   }
 });
 

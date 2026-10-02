@@ -133,7 +133,16 @@ for (const [assetId, manifest] of Object.entries(MANUFACTURER_ASSETS)) for (cons
       const mesh = wheelSurfaces[i], moved = new THREE.Vector3().fromBufferAttribute(mesh.geometry.attributes.position, 0).applyMatrix4(mesh.matrixWorld);
       assert.ok(moved.distanceTo(pointsBefore[i]) > .001, 'the authored wheel surface actually moves with its pivot');
     }
-    assert.deepEqual(names.map(name => car.group.getObjectByName(name).position.toArray()), positions);
+    for(const [index,name] of names.entries()) {
+      const current=car.group.getObjectByName(name).position.toArray();
+      assert.equal(current[0],positions[index][0],'suspension must not move the track width');
+      assert.equal(current[2],positions[index][2],'suspension must not move the wheelbase');
+      assert.ok(Math.abs(current[1]-positions[index][1])<.022,'wheel travel stays within the bounded suspension stroke');
+    }
+    assert.ok(car.group.getObjectByName('sprung-body').rotation.z<0,'the real body responds to cornering load');
+    const pausedPositions=names.map(name=>car.group.getObjectByName(name).position.toArray());
+    car.update({time:1.08,speed:0,actualSpeed:24,steering:.8,brake:1,paused:true});
+    assert.deepEqual(names.map(name=>car.group.getObjectByName(name).position.toArray()),pausedPositions,'pause freezes every shipping wheel pivot');
     assert.equal(car.group.userData.paintable, manifest.paintable !== false && manifest.paintMaterialNames.length > 0);
     const paint = [...materials].filter(material => material.userData.bodyPaint);
     assert.equal(paint.length > 0, car.group.userData.paintable);

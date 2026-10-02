@@ -11,11 +11,11 @@ import { circuitPreviewMarkup, circuitRouteCards, circuitScene, circuitSeriesLab
 
 const source = readFileSync(new URL('../src/circuit-atlas.js', import.meta.url), 'utf8').replace(/^import .*;\n/gm, '');
 
-test('all 34 circuits retain their own real route shape, measured distances and canonical selection links', () => {
+test('all 38 circuits retain their own real route shape, measured distances and canonical selection links', () => {
   const cards = circuitRouteCards(TRACKS, 'suzuka');
-  assert.equal((cards.match(/class="route-card(?: is-selected)?"/g) || []).length, 34);
+  assert.equal((cards.match(/class="route-card(?: is-selected)?"/g) || []).length, 38);
   assert.equal((cards.match(/aria-pressed="true"/g) || []).length, 1);
-  assert.equal((cards.match(/class="route-card-select"/g) || []).length, 34);
+  assert.equal((cards.match(/class="route-card-select"/g) || []).length, 38);
   const definitions = [...cards.matchAll(/\bid="([^"]+)"/g)].map(match => match[1]);
   assert.equal(definitions.length, new Set(definitions).size, 'SVG definitions remain unique across all cards');
   for (const track of TRACKS) {
@@ -113,14 +113,14 @@ test('search, region and series still intersect, and clearing an empty result re
   assert.equal(grid.children.length,0);
   assert.equal(elements['circuit-empty'].hidden,false);
   elements['reset-circuit-search'].onclick();
-  assert.equal(grid.children.length,34);
+  assert.equal(grid.children.length,38);
   assert.equal(elements['circuit-search'].focused,true);
   assert.equal(elements['circuit-region'].value,'all');
   series.find(button=>button.dataset.circuitSeries==='current').onclick();
   assert.equal(grid.children.length,23);
   series.find(button=>button.dataset.circuitSeries==='bonus').onclick();
   assert.equal(grid.children.length,2);
-  assert.equal(elements['circuit-count'].textContent,'2 of 34 circuits');
+  assert.equal(elements['circuit-count'].textContent,'2 of 38 circuits');
 });
 
 test('strip/grid switching preserves cards, hides irrelevant arrows and honours reduced motion when paging', () => {
@@ -149,7 +149,7 @@ test('strip/grid switching preserves cards, hides irrelevant arrows and honours 
 test('header shows validated saved credits and refreshes after another tab changes the wallet without writing', () => {
   const {elements,document,writes,setCredits}=mount({credits:8765});
   assert.equal(elements['atlas-credits'].attrs['aria-label'],'8,765 saved upgrade credits');
-  assert.match(elements['atlas-credits'].innerHTML, /race-icons\.svg\?v=20261002-2#credits/);
+  assert.match(elements['atlas-credits'].innerHTML, /race-icons\.svg\?v=20261002-3#credits/);
   setCredits(9900); document.visibilitychange();
   assert.equal(elements['atlas-credits'].attrs['aria-label'],'9,900 saved upgrade credits');
   assert.deepEqual(writes, []);

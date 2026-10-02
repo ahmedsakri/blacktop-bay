@@ -54,6 +54,18 @@ test('new inland settings replace bay water with distinct terrain and lighting w
   }
 });
 
+test('destination lighting and vegetation override generic venue scenery without SF palms',()=>{
+ const fuji=getVenueProfile(getTrack('fuji-skyline'));
+ const singapore=getVenueProfile(getTrack('singapore-afterdark'));
+ const norway=getVenueProfile(getTrack('norway-fjord'));
+ const sanFrancisco=getVenueProfile(getTrack('san-francisco-hills'));
+ assert.equal(fuji.vegetation,'woodland');assert.equal(fuji.towers,0);
+ assert.equal(singapore.vegetation,'street-trees');assert.equal(singapore.towers,55);
+ assert.equal(norway.vegetation,'conifers');assert.equal(norway.towers,0);
+ assert.equal(sanFrancisco.vegetation,'street-trees');assert.equal(sanFrancisco.towers,24);
+ assert.equal(new Set([fuji,singapore,norway,sanFrancisco].map(profile=>profile.background)).size,4);
+});
+
 test('new scenery is deterministic, bounded on phones, and clears the full route and spectator footprints', () => {
   for(const descriptor of TRACKS){
     const track=getTrack(descriptor.id),profile=getVenueProfile(track),items=venueSceneryLayout(track,{low:true});

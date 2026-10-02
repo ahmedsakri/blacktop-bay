@@ -1,0 +1,21 @@
+.nitro-timing{position:relative;height:5px;margin:7px 9% 0;background:#ffffff30;border-radius:3px;overflow:hidden}
+.nitro-timing span{position:absolute;left:36.8%;width:47.4%;height:100%;background:#329fff}
+.nitro-timing i{position:absolute;left:calc(var(--timing,0)*100%);height:100%;width:3px;background:#fff}
+.nitro-timing.is-perfect{box-shadow:0 0 10px #329fff80}
+.nitro-track[data-mode=perfect] #nitro-fill{background:#91e4ff!important}
+.nitro-track[data-mode=burst] #nitro-fill{background:linear-gradient(90deg,#238cff,#fff)!important;box-shadow:0 0 20px #329fff}
+.perfect-window .nitro-pedal{outline:2px solid #91e4ff;outline-offset:5px}
+.race-settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.race-settings-grid label{display:grid;gap:8px;font-size:13px;color:#ccd0de}.race-settings-grid select{font:inherit;color:#fff;background:#021439;border:1px solid #776680;min-height:46px;padding:10px;border-radius:5px;width:100%}
+@media(max-width:520px){.race-settings-grid{grid-template-columns:1fr}.nitro-timing{margin-top:4px}}
+@media(prefers-reduced-motion:reduce){.nitro-timing,.nitro-track #nitro-fill{transition:none!important}}
+
+/* Currency is a resource emblem, sized with the balance rather than body copy. */
+#menu .hq-wallet > .ui-icon { width:32px;height:32px;flex:0 0 32px; }
+#garage .garage-balance > .ui-icon { display:block;width:28px;height:28px;flex:0 0 28px; }
+@media(max-width:700px), (max-height:520px) {
+  #menu .hq-wallet > .ui-icon { width:28px;height:28px;flex-basis:28px; }
+  #garage .garage-balance > .ui-icon { width:23px;height:23px;flex-basis:23px; }
+}
+@media(max-width:365px) and (orientation:portrait) {
+  #garage .garage-balance > .ui-icon { width:20px;height:20px;flex-basis:20px; }
+}

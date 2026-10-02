@@ -2,21 +2,27 @@
 // Separate music/driving buses and a soft compressor keep the louder mix controlled.
 import { getVehicle } from './vehicles.js';
 
-import { drivingVoice, nitroSoundFrame } from './driving-sound.js';
+import { drivingVoice, nitroSoundFrame, createEngineSoundMotion, engineSpectrum } from './driving-sound.js';
 import { lobbyMusicFrame, normalizeLobbyStyle } from './lobby-music.js';
+import {createRaceSoundscape,createSoundEventTracker} from './race-sound.js';
 
 export function createAudio({contextFactory} = {}) {
   const doc=globalThis.document;
   let context=null,master=null,engineGate=null,tyreGain=null,squealGain=null,boostGain=null;
+  let sfxMix=null,sfxRaceGate=null,soundscape=null;
+  const soundEvents=createSoundEventTracker();
+  const engineMotion=createEngineSoundMotion();
   let engineFilter=null,tyreFilter=null,bodyOsc=null,harmonicOsc=null,subOsc=null,squealOsc=null,boostOsc=null;
   let bodyGain=null,harmonicGain=null,subGain=null;
+  let intakeGain=null,intakeFilter=null,engineWaves=null,waveApplied=null;
   let boostFilter=null,boostLowOsc=null,boostLowGain=null,boostImpactGain=null,boostReleaseGain=null,boostToneGain=null;
-  let boostAge=0,boostWasActive=false,boostRelease=0;
+  let boostAge=0,boostWasActive=false,boostRelease=0,boostMode='normal';
   let lobby=false,lobbyClock=0,lobbyGate=null,lobbyFilter=null,lobbyBass=null,lobbyPulse=null,lobbyTick=null;
   const lobbyPads=[];
   let lobbyStyle=normalizeLobbyStyle(),lobbyTransition=1,lobbyKick=null,lobbyLead=null,lobbySnareBody=null,lobbySnare=null,lobbySpace=null,lobbyEcho=null;
-  let unlockPromise=null,disposed=false,unlocked=false,muted=false,gear=0;
-  let running=false,speed=0,drift=0,brake=0,vehicleId=null,shiftTime=0,volume=.75,musicVolume=.65;
+  let unlockPromise=null,disposed=false,unlocked=false,muted=false;
+  let running=false,speed=0,drift=0,brake=0,volume=.75,musicVolume=.65;
+  let engineVolume=1,sfxVolume=.85;
   const sources=new Set(),transients=new Set(),nodes=new Set();
   const finite=(value,fallback=0)=>Number.isFinite(Number(value))?Number(value):fallback;
   const clamp=(value,min,max)=>Math.min(max,Math.max(min,value));
@@ -30,14 +36,17 @@ export function createAudio({contextFactory} = {}) {
   function updateGates() {
     const audible=unlocked && !muted && visible() && !disposed;
     target(master?.gain,audible?volume*1.6:0,.035);
-    target(engineGate?.gain,audible && running?1:0,.070);
+    target(engineGate?.gain,audible && running?engineVolume:0,.070);
+    target(sfxMix?.gain,audible?sfxVolume:0,.035);
+    target(sfxRaceGate?.gain,audible && running?1:0,.045);
     target(lobbyGate?.gain,audible && lobby && !running?musicVolume*lobbyTransition:0,.28);
     if(!audible || !running) {
       target(tyreGain?.gain,0,.045);
       target(squealGain?.gain,0,.045);
       target(boostGain?.gain,0,.045);
       target(boostToneGain?.gain,0,.045);target(boostLowGain?.gain,0,.045);target(boostImpactGain?.gain,0,.045);target(boostReleaseGain?.gain,0,.035);
-      boostWasActive=false;boostAge=0;boostRelease=0;
+      boostWasActive=false;boostAge=0;boostRelease=0;boostMode='normal';
+      soundscape?.silence();
     }
   }
   function makeOscillator(type,frequency,gain,destination) {
@@ -50,15 +59,20 @@ export function createAudio({contextFactory} = {}) {
     master=node(context.createGain());master.gain.value=0;
     if(context.createDynamicsCompressor){const limiter=node(context.createDynamicsCompressor());limiter.threshold.value=-10;limiter.knee.value=12;limiter.ratio.value=4;limiter.attack.value=.003;limiter.release.value=.18;master.connect(limiter);limiter.connect(context.destination);}else master.connect(context.destination);
     engineGate=node(context.createGain());engineGate.gain.value=0;engineGate.connect(master);
+    sfxMix=node(context.createGain());sfxMix.gain.value=0;sfxMix.connect(master);
+    sfxRaceGate=node(context.createGain());sfxRaceGate.gain.value=0;sfxRaceGate.connect(sfxMix);
     engineFilter=node(context.createBiquadFilter());engineFilter.type='lowpass';
     engineFilter.frequency.value=360;engineFilter.Q.value=.48;engineFilter.connect(engineGate);
     ({oscillator:bodyOsc,amplitude:bodyGain}=makeOscillator('triangle',52,.135,engineFilter));
     ({oscillator:harmonicOsc,amplitude:harmonicGain}=makeOscillator('sawtooth',104,.027,engineFilter));
     ({oscillator:subOsc,amplitude:subGain}=makeOscillator('sine',26,.038,engineFilter));
+    if(context.createPeriodicWave){
+      engineWaves=[false,true].map(overtone=>{const spectrum=engineSpectrum(overtone);return context.createPeriodicWave(spectrum.real,spectrum.imag);});
+    }
 
     // Slow, shallow detuning prevents a static electronic hum without a harsh buzz.
     const flutter=node(context.createOscillator()),flutterDepth=node(context.createGain());
-    flutter.type='sine';flutter.frequency.value=11;flutterDepth.gain.value=.35;
+    flutter.type='sine';flutter.frequency.value=8.3;flutterDepth.gain.value=.16;
     flutter.connect(flutterDepth);flutterDepth.connect(bodyOsc.frequency);
     flutter.start();sources.add(flutter);
 
@@ -71,27 +85,30 @@ export function createAudio({contextFactory} = {}) {
       low=.91*low+.09*white;samples[i]=white*.36+low*.72;
     }
     noise.buffer=buffer;noise.loop=true;
+    intakeFilter=node(context.createBiquadFilter());intakeFilter.type='bandpass';intakeFilter.frequency.value=430;intakeFilter.Q.value=.42;
+    intakeGain=node(context.createGain());intakeGain.gain.value=0;
+    noise.connect(intakeFilter);intakeFilter.connect(intakeGain);intakeGain.connect(engineGate);
     tyreFilter=node(context.createBiquadFilter());tyreFilter.type='bandpass';
     tyreFilter.frequency.value=850;tyreFilter.Q.value=.56;
     tyreGain=node(context.createGain());tyreGain.gain.value=0;
-    noise.connect(tyreFilter);tyreFilter.connect(tyreGain);tyreGain.connect(engineGate);
-    boostFilter=node(context.createBiquadFilter());boostFilter.type='lowpass';boostFilter.frequency.value=620;boostFilter.Q.value=.35;
-    boostGain=node(context.createGain());boostGain.gain.value=0;boostGain.connect(engineGate);
+    noise.connect(tyreFilter);tyreFilter.connect(tyreGain);tyreGain.connect(sfxRaceGate);
+    boostFilter=node(context.createBiquadFilter());boostFilter.type='lowpass';boostFilter.frequency.value=430;boostFilter.Q.value=.35;
+    boostGain=node(context.createGain());boostGain.gain.value=0;boostGain.connect(sfxRaceGate);
     noise.connect(boostFilter);boostFilter.connect(boostGain);
     // Warm turbine harmonics have their own gain; they do not need a loud
     // noise bus or a piercing electrical whine to remain audible.
-    ({oscillator:boostOsc,amplitude:boostToneGain}=makeOscillator('triangle',220,0,engineGate));
+    ({oscillator:boostOsc,amplitude:boostToneGain}=makeOscillator('sine',105,0,sfxRaceGate));
     // Low thrust and a short pressure onset give boost weight without raising
-    // the whole mix. All layers share engineGate so pause/mute are immediate.
-    ({oscillator:boostLowOsc,amplitude:boostLowGain}=makeOscillator('sine',52,0,engineGate));
+    // the whole mix. All layers share the race SFX gate so pause/mute are immediate.
+    ({oscillator:boostLowOsc,amplitude:boostLowGain}=makeOscillator('sine',52,0,sfxRaceGate));
     const impactFilter=node(context.createBiquadFilter());impactFilter.type='lowpass';impactFilter.frequency.value=210;
     boostImpactGain=node(context.createGain());boostImpactGain.gain.value=0;
-    noise.connect(impactFilter);impactFilter.connect(boostImpactGain);boostImpactGain.connect(engineGate);
-    const releaseFilter=node(context.createBiquadFilter());releaseFilter.type='lowpass';releaseFilter.frequency.value=470;releaseFilter.Q.value=.4;
+    noise.connect(impactFilter);impactFilter.connect(boostImpactGain);boostImpactGain.connect(sfxRaceGate);
+    const releaseFilter=node(context.createBiquadFilter());releaseFilter.type='lowpass';releaseFilter.frequency.value=360;releaseFilter.Q.value=.4;
     boostReleaseGain=node(context.createGain());boostReleaseGain.gain.value=0;
-    noise.connect(releaseFilter);releaseFilter.connect(boostReleaseGain);boostReleaseGain.connect(engineGate);
+    noise.connect(releaseFilter);releaseFilter.connect(boostReleaseGain);boostReleaseGain.connect(sfxRaceGate);
     noise.start();sources.add(noise);
-    squealGain=node(context.createGain());squealGain.gain.value=0;squealGain.connect(engineGate);
+    squealGain=node(context.createGain());squealGain.gain.value=0;squealGain.connect(sfxRaceGate);
     squealOsc=node(context.createOscillator());squealOsc.type='sine';squealOsc.frequency.value=820;
     squealOsc.connect(squealGain);squealOsc.start();sources.add(squealOsc);
 
@@ -126,6 +143,7 @@ export function createAudio({contextFactory} = {}) {
       lobbyEcho=node(context.createGain());lobbyEcho.gain.value=0;
       lobbyPulse.amplitude.connect(echo);lobbyLead.amplitude.connect(echo);echo.connect(echoFilter);echoFilter.connect(feedback);feedback.connect(echo);echoFilter.connect(lobbyEcho);lobbyEcho.connect(lobbyGate);
     }
+    soundscape=createRaceSoundscape({context,noise,engineDestination:engineGate,sfxDestination:sfxRaceGate,node,makeOscillator,target});
   }
 
   async function unlock() {
@@ -155,6 +173,8 @@ export function createAudio({contextFactory} = {}) {
   }
   function setVolume(value){volume=clamp(finite(value,.75),0,1);updateGates();}
   function setMusicVolume(value){musicVolume=clamp(finite(value,.65),0,1);updateGates();}
+  function setEngineVolume(value){engineVolume=clamp(finite(value,1),0,1);updateGates();}
+  function setSfxVolume(value){sfxVolume=clamp(finite(value,.85),0,1);updateGates();}
   function setLobbyStyle(value){
     const next=normalizeLobbyStyle(value);if(next===lobbyStyle)return lobbyStyle;
     lobbyStyle=next;lobbyClock=0;lobbyTransition=0;updateGates();return lobbyStyle;
@@ -166,48 +186,44 @@ export function createAudio({contextFactory} = {}) {
     brake=clamp(finite(state.brake),0,1);
     running=Boolean(state.running);
     lobby=state.lobby===true&&!running;
+    const pending=soundEvents.consume(state);
     const vehicle=getVehicle(state.vehicle),voice=drivingVoice(vehicle),electric=voice.electric;
-    if(vehicleId!==vehicle.id || !running){gear=0;shiftTime=0;vehicleId=vehicle.id;}
+    const step=clamp(finite(dt,1/60),0,.1),throttle=clamp(finite(state.throttle,1),0,1);
+    const motion=engineMotion.update({running,voice,speed,topSpeed:vehicle.handling.topSpeed,vehicleId:vehicle.id,raceId:state.raceId,throttle,brake,drift},step);
     if(!context || !unlocked || context.state!=='running')return;
     updateGates();
     if(muted || !visible())return;
     if(lobby)updateLobby(clamp(finite(dt,1/60),0,.1));
     if(!running)return;
-    bodyOsc.type=electric?'sine':'triangle';
-    harmonicOsc.type=electric?'sine':'sawtooth';
-
-    // Distinct six/seven/eight-speed voices follow road speed, with a brief torque
-    // cut and rev drop at shifts. Hysteresis prevents chatter at a shift boundary.
-    const step=clamp(finite(dt,1/60),0,.1),topSpeed=vehicle.handling.topSpeed;
-    const threshold=index=>voice.gears===1?topSpeed:topSpeed*(.20+.78*index/(voice.gears-1));
-    const oldGear=gear;
-    if(gear<voice.gears-1 && speed>threshold(gear)+.5)gear++;
-    else if(gear>0 && speed<threshold(gear-1)-1.5)gear--;
-    if(gear!==oldGear)shiftTime=.105;
-    else shiftTime=Math.max(0,shiftTime-step);
-    const lower=gear?threshold(gear-1)*.66:0,upper=threshold(gear);
-    const rev=clamp((speed-lower)/(upper-lower),0,1.10);
-    const throttle=clamp(finite(state.throttle,1),0,1);
+    if(waveApplied!==electric){
+      if(!electric&&engineWaves){bodyOsc.setPeriodicWave(engineWaves[0]);harmonicOsc.setPeriodicWave(engineWaves[1]);}
+      else {bodyOsc.type=electric?'sine':'triangle';harmonicOsc.type=electric?'sine':'triangle';}
+      waveApplied=electric;
+    }
+    // Smooth pressure/load and rev changes rather than exposing oscillator
+    // frequency jumps or a continuously bright sawtooth at every gear change.
     const boost=Boolean(state.nitro)&&throttle>.1&&brake<.1;
-    const cut=1-.26*shiftTime/.105;
-    const pitch=voice.idle+rev*voice.range+drift*voice.range*.06+(boost?6:0);
-    const smooth=clamp(step*3,.035,.12);
-    target(bodyOsc.frequency,pitch,smooth);
-    target(harmonicOsc.frequency,pitch*(vehicle.family==='formula'?3.003:2.006),smooth);
-    target(subOsc.frequency,pitch*.5,smooth);
-    target(bodyGain.gain,voice.body*(.52+throttle*.48)*cut,.035);
-    target(harmonicGain.gain,voice.harmonic*(.35+throttle*.65)*cut,.035);
-    target(subGain.gain,voice.sub*(.72+throttle*.28),.07);
-    target(engineFilter.frequency,300+voice.cutoff*(.22+rev*.78)*(.48+throttle*.52)+(boost?300:0),.075);
-    if(boost&&!boostWasActive){boostAge=0;boostRelease=0;}
+    const {pitch,rev,load,torque}=motion;
+    target(bodyOsc.frequency,pitch,.028);
+    target(harmonicOsc.frequency,pitch*(vehicle.family==='formula'?3.002:2.003),.035);
+    target(subOsc.frequency,pitch*.5,.045);
+    target(bodyGain.gain,voice.body*(.48+load*.52)*torque,.045);
+    target(harmonicGain.gain,voice.harmonic*(.16+load*.44)*torque,.055);
+    target(subGain.gain,voice.sub*(.68+load*.32),.08);
+    target(engineFilter.frequency,280+voice.cutoff*(.22+rev*.65)*(.52+load*.48)+(boost?80:0),.10);
+    target(intakeGain.gain,electric?0:(.002+rev*.010)*load*torque,.075);
+    target(intakeFilter.frequency,300+rev*370,.12);
+    const nextBoostMode=['perfect','burst'].includes(state.nitroMode)?state.nitroMode:'normal';
+    if(boost&&(!boostWasActive||nextBoostMode!==boostMode)){boostAge=0;boostRelease=0;}
+    if(boost)boostMode=nextBoostMode;
     if(!boost&&boostWasActive)boostRelease=1;
     if(boost)boostAge+=step;
     else boostRelease*=Math.exp(-step*13);
-    const thrust=nitroSoundFrame({active:boost,age:boostAge,speed,electric});
+    const thrust=nitroSoundFrame({active:boost,age:boostAge,speed,electric,mode:boostMode});
     target(boostGain.gain,thrust.air,boost?.055:.065);
     target(boostFilter.frequency,thrust.airCutoff,.10);
-    target(boostOsc.frequency,thrust.coreFrequency,.16);
-    target(boostToneGain.gain,thrust.coreGain,boost?.045:.075);
+    target(boostOsc.frequency,thrust.coreFrequency,.22);
+    target(boostToneGain.gain,thrust.coreGain,boost?.080:.080);
     target(boostLowOsc.frequency,thrust.lowFrequency,.055);
     target(boostLowGain.gain,thrust.lowGain,boost?.038:.09);
     target(boostImpactGain.gain,thrust.impact,.029);
@@ -217,8 +233,9 @@ export function createAudio({contextFactory} = {}) {
     const scrub=Math.max(drift,brake*.22)*moving;
     target(tyreGain.gain,Math.pow(scrub,1.35)*.16,.060);
     target(tyreFilter.frequency,720+scrub*570+Math.min(speed,60)*4,.12);
-    target(squealGain.gain,Math.pow(scrub,2.8)*.015,.10);
+    target(squealGain.gain,Math.pow(scrub,2.8)*.0055,.12);
     target(squealOsc.frequency,780+scrub*190+Math.min(speed,60)*1.4,.16);
+    soundscape.update({...state,speed},step,pending);
   }
   function updateLobby(dt) {
     lobbyClock+=dt;lobbyTransition=Math.min(1,lobbyTransition+dt*2.5);
@@ -237,14 +254,14 @@ export function createAudio({contextFactory} = {}) {
     target(lobbySpace?.gain,frame.space,.2);target(lobbyEcho?.gain,frame.echo,.2);
   }
   function beep(frequency=440,duration=.1) {
-    if(disposed || !unlocked || muted || !visible() || context?.state!=='running')return;
+    if(disposed || !unlocked || muted || !visible() || context?.state!=='running' || transients.size>=8)return;
     try {
       const oscillator=context.createOscillator(),gain=context.createGain();
       const start=context.currentTime,length=clamp(finite(duration,.1),.035,.8);
       oscillator.type='sine';oscillator.frequency.setValueAtTime(clamp(finite(frequency,440),140,1800),start);
       gain.gain.setValueAtTime(0,start);gain.gain.linearRampToValueAtTime(.11,start+.007);
       gain.gain.exponentialRampToValueAtTime(.0001,start+length);
-      oscillator.connect(gain);gain.connect(master);
+      oscillator.connect(gain);gain.connect(sfxMix);
       transients.add(oscillator);
       oscillator.onended=()=>{transients.delete(oscillator);oscillator.disconnect();gain.disconnect();};
       oscillator.start(start);oscillator.stop(start+length+.025);
@@ -262,5 +279,5 @@ export function createAudio({contextFactory} = {}) {
     context=null;master=null;
   }
   doc?.addEventListener?.('visibilitychange',updateGates);
-  return {unlock,setMuted,setVolume,setMusicVolume,setLobbyStyle,update,beep,dispose};
+  return {unlock,setMuted,setVolume,setMusicVolume,setEngineVolume,setSfxVolume,setLobbyStyle,update,beep,dispose};
 }

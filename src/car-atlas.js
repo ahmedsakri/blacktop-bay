@@ -2,23 +2,24 @@ import './circuit-atlas.css';
 import './car-atlas.css';
 import {VEHICLES,getVehicle} from './vehicles.js';
 import {loadProgression} from './progression.js';
+import {loadSetups} from './car-setups.js';
 import {carLibraryMarkup,carLibraryCard,findCars,loadFavorites,saveFavorites,hasCarFilters,clearCarFilters} from './collection-browser.js';
 import {carPreviewMarkup,readAtlasCurrentCar,adjacentPreview} from './car-atlas-view.js';
 import {icon} from './icons.js';
 const $=id=>document.getElementById(id);
-let progression=loadProgression(),current=readAtlasCurrentCar(),preview=current,favorites=loadFavorites();
+let setupState=loadSetups(),progression=loadProgression(),current=readAtlasCurrentCar(),preview=current,favorites=loadFavorites();
 let view={query:'',family:'all',brand:'all',sort:'latest',favoritesOnly:false,compare:false};
 let favoritesSessionOnly=false;
 const library=$('atlas-car-library');library.innerHTML=carLibraryMarkup();
 function updateCredits(){const count=progression.credits.toLocaleString('en');$('atlas-credits').innerHTML=`${icon('credits')} <span>${count}<small>CREDITS</small></span>`;$('atlas-credits').setAttribute('aria-label',`${count} saved upgrade credits`);}
 function renderPreview({focus=false}={}){
- const cars=findCars({...view,progression,favorites});
- $('car-preview').innerHTML=carPreviewMarkup(preview,{progression,current,position:cars.findIndex(car=>car.id===preview)+1,count:cars.length});
+ const cars=findCars({...view,progression,favorites,setupState});
+ $('car-preview').innerHTML=carPreviewMarkup(preview,{progression,setupState,current,position:cars.findIndex(car=>car.id===preview)+1,count:cars.length});
  if(focus){$('car-preview-heading').focus({preventScroll:true});$('car-preview').scrollIntoView({block:'start',behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'instant':'smooth'});$('car-preview-status').textContent=`Previewing ${getVehicle(preview).name}. Open the garage to select this car.`;}
 }
 function refresh({restoreFavorite=null}={}){
- const cars=findCars({...view,progression,favorites});
- $('car-library-grid').innerHTML=cars.map(car=>carLibraryCard(car,{selected:current,favorites,progression,compare:view.compare})).join('');
+ const cars=findCars({...view,progression,favorites,setupState});
+ $('car-library-grid').innerHTML=cars.map(car=>carLibraryCard(car,{selected:current,favorites,progression,setupState,compare:view.compare})).join('');
  $('library-count').textContent=`${cars.length} of ${VEHICLES.length} cars${view.compare?` · compared with ${getVehicle(current).name}`:''}`;
  $('library-empty').hidden=cars.length>0;$('clear-car-filters').disabled=!hasCarFilters(view);
  $('favorites-only').setAttribute('aria-pressed',String(view.favoritesOnly));
@@ -54,12 +55,12 @@ library.addEventListener('click',event=>{
 });
 $('car-preview').addEventListener('click',event=>{
  const button=event.target.closest('[data-preview-step]');if(!button||button.disabled)return;
- const direction=Number(button.dataset.previewStep),cars=findCars({...view,progression,favorites});
+ const direction=Number(button.dataset.previewStep),cars=findCars({...view,progression,favorites,setupState});
  preview=adjacentPreview(preview,cars,direction);renderPreview();refresh();
  $('car-preview').querySelector(`[data-preview-step="${direction}"]`)?.focus({preventScroll:true});
  $('car-preview-status').textContent=`Previewing ${getVehicle(preview).name}. Open the garage to select this car.`;
 });
 // A garage opened in another tab can change credits and upgrades. Read, never
 // award or overwrite progression, when the collection becomes visible again.
-document.addEventListener('visibilitychange',()=>{if(!document.hidden){progression=loadProgression();current=readAtlasCurrentCar();if(!favoritesSessionOnly)favorites=loadFavorites();updateCredits();renderPreview();refresh();}});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){setupState=loadSetups();progression=loadProgression();current=readAtlasCurrentCar();if(!favoritesSessionOnly)favorites=loadFavorites();updateCredits();renderPreview();refresh();}});
 updateCredits();renderPreview();refresh();

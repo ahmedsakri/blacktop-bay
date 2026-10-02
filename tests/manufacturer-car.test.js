@@ -84,7 +84,12 @@ test('manufacturer assets load on demand, deduplicate concurrent requests and pr
     assert.ok(wheel.children[0].rotation.x > 0);
     assert.equal(wheel.rotation.y < 0, name.includes('front'));
   }
-  assert.deepEqual(wheelNames.map(name => a.group.getObjectByName(name).position.toArray()), positions);
+  for (const [index,name] of wheelNames.entries()) {
+    const position=a.group.getObjectByName(name).position.toArray();
+    assert.equal(position[0],positions[index][0]);assert.equal(position[2],positions[index][2]);
+    assert.ok(Math.abs(position[1]-positions[index][1])<.022,'suspension travel is bounded without moving axle positions');
+  }
+  assert.ok(a.group.getObjectByName('sprung-body').rotation.z<0,'actual steering produces outward body roll');
   const lamp = materialsOf(a.group).find(material => material.userData.brakeLight);
   assert.ok(lamp.emissiveIntensity > source.rearLamp.emissiveIntensity);
   a.update({time: 1.06, brake: 0});

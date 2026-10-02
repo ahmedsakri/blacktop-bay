@@ -14,8 +14,9 @@ export function impactCameraOffset(age, strength, nx, nz) {
 }
 function impactDirection(impact, car) {
   if (!car || !Number.isFinite(car.yaw) || !Number.isFinite(impact.nx) || !Number.isFinite(impact.nz)) return 'front';
-  // Impact normals point away from contact: invert to identify its screen side.
-  const side = -(impact.nx * Math.cos(car.yaw) - impact.nz * Math.sin(car.yaw));
+  // The +Z-facing chase camera sees local -X on its right. Contact is opposite
+  // the outward normal, so those two inversions cancel for the screen side.
+  const side = impact.nx * Math.cos(car.yaw) - impact.nz * Math.sin(car.yaw);
   const forward = -(impact.nx * Math.sin(car.yaw) + impact.nz * Math.cos(car.yaw));
   return Math.abs(side) > Math.abs(forward) * .75 ? side > 0 ? 'right' : 'left' : forward > 0 ? 'front' : 'rear';
 }
@@ -27,14 +28,14 @@ export function createRaceFeedback() {
   let identity = null, impactId = 0, recoveryId = 0, previousPhase = 'none';
   let lastCrashNotice = -Infinity, lastWaitingNotice = -Infinity, lastFlash = -Infinity;
   let flashUntil = 0, flashStrength = 0, edge = 'front';
-  let completedLaps = 0, lapNotice = null;
+  let completedLaps = 0, lapNotice = null, pickupId = 0, landingId = 0, rewardNotice = null, wreckId = 0, knockdownId = 0;
   return {
     read(race, {active = true, reducedMotion = false, now = 0} = {}) {
       const key = race?.raceId ?? race;
       if (identity !== key || (race?.impact?.id ?? 0) < impactId || (race?.recovery?.id ?? 0) < recoveryId) {
         identity = key; impactId = recoveryId = 0; previousPhase = 'none';
         lastCrashNotice = lastWaitingNotice = lastFlash = -Infinity; flashUntil = 0;
-        completedLaps = 0; lapNotice = null;
+        completedLaps = 0; lapNotice = null; pickupId = landingId = wreckId = knockdownId = 0; rewardNotice = null;
       }
       const result = {kind: 'none', title: '', detail: '', announcement: '', flash: 0, kick: 0, edge: 'front'};
       if (!active || race?.state !== 'racing') { flashUntil = 0; return result; }
@@ -53,6 +54,20 @@ export function createRaceFeedback() {
           lapNotice = {title: count + 1 === race.totalLaps ? 'Final lap' : `Lap ${count + 1} of ${race.totalLaps}`,
             detail: `Last lap ${lapClock(last)} · ${comparison}`, until: race.elapsed + 4, announced: false};
         }
+      }
+      const knockdown = race.knockdownEvent || {};
+      if (knockdown.id > knockdownId && knockdown.kind === 'knockdown') {
+        knockdownId = knockdown.id;
+        rewardNotice = {kind:'knockdown',title:'Rival knocked down',detail:'Clean line ahead · Keep racing',until:race.elapsed+2,announced:false};
+      }
+      const pickup = race.pickupEvent || {}, landing = race.air?.event || {};
+      if (pickup.id > pickupId && pickup.kind === 'nitro') {
+        pickupId = pickup.id;
+        rewardNotice = {kind:'pickup', title:'Nitro collected', detail:pickup.amount > .01 ? `+${Math.round(pickup.amount / pickup.capacity * 100)}% charge` : 'Tank already full', until:race.elapsed + 1.8, announced:false};
+      }
+      if (landing.id > landingId && landing.kind === 'landing') {
+        landingId = landing.id;
+        rewardNotice = {kind:'landing', title:landing.stunt === 'barrel' ? 'Barrel roll complete' : 'Landed', detail:landing.stunt === 'barrel' ? 'Nitro reward · Keep your line' : `${Number(landing.airtime || 0).toFixed(1)}s airborne`, until:race.elapsed + 2, announced:false};
       }
       const impact = race.impact || {}, recovery = race.recovery || {};
       const newImpact = impact.id > impactId;
@@ -85,6 +100,10 @@ export function createRaceFeedback() {
           ? 'Car reset to the road.' : 'Car returned to the road. Keep steering.';
         flashUntil = 0;
       }
+      if (race.wreck?.phase === 'impact' || race.wreck?.phase === 'recovering') {
+        result.kind = 'crash'; result.title = 'Wrecked'; result.detail = 'Returning to a clear section';
+        if (race.wreck.id > wreckId) { result.announcement = 'Severe impact. Recovering your car safely.'; wreckId = race.wreck.id; }
+      }
       recoveryId = Math.max(recoveryId, recovery.id || 0);
       previousPhase = recovery.phase || 'none';
       if (result.kind === 'none' && lapNotice && race.elapsed < lapNotice.until) {
@@ -93,6 +112,10 @@ export function createRaceFeedback() {
           result.announcement = `${lapNotice.title}. ${lapNotice.detail}.`;
           lapNotice.announced = true;
         }
+      }
+      if (result.kind === 'none' && rewardNotice && race.elapsed < rewardNotice.until) {
+        result.kind = rewardNotice.kind; result.title = rewardNotice.title; result.detail = rewardNotice.detail;
+        if (!rewardNotice.announced) { result.announcement = `${rewardNotice.title}. ${rewardNotice.detail}.`; rewardNotice.announced = true; }
       }
       result.edge = edge;
       result.flash = reducedMotion ? 0 : clamp((flashUntil - now) / 340, 0, 1) * flashStrength;
