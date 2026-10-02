@@ -33,11 +33,12 @@ test('spectator stands stay separated and face the starting straight', () => {
   }
 });
 
-test('new inland settings replace bay water with distinct terrain and lighting while the original five stay unchanged', () => {
+test('inland settings replace bay water while original terrain stays intact and Harbor uses its approved showcase lighting', () => {
   for(const id of ['harbor','dockyard','coast','summit','grandprix']){
     const profile=getVenueProfile(getTrack(id));
     assert.equal(profile.original,true);
-    assert.equal(profile.sun,'#ffb679');
+    if(id==='harbor')assert.deepEqual([profile.sun,profile.sky,profile.fill,profile.sunlight],['#ffd3a0','#9cb9d9','#9fc9ed',1.28],'Harbor uses the coordinated coastal showcase finish');
+    else assert.equal(profile.sun,'#ffb679',`${id} retains its original sunlight`);
     assert.equal(profile.skyStyle,0);
     assert.equal(profile.horizonRadius,990);
   }
