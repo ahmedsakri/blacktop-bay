@@ -1,0 +1,13 @@
+<!doctype html><html><head><meta charset="utf-8"><title>World shader compilation diagnostic</title><style>body{margin:0;background:#110017;color:white;font:12px monospace}pre{position:absolute;inset:8px auto auto 8px;max-width:90%;white-space:pre-wrap;background:#110017ed;padding:10px;z-index:2}</style></head><body><pre id="status">Starting local diagnostic</pre><script type="module">
+import * as T from 'three';import{createWorld}from'/src/world.js';import{createGarage}from'/src/garage.js';import{createPickupView}from'/src/race-pickup-view.js';import{getTrackPickups}from'/src/track-pickups.js';import{TRACK,sampleTrack}from'/src/track.js';
+const status=document.querySelector('#status'),lines=[];const write=text=>{lines.push(text);status.textContent=lines.slice(-35).join('\n');console.log(text);};
+write('Visibility: '+document.visibilityState);document.addEventListener('visibilitychange',()=>write('Visibility: '+document.visibilityState));requestAnimationFrame(()=>{write('RAF 1 arrived');requestAnimationFrame(()=>write('RAF 2 arrived'));});document.fonts.ready.then(()=>write('Fonts ready'));
+const renderer=new T.WebGLRenderer({antialias:true});renderer.setSize(900,650);document.body.append(renderer.domElement);renderer.toneMapping=T.ACESFilmicToneMapping;
+renderer.domElement.addEventListener('webglcontextlost',()=>write('CONTEXT LOST'));
+const camera=new T.PerspectiveCamera(55,900/650,.2,2600),p=sampleTrack(0);camera.position.set(p.x-8,5,p.z+8);camera.lookAt(p.x,1,p.z);
+write('Building world '+TRACK.id);const world=createWorld(renderer,{low:true});write('World built');const pickups=createPickupView(world.scene,getTrackPickups(TRACK.id));world.update(0,{x:p.x,z:p.z,speed:0});write('Crowd '+JSON.stringify(world.scene.userData.crowd));
+const gl=renderer.getContext(),extension=gl.getExtension('KHR_parallel_shader_compile');
+let phase='world',tick=0;
+const diagnose=()=>{const pending=[];for(const program of renderer.info.programs||[]){if(extension&&!gl.getProgramParameter(program.program,extension.COMPLETION_STATUS_KHR))pending.push({name:program.name,type:program.type,id:program.id});}write(JSON.stringify({phase,tick:++tick,contextLost:gl.isContextLost(),programs:renderer.info.programs?.length,pending}));};
+const interval=setInterval(diagnose,1000);write('Begin compile world');await renderer.compileAsync(world.scene,camera);write('World compile DONE');renderer.render(world.scene,camera);phase='garage';const garage=createGarage(renderer,{low:true});write('Begin compile garage');await renderer.compileAsync(garage.scene,camera);write('Garage compile DONE');phase='done';clearInterval(interval);diagnose();renderer.render(world.scene,camera);
+</script></body></html>

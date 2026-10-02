@@ -1,0 +1,26 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Local crash renderer review</title>
+<style>body{margin:0;background:#110017;color:white;font:16px system-ui}header{padding:16px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}button,select{min-height:44px;font:inherit;padding:8px 14px;color:white;background:#021439;border:1px solid #9246ff}button:focus-visible{outline:3px solid #fff71e}#stage{height:65vh}canvas{display:block}p,pre{margin:16px}pre{white-space:pre-wrap}</style>
+<header><label>Car <select id="car"></select></label><button id="clean">Restore body</button><button id="dent">Heavy side impact</button><button id="wreck">Severe side impact</button><button id="tumble">Rollover at 0.40s</button><button id="resume">Play / pause</button><button id="advance">Step 0.1s</button><label><input id="reduced" type="checkbox">Reduced motion</label></header><div id="stage"></div><p>Local renderer fixture using shipped manufacturer geometry and runtime damage/physics. Deliberately staged impacts; not a completed gameplay test.</p><pre id="status" role="status">Loading…</pre>
+<script type="module">
+import * as THREE from 'three';
+import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
+import {MANUFACTURER_VEHICLES} from '/src/manufacturer-vehicles.js';
+import {prepareManufacturerCar,createManufacturerCar} from '/src/manufacturer-car.js';
+import {createRace} from '/src/physics.js';
+import {beginWreck,stepWreckMotion} from '/src/wreck-motion.js';
+import {collisionPose} from '/src/collision-pose.js';
+const stage=document.querySelector('#stage'),status=document.querySelector('#status'),select=document.querySelector('#car');
+for(const car of MANUFACTURER_VEHICLES)select.add(new Option(car.name,car.id));
+const renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});renderer.setPixelRatio(1.25);renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.1;stage.append(renderer.domElement);
+const scene=new THREE.Scene();scene.background=new THREE.Color('#110017');const camera=new THREE.PerspectiveCamera(42,1,.1,50),pmrem=new THREE.PMREMGenerator(renderer),room=new RoomEnvironment(),env=pmrem.fromScene(room,.04);scene.environment=env.texture;scene.environmentIntensity=.85;room.dispose();pmrem.dispose();
+scene.add(new THREE.HemisphereLight('#e3efff','#454049',1));const key=new THREE.DirectionalLight('#fff4e4',3);key.position.set(-4,7,4);scene.add(key);const rim=new THREE.DirectionalLight('#c3e3ff',1);rim.position.set(4,3,-5);scene.add(rim);
+const ground=new THREE.Mesh(new THREE.PlaneGeometry(40,40),new THREE.MeshStandardMaterial({color:'#31303a',roughness:.8}));ground.rotation.x=-Math.PI/2;ground.position.y=-.03;scene.add(ground);
+let model,race,time=0,playing=false;
+function render(){const w=stage.clientWidth,h=stage.clientHeight;renderer.setSize(w,h);camera.aspect=w/h;camera.position.set(-5.0,2.7,5.0);camera.lookAt(0,.9,0);camera.updateProjectionMatrix();const reduced=document.querySelector('#reduced').checked,pose=collisionPose(race,{reducedMotion:reduced});model.group.position.set(race.car.x,race.car.y+pose.lift,race.car.z);model.group.rotation.set(-race.car.pitch+pose.pitch,race.car.yaw+pose.yaw,race.car.roll+pose.roll,'YXZ');model.update({time,raceId:race.raceId,car:race.car,impact:race.impact,recovery:race.recovery,air:race.air,reducedMotion:reduced,active:true,paused:false});renderer.render(scene,camera);status.textContent=JSON.stringify({asset:select.value,phase:race.wreck.phase,time:+time.toFixed(2),roll:+race.car.roll.toFixed(3),height:+race.car.y.toFixed(3),damage:model.group.userData.damage,triangles:renderer.info.render.triangles,playing,reducedMotion:reduced},null,2);}
+function reset(){playing=false;race=createRace({mode:'time-attack'});Object.assign(race.car,{x:0,y:0,z:0,pitch:0,roll:0,yaw:0});time=0;render();}
+async function choose(){await prepareManufacturerCar(select.value,{low:false});model?.dispose();model=createManufacturerCar({assetId:select.value,vehicle:select.value});scene.add(model.group);reset();}
+function hit(severe){reset();race.impact={id:1,kind:'crash',severity:severe?'wreck':'heavy',remaining:.8,strength:1,localX:-1,localZ:.5,localNX:1,localNZ:0,nx:1,nz:0,y:0};if(severe)beginWreck(race,{source:'barrier',normalSpeed:40,contact:{nx:1,nz:0,x:-1,z:.5}});render();}
+function step(seconds){for(let t=0;t<seconds;t+=1/120){if(race.wreck.phase==='impact')stepWreckMotion(race,{y:0},1/120);time+=1/120;render();}}
+select.onchange=choose;document.querySelector('#clean').onclick=reset;document.querySelector('#dent').onclick=()=>hit(false);document.querySelector('#wreck').onclick=()=>hit(true);document.querySelector('#advance').onclick=()=>step(.1);document.querySelector('#tumble').onclick=()=>{hit(true);step(.4)};document.querySelector('#resume').onclick=()=>{playing=!playing;render()};document.querySelector('#reduced').onchange=render;window.onresize=render;
+let previous=performance.now();function animate(now){const dt=Math.min((now-previous)/1000,.05);previous=now;if(playing&&model)step(dt);requestAnimationFrame(animate)}requestAnimationFrame(animate);await choose();
+</script></html>

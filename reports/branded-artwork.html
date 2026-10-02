@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Camber Reign · branded promotional artwork</title>
+<style>
+@font-face{font-family:Manrope;src:url('/assets/manrope.woff2')}@font-face{font-family:Barlow;src:url('/assets/barlow-condensed-extrabold-italic.woff2');font-weight:800;font-style:italic}@font-face{font-family:Oxanium;src:url('/assets/oxanium.ttf')}
+*{box-sizing:border-box}body{margin:0;background:#110017;color:#fff;font:14px Manrope,sans-serif}header{position:sticky;top:0;z-index:2;display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:16px 24px;background:#110017f5;border-bottom:1px solid #9246ff66}header img{width:190px;margin-right:12px}button,a{min-height:44px;padding:12px 16px;border:1px solid #9246ff;background:#021439;color:#fff;font:700 12px Manrope;text-decoration:none;cursor:pointer}button:hover,a:hover{background:#9246ff}button:disabled{opacity:.45;cursor:wait}button:focus-visible,a:focus-visible{outline:3px solid #fff71e;outline-offset:3px}#render-all{background:#fff71e;color:#110017;border-color:#fff71e}#status{padding:0 24px;min-height:20px;color:#d8cdea}#outputs{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,520px),1fr));gap:24px;padding:0 24px 28px}.output{margin:0;padding:14px;background:#021439;border:1px solid #ffffff25}.output h2{margin:0 0 12px;font-size:16px}.output img{width:100%;height:auto;display:block;background:#110017}.links{display:flex;gap:8px;flex-wrap:wrap;padding-top:12px}.note{padding:0 24px;color:#a99bb7;font-size:12px;line-height:1.6}#render-stage{display:none}
+</style>
+</head>
+<body>
+<header><img src="/assets/logo-compact.svg?v=camber-reign-1" alt="Camber Reign"><button id="landscape" disabled>Render landscape · 2560 × 1440</button><button id="portrait" disabled>Render portrait · 1200 × 1600</button><button id="social" disabled>Render social · 1200 × 630</button><button id="render-all" disabled>Render all formats</button></header>
+<p id="status" role="status">Preparing the three manufacturer models…</p>
+<p class="note">Local promotional artwork studio. These are original staged compositions of the shipping manufacturer models, not gameplay captures. Each format provides a clean scene and a branded version. This fixture is excluded from the production build.</p>
+<div id="render-stage"></div><main id="outputs"></main>
+<script type="module">
+import * as THREE from 'three';
+import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
+import {prepareManufacturerCar,createManufacturerCar} from '/src/manufacturer-car.js';
+import {applyPaint} from '/src/paint.js';
+const status=document.querySelector('#status'), outputs=document.querySelector('#outputs');
+const sizes={landscape:[2560,1440],portrait:[1200,1600],social:[1200,630]};
+const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true,preserveDrawingBuffer:true,powerPreference:'high-performance'});
+renderer.setPixelRatio(1);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.02;renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+document.querySelector('#render-stage').append(renderer.domElement);
+const scene=new THREE.Scene();scene.background=new THREE.Color('#110017');scene.fog=new THREE.Fog('#110017',32,75);
+const room=new RoomEnvironment(),pmrem=new THREE.PMREMGenerator(renderer),environment=pmrem.fromScene(room,.035);scene.environment=environment.texture;scene.environmentIntensity=1.05;room.dispose();pmrem.dispose();
+scene.add(new THREE.HemisphereLight('#e3e9f3','#221d29',.48));
+function light(color,intensity,x,y,z,shadow=false){const l=new THREE.DirectionalLight(color,intensity);l.position.set(x,y,z);l.castShadow=shadow;if(shadow){l.shadow.mapSize.set(4096,4096);Object.assign(l.shadow.camera,{left:-15,right:15,top:15,bottom:-15,near:1,far:50});l.shadow.bias=-.00015;l.shadow.normalBias=.012;l.shadow.radius=4;}scene.add(l,l.target);return l;}
+light('#fff7eb',2.55,-8,13,9,true);light('#91caff',.75,11,6,1);light('#b78dff',.70,-9,4,-8);light('#ffffff',.5,0,5,14);
+const asphalt=document.createElement('canvas');asphalt.width=asphalt.height=256;const ap=asphalt.getContext('2d'),pixels=ap.createImageData(256,256);let seed=2731;function noise(){seed=(seed*1664525+1013904223)>>>0;return seed/4294967296;}for(let i=0;i<pixels.data.length;i+=4){const n=65+Math.floor(noise()*18);pixels.data[i]=n;pixels.data[i+1]=n;pixels.data[i+2]=n+6;pixels.data[i+3]=255;}ap.putImageData(pixels,0,0);const asphaltMap=new THREE.CanvasTexture(asphalt);asphaltMap.colorSpace=THREE.SRGBColorSpace;asphaltMap.wrapS=asphaltMap.wrapT=THREE.RepeatWrapping;asphaltMap.repeat.set(18,18);asphaltMap.anisotropy=renderer.capabilities.getMaxAnisotropy();
+const floor=new THREE.Mesh(new THREE.PlaneGeometry(180,180),new THREE.MeshStandardMaterial({color:'#8b828f',map:asphaltMap,roughness:.47,metalness:.22}));floor.rotation.x=-Math.PI/2;floor.position.y=-.018;floor.receiveShadow=true;scene.add(floor);
+const decoration=new THREE.Group();scene.add(decoration);
+function groundStrip(x,z,width,length,color,opacity=1,angle=0){const m=new THREE.Mesh(new THREE.PlaneGeometry(width,length),new THREE.MeshBasicMaterial({color,transparent:opacity<1,opacity,depthWrite:false,toneMapped:false}));m.rotation.set(-Math.PI/2,0,angle);m.position.set(x,.002,z);decoration.add(m);return m;}
+for(const side of [-1,1]){groundStrip(side*8.5,-2,.035,34,'#9246ff',.8);groundStrip(side*8.75,-2,.012,34,'#60bfff',.5);}for(let i=0;i<6;i++)groundStrip(-7.8+i*.31,7,.14,1.1,'#fff71e',.72,.32);
+const models=[];const ids=['mclaren-p1-gtr','mclaren-senna','ferrari-458-italia'];
+const logo=new Image();logo.src='/assets/logo-compact.svg?v=camber-reign-1';
+const camera=new THREE.PerspectiveCamera(36,16/9,.1,150);
+const contactCanvas=document.createElement('canvas');contactCanvas.width=contactCanvas.height=256;const contactContext=contactCanvas.getContext('2d'),contactGradient=contactContext.createRadialGradient(128,128,18,128,128,126);contactGradient.addColorStop(0,'#000000dd');contactGradient.addColorStop(.42,'#000000aa');contactGradient.addColorStop(.75,'#00000055');contactGradient.addColorStop(1,'#00000000');contactContext.fillStyle=contactGradient;contactContext.fillRect(0,0,256,256);const contactMap=new THREE.CanvasTexture(contactCanvas);
+const right=new THREE.Vector3(.83205,0,-.5547),front=new THREE.Vector3(.5547,0,.83205);
+function place(model,x,depth,yaw){model.group.position.copy(right.clone().multiplyScalar(x).addScaledVector(front,depth));model.group.position.y=.014;model.group.rotation.y=yaw;model.group.updateMatrixWorld(true);}
+function configure(format){const portrait=format==='portrait';
+  // A low perspective camera makes the P1 the foreground hero; the supporting
+  // cars sit physically farther away, instead of three equally sized icons.
+  place(models[0],portrait?.35:1,portrait?6.0:5.5,-.45);
+  place(models[1],portrait?-1.8:-4.3,portrait?-1.0:-3.5,.12);
+  place(models[2],portrait?1.6:4.5,portrait?-7.5:-4.5,-.42);
+  const [w,h]=sizes[format];camera.aspect=w/h;camera.fov=portrait?47:36;
+  camera.position.copy(front.clone().multiplyScalar(portrait?16.5:13));camera.position.y=portrait?5.0:2.2;
+  camera.lookAt(front.clone().multiplyScalar(portrait?1.8:4).add(new THREE.Vector3(0,portrait?1.4:.6,0)));
+  camera.updateProjectionMatrix();camera.updateMatrixWorld(true);
+  renderer.setSize(w,h,false);renderer.render(scene,camera);
+}
+function spaced(ctx,text,x,y,spacing){for(const letter of text){ctx.fillText(letter,x,y);x+=ctx.measureText(letter).width+spacing;}}
+function overlay(ctx,w,h,format,branded){const portrait=format==='portrait',scale=w/(portrait?1200:2560);
+  const upper=ctx.createLinearGradient(0,0,0,h*.46);upper.addColorStop(0,'#110017e8');upper.addColorStop(.54,'#11001755');upper.addColorStop(1,'#11001700');ctx.fillStyle=upper;ctx.fillRect(0,0,w,h*.46);
+  const vignette=ctx.createRadialGradient(w*.52,h*.61,w*.16,w*.5,h*.55,w*.74);vignette.addColorStop(0,'#11001700');vignette.addColorStop(1,'#110017bb');ctx.fillStyle=vignette;ctx.fillRect(0,0,w,h);
+  const glow=ctx.createRadialGradient(w*.75,h*.14,0,w*.75,h*.14,w*.55);glow.addColorStop(0,'#9246ff18');glow.addColorStop(1,'#9246ff00');ctx.fillStyle=glow;ctx.fillRect(0,0,w,h);
+  if(!branded)return;
+  const pad=portrait?80:120*scale,logoW=portrait?660:620*scale;ctx.drawImage(logo,pad,portrait?80:72*scale,logoW,logoW*150/860);
+  ctx.fillStyle='#fff';ctx.font=`italic 800 ${portrait?132:148*scale}px Barlow`;ctx.textBaseline='alphabetic';
+  if(portrait){ctx.fillText('OWN THE',pad,340);ctx.fillText('CORNER.',pad,466);ctx.fillStyle='#fff71e';ctx.fillRect(pad,492,140,6);ctx.font='700 21px Manrope';ctx.fillStyle='#d6cede';spaced(ctx,'16 CARS  /  34 CIRCUITS',pad,544,3);}
+  else {ctx.fillText('OWN THE CORNER.',pad,325*scale);ctx.fillStyle='#fff71e';ctx.fillRect(pad,354*scale,180*scale,6*scale);ctx.font=`700 ${21*scale}px Manrope`;ctx.fillStyle='#d6cede';spaced(ctx,'16 CARS  /  34 CIRCUITS',pad,406*scale,3*scale);ctx.font=`700 ${18*scale}px Manrope`;ctx.textAlign='right';spaced(ctx,'',0,0,0);ctx.fillStyle='#ffffff88';ctx.fillText('PLAY FREE IN YOUR BROWSER',w-pad,108*scale);ctx.textAlign='left';}
+  ctx.font=`600 ${portrait?17:17*scale}px Manrope`;ctx.fillStyle='#bfb0cd';spaced(ctx,'CAMBER-REIGN.WEB.APP',pad,h-(portrait?50:50*scale),2*scale);
+  ctx.fillStyle='#fff71e';const slashW=portrait?10:10*scale;for(let i=0;i<3;i++){ctx.beginPath();const x=w-pad-(3-i)*slashW*2.1,y=h-(portrait?60:60*scale);ctx.moveTo(x+slashW,y);ctx.lineTo(x+slashW*2,y);ctx.lineTo(x+slashW,y+slashW*2);ctx.lineTo(x,y+slashW*2);ctx.closePath();ctx.fill();}
+}
+async function render(format){status.textContent=`Rendering ${format} artwork…`;await new Promise(requestAnimationFrame);configure(format);const [w,h]=sizes[format];for(const branded of[false,true]){const canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;const ctx=canvas.getContext('2d');ctx.drawImage(renderer.domElement,0,0);overlay(ctx,w,h,format,branded);const variant=branded?'branded':'scene',id=`${format}-${variant}`;document.getElementById(id+'-card')?.remove();const article=document.createElement('article');article.className='output';article.id=id+'-card';const title=document.createElement('h2');title.textContent=`${format[0].toUpperCase()+format.slice(1)} · ${branded?'wordmark & title':'clean scene'} · ${w} × ${h}`;const img=new Image();img.id=id;img.alt=`Promotional composition of McLaren P1 GTR, blue McLaren Senna and red Ferrari 458 Spider${branded?' with Camber Reign branding':''}`;img.dataset.format=format;img.dataset.variant=variant;img.dataset.width=w;img.dataset.height=h;img.src=canvas.toDataURL('image/png');const links=document.createElement('div');links.className='links';for(const[type,quality]of[['png',1],['webp',.94]]){const a=document.createElement('a');a.textContent=`Save ${type.toUpperCase()}`;a.download=`camber-reign-${format}-${variant}.${type}`;a.href=type==='png'?img.src:canvas.toDataURL('image/webp',quality);a.dataset.export=id;a.dataset.type=type;links.append(a);}article.append(title,img,links);outputs.append(article);}status.textContent=`${format[0].toUpperCase()+format.slice(1)} ready · staged promotional render of the three actual manufacturer models`;document.body.dataset.ready=format;}
+async function run(formats){document.querySelectorAll('button').forEach(b=>b.disabled=true);try{for(const format of formats)await render(format);}catch(error){status.textContent=`Artwork could not finish: ${error.message}`;console.error(error);}finally{document.querySelectorAll('button').forEach(b=>b.disabled=false);}}
+try{await Promise.all([logo.decode(),document.fonts.load('italic 800 148px Barlow'),document.fonts.load('700 21px Manrope')]);for(const id of ids){status.textContent=`Preparing ${id}…`;await prepareManufacturerCar(id,{low:false});const m=createManufacturerCar({assetId:id,vehicle:id,low:false});if(id==='mclaren-senna')applyPaint(m,id,{color:'blue',finish:'gloss'});if(id==='ferrari-458-italia')applyPaint(m,id,{color:'red',finish:'gloss'});const shadow=new THREE.Mesh(new THREE.PlaneGeometry(3.1,5.65),new THREE.MeshBasicMaterial({map:contactMap,color:'#000000',transparent:true,opacity:.82,depthWrite:false,toneMapped:false}));shadow.rotation.x=-Math.PI/2;shadow.position.y=.006;shadow.renderOrder=1;m.group.add(shadow);scene.add(m.group);models.push(m);}for(const format of Object.keys(sizes))document.getElementById(format).onclick=()=>run([format]);document.querySelector('#render-all').onclick=()=>run(Object.keys(sizes));await run(Object.keys(sizes));}catch(error){status.textContent=`Model preparation failed: ${error.message}. Reload to retry.`;console.error(error);document.body.dataset.error=error.message;}
+</script>
+</body></html>

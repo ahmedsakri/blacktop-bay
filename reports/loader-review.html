@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex,nofollow"><title>Local loader artwork review · Camber Reign</title>
+<style>#qa-controls{position:fixed;top:12px;right:12px;z-index:110;max-width:280px;padding:9px 12px;border:1px solid #ffffff55;border-radius:4px;background:#110017eb;color:white;font:12px Manrope,sans-serif}#qa-controls summary{cursor:pointer;min-height:28px;display:flex;align-items:center}#qa-controls p{font-size:11px;line-height:1.5;max-width:240px}#qa-controls button{min-width:44px;min-height:44px;margin:3px;border:1px solid #9246ff;background:#021439;color:white;cursor:pointer}#qa-controls button:focus-visible{outline:3px solid #fff71e}#qa-controls label{display:block;margin:10px 0}#qa-controls input{width:100%}#qa-status{font-size:11px;color:#d6cede}</style>
+</head><body>
+    <div id="loading" role="status" aria-label="Loading Camber Reign">
+      <picture class="loader-art" aria-hidden="true">
+        <source media="(max-aspect-ratio: 3/4)" srcset="/assets/camber-reign-loading-portrait.webp?v=camber-reign-1">
+        <img src="/assets/camber-reign-loading.webp?v=camber-reign-1" alt="" width="1536" height="864" decoding="async" fetchpriority="low">
+      </picture>
+      <div class="loader-grid" aria-hidden="true"></div>
+      <div class="loader-content">
+        <p class="loader-kicker">APPSOVERFLOW PRESENTS</p>
+        <img
+          class="loader-logo"
+          src="/assets/logo-loader.svg?v=violet-primary-1"
+          alt="Camber Reign"
+          width="900"
+          height="300"
+        />
+        <div class="loader-diagnostics">
+          <span id="loading-status">IGNITION SEQUENCE</span
+          ><span id="loading-percent">0%</span>
+        </div>
+        <div
+          class="loader-track"
+          id="loading-progress"
+          role="progressbar"
+          aria-label="Game loading"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          aria-valuenow="0"
+        >
+          <i id="loading-fill"></i>
+        </div>
+        <div class="loader-caption">
+          <span>PRECISION. POWER. A LITTLE SIDEWAYS.</span
+          ><span>01 / FIND YOUR LINE</span>
+        </div>
+      </div>
+    </div>
+
+<details id="qa-controls"><summary>Local loader review</summary><p>Static loading-screen fixture using current production markup and styles. It stays visible and is not a gameplay or download test.</p><label for="qa-progress">Progress <input id="qa-progress" type="range" min="0" max="100" value="52"></label><button id="qa-replay" type="button">Replay reveal</button><button id="qa-hide" type="button">Hide controls</button><p id="qa-status" role="status"></p></details>
+<script type="module">
+import "/src/style.css";
+import "/src/racing.css";
+import "/src/collection.css";
+import "/src/workshop.css";
+import "/src/mobile-hud.css";
+import "/src/collection-browser.css";
+import "/src/race-dialogs.css";
+import "/src/button-system.css";
+import "/src/brand-theme.css";
+import "/src/steering-controls.css";
+import "/src/race-feedback.css";
+const loading=document.querySelector('#loading'),fill=document.querySelector('#loading-fill'),progress=document.querySelector('#loading-progress'),amount=document.querySelector('#loading-percent'),label=document.querySelector('#loading-status');
+function update(value){fill.style.width=value+'%';amount.textContent=value+'%';progress.setAttribute('aria-valuenow',value);label.textContent=value<52?'BUILDING YOUR CIRCUIT':value<76?'PREPARING THE RACE CARS':value<100?'LIGHTS. REFLECTIONS. ACTION.':'THE COAST IS YOURS';}
+document.querySelector('#qa-progress').oninput=event=>update(Number(event.target.value));document.querySelector('#qa-replay').onclick=()=>{for(const element of loading.querySelectorAll('.loader-art,.loader-grid')){element.style.animation='none';void element.offsetWidth;element.style.animation='';}};document.querySelector('#qa-hide').onclick=()=>document.querySelector('#qa-controls').hidden=true;
+function report(){const image=loading.querySelector('.loader-art img');document.querySelector('#qa-status').textContent=`${innerWidth} × ${innerHeight} · ${image.currentSrc.split('/').pop()}`;document.body.dataset.ready='loader';}window.addEventListener('resize',report);loading.querySelector('.loader-art img').addEventListener('load',report);update(52);await document.fonts.ready;report();
+</script></body></html>
