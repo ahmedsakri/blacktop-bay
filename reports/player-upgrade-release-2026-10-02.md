@@ -2,7 +2,7 @@
 
 ## Release status
 
-Implemented in the local checkout. Final integration verification, the complete current test run and deployment confirmation remain pending. This report does not claim that the upgraded game is live.
+Implemented in the local checkout, including the subsequent iPad touch-control and mobile graphics corrections described below. Final integration verification, the complete current test run and deployment confirmation remain pending. This report does not claim that these changes are live.
 
 The optional analytics application changes are implemented. The corresponding Google Tag Manager draft is saved and reviewed, but **publication is pending explicit user approval** after automatic approval review rejected the final Publish action. No new live GTM version or live GA4 receipt is claimed. See [analytics configuration and consent boundaries](../docs/analytics-events.md).
 
@@ -14,6 +14,8 @@ The optional analytics application changes are implemented. The corresponding Go
 - Keyboard bindings are configurable, with normalized conflicts and compatible default aliases. Help and race hints show the active bindings. Inputs and latched Nitro clear on pause, focus loss and navigation.
 - Touch controls support mirrored steering/Nitro placement, adjustable control size, inward spacing and height. Nitro supports hold or tap-on/tap-off input. Perfect Nitro requires starting Nitro, releasing, then pressing again in its timing window; it is not awarded merely by releasing.
 - Stable chase camera, device-preference/reduced/full motion choices and a mobile 30 FPS battery-saver option provide explicit comfort controls. These settings are persisted and included in portable backups.
+- The iPad follow-up replaces mouse-only contact assumptions with a shared pointer/touch adapter for the steering pad, race canvas and driving buttons. Touch/pen contacts do not depend on `button === 0` or primary-pointer status. An active, non-passive touch fallback works even when a hybrid browser exposes Pointer Events but delivers only Touch Events for a gesture. Duplicate event streams are suppressed, separate fingers can steer and hold Nitro, and window-level movement/release survives failed pointer capture.
+- Driving surfaces prevent long-press selection/callouts through touch handling and scoped interaction styling. Pause, orientation changes, focus loss and hidden pages clear both the adapter contact maps and driving state; stale moves cannot resume an old turn or boost. Fresh contacts work after resuming. These are verified event-path corrections; the reported symptom has not been reproduced or confirmed resolved on the user's physical iPad by this task.
 
 ### Personal racing and results
 
@@ -40,7 +42,8 @@ The optional analytics application changes are implemented. The corresponding Go
 
 - All 33 licensed manufacturer cars have separately prepared distance assets, retaining source attribution and a modification notice. Across the catalogue, these assets reduce triangles by **68.3%** and delivery bytes by **66.5%** relative to the existing low-detail sources. These totals describe asset preparation, not a claim that all cars download together.
 - Distance changes use hysteresis and keep the current model visible if a background load fails. Model preparation is bounded to two concurrent requests with prioritization and deduplication. Cache residency figures are estimates, not direct GPU-memory measurements.
-- Automatic graphics quality responds to sustained observed frame intervals with conservative recovery. Manual selection remains authoritative; intentional low refresh limits, hidden tabs and loading should not drive adaptive reductions. Static scenery uses selective spatial batches and real distance culling within established destination budgets.
+- Automatic graphics quality responds to sustained observed frame intervals with conservative recovery. The mobile follow-up starts with a sharper standard 1.6× density, bounded by device density and viewport pixel budgets; optional device hints select conservative constrained/standard/capable starting profiles. Under sustained pressure, mobile quality reduces shadows and distant detail before reducing resolution, with a one-CSS-pixel density floor. Missing hardware hints do not imply high-end capability. Manual selection remains authoritative; intentional low refresh limits, hidden tabs and loading should not drive adaptive reductions. Static scenery uses selective spatial batches and real distance culling within established destination budgets.
+- High detail selects actual high-detail car and world source geometry on touch devices. Changing sharpness/passes applies immediately; a change to already-loaded source geometry shows an explicit reload notice that explains unfinished-run loss. The Reload Graphics action retries saving preferences first. If persistence fails, it keeps the current run and displays a clear failure message instead of reloading with an unsaved choice.
 - Harbor Flow, Fuji Skyline and San Francisco Hills have original authored landmark groups, signs, terraces and sector surface variation. Existing characteristic scenery remains. New scenery stays outside the driving corridor; pause/reduced-motion behaviour includes water and boats.
 - Distance assets retain ordinary decoded GPU textures; KTX2/Basis GPU compression is not implemented. The detailed geometry, placement, queue and culling evidence is recorded in [the rendering report](rendering-upgrade-2026-10-02.md).
 
@@ -68,7 +71,15 @@ The driving task's earlier 281-test run included all **192 physics tests**, incl
 
 Five focused modal/navigation regressions cover countdown → pause → backup → back/resume; school-result Escape; share-result Escape without reward duplication; import navigation to the restored circuit; and stock trial isolation from the actual garage build. The associated targeted lifecycle/navigation group passed **18/18**. These tests exercise extracted integration functions with inert UI/rendering endpoints, not full browser flows.
 
-The rendering task reported a production build passing. The final corrective rendering group passed **31 focused tests**, and the integration browser recheck of the roof and clock passed without new rendering errors. The final Firebase predeploy run is in progress; its complete integrated test result and build confirmation must be appended before publication. Earlier successful subsets do not establish that the current entire checkout passes.
+The rendering task reported a production build passing. The final corrective rendering group passed **31 focused tests**, and the integration browser recheck of the roof and clock passed without new rendering errors. The final complete integrated test result and build confirmation for the current mobile follow-up must be appended before publication. Earlier successful subsets do not establish that the current entire checkout passes.
+
+### Latest mobile follow-up verification
+
+The latest focused run passed **80/80 tests**: **65** across driving contact, steering pad, drag steering, driving controls, player controls, lobby navigation/settings, modal lifecycle and loading; plus **15** across render quality, adaptive quality and screen-mode/frame budgeting. These counts overlap the earlier targeted groups and must not be added together as independent full-suite coverage. `git diff --check` also passed.
+
+The input checks include touch/pen `button: -1`, a non-primary second finger, TouchEvent fallback on a hybrid device, simultaneous Nitro and steering through both event paths, duplicate pointer/touch delivery, multiple Nitro contacts, failed capture, long-touch synthetic mouse suppression and contact cancellation. One regression executes the actual main `syncInput`/`clearInput` functions against real adapters, ownership stores and Nitro latch: pause empties captures and maps, stale movement stays inactive, and the same IDs can begin fresh contacts after resume.
+
+Quality checks cover phone and tablet dimensions in both orientations, optional/malformed capability hints, bounded resolution, pressure/recovery transitions, manual quality and genuine high-detail geometry selection. Settings regressions execute the actual integration with imported geometry helpers; they verify the reload explanation, no automatic reload, failure-safe save handling and a successful later retry. They do not establish appearance or performance on physical hardware. The latest mobile browser checks and deployment confirmation remain the integration task's release responsibility.
 
 Remaining release gates:
 

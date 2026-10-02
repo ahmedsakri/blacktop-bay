@@ -3,7 +3,7 @@ export function createDragSteering() {
   let pointer = null, origin = 0, travel = 72, amount = 0, floating = true;
   return {
     start(id, x, width, range) {
-      if (pointer !== null || !Number.isInteger(id) || id < 0 || !Number.isFinite(x)) return false;
+      if (pointer !== null || !Number.isSafeInteger(id) || id < 0 || !Number.isFinite(x)) return false;
       pointer = id; origin = x; amount = 0;
       floating = !Number.isFinite(range);
       travel = Number.isFinite(range) ? Math.max(20, Math.min(90, range))

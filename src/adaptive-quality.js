@@ -4,17 +4,18 @@ import {normalizeQuality, qualitySettings} from './render-quality.js';
 // callbacks or CPU submission alone. It never claims to measure GPU/thermal cost.
 // Menus, hidden tabs, intentional <=30 Hz caps and loading must be excluded by
 // the caller. A single hitch or pause cannot downgrade a whole race.
-export function createAdaptiveQuality({mobile=false,dpr=1,choice='auto'}={}) {
+export function createAdaptiveQuality({mobile=false,dpr=1,choice='auto',width=0,height=0,deviceMemory,hardwareConcurrency}={}) {
  choice=normalizeQuality(choice);
+ const display={mobile,dpr,width,height,deviceMemory,hardwareConcurrency};
  let level=0,elapsed=0,warmup=2,cooldown=0,good=0,frames=[];
  const status={level:0,p75Ms:0,samples:0,reason:'warming up',changes:0};
- const settings=()=>qualitySettings(choice,{mobile,dpr,adaptiveLevel:level});
+ const settings=()=>qualitySettings(choice,{...display,adaptiveLevel:level});
  return {
   status,get settings(){return settings();},
   configure(options={}) {
    const next=normalizeQuality(options.choice??choice);
    if(next!==choice){level=0;elapsed=0;warmup=2;good=0;cooldown=0;frames=[];status.level=0;}
-   choice=next;mobile=options.mobile??mobile;dpr=options.dpr??dpr;
+   choice=next;for(const key of Object.keys(display))if(options[key]!==undefined)display[key]=options[key];
    return settings();
   },
   reset(){elapsed=0;warmup=2;good=0;frames=[];},

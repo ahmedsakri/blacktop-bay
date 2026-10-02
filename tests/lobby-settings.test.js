@@ -6,7 +6,7 @@ import {LOBBY_STYLES,normalizeLobbyStyle} from '../src/lobby-music.js';
 import {normalizeRaceOptions} from '../src/race-options.js';
 import {normalizeSteeringSensitivity} from '../src/driving-controls.js';
 import {DEFAULT_VEHICLE_ID,getVehicle} from '../src/vehicles.js';
-import {normalizeQuality} from '../src/render-quality.js';
+import {normalizeQuality,qualityGeometry} from '../src/render-quality.js';
 import {icon} from '../src/icons.js';
 import {normalizePlayerControls} from '../src/player-controls.js';
 
@@ -14,19 +14,22 @@ import {normalizePlayerControls} from '../src/player-controls.js';
 // double, not a browser or an audio implementation.
 const main=readFileSync(new URL('../src/main.js',import.meta.url),'utf8');
 const loadSource=main.slice(main.indexOf('const preferenceKey ='),main.indexOf('let campaign ='));
-const mountSource=main.slice(main.indexOf('function mountSteeringSettings()'),main.indexOf("bindSteeringPad($('touch-steer-cue')"));
+const mountStart=main.indexOf('function mountSteeringSettings()');
+const mountSource=main.slice(mountStart,main.indexOf('\n}',mountStart)+2);
+const viewportStart=main.indexOf('const graphicsViewport =');
+const viewportSource=main.slice(viewportStart,main.indexOf(';',viewportStart)+1);
 function load(stored){
  const context=vm.createContext({localStorage:{getItem:()=>JSON.stringify(stored),setItem(){}},DEFAULT_VEHICLE_ID,getVehicle,normalizeRaceOptions,normalizeSteeringSensitivity,normalizeLobbyStyle,normalizeQuality,normalizePlayerControls,TRACKS:[{id:'harbor'}],clamp:(v,min,max)=>Math.min(max,Math.max(min,v))});
  return vm.runInContext(`${loadSource}; preferences;`,context);
 }
-function settings({musicVolume=.65,volume=.75}={}){
+function settings({musicVolume=.65,volume=.75,saveResult=true}={}){
  const elements=new Map(),calls=[],writes=[],qualityChanges=[],playerTools=[];
- const element=()=>({value:'',textContent:'',innerHTML:'',className:'',children:[],append(node){this.children.push(node);}});
+ const element=()=>({value:'',textContent:'',innerHTML:'',className:'',children:[],attributes:{},set id(value){this._id=value;elements.set(value,this);},get id(){return this._id;},setAttribute(name,value){this.attributes[name]=String(value);},append(node){this.children.push(node);}});
  const $=id=>{if(!elements.has(id))elements.set(id,element());return elements.get(id);};
  const preferences={lobbyStyle:'liquid-lines',musicVolume,volume,engineVolume:1,sfxVolume:.85,quality:'auto',gamepadSwap:false,controls:normalizePlayerControls()};
- const context=vm.createContext({document:{createElement:element},$,preferences,icon,screenMode:()=>({standalone:false,ios:false}),canInstallPWA:()=>false,requestInstallPWA:()=>{throw new Error('Must not install automatically');},usesTouchControls:()=>false,normalizeQuality,normalizePlayerControls,mobile:true,devicePixelRatio:2,adaptiveQuality:{configure:settings=>qualityChanges.push({...settings})},mountPlayerTools:(container,callbacks)=>{assert.equal(container,$('dialog-content'));playerTools.push(callbacks);},showSaveBackup(){throw Error('Backup must require a user action');},applyQuality:()=>calls.push(['quality',preferences.quality]),
-  sound:{setVolume:value=>calls.push(['volume',value]),setMusicVolume:value=>calls.push(['music',value]),setEngineVolume:value=>calls.push(['engine',value]),setSfxVolume:value=>calls.push(['sfx',value])},saveChoices(){writes.push({...preferences});}});
- vm.runInContext(`${mountSource}; mountSteeringSettings();`,context);
+ const context=vm.createContext({document:{createElement:element},$,preferences,icon,screenMode:()=>({standalone:false,ios:false}),canInstallPWA:()=>false,requestInstallPWA:()=>{throw new Error('Must not install automatically');},usesTouchControls:()=>false,normalizeQuality,qualityGeometry,loadedGeometry:qualityGeometry('auto',{mobile:true}),normalizePlayerControls,mobile:true,devicePixelRatio:2,innerWidth:844,innerHeight:390,navigator:{hardwareConcurrency:8},location:{reload:()=>calls.push(['reload'])},adaptiveQuality:{configure:settings=>qualityChanges.push({...settings})},mountPlayerTools:(container,callbacks)=>{assert.equal(container,$('dialog-content'));playerTools.push(callbacks);},showSaveBackup(){throw Error('Backup must require a user action');},applyQuality:()=>calls.push(['quality',preferences.quality]),
+  sound:{setVolume:value=>calls.push(['volume',value]),setMusicVolume:value=>calls.push(['music',value]),setEngineVolume:value=>calls.push(['engine',value]),setSfxVolume:value=>calls.push(['sfx',value])},saveChoices(){writes.push({...preferences});return typeof saveResult==='function'?saveResult():saveResult;}});
+ vm.runInContext(`${viewportSource}\n${mountSource}; mountSteeringSettings();`,context);
  return {$,calls,writes,preferences,elements,qualityChanges,playerTools};
 }
 
@@ -82,7 +85,7 @@ test('display and controller settings apply and persist without changing audio o
  h.$('controller-layout').onchange({target:{value:'swap'}});
  assert.equal(h.preferences.quality,'performance');assert.equal(h.preferences.gamepadSwap,true);
  assert.deepEqual(h.calls,[['quality','performance']]);assert.equal(h.writes.length,2);
- assert.deepEqual(h.qualityChanges,[{choice:'performance',mobile:true,dpr:2}]);
+ assert.deepEqual(h.qualityChanges,[{choice:'performance',mobile:true,dpr:2,width:844,height:390,deviceMemory:undefined,hardwareConcurrency:8}]);
  assert.equal(h.playerTools.length,1);assert.equal(h.playerTools[0].getControls(),h.preferences.controls);
  assert.equal(h.preferences.volume,.75);assert.equal(h.preferences.musicVolume,.65);
  assert.equal(h.preferences.engineVolume,1);assert.equal(h.preferences.sfxVolume,.85);
@@ -97,4 +100,27 @@ test('game and music sliders remain independent and preserve Liquid Lines throug
  assert.deepEqual(h.calls,[['music',0],['volume',.35]]);
  assert.equal(h.writes.length,2);assert.ok(h.writes.every(preferences=>preferences.lobbyStyle==='liquid-lines'));
  assert.equal(h.$('music-volume-value').value,'0%');assert.equal(h.$('master-volume-value').value,'35%');
+});
+
+
+test('geometry-changing graphics settings explain the required reload without reloading automatically',()=>{
+ const h=settings(),note=h.$('graphics-detail-note'),reload=h.$('graphics-detail-reload');
+ assert.equal(note.attributes.role,'status');assert.equal(reload.hidden,true);
+ h.$('graphics-quality').onchange({target:{value:'ultra'}});
+ assert.equal(reload.hidden,false);assert.match(note.textContent,/Reload to apply the new model and scenery detail/);
+ assert.match(note.textContent,/ends an unfinished run/);assert.equal(h.calls.some(call=>call[0]==='reload'),false);
+ h.$('graphics-quality').onchange({target:{value:'auto'}});assert.equal(reload.hidden,true);
+ h.$('graphics-quality').onchange({target:{value:'ultra'}});reload.onclick();
+ assert.equal(h.calls.filter(call=>call[0]==='reload').length,1);
+});
+
+
+test('a failed graphics save keeps the current run and permits a later successful reload',()=>{
+ let saved=false;const h=settings({saveResult:()=>saved}),note=h.$('graphics-detail-note'),reload=h.$('graphics-detail-reload');
+ h.$('graphics-quality').onchange({target:{value:'ultra'}});assert.equal(reload.hidden,false);
+ const before=h.writes.length;reload.onclick();
+ assert.equal(h.writes.length,before+1,'reload retries saving the actual selected preferences');
+ assert.equal(h.writes.at(-1).quality,'ultra');assert.equal(h.calls.some(call=>call[0]==='reload'),false);
+ assert.match(note.textContent,/could not be saved/);assert.match(note.textContent,/current run is safe/);assert.equal(reload.hidden,false);
+ saved=true;reload.onclick();assert.equal(h.calls.filter(call=>call[0]==='reload').length,1);
 });

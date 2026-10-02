@@ -4,3 +4,25 @@ body.in-race.touch-mode .touch-steer-cue{left:calc(var(--race-left) + var(--cont
 .next-driver-goal{min-height:44px;max-width:100%;padding:7px 10px;background:#021439;color:#FFF71E;border:1px solid #9246FF;font:700 12px/1.35 Manrope,sans-serif;text-align:left}.startup-recovery{position:fixed;inset:0;z-index:99999;background:#110017;color:#fff;display:grid;place-content:center;padding:24px;gap:16px}.startup-recovery button{min-height:48px;background:#FFF71E;color:#110017;border:0;padding:14px;font:700 16px Manrope,sans-serif}#backup-download{margin:10px 0}#backup-file{margin-top:10px}.backup-details input{background:#021439;color:white;border:1px solid #ffffff55;padding:10px}#ghost-split[hidden],#skill-coach[hidden]{display:none}@media(orientation:landscape) and (max-height:500px){.next-driver-goal{display:none}}
 
 @media(max-width:700px) and (orientation:portrait){.lobby-practice{display:none}}
+
+/* Safari must treat a held driving gesture as input, never as text selection.
+   Keep normal text selection and editing available in dialogs and fields. */
+body.in-race,
+:is(#scene, #menu, #garage, #hud, #touch, .skill-coach),
+:is(button, [role="button"], [role="slider"]) {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+:is(button, [role="button"], #touch, #scene, #hud) * {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+#scene canvas, #touch-steer-cue, #touch [data-input] { touch-action: none; }
+.dialog, .dialog :is(p, label), input, textarea, [contenteditable="true"] {
+  -webkit-user-select: text;
+  user-select: text;
+  -webkit-touch-callout: default;
+}
+#touch-steer-cue, #touch [data-input] { -webkit-tap-highlight-color: transparent; }

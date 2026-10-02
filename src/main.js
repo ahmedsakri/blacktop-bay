@@ -39,7 +39,7 @@ import { mountCampaignPanel, mountCarDevelopment, developmentResultMarkup, nextG
 import { saveCampaignIntent, consumeCampaignIntent } from "./campaign-intent.js";
 import { createPickupView } from "./race-pickup-view.js";
 import { readGamepad } from "./gamepad-controls.js";
-import { qualitySettings, normalizeQuality } from "./render-quality.js";
+import { qualitySettings, qualityGeometry, normalizeQuality } from "./render-quality.js";
 import { circuitFromPath, circuitPath } from "./circuit-routes.js";
 import { carFromPath, carPath } from "./car-routes.js";
 import { drawRaceMap } from "./race-map.js";
@@ -52,7 +52,8 @@ import { icon } from './icons.js';
 import { garageStatsMarkup, garageBuildMarkup, circuitMapMarkup } from "./collection-ui.js";
 import { createDrivingInputs, resolveDriveControls, normalizeSteeringSensitivity, isDrivingShortcut } from "./driving-controls.js";
 import { createDragSteering } from "./drag-steering.js";
-import { bindSteeringPad } from "./steering-pad.js";
+import { bindSteeringPad, bindDragSteering } from "./steering-pad.js";
+import { bindDrivingContact } from "./driving-contact.js";
 import { createTiltSteering, requestTiltPermission } from "./tilt-steering.js";
 import { collisionPose } from "./collision-pose.js";
 import { createRaceFeedback, impactCameraOffset } from "./race-feedback.js";
@@ -187,7 +188,7 @@ const paintChoices = loadPaint();
 const favoriteCars = loadFavorites();
 const rivalVehicles = [...MANUFACTURER_RIVAL_VEHICLES];
 const playerColor = () => getPaint(preferences.vehicle, paintChoices[preferences.vehicle]).color;
-function createPlayerCar(){const car=createCar({vehicle:preferences.vehicle,low:mobile});applyPaint(car,preferences.vehicle,paintChoices[preferences.vehicle]);return car;}
+function createPlayerCar(){const car=createCar({vehicle:preferences.vehicle,low:loadedGeometry.carLow});applyPaint(car,preferences.vehicle,paintChoices[preferences.vehicle]);return car;}
 function selectedCampaignEvent() {
   const event = getCampaignEvent(selectedCampaignId, preferences.vehicle);
   return event && canStartCampaignEvent(campaign,event.id) && event.track===preferences.track && event.mode===preferences.mode && event.difficulty===preferences.difficulty ? event : null;
@@ -226,6 +227,7 @@ let records = loadRecords(recordStore),
   orientationFocus = null;
 let driftSnapshot = null, driftBankUntil = 0, lastBankedPoints = 0;
 const raceFeedback = createRaceFeedback();
+const drivingBindings = [];
 const coarsePointer = matchMedia("(any-pointer:coarse)");
 const input = {
     left: false,
@@ -253,6 +255,8 @@ function updatePlayerControls(){
 }
 motionQuery.addEventListener('change',()=>updatePlayerControls());
 const mobile = usesTouchControls();
+const loadedGeometry = qualityGeometry(preferences.quality, {mobile});
+const graphicsViewport = () => ({mobile, dpr:devicePixelRatio, width:innerWidth, height:innerHeight, deviceMemory:navigator.deviceMemory, hardwareConcurrency:navigator.hardwareConcurrency});
 let steeringMode = 'touch', tiltPending = false, tiltRequest = 0, tiltTimer = null;
 let tiltGraceUntil = 0, analogSteering = 0;
 let tiltStatus = 'Hold either side of the thumbpad, or drag. Tilt is optional and uses motion sensors only after you enable it.';
@@ -266,7 +270,7 @@ updateSound();
 let renderer, world, player, effects, camera, composer, carFill, garageStudio, renderPass, bloomPass;
 let garageFrame = null, lobbyFrame = null, pickupView=null, gamepadPauseHeld=false;
 const frameBudget = createFrameBudget();
-const adaptiveQuality=createAdaptiveQuality({mobile,dpr:devicePixelRatio,choice:preferences.quality});
+const adaptiveQuality=createAdaptiveQuality({...graphicsViewport(),choice:preferences.quality});
 let lastRendered=0, performanceSamples=[], lastPerformanceReport=0;
 let directRender = false;
 function applyQuality(){if(!renderer)return;const q=adaptiveQuality.settings;world?.setQuality?.(q);directRender=!q.bloom;renderer.setPixelRatio(q.pixelRatio);renderer.shadowMap.enabled=q.shadows;if(composer){composer.setPixelRatio(q.pixelRatio);composer.setSize(innerWidth,innerHeight);}if(bloomPass)bloomPass.enabled=q.bloom;if(world?.reflection)world.reflection.visible=q.reflection&&!TRACK.elevationProfile&&!["desert","parkland"].includes(world.scene.userData.venueEnvironment?.type);}
@@ -368,7 +372,7 @@ async function initGame() {
       antialias: true,
       powerPreference: "high-performance",
     });
-    renderer.setPixelRatio(qualitySettings(preferences.quality,{mobile,dpr:devicePixelRatio}).pixelRatio);
+    renderer.setPixelRatio(adaptiveQuality.settings.pixelRatio);
     renderer.info.autoReset=false;
     renderer.setSize(innerWidth, innerHeight);
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -393,19 +397,10 @@ async function initGame() {
     renderer.domElement.addEventListener("pointerup", stopGarageDrag);
     renderer.domElement.addEventListener("pointercancel", stopGarageDrag);
     renderer.domElement.addEventListener("lostpointercapture", stopGarageDrag);
-    renderer.domElement.addEventListener("pointerdown", (e) => {
-      if (!["racing", "countdown"].includes(mode) || e.button !== 0) return;
-      if (!dragSteering.start(e.pointerId, e.clientX, innerWidth)) return;
-      e.preventDefault();
-      try { renderer.domElement.setPointerCapture(e.pointerId); } catch {}
-    });
-    renderer.domElement.addEventListener("pointermove", (e) => {
-      if (["racing", "countdown"].includes(mode)) dragSteering.move(e.pointerId, e.clientX);
-    });
-    const stopSteering = (e) => dragSteering.release(e.pointerId);
-    renderer.domElement.addEventListener("pointerup", stopSteering);
-    renderer.domElement.addEventListener("pointercancel", stopSteering);
-    renderer.domElement.addEventListener("lostpointercapture", stopSteering);
+    drivingBindings.push(bindDragSteering(renderer.domElement, dragSteering, {
+      enabled: () => ["racing", "countdown"].includes(mode),
+      width: () => innerWidth,
+    }));
 
     renderer.domElement.tabIndex = 0;
     renderer.domElement.setAttribute(
@@ -422,11 +417,11 @@ async function initGame() {
     await nextPaint();
     // Track signage is rasterized once; load its typeface before painting it.
     if(document.fonts) await Promise.all(['32px "Racing Sans One"','800 32px "Barlow Condensed"'].map(font=>document.fonts.load(font))).catch(()=>{});
-    world = createWorld(renderer, { low: mobile, reducedMotion: reduced });
+    world = createWorld(renderer, { low: loadedGeometry.worldLow, reducedMotion: reduced });
     loadProgress("Preparing your car…", getVehicle(preferences.vehicle).name);
     await nextPaint();
     const selectedAsset = getVehicle(preferences.vehicle).assetId;
-    await prepareManufacturerCar(selectedAsset, {low: mobile});
+    await prepareManufacturerCar(selectedAsset, {low: loadedGeometry.carLow});
     player = createPlayerCar();
     world.scene.add(player.group);
     // Rival models are only needed when the player starts a race. Loading a
@@ -434,10 +429,10 @@ async function initGame() {
     race = newRace();
     carFill = new THREE.DirectionalLight("#c1d5e2", .55);
     world.scene.add(carFill, carFill.target);
-    garageStudio = createGarage(renderer, { low: mobile });
+    garageStudio = createGarage(renderer, { low: loadedGeometry.worldLow });
     addHeadlights(player);
     loadProgress("Warming up the tyres…", "Preparing the garage and race effects.");
-    effects = createEffects(world.scene, { low: mobile });
+    effects = createEffects(world.scene, { low: loadedGeometry.worldLow });
     pickupView=createPickupView(world.scene,race.pickups);
 
     composer = new EffectComposer(renderer);
@@ -638,7 +633,16 @@ function mountSteeringSettings() {
   const display=document.createElement('details');display.className='steering-settings';
   display.innerHTML=`<summary><h3>Display &amp; controller</h3></summary><div class="race-settings-grid"><label>Graphics<select id="graphics-quality"><option value="auto">Automatic</option><option value="performance">Performance</option><option value="balanced">Balanced</option><option value="ultra">High detail</option></select></label><label>Controller buttons<select id="controller-layout"><option value="standard">A / right trigger: Nitro</option><option value="swap">B / right trigger: Nitro</option></select></label></div><p>Standard gamepads: left stick or D-pad steers. Left trigger brakes. Menu pauses. Touch and keyboard remain available.</p>`;
   $('dialog-content').append(display);$('graphics-quality').value=preferences.quality;
-  $('graphics-quality').onchange=e=>{preferences.quality=normalizeQuality(e.target.value);adaptiveQuality.configure({choice:preferences.quality,mobile,dpr:devicePixelRatio});saveChoices();applyQuality();};
+  $('graphics-quality').onchange=e=>{preferences.quality=normalizeQuality(e.target.value);adaptiveQuality.configure({...graphicsViewport(),choice:preferences.quality});saveChoices();applyQuality();updateGraphicsDetailNotice();};
+  const graphicsNote=document.createElement('p');graphicsNote.id='graphics-detail-note';graphicsNote.setAttribute('role','status');display.append(graphicsNote);
+  const graphicsReload=document.createElement('button');graphicsReload.id='graphics-detail-reload';graphicsReload.type='button';graphicsReload.className='button secondary';graphicsReload.innerHTML=icon('restart')+'<span>RELOAD GRAPHICS</span>';graphicsReload.onclick=()=>{if(saveChoices())location.reload();else graphicsNote.textContent='The graphics choice could not be saved. Your current run is safe. Free browser storage or try again before reloading.';};display.append(graphicsReload);
+  function updateGraphicsDetailNotice(){
+    const requested=qualityGeometry(preferences.quality,{mobile});
+    const reload=requested.worldLow!==loadedGeometry.worldLow||requested.carLow!==loadedGeometry.carLow;
+    graphicsReload.hidden=!reload;
+    graphicsNote.textContent=reload?'Sharpness updated. Reload to apply the new model and scenery detail. Reloading ends an unfinished run; saved credits and progress stay.':'Automatic balances sharpness and performance. High detail adds richer models and scenery; Performance reduces battery and graphics load.';
+  }
+  updateGraphicsDetailNotice();
   $('controller-layout').value=preferences.gamepadSwap?'swap':'standard';
   $('controller-layout').onchange=e=>{preferences.gamepadSwap=e.target.value==='swap';saveChoices();};
   const install = document.createElement('section'); install.className = 'app-install-card';
@@ -671,7 +675,7 @@ function mountSteeringSettings() {
   };
   updateSteeringSettings();
 }
-bindSteeringPad($('touch-steer-cue'), dragSteering, {enabled: () => ['racing', 'countdown'].includes(mode)});
+drivingBindings.push(bindSteeringPad($('touch-steer-cue'), dragSteering, {enabled: () => ['racing', 'countdown'].includes(mode)}));
 function syncInput() {
   const pressedPointers = pointerInputs.read();
   for (const key in input)
@@ -684,6 +688,7 @@ function syncInput() {
   }
 }
 function clearInput() {
+  for (const binding of drivingBindings) binding.clear();
   nitroLatch.clear();
   heldKeys.clear();
   heldPads.clear();
@@ -865,9 +870,9 @@ async function chooseVehicle(id) {
   const carLoader = mountLogoLoader($('model-loading-notice'), {variant:'compact',label:'Preparing your car…',detail:nextVehicle.name});
   $('garage').setAttribute('aria-busy','true');
   try {
-    if (nextVehicle.assetId) await prepareManufacturerCar(nextVehicle.assetId, {low: mobile});
+    if (nextVehicle.assetId) await prepareManufacturerCar(nextVehicle.assetId, {low: loadedGeometry.carLow});
     // Construct before changing the saved choice or disposing the current model.
-    const nextPlayer = createCar({vehicle: nextVehicle.id, low: mobile});
+    const nextPlayer = createCar({vehicle: nextVehicle.id, low: loadedGeometry.carLow});
     applyPaint(nextPlayer, nextVehicle.id, paintChoices[nextVehicle.id]);
     preferences.vehicle = nextVehicle.id;
     saveChoices();
@@ -1433,20 +1438,15 @@ window.addEventListener("keyup", (e) => {
 });
 for (const b of document.querySelectorAll("[data-input]")) {
   b.setAttribute("aria-pressed", "false");
-  b.addEventListener("pointerdown", (e) => {
-    if (!["racing", "countdown"].includes(mode) || e.button !== 0) return;
-    e.preventDefault();
-    try { b.setPointerCapture(e.pointerId); } catch {}
-    pointerInputs.press(e.pointerId, b.dataset.input);
-    syncInput();
-  });
-  const release = (e) => {
-    pointerInputs.release(e.pointerId);
-    syncInput();
-  };
-  b.addEventListener("pointerup", release);
-  b.addEventListener("pointercancel", release);
-  b.addEventListener("lostpointercapture", release);
+  drivingBindings.push(bindDrivingContact(b, {
+    enabled: () => ["racing", "countdown"].includes(mode),
+    onStart(e) {
+      const accepted = pointerInputs.press(e.pointerId, b.dataset.input);
+      syncInput();
+      return accepted;
+    },
+    onEnd(e) { pointerInputs.release(e.pointerId); syncInput(); },
+  }));
   b.addEventListener("keydown", (e) => {
     if (isDrivingShortcut(e)) { heldPads.delete(b.dataset.input); syncInput(); return; }
     if (!["Space", "Enter"].includes(e.code) || !["racing", "countdown"].includes(mode)) return;
@@ -1511,6 +1511,7 @@ window.addEventListener("resize", () => {
   camera.aspect = innerWidth / innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(innerWidth, innerHeight);
+  adaptiveQuality.configure(graphicsViewport());
   applyQuality();
   composer?.setSize(innerWidth, innerHeight);
   checkOrientation();
@@ -2000,7 +2001,7 @@ updateRaceOptions();
 if (import.meta.env.DEV) {
   window.__blacktopBayQA = Object.freeze({
     snapshot: () => ({
-      mode, quality:{...adaptiveQuality.status,settings:adaptiveQuality.settings},renderer:renderer?{...renderer.info.render,memory:{...renderer.info.memory}}:null,school:school?{index:school.index,active:school.active}:null,controls:structuredClone(preferences.controls),ghostVisible:ghostModel?.group.visible||false,
+      mode, quality:{...adaptiveQuality.status,settings:adaptiveQuality.settings,geometry:{...loadedGeometry}},renderer:renderer?{...renderer.info.render,memory:{...renderer.info.memory}}:null,school:school?{index:school.index,active:school.active}:null,controls:structuredClone(preferences.controls),ghostVisible:ghostModel?.group.visible||false,
       raceId:race.raceId, wreck:race.wreck ? structuredClone(race.wreck) : null, air:race.air ? structuredClone(race.air) : null, pickupEvent:race.pickupEvent ? structuredClone(race.pickupEvent) : null,
       input: {...input, steer: analogSteering, steeringMode},
       car: { ...race.car },
