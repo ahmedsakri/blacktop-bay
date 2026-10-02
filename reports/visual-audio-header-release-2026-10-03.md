@@ -10,7 +10,7 @@
 
 ## Verification
 
-- Complete suite before the last crowd-distance adjustment: 1,030 passed, zero failed. Mandatory Firebase predeploy repeats the full suite and production build for the final state.
+- Complete suite before the last crowd-distance adjustment: 1,030 passed, zero failed. The final mandatory Firebase predeploy suite passed all 1,031 tests, zero failures, and the production build succeeded.
 - Rendered desktop and mobile layouts checked at 1280×800, 390×844, 844×390, 568×320 and 320×740. Header targets are at least 44px. A temporary one-million-credit display fits at 320px; test-only display changes were cleared by reload.
 - Header Garage opens /cars/; selecting an individual car opens its real 3D garage. Starting a race hides the menu resources and preserves the racing HUD and touch controls.
 - Actual Harbor Flow race telemetry observed six active textured spectators from the normal driving path. All six assets loaded with no queued downloads left.
@@ -24,4 +24,9 @@ This release improves the working browser game; it does not claim visual parity 
 
 ## Release
 
-Pending final predeploy checks, GitHub main push and Firebase deployment.
+- Implementation commit: `e88f61cd82d278d420a301e8c64154c855dc9869`, pushed to GitHub `main`.
+- Published successfully to https://camber-reign.web.app/ on 2026-10-03 (Asia/Kolkata).
+- Live home, credits, spectator GLB, studio HDR, road texture and recorded engine WAV all returned HTTP 200 and exactly matched the production build hashes.
+- The live Garage button opened `/cars/` with all 33 cars. Published lobby rendered without console errors.
+- Local screenshot evidence: `reports/garage-header-desktop-2026-10-02.png` (published desktop page), `reports/garage-header-mobile-2026-10-02.png` (responsive local review), `reports/textured-crowd-2026-10-02.png` (rendered character fixture). Browser audio results: `reports/audio-catalogue-2026-10-02.json`. Screenshot/JSON evidence remains locally ignored by Git.
+- The production output contains no review fixtures.
