@@ -1,6 +1,7 @@
 import * as THREE from 'three';
+import {SHOWCASE_LIGHTING} from './showcase-lighting.js';
 
-// Original illustrated scenery, independent of car/environment reflection maps.
+// Original illustrated scenery; its loaded, graded sky also supplies the world reflection map.
 // A race requests just one image. Smaller phone textures avoid retaining four
 // large decoded panoramas or allocating an additional cube/PMREM render target.
 export const BACKDROP_FAMILIES = Object.freeze(['coastal', 'desert', 'alpine', 'urban']);
@@ -28,6 +29,8 @@ uniform sampler2D cinematicMap;
 uniform float cinematicAmount;
 uniform vec3 cinematicHaze;
 uniform float cinematicHorizon;
+uniform vec3 cinematicTint;
+uniform float cinematicExposure;
 vec3 cinematicBackdrop(vec3 fallback, vec3 direction) {
   if (cinematicAmount <= 0.) return fallback;
   float u = fract(atan(direction.z, direction.x) * .15915494309189535 + .5);
@@ -38,6 +41,7 @@ vec3 cinematicBackdrop(vec3 fallback, vec3 direction) {
     vec3 joined = (texture2D(cinematicMap, vec2(.001, v)).rgb + texture2D(cinematicMap, vec2(.999, v)).rgb) * .5;
     photograph = mix(joined, photograph, smoothstep(0., .018, seam));
   }
+  photograph *= cinematicTint * cinematicExposure;
   photograph = mix(photograph, cinematicHaze, (1.-smoothstep(.015, .15, abs(direction.y))) * .10);
   float horizonMask = smoothstep(-.075, -.012, direction.y);
   return mix(fallback, photograph, cinematicAmount * horizonMask);
@@ -93,6 +97,8 @@ export function createCinematicBackdrop({track, venue, low = false, reducedMotio
     cinematicAmount: {value: 0},
     cinematicHaze: {value: new THREE.Color(venue?.fog || '#344052')},
     cinematicHorizon: {value: source.horizonV},
+    cinematicTint: {value:new THREE.Color(SHOWCASE_LIGHTING[track?.id]?.backdropTint||'#ffffff')},
+    cinematicExposure: {value:SHOWCASE_LIGHTING[track?.id]?.backdropExposure||1},
   };
   const status = {family: source.family, detail: source.detail, state: 'loading', url: source.url};
   let disposed = false, texture = null, startedAt = null;

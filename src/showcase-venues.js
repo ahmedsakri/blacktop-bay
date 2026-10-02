@@ -21,6 +21,7 @@ export const SHOWCASE_VENUES=Object.freeze({
   {s:.76,label:'PACIFIC DESCENT',kind:'bay-shelter',side:-1,roughness:.82,wear:.26},
  ]},
 });
+export const SHOWCASE_CROWD_PALETTES=Object.freeze({harbor:['#e6dfc8','#42697e','#c7b46d','#535669'],'fuji-skyline':['#dfc9c4','#705a71','#d3d3bf','#52675c'],'san-francisco-hills':['#d2a555','#334d68','#b95e52','#d9d8ce']});
 const wrap=(x)=>((x%1)+1)%1;
 export function showcaseSurfaceAt(track,fraction){
  const showcase=SHOWCASE_VENUES[track.id];if(!showcase)return {roughness:.86,wear:0};
@@ -92,20 +93,35 @@ export function createShowcaseVenue(scene,track,{low=false,stands=[],crowd,rng=M
   const m=new THREE.Mesh(geometry,material),c=Math.cos(site.yaw),s=Math.sin(site.yaw);
   m.position.set(site.x+c*x+s*z,site.y+y,site.z-s*x+c*z);m.rotation.set(0,site.yaw+rotation,0,'YXZ');m.scale.set(sx,sy,sz);m.userData.sector=site.index;root.add(m);parts.push(m);return m;
  };
+ const rod=(site,from,to,material,radius=.045)=>{
+  const direction=new THREE.Vector3(...to).sub(new THREE.Vector3(...from)),mid=new THREE.Vector3(...from).add(new THREE.Vector3(...to)).multiplyScalar(.5);
+  const mesh=piece(site,cylinder,material,...mid.toArray(),radius,direction.length(),radius);
+  mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),direction.normalize()).premultiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0),site.yaw));return mesh;
+ };
  for(const site of sites){
   // Terrace foundations meet the road elevation instead of floating at crests.
   piece(site,box,mats.concrete,0,-.3,0,15,.6,15);
-  if(site.y>1)piece(site,box,mats.concrete,0,-site.y/2-.3,0,13,site.y,13);
+  if(site.kind==='bay-shelter'){
+   // The old pedestal stopped at -0.30m above the -0.65m sea. A submerged
+   // quay and six visible piers now connect every terrace to solid support.
+   piece(site,box,mats.concrete,0,-site.y-1.65,0,17,3,17);
+   for(const x of [-5.6,5.6])for(const z of [-5.6,0,5.6])piece(site,box,mats.concrete,x,-site.y/2-.375,z,1.15,site.y-.45,1.15);
+   for(const side of [-1,1]){piece(site,box,mats.concrete,0,-.75,side*6.3,14,.55,.65);piece(site,box,mats.concrete,side*6.3,-.75,0,.65,.55,14);}
+   (root.userData.foundations||=[]).push({sector:site.index,x:site.x,z:site.z,yaw:site.yaw,deckTop:site.y,deckBottom:site.y-.6,bottom:-3.15,quayTop:-.15,piers:6,width:17});
+  }else if(site.y>1)piece(site,box,mats.concrete,0,-site.y/2-.3,0,13,site.y,13);
   if(site.kind==='sail-terminal'){
    for(const x of [-5,5]){piece(site,cylinder,mats.steel,x,4,0,.13,8,.13);piece(site,box,mats.warm,x,3.7,-.35,.85,.08,.25);}
    // Two stretched triangular sails: architectural fabric with a ridged edge.
    for(const flip of [-1,1]){const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute([-5,5,flip*5,5,7,0,5,4.7,flip*5],3));geo.setAttribute('uv',new THREE.Float32BufferAttribute([0,1,1,0,1,1],2));geo.computeVertexNormals();piece(site,geo,mats.cream,0,0,0,1,1,1);}
+   for(const flip of [-1,1]){rod(site,[-5,5,flip*5],[5,7,0],mats.steel,.026);rod(site,[5,7,0],[5,4.7,flip*5],mats.steel,.026);}
    piece(site,box,mats.timber,0,.55,4.2,9,.2,.7);piece(site,box,mats.steel,0,.3,4.2,8,.5,.12);
    for(const x of [-3,0,3])piece(site,box,mats.cream,x,.65,1.5,1.4,1.3,1.4);
   }else if(site.kind==='mountain-pavilion'){
    for(const x of [-4.5,4.5])for(const z of [-3.3,3.3])piece(site,box,mats.timber,x,2.3,z,.30,4.6,.30);
    piece(site,box,mats.timber,0,4.5,0,9.7,.32,7.4);
    for(const side of [-1,1]){const roof=piece(site,box,mats.roof,0,5.05,side*2.05,11,.3,4.65);roof.rotation.x=side*.24;}
+   piece(site,box,mats.timber,0,5.73,0,11.25,.18,.24);
+   for(const side of [-1,1]){piece(site,box,mats.timber,0,4.6,side*4.24,11.15,.19,.18);for(const x of [-4.5,4.5])rod(site,[x,3.25,side*3.3],[x-side*.75,4.42,side*3.3],mats.timber,.075);}
    piece(site,box,mats.timber,0,.65,2.8,8.5,.2,.75);
    for(const x of [-3,3]){piece(site,box,mats.cream,x,3.2,0,.62,1.1,.62);piece(site,box,mats.warm,x,3.2,-.32,.48,.73,.02);}
    for(const x of [-3.9,3.9])piece(site,box,mats.red,x,1.2,3.7,.18,2.4,.18);
@@ -113,6 +129,8 @@ export function createShowcaseVenue(scene,track,{low=false,stands=[],crowd,rng=M
    for(const x of [-4,4])for(const z of [-2.5,2.5])piece(site,box,mats.red,x,2.2,z,.25,4.4,.25);
    piece(site,box,mats.roof,0,4.5,0,9.7,.33,6.5);
    piece(site,box,mats.red,0,4.14,0,9.1,.32,5.8);
+   for(const side of [-1,1])piece(site,box,mats.cream,0,4.45,side*3.24,9.85,.12,.07);
+   for(const x of [-4,4])for(const z of [-2.5,2.5])rod(site,[x,3.25,z],[x*.74,4.22,z],mats.red,.055);
    piece(site,box,mats.timber,0,.67,2.1,7.2,.19,.75);
    piece(site,box,mats.glass,0,2.6,2.7,7.5,2.3,.1);
    for(const x of [-3.2,0,3.2])piece(site,box,mats.cream,x,2.6,2.62,.13,2.5,.12);
@@ -120,6 +138,7 @@ export function createShowcaseVenue(scene,track,{low=false,stands=[],crowd,rng=M
    // Compact clock tower creates a recognisable crest-side silhouette.
    piece(site,box,mats.cream,5.6,4,3,1.45,8,1.45);piece(site,box,mats.roof,5.6,8.2,3,2.2,.35,2.2);
    const clock=piece(site,cylinder,mats.steel,5.6,7,2.24,.58,.10,.58);clock.rotation.x=Math.PI/2;
+   for(let tick=0;tick<12;tick++){const angle=tick*Math.PI/6;const mark=piece(site,box,mats.cream,5.6+Math.sin(angle)*.465,7+Math.cos(angle)*.465,2.175,.035,tick%3===0?.13:.065,.035);mark.rotation.z=-angle;}
    piece(site,box,mats.cream,5.6,7.2,2.16,.055,.4,.05);piece(site,box,mats.cream,5.8,7,2.16,.4,.055,.05);
   }else{
    piece(site,box,mats.concrete,0,2.6,0,5,5.2,5);piece(site,box,mats.glass,0,5.9,0,5.5,1.5,5.5);piece(site,box,mats.roof,0,6.9,0,6.5,.3,6.5);
@@ -131,7 +150,7 @@ export function createShowcaseVenue(scene,track,{low=false,stands=[],crowd,rng=M
   for(let i=0;i<(low?8:14);i++){
    const across=-6+(i%7)*1.85,along=-5.8-Math.floor(i/7)*.85;
    const c=Math.cos(site.yaw),s=Math.sin(site.yaw),x=site.x+c*across+s*along,z=site.z-s*across+c*along;
-   const road=sampleTrack(site.s,track);crowd?.add(x,site.y+.05,z,Math.atan2(road.x-x,road.z-z),false,rng);
+   const road=sampleTrack(site.s,track);crowd?.add(x,site.y+.05,z,Math.atan2(road.x-x,road.z-z),false,rng,{palette:SHOWCASE_CROWD_PALETTES[track.id],gesture:i===2?3:undefined});
   }
   const p=sampleTrack(site.s-28,track),offset=site.side*(track.width/2+5.2),sx=p.x+p.nx*offset,sz=p.z+p.nz*offset;
   if(projectOnTrack(sx,sz,undefined,track).distance>track.width/2+4.8){

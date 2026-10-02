@@ -26,17 +26,33 @@ export function ambientSoundFrame(state={}) {
  };
 }
 
+// World-space zones avoid mixing normalized lap progress with metres. A max
+// blend avoids doubling the audience level where adjacent stands overlap.
+export function crowdZoneLevel(listener, zones = []) {
+ if (!listener || ![listener.x, listener.z].every(Number.isFinite) || !Array.isArray(zones)) return 0;
+ let level = 0;
+ for (const zone of zones.slice(0, 128)) {
+  if (!zone || ![zone.x, zone.z].every(Number.isFinite)) continue;
+  const distance = Math.hypot(listener.x-zone.x, finite(listener.y)-finite(zone.y), listener.z-zone.z);
+  const radius = clamp(zone.radius ?? 95, 5, 200), strength = clamp(zone.strength ?? .4);
+  const proximity = clamp(1-distance/radius);
+  level = Math.max(level, strength*proximity*proximity*(3-2*proximity));
+ }
+ return level;
+}
+
 export function spatialRivalFrames(listener,rivals=[]) {
  if(!listener||![listener.x,listener.z,listener.yaw].every(Number.isFinite)||!Array.isArray(rivals))return [];
  const frames=[],seen=new Set();
  for(const rival of rivals.slice(0,32)) {
   if(!rival||![rival.x,rival.z].every(Number.isFinite)||rival.id===undefined||seen.has(rival.id))continue;
   seen.add(rival.id);
-  const dx=rival.x-listener.x,dz=rival.z-listener.z,distance=Math.hypot(dx,dz);
+  const dx=rival.x-listener.x,dy=finite(rival.y)-finite(listener.y),dz=rival.z-listener.z,distance=Math.hypot(dx,dy,dz);
   if(distance>72)continue;
-  const side=dx*Math.cos(listener.yaw)-dz*Math.sin(listener.yaw);
+  // Driver-right is (-cos(yaw), +sin(yaw)); Web Audio +pan is right.
+  const side=-dx*Math.cos(listener.yaw)+dz*Math.sin(listener.yaw);
   const forward=dx*Math.sin(listener.yaw)+dz*Math.cos(listener.yaw);
-  const radial=distance>.01?((finite(rival.vx)-finite(listener.vx))*dx+(finite(rival.vz)-finite(listener.vz))*dz)/distance:0;
+  const radial=distance>.01?((finite(rival.vx)-finite(listener.vx))*dx+(finite(rival.vz)-finite(listener.vz))*dz+(finite(rival.vy)-finite(listener.vy))*dy)/distance:0;
   const vehicle=getVehicle(typeof rival.vehicle==='string'?rival.vehicle:rival.vehicle?.id);
   const voice=drivingVoice(vehicle),speed=clamp(Math.abs(finite(rival.speed)),0,100);
   const rev=clamp(speed/Math.max(1,vehicle.handling.topSpeed));

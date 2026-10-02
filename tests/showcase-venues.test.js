@@ -1,9 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as THREE from 'three';
-import {getTrack,projectOnTrack} from '../src/track.js';
+import {getTrack,projectOnTrack,sampleTrack} from '../src/track.js';
 import {grandstandLayout} from '../src/world.js';
-import {SHOWCASE_VENUES,showcaseLayout,showcaseSurfaceAt,applyShowcaseSurface,createShowcaseVenue} from '../src/showcase-venues.js';
+import {SHOWCASE_VENUES,SHOWCASE_CROWD_PALETTES,showcaseLayout,showcaseSurfaceAt,applyShowcaseSurface,createShowcaseVenue} from '../src/showcase-venues.js';
 
 test('all three authored showcases have three distinct safe sector landmarks',()=>{
  for(const id of Object.keys(SHOWCASE_VENUES)){
@@ -73,4 +73,16 @@ test('rotated pavilion roofs keep a level raised ridge and clock faces follow th
   assert.ok(size.z<.101,site.label+' clock face stays flush with the rotated tower');
   assert.ok(size.x>1&&size.y>1,site.label+' clock remains a full size upright disc');
  }
+});
+
+test('showcase terraces keep bounded populations with coordinated clothing and one filming observer per sector',t=>{
+ const original=globalThis.document;globalThis.document={createElement:()=>({getContext:()=>({fillRect(){},fillText(){}})})};t.after(()=>{if(original===undefined)delete globalThis.document;else globalThis.document=original;});
+ for(const id of Object.keys(SHOWCASE_VENUES))for(const low of [true,false]){
+  const people=[],track=getTrack(id),group=createShowcaseVenue(new THREE.Scene(),track,{low,stands:grandstandLayout(track),crowd:{add(...args){people.push(args);}}});
+  assert.equal(people.length,low?24:42);assert.equal(people.filter(p=>p[6].gesture===3).length,3);assert.ok(people.every(p=>p[6].palette===SHOWCASE_CROWD_PALETTES[id]));assert.equal(group.userData.geometryStats.fallbackBatches,0);
+ }
+});
+
+test('grandstand sound-zone heights match the authored elevated road rather than falling back to ground level',()=>{
+ for(const id of Object.keys(SHOWCASE_VENUES)){const track=getTrack(id);for(const stand of grandstandLayout(track))assert.equal(stand.y,sampleTrack(stand.distance,track).y||0);}
 });

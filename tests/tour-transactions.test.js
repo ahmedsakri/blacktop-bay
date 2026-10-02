@@ -5,6 +5,7 @@ import vm from 'node:vm';
 import { beginChampionship, nextChampionshipRace, finalizeChampionshipRound, recordCareerResult, CAREER_KEY } from '../src/race-career.js';
 import { schoolSeen, saveSchool, createDrivingSchool, SCHOOL_KEY } from '../src/driving-school.js';
 import { RIVAL_GRID } from '../src/rivals.js';
+import {commitTourAdvance,TOUR_TRANSACTION_KEY} from '../src/tour-transaction.js';
 import { careerResultMarkup } from '../src/race-hq.js';
 
 // Exercise the actual orchestration functions with no browser, audio, rendering
@@ -21,12 +22,12 @@ function harness({failWrite = 0} = {}) {
   const {state} = beginChampionship(null, {id: 'tour-test-transaction', vehicle: 'mclaren-p1-gtr', track: 'harbor', difficulty: 'street'});
   const writes = [], navigation = [], notices = [], dialogs = [];
   const saved = new Map([[SCHOOL_KEY,'seen']]);
-  const storage = {getItem:key=>saved.get(key)??null,setItem(key,value) {writes.push([key,value]);if(writes.length===failWrite)throw Error('Unavailable');saved.set(key,value);}};
+  const storage = {removeItem:key=>saved.delete(key),getItem:key=>saved.get(key)??null,setItem(key,value) {writes.push([key,value]);if(writes.length===failWrite)throw Error('Unavailable');saved.set(key,value);}};
   const context = vm.createContext({
     preferences: {vehicle: 'audi-r18', track: 'coast', mode: 'championship', difficulty: 'pro'}, career: state,
-    CAREER_KEY, preferenceKey: 'preferences', TRACK: {id: 'coast'}, race: {vehicle: 'audi-r18'},
+    CAREER_KEY, preferenceKey: 'blacktop-bay-choices-v1', TRACK: {id: 'coast'}, race: {vehicle: 'audi-r18'},
     mode:'menu',school:null,pendingStartOptions:{},selectedCampaignId:null,schoolSeen,saveSchool,createDrivingSchool,localStore:()=>storage,
-    nextChampionshipRace, beginChampionship, finalizeChampionshipRound, circuitPath: id => `/circuits/${id}/`,
+    commitTourAdvance, nextChampionshipRace, beginChampionship, finalizeChampionshipRound, circuitPath: id => `/circuits/${id}/`,
     localStorage: storage,
     location: {assign: path => navigation.push(path)}, toast: text => notices.push(text),
     updateRaceOptions() {}, closeDialog() {}, start() {}, carSelectionPending: false, racePreparing: false,
@@ -37,7 +38,7 @@ function harness({failWrite = 0} = {}) {
   return {context, writes, navigation, notices, dialogs, saved};
 }
 
-for (const failWrite of [1, 2]) test(`continuing a tour keeps the current selection when persistence write ${failWrite} fails`, async () => {
+for (const failWrite of [1, 2, 3]) test(`continuing a tour keeps the current selection when persistence write ${failWrite} fails`, async () => {
   const h = harness({failWrite}), preferences = snapshot(h.context.preferences), career = snapshot(h.context.career);
   const action = vm.runInContext(`(${continueSource})`, h.context); await action();
   assert.deepEqual(snapshot(h.context.preferences), preferences); assert.deepEqual(snapshot(h.context.career), career);
@@ -47,8 +48,8 @@ for (const failWrite of [1, 2]) test(`continuing a tour keeps the current select
 test('continuing a saved tour commits the exact car and course before navigation', async () => {
   const h = harness(), action = vm.runInContext(`(${continueSource})`, h.context); await action();
   assert.deepEqual(snapshot(h.context.preferences), {vehicle: 'mclaren-p1-gtr', track: 'harbor', mode: 'championship', difficulty: 'street'});
-  assert.deepEqual(h.writes.map(([key]) => key), [CAREER_KEY, 'preferences']);
-  assert.equal(JSON.parse(h.writes[1][1]).track, 'harbor'); assert.deepEqual(h.navigation, ['/circuits/harbor/']);
+  assert.deepEqual(h.writes.map(([key]) => key), [TOUR_TRANSACTION_KEY,CAREER_KEY, 'blacktop-bay-choices-v1']);
+  assert.equal(JSON.parse(h.writes[2][1]).track, 'harbor'); assert.deepEqual(h.navigation, ['/circuits/harbor/']);
 });
 
 test('choosing a different tour car or venue offers an explicit continuation choice without replacing progress', async () => {
@@ -83,11 +84,23 @@ test('continuation from a finished round persists real DNF finalization without 
  const recorded=recordCareerResult(h.context.career,race,{awarded:true,credits:650,persisted:true});
  assert.equal(recorded.recorded,true);h.context.career=recorded.state;h.context.race=race;h.context.mode='finished';
  const next=nextChampionshipRace(recorded.state),action=vm.runInContext(`(${continueSource})`,h.context);await action();
- assert.deepEqual(h.writes.map(([key])=>key),[CAREER_KEY,CAREER_KEY,'preferences']);
+ assert.deepEqual(h.writes.map(([key])=>key),[TOUR_TRANSACTION_KEY,CAREER_KEY,'blacktop-bay-choices-v1']);
  const saved=JSON.parse(h.saved.get(CAREER_KEY)),round=saved.activeTour.rounds[0];
  assert.equal(round.classification.filter(row=>row.status==='dnf').length,7);
  assert.equal(round.classification.find(row=>row.id==='player').finishTime,140);
  assert.equal(saved.activeTour.credits,650);assert.equal(saved.activeTour.rounds.length,1);assert.deepEqual(saved.recordedRaces,[race.raceId]);
- assert.deepEqual(h.navigation,[`/circuits/${next.track}/`]);assert.equal(JSON.parse(h.saved.get('preferences')).track,next.track);
+ assert.deepEqual(h.navigation,[`/circuits/${next.track}/`]);assert.equal(JSON.parse(h.saved.get('blacktop-bay-choices-v1')).track,next.track);
  assert.deepEqual(h.notices,[]);
+});
+
+for(const failWrite of [1,2,3])test(`failed finished-round continuation ${failWrite} preserves pending rivals`,async()=>{
+ const h=harness({failWrite}),tour=h.context.career.activeTour;
+ const race={raceId:'race-tour-transaction-finish',state:'finished',completedLaps:3,totalLaps:3,track:'harbor',vehicle:tour.vehicle,elapsed:140,position:1,mode:'championship',difficulty:tour.difficulty,score:0,
+  leaderboard:[{id:'player',vehicle:tour.vehicle,finished:true,completedLaps:3,finishTime:140,position:1},...RIVAL_GRID.map(rival=>({id:rival.id,vehicle:tour.vehicle,finished:false,completedLaps:2,finishTime:null,position:null}))]};
+ const recorded=recordCareerResult(h.context.career,race,{awarded:true,credits:650,persisted:true});
+ assert.equal(recorded.recorded,true);h.context.career=recorded.state;h.context.race=race;h.context.mode='finished';
+ const before=snapshot(h.context.career),choices=snapshot(h.context.preferences);
+ const action=vm.runInContext(`(${continueSource})`,h.context);await action();
+ assert.deepEqual(snapshot(h.context.career),before);assert.deepEqual(snapshot(h.context.preferences),choices);assert.deepEqual(h.navigation,[]);
+ assert.equal(h.context.career.activeTour.rounds[0].classification.filter(row=>row.status==="pending").length,7);
 });

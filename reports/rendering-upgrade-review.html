@@ -7,7 +7,7 @@ import * as T from 'three';
 import {createWorld} from '/src/world.js';
 import {setTrack,sampleTrack} from '/src/track.js';
 import {MANUFACTURER_ASSETS} from '/src/manufacturer-asset-manifest.js';
-import {prepareManufacturerCar,createManufacturerCar,manufacturerCacheStatus} from '/src/manufacturer-car.js';
+import {prepareManufacturerCar,createManufacturerCar,manufacturerCacheStatus,configureManufacturerRenderer,prepareManufacturerInstances} from '/src/manufacturer-car.js';
 import {qualitySettings} from '/src/render-quality.js';
 const $=id=>document.getElementById(id),params=new URLSearchParams(location.search);
 for(const [id,asset]of Object.entries(MANUFACTURER_ASSETS)){const option=document.createElement('option');option.value=id;option.textContent=asset.brand+' '+asset.model;$('car').append(option);}
@@ -22,9 +22,11 @@ try{
  const renderer=new T.WebGLRenderer({antialias:true});renderer.setPixelRatio(1);renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.1;renderer.outputColorSpace=T.SRGBColorSpace;$('viewport').append(renderer.domElement);
  const world=createWorld(renderer,{low,reducedMotion:true}),q=qualitySettings('performance',{mobile:low,dpr:1});world.setQuality(q);world.reflection.visible=false;renderer.shadowMap.enabled=false;
  const camera=new T.PerspectiveCamera(view==='car'?38:54,1,.2,2600),sites=world.scene.userData.showcaseSectors,site=sites[Number($('sector').value)]||sites[0],p=sampleTrack(site.s,track);
+ const compression=configureManufacturerRenderer(renderer,{camera,scene:world.scene});
  let focus={x:site.x,y:site.y,z:site.z,speed:0},model=null;
  if(view==='car'){
   const assetId=$('car').value;await prepareManufacturerCar(assetId,{low:true});model=createManufacturerCar({assetId,low:true});
+  await prepareManufacturerInstances(renderer,[model],{camera,scene:world.scene});
   if($('tier').value==='distance'){if(!await model.prepareDistanceDetail())throw new Error('Distance mesh unavailable');model.setDistanceDetail(100);}
   const start=sampleTrack(8,track);model.group.position.set(start.x,start.y+.055,start.z);model.group.rotation.y=Math.atan2(start.tx,start.tz);world.scene.add(model.group);
   camera.position.set(start.x+start.nx*6.4+start.tx*8.3,start.y+3.3,start.z+start.nz*6.4+start.tz*8.3);camera.lookAt(start.x,start.y+.85,start.z);focus={...start,speed:0};
@@ -36,7 +38,7 @@ try{
   camera.position.set(site.x+dx/n*21-p.tx*21,site.y+10,site.z+dz/n*21-p.tz*21);camera.lookAt(site.x,site.y+3,site.z);
  }
  const resize=()=>{const height=Math.max(180,innerHeight-$('viewport').getBoundingClientRect().top);renderer.setSize(innerWidth,height);camera.aspect=innerWidth/height;camera.updateProjectionMatrix();};resize();addEventListener('resize',resize);
- let frame=0;renderer.setAnimationLoop(time=>{world.update(time/1000,focus,{paused:false,reducedMotion:true});model?.update({time:time/1000,speed:0,paused:true,reducedMotion:true});renderer.render(world.scene,camera);if(frame++%30===0){const stats=world.scene.userData.distanceDetail,car=model?.group.userData.distanceDetail;$('diagnostics').textContent=`${track.name} / ${site.label}\nDraws ${renderer.info.render.calls} · triangles ${renderer.info.render.triangles.toLocaleString()}\nScenery ${stats.visibleBatches}/${stats.batches} batches · ${stats.visibleInstances}/${stats.totalInstances} instances\n${car?`Car ${car.tier} · near ${car.nearTriangles.toLocaleString()} / distant ${car.distanceTriangles.toLocaleString()} triangles`:world.scene.userData.spectatorCount+' authored spectators'}\nCache estimated ${Math.round(manufacturerCacheStatus().estimatedResidentBytes/1048576)} MiB · actual production shaders`;}});
- window.addEventListener('pagehide',()=>{model?.dispose();world.backdrop.dispose();renderer.dispose();});
+ let frame=0;renderer.setAnimationLoop(time=>{world.update(time/1000,focus,{paused:false,reducedMotion:true});model?.update({time:time/1000,speed:0,paused:true,reducedMotion:true});renderer.render(world.scene,camera);if(frame++%30===0){const stats=world.scene.userData.distanceDetail,car=model?.group.userData.distanceDetail;$('diagnostics').textContent=`${track.name} / ${site.label}\nDraws ${renderer.info.render.calls} · triangles ${renderer.info.render.triangles.toLocaleString()}\nScenery ${stats.visibleBatches}/${stats.batches} batches · ${stats.visibleInstances}/${stats.totalInstances} instances\n${car?`Car ${car.tier} · near ${car.nearTriangles.toLocaleString()} / distant ${car.distanceTriangles.toLocaleString()} triangles`:world.scene.userData.spectatorCount+' authored spectators'}\nCache estimated ${Math.round(manufacturerCacheStatus().estimatedResidentBytes/1048576)} MiB · KTX2 ${compression.gpuCompressed?'available':'unsupported'} · actual production shaders`;}});
+ window.addEventListener('pagehide',()=>{model?.dispose();world.backdrop.dispose();world.disposeEnvironment();renderer.dispose();});
 }catch(e){error(e.stack||e);}
 </script></body></html>

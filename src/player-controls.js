@@ -1,3 +1,4 @@
+import {canUpgradeNitro} from './nitro-system.js';
 export const CONTROL_DEFAULTS = Object.freeze({left:'ArrowLeft',right:'ArrowRight',brake:'ArrowDown',drift:'Space',nitro:'ShiftLeft',reset:'KeyR',pause:'Escape'});
 export const CONTROL_LABELS = Object.freeze({left:'Steer left',right:'Steer right',brake:'Brake',drift:'Handbrake',nitro:'Nitro',reset:'Reset to road',pause:'Pause'});
 export const KEY_OPTIONS = Object.freeze(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Space','ShiftLeft','ShiftRight','Escape',...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map(c=>'Key'+c),...'0123456789'.split('').map(c=>'Digit'+c)]);
@@ -29,9 +30,15 @@ export function remapControl(controls,action,code) {
  if(conflict)return {ok:false,controls:next,error:`${keyLabel(code)} is already used for ${CONTROL_LABELS[conflict].toLowerCase()}.`};
  next.bindings[action]=code;return {ok:true,controls:next};
 }
-// Tap-to-toggle is an alternative to holding. Lifecycle clears cancel the latch.
-export function createNitroLatch(){let latched=false,held=false;return {
- sample(pressed,toggle){if(!toggle){latched=false;held=pressed;return pressed;}if(pressed&&!held)latched=!latched;held=pressed;return latched;},
- clear(){latched=false;held=false;},get active(){return latched;}
-};
-}
+// Physical presses remain distinct from the held boost state. A timing press
+// upgrades an active normal boost; a later press (or one after a special) stops.
+export function createNitroLatch(){let latched=false,held=false,pressId=0;return {
+ sample(pressed,toggle,nitro){
+  pressed=pressed===true;
+  const edge=pressed&&!held;if(edge)pressId++;
+  if(!toggle)latched=false;
+  else if(edge)latched=latched&&canUpgradeNitro(nitro)?true:!latched;
+  held=pressed;return toggle?latched:pressed;
+ },
+ clear(){latched=false;held=false;},get active(){return latched;},get pressId(){return pressId;}
+};}

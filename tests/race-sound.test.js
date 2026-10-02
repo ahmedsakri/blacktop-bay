@@ -25,7 +25,7 @@ test('scraping follows actual contact lifetime and movement; crowd is opt-in loc
 test('rival stereo field rotates with the listener, distance fades voices, and far/malformed cars stay silent',()=>{
  const rival={id:'a',vehicle:'ferrari-enzo',x:8,z:8,speed:25},listener={x:0,z:0,yaw:0};
  const facingNorth=spatialRivalFrames(listener,[rival])[0],facingSouth=spatialRivalFrames({...listener,yaw:Math.PI},[rival])[0];
- assert.ok(facingNorth.pan>.5&&facingSouth.pan<-.5);
+ assert.ok(facingNorth.pan<-.5&&facingSouth.pan>.5);
  const farther=spatialRivalFrames(listener,[{...rival,x:30,z:30}])[0];assert.ok(farther.gain<facingNorth.gain);
  assert.deepEqual(spatialRivalFrames(listener,[{...rival,x:100}]),[]);
  assert.deepEqual(spatialRivalFrames({...listener,yaw:NaN},[rival]),[]);

@@ -345,9 +345,11 @@ export function createCrowd({low = false, reducedMotion = false} = {}) {
 
  }
  return {
-  add(x,floor,z,yaw,seated,rng=Math.random,{role='spectator'}={}){
+  add(x,floor,z,yaw,seated,rng=Math.random,{role='spectator',palette,gesture}={}){
    if(scene)throw new Error('Add spectators before rendering the crowd');
    const person=spectatorProfile(x,floor,z,yaw,seated,rng);
+   if(Array.isArray(palette)&&palette.length&&palette.every(value=>/^#[a-f0-9]{6}$/i.test(value)))person.shirt=pick(palette,rng);
+   if(Number.isInteger(gesture)&&gesture>=0&&gesture<=4)person.gesture=gesture;
    if(role==='marshal'){person.role='marshal';person.shirt='#e97938';person.garment=2;person.pants='#233844';person.shorts=false;person.scarf=false;person.cap=true;person.gesture=rng()>.55?3:1;person.shirtLight='#e3e6cf';}
    person.parts=[];people.push(person);
    compose(person,person.phase,Math.sin(person.phase)>.45?.3:0,true);return person;

@@ -11,6 +11,9 @@ import { ORIGINAL_VENUE_PROFILES, originalLandmarkLayout, createOriginalLandmark
 import {createSpatialInstances,createDistanceDetail} from './spatial-detail.js';
 import {applyShowcaseSurface,createShowcaseVenue} from './showcase-venues.js';
 import { createCinematicBackdrop, CINEMATIC_BACKDROP_GLSL } from './cinematic-backdrop.js';
+import {SHOWCASE_LIGHTING} from './showcase-lighting.js';
+import {createCoastalGrounding} from './coastal-foundations.js';
+import {createEnvironmentResource} from './environment-resource.js';
 
 const TAU = Math.PI * 2;
 const ORIGINAL_VENUES = new Set(['harbor', 'dockyard', 'coast', 'summit', 'grandprix']);
@@ -30,7 +33,7 @@ export function getVenueProfile(track = TRACK) {
  for(const p of track.samples){minX=Math.min(minX,p.x);maxX=Math.max(maxX,p.x);minZ=Math.min(minZ,p.z);maxZ=Math.max(maxZ,p.z);}
  const centerX=(minX+maxX)/2,centerZ=(minZ+maxZ)/2;
  let radius=0;for(const p of track.samples)radius=Math.max(radius,Math.hypot(p.x-centerX,p.z-centerZ));
- return {...VENUE_ENVIRONMENTS[environment],...ORIGINAL_VENUE_PROFILES[track.scenery],...DESTINATION_PROFILES[track.id],environment,original,centerX,centerZ,radius,
+ return {...VENUE_ENVIRONMENTS[environment],...ORIGINAL_VENUE_PROFILES[track.scenery],...DESTINATION_PROFILES[track.id],...SHOWCASE_LIGHTING[track.id],environment,original,centerX,centerZ,radius,
   horizonRadius:original?990:Math.max(990,radius+480),groundRadius:Math.max(1400,radius+650)};
 }
 
@@ -99,7 +102,7 @@ export function grandstandLayout(track = TRACK) {
    footprint.push({ x: x + p.nx * across + p.tx * along, z: z + p.nz * across + p.tz * along });
   }
   if (footprint.some(point => projectOnTrack(point.x, point.z, undefined, track).distance < track.width / 2 + 4.2)) continue;
-  stands.push({ x, z, yaw: Math.atan2(p.tx, p.tz), side, distance, footprint });
+  stands.push({ x, y:p.y||0, z, yaw: Math.atan2(p.tx, p.tz), side, distance, footprint });
  }
  return stands;
 }
@@ -197,7 +200,15 @@ export function createWorld(renderer, { low = false, reducedMotion = false } = {
   #include <colorspace_fragment>
  }` })); sky.name='cinematic-distant-sky';sky.frustumCulled=false;scene.add(sky);
  const environmentScene = new THREE.Scene(); environmentScene.add(sky.clone());
- const pmrem = new THREE.PMREMGenerator(renderer); scene.environment = pmrem.fromScene(environmentScene, .045, .1, 2000).texture; scene.environmentIntensity = .72; pmrem.dispose();
+ const environment=createEnvironmentResource(scene,()=>{
+  if(renderer.getContext?.().isContextLost())return null;
+  const amount=backdrop.uniforms.cinematicAmount.value,pmrem=new THREE.PMREMGenerator(renderer);
+  if(backdrop.status.state==='ready')backdrop.uniforms.cinematicAmount.value=1;
+  try{return pmrem.fromScene(environmentScene,.045,.1,2000,{size:low?128:256});}
+  finally{backdrop.uniforms.cinematicAmount.value=amount;pmrem.dispose();}
+ });
+ environment.rebuild();scene.environmentIntensity=venue.environmentIntensity??.72;
+ backdrop.ready.then(ready=>{if(ready)environment.rebuild();}).catch(()=>{/* Context restoration retries the owned environment resource. */});
  const sea = new THREE.Mesh(new THREE.PlaneGeometry(3000, 3000), new THREE.ShaderMaterial({ uniforms: { time: { value: 0 } }, vertexShader: 'varying vec3 p;void main(){vec4 w=modelMatrix*vec4(position,1.);p=w.xyz;gl_Position=projectionMatrix*viewMatrix*w;}', fragmentShader: `${noiseGLSL}
  varying vec3 p;uniform float time;
  float heightAt(vec2 p){return sin(dot(p,vec2(.43,.31))+time*.45)*.12+sin(dot(p,vec2(-.7,.29))-time*.57)*.075+sin(dot(p,vec2(.21,1.1))+time*.67)*.034+(fbm(p*.75+vec2(time*.04,-time*.05))-.45)*.13;}
@@ -365,7 +376,7 @@ export function createWorld(renderer, { low = false, reducedMotion = false } = {
  const underside=new THREE.Mesh(new THREE.BoxGeometry(TRACK.width+2.7,.035,.75),cyan);underside.position.y=6.55;finishArch.add(underside);scene.add(finishArch);
 
  const standLayouts = grandstandLayout(), standStructure = [], standRoof = [], standSeats = [], standRails = [];
- scene.userData.grandstands = standLayouts.map(({ x, z, yaw, side, distance }) => ({ x, z, yaw, side, distance }));
+ scene.userData.grandstands = standLayouts.map(({ x, y, z, yaw, side, distance }) => ({ x, y, z, yaw, side, distance }));
  for (const stand of standLayouts) {
   const { x, z, yaw, side, distance } = stand, cos = Math.cos(yaw), sin = Math.sin(yaw);
   const local = (px, py, pz) => ({ x: x + cos * px + sin * pz, y: py + sampleTrack(distance).y, z: z - sin * px + cos * pz, ry: yaw });
@@ -444,6 +455,7 @@ export function createWorld(renderer, { low = false, reducedMotion = false } = {
  if(!venue.original&&(!venue.water||TRACK.scenery==='breakwater'||venue.vegetation==='street-trees')){
   const foliage=[],treeTrunks=[],rocks=[],cityBlocks=[],cityRoofs=[];
   const decorations=venueSceneryLayout(TRACK,{low});scene.userData.venueDecorationCount=decorations.length;
+  if(TRACK.id==='san-francisco-hills')createCoastalGrounding(scene,TRACK,decorations);
   for(const item of decorations){
    const {x,z,radius,height,yaw,shade}=item;
    if(item.kind==='building'){
@@ -607,6 +619,6 @@ export function createWorld(renderer, { low = false, reducedMotion = false } = {
  crowd.render(scene);
  const detail=createDistanceDetail(scene,{low});scene.userData.distanceDetail=detail.stats;
  let motionTime=0,lastWorldTime=null;
- return { scene, reflection, sun, startLights, backdrop, setQuality:settings=>detail.setQuality(settings), update(time, car, motion = {}) {
+ return { scene, reflection, sun, startLights, backdrop, rebuildEnvironment:environment.rebuild,disposeEnvironment:environment.dispose, setQuality:settings=>detail.setQuality(settings), update(time, car, motion = {}) {
  const dt=lastWorldTime===null?0:Math.max(0,Math.min(.1,time-lastWorldTime));lastWorldTime=time;if(!motion.paused&&!(motion.reducedMotion??reducedMotion))motionTime+=dt;detail.update(time,car); backdrop.update(time,{reducedMotion:motion.reducedMotion??reducedMotion});fallbackRidge.material.opacity=1-backdrop.uniforms.cinematicAmount.value;fallbackRidge.visible=fallbackRidge.material.opacity>.001;crowd.update(time, car, motion); landmarks.update(time,{paused:motion.paused,reducedMotion:motion.reducedMotion??reducedMotion}); sea.material.uniforms.time.value = motionTime; boat.position.y = -.8 + Math.sin(motionTime * .7) * .065; if (car) { sun.position.set(car.x - 150,venue.sunHeight+(car.y||0),car.z + 130); sun.target.position.set(car.x, car.y||0, car.z); } } };
 }

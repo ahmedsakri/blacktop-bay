@@ -1,11 +1,16 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { KTX2Loader } from 'three/addons/loaders/KTX2Loader.js';
+import { MANUFACTURER_COMPRESSED_ASSETS } from './manufacturer-compressed-manifest.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { MANUFACTURER_DISTANCE_ASSETS } from './manufacturer-distance-manifest.js';
 import { MANUFACTURER_ASSETS } from './manufacturer-asset-manifest.js';
 import { configureManufacturerPaint } from './manufacturer-paint.js';
 import { createChassisMotion } from './chassis-motion.js';
 import { createCarDamage } from './car-damage.js';
+import {applyFlagshipFinish} from './manufacturer-finish.js';
+import {prepareManufacturerInstances} from './gpu-preparation.js';
+export {prepareManufacturerInstances} from './gpu-preparation.js';
 
 // This module downloads only the requested car. Geometry and texture images are
 // immutable cache resources; every displayed car owns its mutable materials.
@@ -13,22 +18,32 @@ const templates = new Map();
 const pending = new Map();
 const loadQueue = [];
 const MAX_IDLE_TEMPLATES = 2;
+const MAX_IDLE_BYTES = 32 * 1024 * 1024;
 const MAX_CONCURRENT_LOADS = 2;
 const BRAKE_COLOR = new THREE.Color('#ff1708');
 let activeLoads = 0, useCounter = 0;
+let graphicsPreparation=null,ktxLoader=null,compressedEnabled=false;
+export function configureManufacturerRenderer(renderer,{camera,scene}={}){
+ graphicsPreparation={renderer,camera,scene};
+ compressedEnabled=['WEBGL_compressed_texture_astc','WEBGL_compressed_texture_etc','EXT_texture_compression_bptc','WEBGL_compressed_texture_s3tc'].some(name=>renderer.extensions?.has(name));
+ if(compressedEnabled){ktxLoader ||= new KTX2Loader().setTranscoderPath('/assets/basis/').setWorkerLimit(2);ktxLoader.detectSupport(renderer);}
+ return {gpuCompressed:compressedEnabled,compressedCars:Object.keys(MANUFACTURER_COMPRESSED_ASSETS).length};
+}
 const WHEELS = ['wheel_front_left', 'wheel_front_right', 'wheel_rear_left', 'wheel_rear_right'];
 const finite = (value, fallback = 0) => Number.isFinite(value) ? value : fallback;
 const keyFor = (id, low, distant=false) => `${id}:${distant?'distance':low ? 'low' : 'high'}`;
 const manifestFor = id => Object.hasOwn(MANUFACTURER_ASSETS, id) ? MANUFACTURER_ASSETS[id] : null;
 const templateFor = (id, low, distant=false) => templates.get(keyFor(id, low,distant)) || (!distant&&templates.get(keyFor(id, !low)));
 
-export function manufacturerCacheStatus(){return {templates:templates.size,activeLoads,queuedLoads:loadQueue.length,activeTemplates:[...templates.values()].filter(entry=>entry.references>0).length,estimatedResidentBytes:[...templates.values()].reduce((n,entry)=>n+(entry.estimatedBytes||0),0)};}
+export function manufacturerCacheStatus(){return {templates:templates.size,activeLoads,queuedLoads:loadQueue.length,activeTemplates:[...templates.values()].filter(entry=>entry.references>0).length,idleByteLimit:MAX_IDLE_BYTES,idleEstimatedBytes:[...templates.values()].filter(entry=>entry.references===0).reduce((n,entry)=>n+(entry.estimatedBytes||0),0),estimatedResidentBytes:[...templates.values()].reduce((n,entry)=>n+(entry.estimatedBytes||0),0)};}
 
-function trimCache() {
+function trimCache(protectedKey) {
   const idle = [...templates.entries()].filter(([, entry]) => entry.references === 0)
     .sort(([, a], [, b]) => a.lastUsed - b.lastUsed);
-  while (idle.length > MAX_IDLE_TEMPLATES) {
-    const [key, entry] = idle.shift();
+  let bytes=idle.reduce((sum,[,entry])=>sum+entry.estimatedBytes,0);
+  while (idle.length > MAX_IDLE_TEMPLATES || bytes > MAX_IDLE_BYTES) {
+    const index=idle.findIndex(([key])=>key!==protectedKey);if(index<0)break;
+    const [key, entry] = idle.splice(index,1)[0];bytes-=entry.estimatedBytes;
     templates.delete(key);
     releaseSource(entry.scene);
   }
@@ -82,7 +97,7 @@ function inspectSource(scene, manifest) {
     if (object.isSkinnedMesh) throw new Error('Manufacturer cars require static meshes with separate wheel pivots.');
   });
   const buffers=new Set(),textures=new Set();let estimatedBytes=0;
-  scene.traverse(mesh=>{if(!mesh.isMesh)return;for(const attribute of [...Object.values(mesh.geometry.attributes),mesh.geometry.index].filter(Boolean)){const data=attribute.isInterleavedBufferAttribute?attribute.data.array:attribute.array;if(data&&!buffers.has(data.buffer)){buffers.add(data.buffer);estimatedBytes+=data.buffer.byteLength;}}for(const material of Array.isArray(mesh.material)?mesh.material:[mesh.material])for(const value of Object.values(material))if(value?.isTexture&&!textures.has(value)){textures.add(value);const image=value.image;estimatedBytes+=(image?.width||0)*(image?.height||0)*4*4/3;}});
+  scene.traverse(mesh=>{if(!mesh.isMesh)return;for(const attribute of [...Object.values(mesh.geometry.attributes),mesh.geometry.index].filter(Boolean)){const data=attribute.isInterleavedBufferAttribute?attribute.data.array:attribute.array;if(data&&!buffers.has(data.buffer)){buffers.add(data.buffer);estimatedBytes+=data.buffer.byteLength;}}for(const material of Array.isArray(mesh.material)?mesh.material:[mesh.material])for(const value of Object.values(material))if(value?.isTexture&&!textures.has(value)){textures.add(value);const image=value.image;estimatedBytes+=value.isCompressedTexture?value.mipmaps.reduce((n,m)=>n+(m.data?.byteLength||0),0):(image?.width||0)*(image?.height||0)*4*4/3;}});
   return {scene,estimatedBytes:Math.ceil(estimatedBytes), dimensions: {length: size.z, width: size.x, height: size.y}, references: 0, lastUsed: ++useCounter};
 }
 
@@ -96,7 +111,8 @@ export function prepareManufacturerCar(assetId, {low = false, distant=false, bas
     return Promise.resolve(entry);
   }
   if (pending.has(key)) return pending.get(key);
-  const path = distant?MANUFACTURER_DISTANCE_ASSETS[assetId]?.path:low ? manifest.low : manifest.high;
+  const compressed=low&&!distant&&compressedEnabled?MANUFACTURER_COMPRESSED_ASSETS[assetId]:null;
+  const path = distant?MANUFACTURER_DISTANCE_ASSETS[assetId]?.path:compressed?.path||(low ? manifest.low : manifest.high);
   if (!path) return Promise.reject(new Error(`No ${low ? 'mobile' : 'desktop'} asset is available for ${assetId}.`));
   const failedResources = new Set();
   const manager = new THREE.LoadingManager();
@@ -104,16 +120,26 @@ export function prepareManufacturerCar(assetId, {low = false, distant=false, bas
   // A failed finish must reject the selection so the current car stays intact.
   manager.onError = resource => failedResources.add(resource);
   const loader = new GLTFLoader(manager);
-  loader.setMeshoptDecoder(MeshoptDecoder);
+  loader.setMeshoptDecoder(MeshoptDecoder);if(ktxLoader)loader.setKTX2Loader(ktxLoader);
   let url = baseURL ? new URL(path, baseURL).href : path;
-  const hash = distant?MANUFACTURER_DISTANCE_ASSETS[assetId]?.sha256:manifest.variants?.[low ? 'low' : 'high']?.sha256;
+  const hash = distant?MANUFACTURER_DISTANCE_ASSETS[assetId]?.sha256:compressed?.sha256||manifest.variants?.[low ? 'low' : 'high']?.sha256;
   if (typeof hash === 'string' && /^[a-f0-9]{64}$/i.test(hash)) url += `${url.includes('?') ? '&' : '?'}v=${hash.slice(0, 16)}`;
-  const request = scheduleLoad(() => loader.loadAsync(url, onProgress),distant?1:0).then(gltf => {
+  const request = scheduleLoad(async() => {
+    if(!compressed)return loader.loadAsync(url,onProgress);
+    let partial;
+    try{partial=await loader.loadAsync(url,onProgress);if(failedResources.size)throw new Error('Compressed maps unavailable');return partial;}
+    catch{if(partial)releaseSource(partial.scene);failedResources.clear();
+      const fallback=baseURL?new URL(manifest.low,baseURL).href:manifest.low;
+      return loader.loadAsync(fallback+'?v='+manifest.variants.low.sha256.slice(0,16),onProgress);
+    }
+  },distant?1:0).then(gltf => {
     try {
       if (failedResources.size) throw new Error(`The ${manifest.brand} ${manifest.model} textures could not be loaded. Please try again.`);
       const template = inspectSource(gltf.scene, manifest);
       templates.set(key, template);
-      trimCache();
+      // Awaiting callers may immediately create an instance. Protect this
+      // handoff until the next task, then enforce the idle byte ceiling too.
+      trimCache(key);const trimTimer=setTimeout(()=>trimCache(),0);trimTimer.unref?.();
       return template;
     } catch (error) {
       releaseSource(gltf.scene);
@@ -184,6 +210,7 @@ export function createManufacturerCar({assetId, vehicle, color, low = false, gho
     const copy = source => {
       if (materialCopies.has(source)) return materialCopies.get(source);
       const material = cloneMaterial(source, paintable && paintNames.has(source.name), ghost, color,distant);
+      if(!ghost&&!distant)applyFlagshipFinish(material,assetId);
       configureManufacturerPaint(material, assetId, {customColor: color !== undefined && color !== null});
       materialCopies.set(source, material);
       if (!ghost && material.emissive && (brakeNames.has(source.name) || source.userData.brakeLight === true)) {
@@ -243,18 +270,21 @@ export function createManufacturerCar({assetId, vehicle, color, low = false, gho
 
   template.references++;
   template.lastUsed = ++useCounter;
-  let lastTime = null, disposed = false,distanceModel=null,distanceRequest=null,usingDistance=false,nextVisualTime=0;
+  let lastTime = null, disposed = false,distanceModel=null,distanceRequest=null,usingDistance=false,nextVisualTime=0,distanceReady=false;
   const distanceStatus={tier:distant?'distance':'near',loading:false,available:Boolean(MANUFACTURER_DISTANCE_ASSETS[assetId]),nearTriangles:manifest.variants?.[low?'low':'high']?.triangles,distanceTriangles:MANUFACTURER_DISTANCE_ASSETS[assetId]?.triangles};
   group.userData.distanceDetail=distanceStatus;
   const ownChildren=[...group.children];
-  const prepareDistanceDetail=()=>{
+  const prepareDistanceDetail=(preparation)=>{
     if(distant||ghost||disposed||!distanceStatus.available)return Promise.resolve(false);
-    if(distanceModel)return Promise.resolve(true);if(distanceRequest)return distanceRequest;
+    if(distanceModel&&distanceReady)return Promise.resolve(true);if(distanceRequest)return distanceRequest;
     distanceStatus.loading=true;
-    distanceRequest=prepareManufacturerCar(assetId,{low:true,distant:true}).then(()=>{
+    distanceRequest=prepareManufacturerCar(assetId,{low:true,distant:true}).then(async()=>{
       if(disposed)return false;distanceModel=createManufacturerCar({assetId,vehicle,color,low:true,distant:true});
-      distanceModel.group.visible=false;group.add(distanceModel.group);return true;
-    }).catch(()=>{distanceStatus.available=false;return false;}).finally(()=>{distanceStatus.loading=false;});
+      distanceModel.group.visible=false;group.add(distanceModel.group);
+      const warmup=preparation||graphicsPreparation;
+      if(warmup?.renderer&&warmup.camera&&warmup.scene)await prepareManufacturerInstances(warmup.renderer,[distanceModel],warmup);
+      distanceReady=!disposed;return distanceReady;
+    }).catch(error=>{distanceModel?.dispose();distanceModel=null;distanceReady=false;distanceStatus.available=error?.name==='AbortError';return false;}).finally(()=>{distanceStatus.loading=false;distanceRequest=null;});
     return distanceRequest;
   };
   const setDistanceDetail=(distance,{detailDistanceScale=1}={})=>{
@@ -262,7 +292,7 @@ export function createManufacturerCar({assetId, vehicle, color, low = false, gho
     const scale=Math.max(.5,Math.min(1.3,detailDistanceScale)),threshold=(usingDistance?52:65)*scale;
     const far=Number.isFinite(distance)&&distance>threshold;
     if(far&&!distanceModel&&distanceStatus.available)prepareDistanceDetail();
-    const use=far&&Boolean(distanceModel);if(use===usingDistance)return;usingDistance=use;nextVisualTime=0;
+    const use=far&&Boolean(distanceModel)&&distanceReady;if(use===usingDistance)return;usingDistance=use;nextVisualTime=0;
     for(const child of ownChildren)child.visible=!use;distanceModel.group.visible=use;distanceStatus.tier=use?'distance':'near';
     if(use){const current=new Map([...materialCopies.values()].filter(m=>m.userData.bodyPaint).map(m=>[m.name,m]));
       distanceModel.group.traverse(mesh=>{if(!mesh.isMesh)return;for(const material of Array.isArray(mesh.material)?mesh.material:[mesh.material]){const near=current.get(material.name);if(near&&material.color){material.color.copy(near.color);material.roughness=near.roughness;material.metalness=near.metalness;if(material.userData.bodyPaintMask&&near.userData.bodyPaintMask)material.userData.bodyPaintMask.enabled.value=near.userData.bodyPaintMask.enabled.value;}}});}
@@ -311,5 +341,5 @@ export function createManufacturerCar({assetId, vehicle, color, low = false, gho
     // templates stay cached, so inspecting the entire catalogue is bounded.
     trimCache();
   };
-  return {group, update, dispose,prepareDistanceDetail,setDistanceDetail};
+  return {group, update, dispose,prepareDistanceDetail,setDistanceDetail,get disposed(){return disposed;}};
 }

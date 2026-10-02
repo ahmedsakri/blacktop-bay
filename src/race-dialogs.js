@@ -43,8 +43,8 @@ export function howToPlayPanel({ touch = false, controls } = {}) {
   const defaultSteering = arrows && actionForKey('KeyA', settings) === 'left' && actionForKey('KeyD', settings) === 'right';
   const nitroKey = activeKeys('nitro').includes('ShiftLeft') && activeKeys('nitro').includes('ShiftRight') ? 'Shift' : keyLabel(bindings.nitro);
   const boostCue = `${settings.nitroToggle ? 'TAP' : 'HOLD'} ${touch ? 'NITRO' : nitroKey.toUpperCase()}`;
-  const boostText = settings.nitroToggle ? 'Tap to start Nitro on a clear straight. Tap again to stop and recharge while driving and drifting.' : 'Boost on a clear straight. Release to recharge while driving and drifting.';
-  const phoneBoost = settings.nitroToggle ? 'tap Nitro on and off' : 'hold Nitro to boost';
+  const boostText = settings.nitroToggle ? 'Tap to start Nitro on a clear straight. A second tap in a Burst or blue Perfect window upgrades the boost and keeps it on. Tap outside a timing window, or after the upgrade, to stop.' : 'Boost on a clear straight. Release to recharge while driving and drifting.';
+  const phoneBoost = settings.nitroToggle ? 'tap Nitro to start or stop; a timed second tap upgrades the boost' : 'hold Nitro to boost';
   const keyMarkup = code => {
     const glyph = {'ArrowLeft': 'arrow-left', 'ArrowRight': 'arrow-right', 'ArrowDown': 'chevron-down'}[code];
     return `<kbd aria-label="${escape(readableKey(code))}">${glyph ? icon(glyph) : escape(keyLabel(code))}</kbd>`;
@@ -80,12 +80,23 @@ export function finishStatusText(race) {
     : 'Rivals still on track. Their times update as they finish.';
 }
 
-export function finishPanel({ race, track, isBest = false, previousBest = null, bestTime = null, reward = null, credits = 0 } = {}) {
+// Only an explicit persistence receipt may claim a record survived storage.
+export function recordPersistenceMarkup(receipt) {
+  const pending = receipt?.pending === true;
+  const saved = receipt?.persisted === true && !pending;
+  if (!pending && !saved) return '<div id="record-save-status"></div>';
+  return `<section id="record-save-status" class="rd-record-persistence${pending ? ' rd-record-pending' : ''}" aria-label="Personal best saving">
+    <p role="status">${pending ? '<strong>Personal best not saved yet.</strong> It is available for this session. Retry saving or export your unsaved records before leaving.' : 'Personal best saved on this device.'}</p>
+    ${pending ? `<div class="rd-record-actions"><button id="retry-record-save" class="button secondary" type="button">${icon('restart')}<span>Retry save</span></button><button id="export-unsaved-records" class="button secondary" type="button">${icon('download')}<span>Export unsaved records</span></button></div>` : ''}
+  </section>`;
+}
+
+export function finishPanel({ race, track, isBest = false, previousBest = null, bestTime = null, reward = null, credits = 0, recordPersistence = null } = {}) {
   const car = getVehicle(race?.vehicle), venue = circuit(race, track), position = count(race?.position) || 1, solo = isSolo(race);
   const suffix = position === 1 ? 'ST' : position === 2 ? 'ND' : position === 3 ? 'RD' : 'TH';
   const earned = reward?.awarded === true ? count(reward.credits) : 0;
   const improvement = isBest && Number.isFinite(previousBest) && Number.isFinite(race?.elapsed) && previousBest > race.elapsed ? previousBest - race.elapsed : null;
-  const bestLabel = isBest ? improvement === null ? 'First benchmark set' : `${improvement.toFixed(2)} sec quicker than your previous best` : 'Saved on this device';
+  const bestLabel = isBest ? improvement === null ? 'First benchmark set' : `${improvement.toFixed(2)} sec quicker than your previous best` : 'Your benchmark for this build';
   const recordScopeLabel = `For this car, circuit, ${solo ? '' : 'mode, difficulty, '}build and handling version`;
   const record = Number.isFinite(bestTime) && bestTime > 0 ? bestTime : isBest ? race?.elapsed : null;
   const classification = solo
@@ -104,6 +115,7 @@ export function finishPanel({ race, track, isBest = false, previousBest = null, 
     <div class="rd-results-grid">${order}
       <div class="rd-result-insights"><section class="rd-record-card${isBest ? ' rd-new-record' : ''}"><span class="rd-label">${isBest ? 'PERSONAL BEST' : 'YOUR PERSONAL BEST'}</span><strong>${formatRaceTime(record)}</strong><p>${bestLabel}</p><p class="rd-record-scope">${recordScopeLabel}</p></section><dl class="rd-finish-stats"><div><dt>BEST LAP</dt><dd>${formatRaceTime(race?.bestLap)}</dd></div><div><dt>DRIFT POINTS</dt><dd>${number(race?.score)}</dd></div><div><dt>ROAD RESETS</dt><dd>${number(race?.recoveries)}</dd></div></dl></div>
     </div>
+    ${recordPersistenceMarkup(recordPersistence)}
     <div class="rd-reward"><div class="rd-reward-earned"><span class="rd-label">RACE CREDITS EARNED</span><strong>+${number(earned)} <small>CR</small></strong><span>${reward?.awarded === true ? 'Ready for your next upgrade' : 'No new credits awarded'}</span></div><div class="rd-reward-wallet"><span class="rd-label">AVAILABLE IN WORKSHOP</span><strong>${number(credits)} <small>CR</small></strong><span>Garage / Performance</span></div></div>
     ${reward?.awarded && reward.persisted === false ? '<p class="rd-save-note" role="status">Credits are available for this session. Your browser could not save them for next time.</p>' : ''}
   </div>`;

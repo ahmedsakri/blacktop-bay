@@ -60,5 +60,6 @@ export function resolveDriveControls(input = {}, {steeringSensitivity = 1} = {})
     brake,
     handbrake: held('drift'),
     nitro,
+    ...(Number.isSafeInteger(input?.nitroGesture) ? {nitroGesture: input.nitroGesture} : {}),
   };
 }

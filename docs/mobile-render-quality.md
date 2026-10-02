@@ -18,11 +18,13 @@ At Standard settings a 390×844 phone changes from DPR 1.0 (329,160 pixels) to D
 
 ## Sustained-load behavior
 
-The existing 2-second warmup, 2-second p75 observation windows, downgrade cooldown and slow recovery remain in place. In mobile Auto:
+Ordinary intervals retain the 2-second warmup, 2-second p75 observation windows, downgrade cooldown and slow recovery. Repeated rendered intervals above 150 ms use a separate severe-load path: at least four consecutive samples and two seconds of accumulated pressure cause a downgrade, followed by the same four-second cooldown. Each sample contributes at most 500 ms, so one very long browser interruption cannot trigger relief alone. Ordinary intervals, inactive sampling and reset clear this consecutive streak. Severe samples also remain in ordinary p75 windows, so alternating stalls and smooth frames cannot conceal sustained overload. In mobile Auto:
 
 1. First sustained slowdown removes shadows and reduces distant-detail work. Drawing sharpness stays unchanged.
 2. Second slowdown reduces drawing ratio to 82% of the viewport-capped starting ratio and reduces distant detail further.
 3. Third slowdown uses exactly DPR 1.0 and the smallest automatic detail distance.
+
+`noteInterruption(nowMs)` handles the application’s automatic safety pauses after gaps longer than 300 ms. The caller reports the active interruption before pausing. Three reports within 30 seconds reduce Auto by one level, with a four-second wall-time cooldown; an isolated event, manual graphics choices, duplicate times and inactive reports do nothing. This bounded history survives the ordinary sampling reset while paused, so repeatedly resuming a struggling device still reduces rendering work. The method never advances the race clock or resumes play.
 
 The automatic mobile controller cannot make a phone render below one drawing pixel per CSS pixel. A standard phone's four DPR states are 1.60 → 1.60 → 1.312 → 1.00. Pauses, menus, hidden tabs, intentional battery-saver frame caps and isolated loading hitches are excluded from adaptation by the caller.
 

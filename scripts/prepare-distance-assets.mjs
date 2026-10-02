@@ -10,10 +10,11 @@ import {resolve} from 'node:path';
 import {readFile,writeFile} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 import {MANUFACTURER_ASSETS} from '../src/manufacturer-asset-manifest.js';
+import {batchDistanceMaterials} from './distance-material-batching.mjs';
 const args=process.argv.slice(2),i=args.indexOf('--tools');
 const require=createRequire(resolve(i<0?'/tmp/camber-distance-tools':args[i+1],'package.json'));
 const load=name=>import(pathToFileURL(require.resolve(name)).href);
-const [{NodeIO},{ALL_EXTENSIONS},{compactPrimitive,dedup,prune,textureCompress,meshopt,dequantize,weld},{MeshoptSimplifier,MeshoptEncoder,MeshoptDecoder},sharpModule]=await Promise.all([load('@gltf-transform/core'),load('@gltf-transform/extensions'),load('@gltf-transform/functions'),load('meshoptimizer'),load('sharp')]);
+const [{NodeIO},{ALL_EXTENSIONS},{compactPrimitive,dedup,prune,textureCompress,meshopt,dequantize,weld,joinPrimitives},{MeshoptSimplifier,MeshoptEncoder,MeshoptDecoder},sharpModule]=await Promise.all([load('@gltf-transform/core'),load('@gltf-transform/extensions'),load('@gltf-transform/functions'),load('meshoptimizer'),load('sharp')]);
 await Promise.all([MeshoptSimplifier.ready,MeshoptEncoder.ready,MeshoptDecoder.ready]);
 const io=new NodeIO().registerExtensions(ALL_EXTENSIONS).registerDependencies({'meshopt.encoder':MeshoptEncoder,'meshopt.decoder':MeshoptDecoder});
 const base=fileURLToPath(new URL('../',import.meta.url)),report={};
@@ -33,11 +34,13 @@ for(const [id,manifest]of Object.entries(MANUFACTURER_ASSETS)){
   const [reduced,error]=MeshoptSimplifier.simplifyWithAttributes(new Uint32Array(idx.getArray()),new Float32Array(pos.getArray()),3,attributes,stride,uv?[.09,.09,.09,.03,.03]:[.09,.09,.09],null,Math.max(36,Math.floor(idx.getCount()*ratio/3)*3),.006,['Permissive']);
   maxError=Math.max(maxError,error);primitive.setIndices(doc.createAccessor().setType('SCALAR').setArray(reduced).setBuffer(idx.getBuffer()));compactPrimitive(primitive);
  }
- await doc.transform(dedup(),prune(),textureCompress({encoder:sharpModule.default,targetFormat:'webp',resize:[192,192],quality:78}),meshopt({encoder:MeshoptEncoder,level:'medium'}));
+ await doc.transform(textureCompress({encoder:sharpModule.default,targetFormat:'webp',resize:[192,192],quality:82}));
+ const batching=await batchDistanceMaterials(doc,manifest,{sharp:sharpModule.default,joinPrimitives});
+ await doc.transform(dedup(),prune(),textureCompress({encoder:sharpModule.default,targetFormat:'webp',quality:85}),meshopt({encoder:MeshoptEncoder,level:'medium'}));
  const names=root.listNodes().map(n=>n.getName());for(const wheel of manifest.wheelNames)if(!names.includes(wheel))throw new Error(id+' lost '+wheel);
- const originalExtras=root.getAsset().extras||{};root.getAsset().extras={...originalExtras,detail:'distance',derivedFrom:manifest.low,changes:(originalExtras.changes||'')+' Additional distance-only attribute-weighted geometry reduction with relative error capped at 0.006 and embedded textures resized to 192px.'};
+ const originalExtras=root.getAsset().extras||{};root.getAsset().extras={...originalExtras,detail:'distance',derivedFrom:manifest.low,changes:(originalExtras.changes||'')+' Additional distance-only attribute-weighted geometry reduction with relative error capped at 0.006 and embedded textures resized to 192px. Distance-only opaque material atlases batch compatible surfaces while retaining named paint, glass, animated lights and four wheel pivots.'};
  const path='/assets/cars/manufacturers/'+id+'-distance.glb',output=resolve(base,'public'+path);await io.write(output,doc);const bytes=await readFile(output);
- report[id]={path,triangles:triangles(doc),sourceTriangles:before,bytes:bytes.length,maxRelativeError:maxError,sha256:createHash('sha256').update(bytes).digest('hex'),sourceSha256:manifest.variants.low.sha256};
+ report[id]={path,primitives:root.listMeshes().reduce((n,m)=>n+m.listPrimitives().length,0),sourcePrimitives:manifest.variants.low.primitives,...batching,triangles:triangles(doc),sourceTriangles:before,bytes:bytes.length,maxRelativeError:maxError,sha256:createHash('sha256').update(bytes).digest('hex'),sourceSha256:manifest.variants.low.sha256};
  console.log(id+': '+before+' -> '+report[id].triangles+' triangles, '+bytes.length+' bytes');
 }
 await writeFile(resolve(base,'src/manufacturer-distance-manifest.js'),'// Generated from licensed low assets by scripts/prepare-distance-assets.mjs. Attribution remains in MANUFACTURER_ASSETS and embedded GLBs.\nexport const MANUFACTURER_DISTANCE_ASSETS=Object.freeze('+JSON.stringify(report,null,2)+');\n');

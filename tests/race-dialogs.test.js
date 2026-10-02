@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  formatRaceTime, pausePanel, howToPlayPanel, finishPanel, finishRowsMarkup, finishStatusText,
+  formatRaceTime, pausePanel, howToPlayPanel, finishPanel, finishRowsMarkup, finishStatusText, recordPersistenceMarkup,
 } from '../src/race-dialogs.js';
 import {CONTROL_DEFAULTS} from '../src/player-controls.js';
 
@@ -124,7 +124,7 @@ test('help reflects active remaps and tap Nitro throughout keyboard and phone in
  assert.match(desktop,/<kbd aria-label="B">B<\/kbd>/);assert.match(desktop,/<kbd aria-label="H">H<\/kbd>/);
  assert.match(desktop,/<kbd aria-label="T">T<\/kbd>/);assert.match(desktop,/<kbd aria-label="X">X<\/kbd>/);
  for(const html of [desktop,phone]){
-  assert.match(html,/Tap again to stop/);assert.match(html,/tap Nitro on and off/);
+  assert.match(html,/second tap in a Burst or blue Perfect window upgrades the boost/);assert.match(html,/Tap outside a timing window, or after the upgrade, to stop/);assert.match(html,/tap Nitro to start or stop/);
   assert.doesNotMatch(html,/HOLD SHIFT|HOLD NITRO|hold Nitro to boost|Release to recharge|ARROWS \/ A|Left Shift|Right Shift|<kbd[^>]*>Space</);
  }
  assert.match(phone,/TAP NITRO/);
@@ -139,4 +139,19 @@ test('result record descriptions identify the build and handling version for bot
   assert.match(html,/build and handling version/);
   if(mode==='race')assert.match(html,/mode, difficulty, build/);
  }
+});
+
+
+test('personal best persistence is explicit and unsaved records expose recovery actions',()=>{
+ const receipt=Object.freeze({persisted:false,pending:true,reason:'write-failed'});
+ const html=finishPanel({race:race(),isBest:true,bestTime:145.23,recordPersistence:receipt});
+ assert.match(html,/Personal best not saved yet/);assert.match(html,/available for this session/);
+ assert.match(html,/id="retry-record-save"/);assert.match(html,/id="export-unsaved-records"/);
+ assert.doesNotMatch(html,/Personal best saved on this device/);
+ const saved=recordPersistenceMarkup({persisted:true,pending:false});
+ assert.match(saved,/Personal best saved on this device/);assert.doesNotMatch(saved,/<button/);
+ // Missing or contradictory receipts must never invent a persisted result.
+ assert.doesNotMatch(finishPanel({race:race(),bestTime:140}),/saved on this device/i);
+ assert.match(recordPersistenceMarkup({persisted:true,pending:true}),/not saved yet/);
+ assert.doesNotMatch(recordPersistenceMarkup({persisted:false,pending:false,reason:'<script>'}),/saved on this device|<script>/);
 });

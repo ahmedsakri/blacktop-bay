@@ -123,3 +123,15 @@ export function createTyreSoundMotion() {
     squealGain: scrub ** 2.8 * .0038, squealFrequency: 760 + scrub * 160 + Math.min(speed, 60) * 1.2};
  }};
 }
+
+// Coherent extra layers use the same smoothed load/revs and shift torque as the
+// core engine. Authored texture, not measured engine orders or manufacturer RPM.
+export function engineDetailFrame({voice = drivingVoice(), motion = {}, vehicle = {}, speed = 0} = {}) {
+ const rev=clamp(number(motion.rev),0,1.1),load=clamp(number(motion.load),0,1),torque=clamp(number(motion.torque,1),0,1);
+ const pitch=Math.max(20,number(motion.pitch,voice.idle));
+ const electric=voice.electric, induction=vehicle.powertrain==='hybrid'||/turbo/i.test(`${vehicle.name||''} ${vehicle.specs?.body||''}`);
+ return {exhaustFrequency:Math.max(28,pitch*(vehicle.family==='formula'?1.5:.75)),
+  exhaustGain:electric?0:Math.min(.017,voice.body*.10)*( .15+load*.85)*torque*(.5+rev*.5),
+  turbineFrequency:electric?pitch*1.503:180+rev*310+Math.min(100,Math.max(0,number(speed)))*1.2,
+  turbineGain:electric?.0035*load*rev:induction?.0045*load*load*rev*torque:.0018*load*rev*torque};
+}

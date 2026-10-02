@@ -40,3 +40,8 @@ test('an exhausted held trigger does not turn collected charge into surprise boo
   n.charge=.1;tick(n,true,.05);assert.equal(n.active,false);assert.equal(n.charge,.1);
   tick(n,false,1/120);tick(n,true,1/120);assert.equal(n.active,true);
 });
+
+test('a timed press without enough remaining fuel cannot emit a Perfect objective event',()=>{
+ const n=createNitro(5);n.charge=.001;n._gestureAge=.45;
+ stepNitro(n,true,true,1/120);assert.equal(n.active,false);assert.equal(n.event.id,0);assert.equal(n.event.kind,'none');
+});

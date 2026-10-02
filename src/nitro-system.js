@@ -18,11 +18,22 @@ export function interruptNitro(nitro) {
   nitro._gestureAge = -1; nitro._startedFull = false; nitro._special = 'normal';
 }
 
-export function stepNitro(nitro, held, eligible, dt) {
+export function canUpgradeNitro(nitro, nextStep = 1 / 120) {
+  if (!nitro?.active || nitro.locked || nitro._special !== 'normal') return false;
+  const age = nitro._gestureAge < 0 ? -1 : nitro._gestureAge + nextStep;
+  return age >= 0 && age <= NITRO_TIMING.doubleTap && nitro._startedFull && nitro.charge >= nitro.capacity * .8
+    || age >= NITRO_TIMING.perfectStart && age <= NITRO_TIMING.perfectEnd;
+}
+
+export function stepNitro(nitro, held, eligible, dt, gestureId) {
   if (nitro._gestureAge >= 0) nitro._gestureAge += dt;
-  const pressed = held && !nitro._held;
+  const trackedGesture = Number.isSafeInteger(gestureId);
+  const physicalEdge = trackedGesture && gestureId > 0 && gestureId !== nitro._gestureId;
+  const pressed = held && (trackedGesture ? physicalEdge : !nitro._held);
+  if (Number.isSafeInteger(gestureId)) nitro._gestureId = gestureId;
   nitro._held = held;
   if (!held) nitro.locked = false;
+  let selectedGesture = null;
   if (pressed && eligible && !nitro.locked && nitro.charge > 0) {
     const age = nitro._gestureAge;
     if (age >= 0 && age <= NITRO_TIMING.doubleTap && nitro._startedFull && nitro.charge >= nitro.capacity * .8) {
@@ -33,7 +44,7 @@ export function stepNitro(nitro, held, eligible, dt) {
       nitro._special = 'normal'; nitro._gestureAge = 0;
       nitro._startedFull = nitro.charge >= nitro.capacity * .98;
     }
-    nitro.event = {id: nitro.event.id + 1, kind: nitro._special};
+    selectedGesture = nitro._special;
   }
   if (nitro._gestureAge > NITRO_TIMING.expire) nitro._gestureAge = -1;
   // Starting at rest while holding still gives the familiar held boost when the
@@ -43,6 +54,9 @@ export function stepNitro(nitro, held, eligible, dt) {
   if (nitro.active) nitro.charge = Math.max(0, nitro.charge - dt * tuning.drain);
   if (held && nitro.charge < dt * tuning.drain) { nitro.locked = true; nitro.active = false; }
   nitro.mode = nitro.active ? mode : 'off';
+  // Objective counters only observe a boost that actually engaged. A timing
+  // press with a sub-step remainder of fuel must not award a free technique.
+  if (selectedGesture && nitro.active) nitro.event = {id:nitro.event.id+1,kind:selectedGesture};
   nitro.timingProgress = nitro._gestureAge < 0 ? 0 : Math.min(1, nitro._gestureAge / NITRO_TIMING.expire);
   nitro.perfectWindow = nitro._gestureAge >= NITRO_TIMING.perfectStart && nitro._gestureAge <= NITRO_TIMING.perfectEnd;
   return NITRO_MODES[nitro.mode];

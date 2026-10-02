@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { MANUFACTURER_ASSETS } from '../src/manufacturer-asset-manifest.js';
-import { prepareManufacturerCar, isManufacturerCarReady, createManufacturerCar } from '../src/manufacturer-car.js';
+import { prepareManufacturerCar, isManufacturerCarReady, createManufacturerCar,manufacturerCacheStatus } from '../src/manufacturer-car.js';
 
 const entries = Object.entries(MANUFACTURER_ASSETS);
 const wheelNames = ['wheel_front_left', 'wheel_front_right', 'wheel_rear_left', 'wheel_rear_right'];
@@ -312,4 +312,26 @@ test('switching a crashed manufacturer car to distance detail keeps fragment exp
  car.setDistanceDetail(90);car.update({...farInput,recovery:{id:1},impact:{...impact,id:2,remaining:0},time:3.08});
  assert.equal(stats.dents,0,'recovery restores the hidden near body');
  assert.equal(car.group.getObjectByName('crash-undertray'),undefined);
+});
+
+
+test('idle source memory obeys a byte ceiling without evicting the just-prepared or active model',async t=>{
+ const [id,manifest]=entries.find(([id])=>!isManufacturerCarReady(id));const source=fixture(manifest);
+ source.paint.map.image={width:4096,height:4096};let released=0;source.paint.map.addEventListener('dispose',()=>released++);
+ t.mock.method(GLTFLoader.prototype,'loadAsync',async()=>({scene:source.scene}));
+ await prepareManufacturerCar(id,{low:true});assert.equal(isManufacturerCarReady(id,{low:true}),true);
+ const car=createManufacturerCar({assetId:id,low:true});await new Promise(r=>setTimeout(r,5));assert.equal(released,0);
+ assert.ok(manufacturerCacheStatus().estimatedResidentBytes>manufacturerCacheStatus().idleByteLimit);
+ car.dispose();assert.equal(released,1);assert.equal(isManufacturerCarReady(id,{low:true}),false);
+ assert.ok(manufacturerCacheStatus().idleEstimatedBytes<=manufacturerCacheStatus().idleByteLimit);
+});
+
+test('context-lost distance warmup remains hidden and retries after restoration',async t=>{
+ const [id,manifest]=entries.find(([id])=>id==='ferrari-testarossa');
+ t.mock.method(GLTFLoader.prototype,'loadAsync',async()=>({scene:fixture(manifest).scene}));
+ await prepareManufacturerCar(id,{low:true});const car=createManufacturerCar({assetId:id,low:true});t.after(()=>car.dispose());
+ let lost=true,compiled=0;const camera=new THREE.PerspectiveCamera(),scene=new THREE.Scene(),renderer={getContext:()=>({isContextLost:()=>lost}),initTexture(){},async compileAsync(){compiled++;}};
+ const preparation={renderer,camera,scene,yieldControl:async()=>{}};
+ assert.equal(await car.prepareDistanceDetail(preparation),false);assert.equal(car.group.userData.distanceDetail.available,true);assert.equal(car.group.userData.distanceDetail.tier,'near');
+ lost=false;assert.equal(await car.prepareDistanceDetail(preparation),true);assert.equal(compiled,1);car.setDistanceDetail(100);assert.equal(car.group.userData.distanceDetail.tier,'distance');
 });

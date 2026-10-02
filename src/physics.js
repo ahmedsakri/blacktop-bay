@@ -149,23 +149,35 @@ export function resetCar(race, { reason = 'manual', retreat = 0, occupants = rac
   const track = getTrack(race.track), fromS = race._safeS;
   // An automatic recovery only gives up already validated distance. It never
   // jumps toward the next gate, adds a lap, or borrows the nearest other bend.
-  let lostDistance = Math.min(Math.max(0, retreat), race._lapDistance, fromS);
-  let location = sampleTrack(fromS - lostDistance, track), lane = 0;
-  if (reason !== 'manual' || trackObstacles(track).some(obstacle => obstacleBlocksPosition(obstacle, location.x, location.y || 0, location.z, race.contactShape.length / 2, race.contactShape.height))) {
-    let found = false;
-    for (const back of [retreat, retreat + 6, retreat + 14, retreat + 24]) {
-      const loss = Math.min(back, race._lapDistance, fromS), point = sampleTrack(fromS - loss, track);
-      for (const offset of [0, -3, 3]) {
-        const x = point.x + point.nx * offset, z = point.z + point.nz * offset;
-        if (occupants.some(rival => rival !== race && rival.state === 'racing' && Math.hypot(rival.car.x - x, rival.car.z - z) < 6.2)) continue;
-        if (trackObstacles(track).some(obstacle => obstacleBlocksPosition(obstacle, x, point.y || 0, z, race.contactShape.length / 2, race.contactShape.height))) continue;
-        location = point; lane = offset; lostDistance = loss; found = true; break;
-      }
-      if (found) break;
+  let lostDistance = 0, location = null, lane = 0;
+  const shape = carContactShape(race), obstacles = trackObstacles(track);
+  // Manual and automatic recovery share the same placement test. Recovery
+  // cooldown protects against wrecks; it is not permission to overlap traffic.
+  const baseRetreat = Math.max(0, finite(retreat));
+  for (const back of [baseRetreat, baseRetreat + 6, baseRetreat + 14, baseRetreat + 24]) {
+    const loss = Math.min(back, race._lapDistance, fromS), point = sampleTrack(fromS - loss, track);
+    for (const offset of [0, -3, 3]) {
+      const x = point.x + point.nx * offset, z = point.z + point.nz * offset;
+      const candidate = {vehicle: race.vehicle, contactShape: {...shape, radius: shape.radius + .6},
+        car: {x, y: point.y || 0, z, yaw: Math.atan2(point.tx, point.tz)}};
+      if (Math.abs(offset) + carRoadClearance(candidate, point) > track.width / 2 - .25) continue;
+      if (occupants.some(other => {
+        if (other === race || !other.car || !['racing', 'finished'].includes(other.state)) return false;
+        const body = other.car, gap = Math.hypot(body.x-x, body.z-z);
+        // Existing automatic recovery keeps its wider traffic buffer. Sparse
+        // external occupant snapshots use that same conservative fallback.
+        if (![body.y,body.yaw].every(Number.isFinite)) return gap < 6.2;
+        const vertical = body.y < candidate.car.y+shape.height && candidate.car.y < body.y+carContactShape(other).height;
+        return Boolean(capsuleContact(candidate,other)) || reason !== 'manual' && vertical && gap < 6.2;
+      })) continue;
+      if (obstacles.some(obstacle => obstacleBlocksPosition(obstacle, x, point.y || 0, z, shape.length / 2 + .25, shape.height))) continue;
+      location = point; lane = offset; lostDistance = loss; break;
     }
-    // Wait for a gap instead of materializing inside an opponent at the grid.
-    if (!found) return false;
+    if (location) break;
   }
+  // A full grid can have no safe gap. Leave all state untouched and let the
+  // driver retry rather than moving through a car, wall, or progress gate.
+  if (!location) return false;
   Object.assign(race.car, {
     x: location.x + location.nx * lane, z: location.z + location.nz * lane, yaw: Math.atan2(location.tx, location.tz),
     speed: 0, forwardSpeed: 0, lateralSpeed: 0, vx: 0, vz: 0,
@@ -207,6 +219,7 @@ export function stepRace(race, input = {}, dt = STEP) {
     throttle: clamp(finite(input.throttle), 0, 1),
     brake: Boolean(input.brake), handbrake: Boolean(input.handbrake),
     nitro: Boolean(input.nitro),
+    nitroGesture: Number.isSafeInteger(input.nitroGesture) ? input.nitroGesture : undefined,
   };
   const track = getTrack(race.track);
   while (race._accumulator + 1e-10 >= STEP && !race.allFinished) {
@@ -367,7 +380,7 @@ function simulate(race, input, dt, occupants) {
   let forward = car.vx * fx + car.vz * fz;
   let lateral = car.vx * rx + car.vz * rz;
   const nitroTuning = stepNitro(race.nitro, input.nitro,
-    input.throttle > 0 && !input.brake && !input.handbrake && speed > 2 && race._crashPenaltyTimer <= 0, dt);
+    input.throttle > 0 && !input.brake && !input.handbrake && speed > 2 && race._crashPenaltyTimer <= 0, dt, input.nitroGesture);
   car.nitroActive = race.nitro.active;
   car.braking = input.brake;
   const impactDrive = .55 + .45 * smoothRange(.32 - race._crashPenaltyTimer, 0, .32);

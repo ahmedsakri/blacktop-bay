@@ -2,7 +2,7 @@ import { exportSaveBackup, inspectSaveBackup, importSaveBackup, recoverSaveImpor
 import { normalizePlayerControls, actionForKey, keyLabel, createNitroLatch } from './player-controls.js';
 import { mountPlayerTools, makeResultCard } from './player-tools-ui.js';
 import { recordScope, interpolateGhost, ghostTimeAtProgress, createGhostTiming, challengeURL, readChallenge } from './personal-ghost.js';
-import { LESSONS, createDrivingSchool, schoolSeen, saveSchool } from './driving-school.js';
+import { LESSONS, createDrivingSchool, schoolSeen, saveSchool, schoolLessonCopy } from './driving-school.js';
 import { createAdaptiveQuality } from './adaptive-quality.js';
 import { waitForPaint } from './paint-readiness.js';
 import { PAINT_COLORS, PAINT_FINISHES, loadPaint, savePaint, getPaint, applyPaint } from './paint.js';
@@ -27,7 +27,10 @@ import "./driver-development.css";
 import "./logo-loader.css";
 import "./screen-mode.css";
 import { screenMode, toggleScreenMode, screenHelpMarkup } from './screen-mode.js';
+import {createDialogNavigation, trapDialogFocus} from './dialog-navigation.js';
 import { createFrameBudget } from './frame-budget.js';
+import { createRaceTiming, advanceRaceTime } from './race-timing.js';
+import { commitTourAdvance, recoverTourAdvance } from './tour-transaction.js';
 import { registerPWA, canInstallPWA, requestInstallPWA } from './pwa.js';
 import './mobile-viewport.css';
 import './player-tools.css';
@@ -47,7 +50,7 @@ import { RACE_MODES, getDifficulty, normalizeRaceOptions, raceFieldSize } from "
 import { CAREER_KEY, normalizeCareer, beginChampionship, nextChampionshipRace, recordCareerResult, bindChampionshipFleet, refreshChampionshipRound, finalizeChampionshipRound, finalizeInterruptedTourRounds } from "./race-career.js";
 import { raceSetupMarkup, careerResultMarkup, championshipStandingsMarkup } from "./race-hq.js";
 import { NEW_CARS, loadFavorites, saveFavorites, findCars, hasCarFilters, clearCarFilters, carLibraryMarkup, carLibraryCard, circuitLibraryMarkup, circuitLibraryCards, findCircuits } from "./collection-browser.js";
-import { pausePanel, howToPlayPanel, finishPanel, finishRowsMarkup, finishStatusText } from "./race-dialogs.js";
+import { pausePanel, howToPlayPanel, finishPanel, finishRowsMarkup, finishStatusText, recordPersistenceMarkup } from "./race-dialogs.js";
 import { icon } from './icons.js';
 import { garageStatsMarkup, garageBuildMarkup, circuitMapMarkup } from "./collection-ui.js";
 import { createDrivingInputs, resolveDriveControls, normalizeSteeringSensitivity, isDrivingShortcut } from "./driving-controls.js";
@@ -67,7 +70,7 @@ import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
 import { SMAAPass } from "three/addons/postprocessing/SMAAPass.js";
 import { createWorld } from "./world.js";
 import { createCar } from "./car.js";
-import { prepareManufacturerCar } from "./manufacturer-car.js";
+import { prepareManufacturerCar, prepareManufacturerInstances, configureManufacturerRenderer } from "./manufacturer-car.js";
 import { MANUFACTURER_RIVAL_VEHICLES, createOpponentFleet } from "./opponent-fleet.js";
 import { createGarage } from "./garage.js";
 import { DEFAULT_VEHICLE_ID, VEHICLES, getVehicle } from "./vehicles.js";
@@ -93,10 +96,11 @@ import {
 } from "./physics.js";
 import { createEffects } from "./effects.js";
 import { createAudio } from "./audio.js";
+import { crowdZoneLevel } from './race-sound.js';
 import { normalizeLobbyStyle } from "./lobby-music.js";
 import {
   loadRecords,
-  saveResult,
+  saveResultWithStatus, retryRecordSave, recordSaveStatus, exportPendingRecords, importPendingRecords,
   setSound,
   clearRecords,
   STORAGE_KEY,
@@ -114,6 +118,8 @@ document.title = `${BRAND.name} — AppsOverFlow`;
 function localStore(){try{return localStorage;}catch{return null;}}
 const saveRecovery=recoverSaveImport({storage:localStore()});
 if(saveRecovery.recoveryRequired){showStartupRecovery();throw new Error('Save recovery required before loading game progress.');}
+const tourRecovery=recoverTourAdvance(localStore());
+if(tourRecovery.recoveryRequired){showTourRecovery();throw new Error('Tour recovery required before loading game progress.');}
 let school=null, pendingStartOptions={}, ghostModel=null, ghostReference=[], ghostTiming=null, lastGhostSector=0;
 const nitroLatch=createNitroLatch();
 let challenge=null,lastResultDialog=null,pauseResumeMode="racing";
@@ -162,6 +168,7 @@ if (requestedTrack || requestedVehicle) {
 }
 if (requestedVehicle) document.title = `${getVehicle(requestedVehicle).name} — ${BRAND.name}`;
 const recordStore = {
+  get storageIdentity(){return localStore();},
   getItem(key) {
     return localStorage.getItem(
       `${key}-${currentRecordScope()}`,
@@ -208,7 +215,7 @@ function event(name, extra = {}) {
     ...extra,
   });
 }
-let records = loadRecords(recordStore),
+let records = loadRecords(recordStore,{scope:currentRecordScope()}),
   sound = createAudio(),
   mode = "menu",
   race = newRace(),
@@ -220,7 +227,6 @@ let records = loadRecords(recordStore),
   frames = [],
   nextFrame = 0,
   modalKind = "",
-  previousFocus = null,
   toastTimer = 0,
   countdownTimer = 0,
   pendingLandscapeStart = false,
@@ -249,7 +255,7 @@ function updatePlayerControls(){
  document.body.classList.toggle('controls-left-handed',preferences.controls.leftHanded);
  const c=preferences.controls;document.body.style.setProperty('--control-scale',c.touchSize);document.body.style.setProperty('--control-inset',c.touchInset+'px');document.body.style.setProperty('--control-lift',c.touchLift+'px');
  const b=c.bindings;const hint=document.querySelector('.drive-hint');if(hint)hint.textContent=`${keyLabel(b.left)} / ${keyLabel(b.right)} STEER · ${keyLabel(b.brake)} BRAKE · ${keyLabel(b.nitro)} NITRO`;
- document.querySelector('.nitro-touch-hint').textContent=c.nitroToggle?'TAP ON / TAP OFF':'HOLD TO BOOST';
+ document.querySelector('.nitro-touch-hint').textContent=c.nitroToggle?'TAP TO BOOST':'HOLD TO BOOST';
  document.querySelector('[data-input="nitro"]').setAttribute('aria-label',c.nitroToggle?'Tap to toggle Nitro boost':'Hold for Nitro boost');
  if(renderer?.domElement)renderer.domElement.setAttribute('aria-label',`Race canvas. Automatic acceleration. ${keyLabel(b.left)} and ${keyLabel(b.right)} steer. ${keyLabel(b.brake)} brakes. ${keyLabel(b.nitro)} boosts. ${keyLabel(b.reset)} resets. ${keyLabel(b.pause)} pauses.`);
 }
@@ -269,13 +275,63 @@ sound.setVolume(preferences.volume);sound.setMusicVolume(preferences.musicVolume
 updateSound();
 let renderer, world, player, effects, camera, composer, carFill, garageStudio, renderPass, bloomPass;
 let garageFrame = null, lobbyFrame = null, pickupView=null, gamepadPauseHeld=false;
+const dialogNavigation=createDialogNavigation({document,dialog:$('dialog'),fallback:()=>mode==='garage'?$('garage-back'):mode==='menu'?$('how'):renderer?.domElement});
 const frameBudget = createFrameBudget();
+const raceTiming = createRaceTiming();
 const adaptiveQuality=createAdaptiveQuality({...graphicsViewport(),choice:preferences.quality});
 let lastRendered=0, performanceSamples=[], lastPerformanceReport=0;
-let directRender = false;
+let directRender = false, graphicsState='ready', graphicsGeneration=0, graphicsTimer=null, graphicsReturn=null, graphicsLoader=null, currentDialog=null;
+function buildComposer(){
+  const scene=renderPass?.scene||world.scene;
+  for(const pass of composer?.passes||[])pass.dispose?.();composer?.dispose();
+  composer=new EffectComposer(renderer);renderPass=new RenderPass(scene,camera);composer.addPass(renderPass);
+  bloomPass=new UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight),.18,.5,1.05);
+  composer.addPass(bloomPass);composer.addPass(new SMAAPass());composer.addPass(new OutputPass());
+}
+function graphicsFailure(){
+  if(graphicsState==='ready')return;
+  graphicsGeneration++;graphicsState='failed';graphicsLoader?.destroy();graphicsLoader=null;
+  dialog({kind:'graphics',eyebrow:'YOUR RACE IS PAUSED',title:'Restore the <em>view.</em>',html:'<p>The browser could not restore graphics yet. Your current run is held in memory. Try restoring again, or save your progress before reloading.</p>',actions:[
+    {label:'TRY RESTORING',primary:true,action:()=>{if(renderer.getContext().isContextLost()){renderer.forceContextRestore();}else void restoreGraphics();}},
+    {label:'DOWNLOAD BACKUP',action:()=>{const result=saveSnapshot();if(result.ok)downloadBlob(new Blob([result.json],{type:'application/json'}),result.filename);else toast(result.error);}},
+    {label:'RELOAD GAME',action:()=>location.reload()},
+  ]});
+}
+function loseGraphics(e){
+  e.preventDefault();if(graphicsState==='lost')return;
+  if(['racing','countdown'].includes(mode))pauseGame();
+  if(racePreparing){fleetGeneration++;fleetPreparation?.abort();racePreparing=false;menu();}
+  if(!graphicsReturn)graphicsReturn={mode,dialog:currentDialog,modalKind};graphicsState='lost';graphicsGeneration++;
+  graphicsLoader?.destroy();graphicsLoader=null;
+  clearInput();sound.setPageActive?.(false);raceTiming.reset();clearTimeout(graphicsTimer);
+  dialog({kind:'graphics',eyebrow:'HOLDING YOUR PLACE',title:'Bringing back the <em>track.</em>',html:logoLoaderMarkup({label:'Restoring graphics…',detail:'Your car, clock and credits are held safely.'}),actions:[]});
+  graphicsLoader=bindLogoLoader($('dialog-content').querySelector('[data-logo-loader]'));
+  graphicsTimer=setTimeout(graphicsFailure,12000);
+}
+async function restoreGraphics(){
+  if(graphicsState==='ready'||graphicsState==='restoring')return;
+  const generation=++graphicsGeneration;graphicsState='restoring';clearTimeout(graphicsTimer);graphicsTimer=setTimeout(graphicsFailure,15000);
+  const current=()=>generation===graphicsGeneration&&!renderer.getContext().isContextLost();
+  try{
+    renderer.resetState();await world.rebuildEnvironment();if(!current())return;
+    await garageStudio.rebuildEnvironment();if(!current())return;
+    configureManufacturerRenderer(renderer,{camera,scene:world.scene});
+    for(const scene of [world.scene,garageStudio.scene])scene.traverse(object=>{if(object.shadow){object.shadow.map?.dispose();object.shadow.map=null;object.shadow.needsUpdate=true;}});
+    buildComposer();applyQuality();
+    await prepareManufacturerInstances(renderer,[world.scene],{camera,scene:world.scene});if(!current())return;
+    await prepareManufacturerInstances(renderer,[garageStudio.scene],{camera,scene:garageStudio.scene});if(!current())return;
+    clearTimeout(graphicsTimer);graphicsLoader?.destroy();graphicsLoader=null;graphicsState='ready';
+    raceTiming.reset(performance.now());frameBudget.reset();lastRendered=0;last=performance.now();clearInput();sound.setPageActive?.(!document.hidden);
+    const previous=graphicsReturn;graphicsReturn=null;closeDialog();
+    if(mode==='paused')pauseSettingsReturn();
+    else if(mode==='finished'&&lastResultDialog){dialog(lastResultDialog);updateFinish();}
+    else if(previous?.modalKind){const reopen={how,paint:showPaint,upgrades:showUpgrades,'car-development':showCarDevelopment,collection:openCarLibrary,campaign:showCampaign,'race-setup':showRaceSetup,privacy,backup:showSaveBackup}[previous.modalKind];reopen?.();}
+    updateTouchControls();renderScene();toast('Graphics restored. Your race is ready when you are.');
+  }catch(error){if(generation!==graphicsGeneration)return;console.warn('Graphics restoration failed',error);graphicsFailure();}
+}
 function applyQuality(){if(!renderer)return;const q=adaptiveQuality.settings;world?.setQuality?.(q);directRender=!q.bloom;renderer.setPixelRatio(q.pixelRatio);renderer.shadowMap.enabled=q.shadows;if(composer){composer.setPixelRatio(q.pixelRatio);composer.setSize(innerWidth,innerHeight);}if(bloomPass)bloomPass.enabled=q.bloom;if(world?.reflection)world.reflection.visible=q.reflection&&!TRACK.elevationProfile&&!["desert","parkland"].includes(world.scene.userData.venueEnvironment?.type);}
 function renderScene(){renderer.info.reset();if(directRender)renderer.render(renderPass.scene,camera);else composer.render();}
-let carSelectionPending = false, racePreparing = false, fleetGeneration = 0;
+let carSelectionPending = false, racePreparing = false, fleetGeneration = 0, fleetPreparation=null;
 updateMenu();
 let garageYaw = -.75,
   garageDrag = null;
@@ -297,7 +353,8 @@ const camTarget = new THREE.Vector3(),
   lookTarget = new THREE.Vector3(),
   smoothedLook = new THREE.Vector3();
 async function prepareOpponents(seed, onProgress = () => {}) {
-  const generation=++fleetGeneration;
+  fleetPreparation?.abort();fleetPreparation=new AbortController();
+  const generation=++fleetGeneration;const signal=fleetPreparation.signal;
   const fixedField=preferences.mode==='championship'?nextChampionshipRace(career)?.rivalVehicles:null;
   const ids=school||preferences.mode==='time-attack'?[]:fixedField||createOpponentFleet({playerVehicle:preferences.vehicle,playerStats:fittedStats(),seed,mobile});
   const prepared=[],loadedIds=[];
@@ -316,6 +373,11 @@ async function prepareOpponents(seed, onProgress = () => {}) {
       }));
       const failed=outcomes.find(result=>result.status==='rejected');if(failed)throw failed.reason;
       if(generation!==fleetGeneration){prepared.forEach(m=>m?.dispose());return false;}
+    }
+    if(generation!==fleetGeneration){prepared.forEach(m=>m?.dispose());return false;}
+    if(prepared.length){
+      onProgress({label:'Finishing the grid',detail:'Preparing car reflections and textures.'});
+      await prepareManufacturerInstances(renderer,prepared,{camera,scene:world.scene,signal});
     }
     if(generation!==fleetGeneration){prepared.forEach(m=>m?.dispose());return false;}
     rivalModels.forEach(m=>m.dispose());rivalModels=prepared;
@@ -338,19 +400,18 @@ function updateRaceOptions(){
   $('lobby-mode-description').textContent=campaignEvent ? campaignEvent.objectives[0].label : selectedMode.description;
   for(const button of document.querySelectorAll('[data-lobby-mode]'))button.setAttribute('aria-pressed',String(!campaignEvent && button.dataset.lobbyMode===option.mode));
   $('open-campaign').setAttribute('aria-pressed',String(Boolean(campaignEvent)));
-  records=loadRecords(recordStore);if(typeof preferences.sound==='boolean')records.sound=preferences.sound;
+  records=loadRecords(recordStore,{scope:currentRecordScope()});if(typeof preferences.sound==='boolean')records.sound=preferences.sound;
   updateWallet();
   const goalButton=$("next-driver-goal");if(goalButton){const goal=nextGoalSuggestion({campaign,mastery,vehicle:preferences.vehicle});goalButton.textContent="NEXT GOAL · "+goal.label;goalButton.title=goal.description;goalButton.onclick=showCampaign;}
 }
 function finalizeTour(){if(mode!=="finished")return;const result=finalizeChampionshipRound(career,race);career=result.state;if(result.changed&&!persistCareer())toast("Tour standings saved for this session only.");}
-async function continueTour(){finalizeTour();const next=nextChampionshipRace(career);if(!next)return;
+async function continueTour(){const stagedCareer=mode==='finished'?finalizeChampionshipRound(career,race).state:career;const next=nextChampionshipRace(stagedCareer);if(!next)return;
   const nextPreferences={...preferences,vehicle:next.vehicle,track:next.track,mode:next.mode,difficulty:next.difficulty};
   // Commit the reload's inputs before changing the visible selection. A failed
   // write leaves the current car, world and pending tour intact.
-  try {
-    localStorage.setItem(CAREER_KEY,JSON.stringify(career));
-    localStorage.setItem(preferenceKey,JSON.stringify(nextPreferences));
-  } catch {toast('Your browser could not save the next tour round. Your current selection and tour are unchanged.');return;}
+  const committed=commitTourAdvance(localStore(),{career:stagedCareer,preferences:nextPreferences});
+  if(!committed.ok){if(committed.recoveryRequired){showTourRecovery();return;}toast('Your browser could not save the next tour round. Your current selection and tour are unchanged.');return;}
+  career=stagedCareer;
   selectedCampaignId=null;
   Object.assign(preferences,nextPreferences);
   if(TRACK.id!==next.track||race.vehicle!==next.vehicle){location.assign(circuitPath(next.track));return;}
@@ -418,6 +479,7 @@ async function initGame() {
     // Track signage is rasterized once; load its typeface before painting it.
     if(document.fonts) await Promise.all(['32px "Racing Sans One"','800 32px "Barlow Condensed"'].map(font=>document.fonts.load(font))).catch(()=>{});
     world = createWorld(renderer, { low: loadedGeometry.worldLow, reducedMotion: reduced });
+    configureManufacturerRenderer(renderer,{camera,scene:world.scene});
     loadProgress("Preparing your car…", getVehicle(preferences.vehicle).name);
     await nextPaint();
     const selectedAsset = getVehicle(preferences.vehicle).assetId;
@@ -435,18 +497,7 @@ async function initGame() {
     effects = createEffects(world.scene, { low: loadedGeometry.worldLow });
     pickupView=createPickupView(world.scene,race.pickups);
 
-    composer = new EffectComposer(renderer);
-    renderPass = new RenderPass(world.scene, camera);
-    composer.addPass(renderPass);
-    bloomPass = new UnrealBloomPass(
-        new THREE.Vector2(innerWidth, innerHeight),
-        0.18,
-        0.5,
-        1.05,
-      );
-    composer.addPass(bloomPass);
-    composer.addPass(new SMAAPass());
-    composer.addPass(new OutputPass());
+    buildComposer();
     applyQuality();
     placeCar();
     updateCamera(1, true);
@@ -481,11 +532,8 @@ async function initGame() {
     setTimeout(() => {$("loading").hidden = true;startupLoader.destroy();}, reduced ? 0 : 250);
     last = performance.now();
     requestAnimationFrame(tick);
-    renderer.domElement.addEventListener("webglcontextlost", (e) => {
-      e.preventDefault();
-      pauseGame();
-      toast("Graphics paused. Reload the page to restore the scene.");
-    });
+    renderer.domElement.addEventListener('webglcontextlost',loseGraphics);
+    renderer.domElement.addEventListener('webglcontextrestored',()=>void restoreGraphics());
   } catch (error) {
     console.error(error);
     $("unsupported").hidden = false;
@@ -659,7 +707,7 @@ function mountSteeringSettings() {
       : screenMode().ios ? screenHelpMarkup(screenMode())
       : '<p>Open your browser’s menu and choose <strong>Install Camber Reign</strong>, <strong>Install this page as an app</strong>, or <strong>Add to Home Screen</strong>. On a Mac in Safari, choose <strong>File → Add to Dock</strong>.</p><p>If installation is unavailable, you can keep playing in this browser.</p>';
   };
-  mountPlayerTools($('dialog-content'),{getControls:()=>preferences.controls,onChange(next){const before=preferences.controls.showGhost;preferences.controls=normalizePlayerControls(next);clearInput();updatePlayerControls();if(!before&&preferences.controls.showGhost&&race.mode==="time-attack"&&["paused","racing"].includes(mode))startPersonalGhost();return saveChoices();},onBackup:showSaveBackup});
+  mountPlayerTools($('dialog-content'),{getControls:()=>preferences.controls,onChange(next){const before=preferences.controls.showGhost;preferences.controls=normalizePlayerControls(next);clearInput();updatePlayerControls();if(!before&&preferences.controls.showGhost&&race.mode==="time-attack"&&["paused","racing"].includes(mode))startPersonalGhost();return saveChoices();},onBackup:()=>{dialogNavigation.pushParent({restore:mode==='paused'?pauseSettingsReturn:how});showSaveBackup();}});
   if (!usesTouchControls()) return;
   const section = document.createElement('section'); section.className = 'steering-settings';
   section.setAttribute('aria-labelledby', 'steering-settings-heading');
@@ -727,15 +775,17 @@ function closeDialog() {
   developmentView?.destroy(); developmentView=null;
   document.body.classList.remove("paint-preview");
   modalKind = "";
+  currentDialog=null;
   $("modal-backdrop").hidden = true;
   $("menu").inert = false;
   $("garage").inert = false;
   document.querySelector(".topbar").inert = false;
-  if (previousFocus?.isConnected) previousFocus.focus({ preventScroll: true });
+  dialogNavigation.close();
 }
 function dialog({ kind, title, eyebrow, html, actions }) {
+  currentDialog={kind,title,eyebrow,html,actions};
   developmentView?.destroy(); developmentView=null;
-  previousFocus = document.activeElement;
+  dialogNavigation.open();
   modalKind = kind;
   $("dialog").dataset.kind = kind;
   $("dialog-eyebrow").textContent = eyebrow;
@@ -756,6 +806,24 @@ function dialog({ kind, title, eyebrow, html, actions }) {
   document.querySelector(".topbar").inert = true;
   $("modal-backdrop").hidden = false;
   $("dialog").focus();
+  if(kind==='result')mountResultPersistence();
+}
+function mountResultPersistence(){
+  const receipt=recordSaveStatus(recordStore,{scope:currentRecordScope()});
+  if($('record-save-status'))$('record-save-status').outerHTML=recordPersistenceMarkup(receipt);
+  if($('retry-record-save'))$('retry-record-save').onclick=()=>{
+    const retry=retryRecordSave(recordStore,{scope:currentRecordScope()});records=retry.records;
+    const template=document.createElement('template');template.innerHTML=lastResultDialog.html;
+    const status=template.content.querySelector('#record-save-status');if(status)status.outerHTML=recordPersistenceMarkup(retry);
+    const best=template.content.querySelector('.rd-record-card strong');if(best)best.textContent=format(records.bestTime||race.elapsed);
+    lastResultDialog.html=template.innerHTML;mountResultPersistence();
+    const liveBest=document.querySelector('.rd-record-card strong');if(liveBest)liveBest.textContent=format(records.bestTime||race.elapsed);
+    if($('retry-record-save'))$('retry-record-save').focus();else{$('record-save-status').tabIndex=-1;$('record-save-status').focus();}
+  };
+  if($('export-unsaved-records'))$('export-unsaved-records').onclick=()=>{
+    const file=exportPendingRecords(recordStore);downloadBlob(new Blob([JSON.stringify(file,null,2)],{type:'application/json'}),'camber-reign-unsaved-records.json');
+    toast('Unsaved records exported. Restore this file through Save backup.');
+  };
 }
 function addHeadlights(model) {
   for (const side of [-1, 1]) {
@@ -797,7 +865,7 @@ function updateGarageCopy() {
 }
 function showUpgrades(focusComponent) {
   dialog({kind: "upgrades", eyebrow: "THE WORKSHOP · BUILT FOR YOUR NEXT RACE", title: `Make it <em>yours.</em>`, html: `<div class="driver-development workshop-development-link"><button class="button secondary" type="button" id="open-car-development">${icon('steering')} SETUP & MASTERY</button><p>${CAR_SETUPS.find(setup=>setup.id===getCarSetup(carSetups,preferences.vehicle,preferences.track)).name} fitted · free setup changes</p></div>` + upgradePanel(progression, preferences.vehicle,getCarSetup(carSetups,preferences.vehicle,preferences.track)), actions: [{label:"BACK TO GARAGE",primary:true,action:()=>{closeDialog();$("open-upgrades").focus();}}]});
-  previousFocus = $("open-upgrades");
+  dialogNavigation.setReturnTarget($("open-upgrades"));
   $("open-car-development").onclick=showCarDevelopment;
   for (const button of document.querySelectorAll("[data-upgrade]")) {
     button.onclick = () => {
@@ -816,7 +884,7 @@ function showUpgrades(focusComponent) {
 function showCampaign() {
   if (!["menu","garage","finished"].includes(mode)) return;
   dialog({kind:"campaign",eyebrow:"SIX CHAPTERS · EIGHTEEN EVENTS",title:"Driver <em>career.</em>",html:'<div id="campaign-view"></div>',actions:[{label:"BACK",primary:true,action:closeDialog}]});
-  previousFocus=$("open-campaign");
+  dialogNavigation.setReturnTarget($("open-campaign"));
   developmentView=mountCampaignPanel($("campaign-view"),{state:campaign,vehicle:preferences.vehicle,selectedEventId:selectedCampaignId,onStart:selectCampaignEvent});
 }
 async function selectCampaignEvent(selected) {
@@ -837,7 +905,7 @@ async function selectCampaignEvent(selected) {
 }
 function showCarDevelopment() {
   dialog({kind:"car-development",eyebrow:"THE WORKSHOP · YOUR DRIVING STYLE",title:"Setup & <em>mastery.</em>",html:'<div id="car-development-view"></div>',actions:[{label:"BACK TO UPGRADES",primary:true,action:()=>showUpgrades()}]});
-  previousFocus=$("open-upgrades");
+  dialogNavigation.setReturnTarget($("open-upgrades"));
   developmentView=mountCarDevelopment($("car-development-view"),{vehicle:preferences.vehicle,baseSpecs:getUpgradeStats(preferences.vehicle,progression.cars[preferences.vehicle],"balanced"),setupState:carSetups,masteryState:mastery,track:preferences.track,onClearCircuit(track){const result=clearCircuitSetup(carSetups,preferences.vehicle,track);carSetups=result.state;const saved=persistSetups(carSetups);race=newRace();updateGarageCopy();developmentView.update({setupState:carSetups});document.querySelector("[data-development-save-status]").textContent=saved?"Circuit override removed. Car default restored.":"Circuit override removed for this session.";},onSelect(id,{track}={}){
     const result=selectCarSetup(carSetups,preferences.vehicle,id,track);if(!result.selected)return;
     carSetups=result.state;const saved=persistSetups(carSetups);race=newRace();updateGarageCopy();
@@ -848,7 +916,7 @@ function showCarDevelopment() {
 function showPaint() {
   const vehicle = getVehicle(preferences.vehicle), current = paintChoices[vehicle.id];
   dialog({kind:"paint",eyebrow:`THE PAINT STUDIO · ${vehicle.name.toUpperCase()}`,title:"Your colour.<br><em>Your signature.</em>",html:`<p>Preview a finish on your car. Paint is free and saved separately for each build.</p><div class="paint-colors" role="group" aria-label="Body colour">${PAINT_COLORS.map(p=>`<button type="button" class="paint-swatch" data-paint-color="${p.id}" aria-pressed="${current.color===p.id}" aria-label="${p.name}" style="--paint-color:${p.color??vehicle.color}"><i aria-hidden="true"></i><span>${p.name}</span></button>`).join("")}</div><h3 class="finish-label">SURFACE FINISH</h3><div class="paint-finishes" role="group" aria-label="Paint finish">${PAINT_FINISHES.map(f=>`<button type="button" data-paint-finish="${f.id}" aria-pressed="${current.finish===f.id}">${f.name}</button>`).join("")}</div><p id="paint-status" role="status" class="paint-status">${getPaint(vehicle.id,current).name} · ${getPaint(vehicle.id,current).finish.name}</p>`,actions:[{label:"BACK TO GARAGE",primary:true,action:()=>{closeDialog();$("open-paint").focus();}}]});
-  document.body.classList.add("paint-preview"); previousFocus=$("open-paint");
+  document.body.classList.add("paint-preview"); dialogNavigation.setReturnTarget($("open-paint"));
   const choose=(property,value)=>{
     const result=savePaint(paintChoices,vehicle.id,{...paintChoices[vehicle.id],[property]:value});
     const paint=applyPaint(player,vehicle.id,paintChoices[vehicle.id]);updateGarageCopy();
@@ -860,6 +928,7 @@ function showPaint() {
   for(const button of document.querySelectorAll("[data-paint-finish]"))button.onclick=()=>choose("finish",button.dataset.paintFinish);
 }
 async function chooseVehicle(id) {
+  const graphicsVersion=graphicsGeneration;
   if ((mode !== "menu" && mode !== "garage") || carSelectionPending) return false;
   const nextVehicle = getVehicle(id);
   if (nextVehicle.id === preferences.vehicle) return true;
@@ -871,9 +940,12 @@ async function chooseVehicle(id) {
   $('garage').setAttribute('aria-busy','true');
   try {
     if (nextVehicle.assetId) await prepareManufacturerCar(nextVehicle.assetId, {low: loadedGeometry.carLow});
+    if(graphicsVersion!==graphicsGeneration||graphicsState!=='ready')throw new DOMException('Graphics interrupted car preparation','AbortError');
     // Construct before changing the saved choice or disposing the current model.
     const nextPlayer = createCar({vehicle: nextVehicle.id, low: loadedGeometry.carLow});
     applyPaint(nextPlayer, nextVehicle.id, paintChoices[nextVehicle.id]);
+    try{await prepareManufacturerInstances(renderer,[nextPlayer],{camera,scene:garageStudio.scene});}catch(error){nextPlayer.dispose();throw error;}
+    if(graphicsVersion!==graphicsGeneration||graphicsState!=='ready'){nextPlayer.dispose();throw new DOMException('Graphics interrupted car preparation','AbortError');}
     preferences.vehicle = nextVehicle.id;
     saveChoices();
     if (mode === "garage") {
@@ -890,15 +962,16 @@ async function chooseVehicle(id) {
   race = newRace();
   effects?.clear();
   const enabled = records.sound;
-  records = loadRecords(recordStore);
+  records = loadRecords(recordStore,{scope:currentRecordScope()});
   records.sound = enabled;
-  setSound(enabled, recordStore);
+  setSound(enabled, recordStore,{scope:currentRecordScope()});
   updateMenu();
   if (player) placeCar();
   event("car_select");
     $('garage-status').textContent = `${nextVehicle.name} is ready to race.`;
     return true;
   } catch (error) {
+    if(error.name==='AbortError'){$('garage-status').textContent='Car preparation paused. Your previous car is still selected.';return false;}
     console.warn('Car selection failed; keeping the current car.', error);
     $('garage-status').textContent = `Couldn't load ${nextVehicle.name}. Your current car is ready. Please try again.`;
     toast('Car download failed. Your current car is still selected.');
@@ -1020,7 +1093,7 @@ async function start({replaceTour=false,practice=false,introAccepted=false}={}) 
   clearInput();
   const preparationStarted=performance.now();
   racePreparing=true;mode="preparing";updateTouchControls();
-  dialog({kind:'preparing',eyebrow:preferences.mode==='time-attack'?'YOUR CIRCUIT. YOUR CLOCK.':'FILLING YOUR STARTING GRID',title:preferences.mode==='time-attack'?'Preparing your <em>run.</em>':'Preparing your <em>grid.</em>',html:logoLoaderMarkup({label:preferences.mode==='time-attack'?'Preparing your solo run…':'Preparing the race cars…',detail:preferences.mode==='time-attack'?'One car. One circuit. Your best time.':'Loading the cars for this race.'}),actions:[{label:'BACK',action:()=>{fleetGeneration++;racePreparing=false;menu();}}]});
+  dialog({kind:'preparing',eyebrow:preferences.mode==='time-attack'?'YOUR CIRCUIT. YOUR CLOCK.':'FILLING YOUR STARTING GRID',title:preferences.mode==='time-attack'?'Preparing your <em>run.</em>':'Preparing your <em>grid.</em>',html:logoLoaderMarkup({label:preferences.mode==='time-attack'?'Preparing your solo run…':'Preparing the race cars…',detail:preferences.mode==='time-attack'?'One car. One circuit. Your best time.':'Loading the cars for this race.'}),actions:[{label:'BACK',action:()=>{fleetGeneration++;fleetPreparation?.abort();racePreparing=false;menu();}}]});
   const gridLoader=bindLogoLoader($('dialog-content').querySelector('[data-logo-loader]'));
   try {if(!await prepareOpponents(crypto.randomUUID(),state=>gridLoader.update(state)))return;}catch(error){event("load_failure",{stage:"race"});racePreparing=false;dialog({kind:'preparing',eyebrow:'CONNECTION INTERRUPTED',title:'Let’s try <em>again.</em>',html:'<p>A car could not finish loading. Check your connection and try again.</p>',actions:[{label:'BACK TO HOME',primary:true,action:menu}]});return;}finally{gridLoader.destroy();}
   racePreparing=false;
@@ -1029,7 +1102,7 @@ async function start({replaceTour=false,practice=false,introAccepted=false}={}) 
   renderer.domElement.focus({ preventScroll: true });
   sound.unlock();
   race = newRace();
-  records=loadRecords(recordStore);
+  records=loadRecords(recordStore,{scope:currentRecordScope()});
   startPersonalGhost();
   if(school)event("tutorial_start");
   renderLesson();
@@ -1062,7 +1135,7 @@ async function start({replaceTour=false,practice=false,introAccepted=false}={}) 
 }
 function menu() {
   finalizeTour();school=null;renderLesson();disposeGhost();
-  if(racePreparing){fleetGeneration++;racePreparing=false;}
+  if(racePreparing){fleetGeneration++;fleetPreparation?.abort();racePreparing=false;}
   pendingLandscapeStart = false;
   orientationGate(false);
   try { screen.orientation?.unlock?.(); } catch {}
@@ -1121,7 +1194,7 @@ function pauseGame() {
         },
       },
       { label: "RESET TO ROAD", action() {
-        resetCar(race); effects.clear(); clearInput(); closeDialog();
+        if(!resetCar(race)){toast('No clear space yet. Wait a moment and try resetting again.');return;} effects.clear(); clearInput(); closeDialog();
         mode = was; updateTouchControls(); last = performance.now();
         renderer.domElement.focus({ preventScroll: true });
       } },
@@ -1193,9 +1266,9 @@ function clearRaceRecords() {
               .forEach((k) => localStorage.removeItem(k));
           } catch {cleared=false;}
           const enabled = records.sound;
-          records = clearRecords(recordStore);
+          records = clearRecords(recordStore,{scope:currentRecordScope()});
           records.sound = enabled;
-          setSound(enabled, recordStore);
+          setSound(enabled, recordStore,{scope:currentRecordScope()});
           preferences.sound = enabled;
           saveChoices();
           updateSound();
@@ -1234,7 +1307,8 @@ function finish() {
   const campaignSaved=!campaignResult.recorded || persistCampaign(campaign), masterySaved=!masteryResult.recorded || persistMastery(mastery);
   updateWallet();
   const enabled = records.sound;
-  records = saveResult(race, frames, recordStore);
+  let recordReceipt=saveResultWithStatus(race,frames,recordStore,{scope:currentRecordScope()});
+  records=recordReceipt.records;
   records.sound = enabled;
   const best =
     records.bestTime === race.elapsed &&
@@ -1252,7 +1326,7 @@ function finish() {
       race.mode==='time-attack'?"A time to <em>beat.</em>":race.position === 1
         ? "Take the <em>flag.</em>"
         : "Finish <em>strong.</em>",
-    html: finishPanel({race,track:TRACK,isBest:best,previousBest:previous,bestTime:records.bestTime,reward,credits:progression.credits}) + careerResultMarkup(careerResult,careerPersisted) + developmentResultMarkup(campaignResult,masteryResult,{campaignSaved,masterySaved}),
+    html: finishPanel({race,track:TRACK,isBest:best,previousBest:previous,bestTime:records.bestTime,reward,credits:progression.credits,recordPersistence:recordReceipt}) + careerResultMarkup(careerResult,careerPersisted) + developmentResultMarkup(campaignResult,masteryResult,{campaignSaved,masterySaved}),
     actions: [
       ...(campaignResult.firstCompletion && campaignResult.next ? [{label:"NEXT CAMPAIGN EVENT",primary:true,action:()=>selectCampaignEvent(campaignResult.next)}] : []),
       { label: careerResult.tour && !careerResult.tourCompleted ? "NEXT TOUR RACE" : race.mode==='time-attack'?"RUN AGAIN":"RACE AGAIN", primary: !campaignResult.firstCompletion || !campaignResult.next, action: careerResult.tour && !careerResult.tourCompleted ? continueTour : start },
@@ -1338,7 +1412,7 @@ $("privacy-link").onclick = privacy;
 $("pause").onclick = pauseGame;
 $("recover").onclick = () => {
   if (mode === "racing") {
-    resetCar(race);
+    if(!resetCar(race)){toast('Road occupied. Try resetting when there is a clear space.');return;}
     event("car_reset");
     effects.clear();
     renderer.domElement.focus({ preventScroll: true });
@@ -1348,7 +1422,7 @@ $("sound").onclick = () => {
   records.sound = !records.sound;
   preferences.sound = records.sound;
   saveChoices();
-  setSound(records.sound, recordStore);
+  setSound(records.sound, recordStore,{scope:currentRecordScope()});
   sound.unlock();
   sound.setMuted(!records.sound);
   updateSound();
@@ -1402,7 +1476,7 @@ window.addEventListener("keydown", (e) => {
         document.querySelector("#dialog-actions button")?.click();
       else if(modalKind === "preparing") menu();
       else if(modalKind==="share"){dialog(lastResultDialog);updateFinish();}
-      else if (!["result","recovery","school-result"].includes(modalKind)) {if(mode==="paused")pauseSettingsReturn();else closeDialog();}
+      else if (!["result","recovery","school-result","graphics"].includes(modalKind)) {if(dialogNavigation.back())return;if(mode==="paused")pauseSettingsReturn();else closeDialog();}
     }
     return;
   }
@@ -1423,7 +1497,7 @@ window.addEventListener("keydown", (e) => {
     syncInput();
   }
   if (action === "reset" && !e.repeat) {
-    resetCar(race);
+    if(!resetCar(race)){toast('Road occupied. Try resetting when there is a clear space.');return;}
     event("car_reset");
     effects.clear();
   }
@@ -1466,8 +1540,10 @@ window.addEventListener("blur", () => {
 });
 window.addEventListener('pagehide', event => {
   clearInput();
+  sound.setPageActive?.(false);
   if (!event.persisted) world?.backdrop?.dispose();
 });
+window.addEventListener('pageshow',()=>sound.setPageActive?.(graphicsState==='ready'));
 for (const name of ['pointerup', 'pointercancel']) window.addEventListener(name, event => {
   dragSteering.release(event.pointerId);
   if (pointerInputs.release(event.pointerId)) syncInput();
@@ -1488,23 +1564,7 @@ document.addEventListener("visibilitychange", () => {
     pauseGame();
   }
 });
-$("dialog").addEventListener("keydown", (e) => {
-  if (e.key !== "Tab") return;
-  const focus = [...$("dialog").querySelectorAll("button,a[href],select,input,textarea,[tabindex]")].filter(
-    (el) => !el.disabled && el.tabIndex >= 0 && el.getClientRects().length > 0 && !el.closest("[hidden],[inert]"),
-  );
-  if (
-    e.shiftKey &&
-    (document.activeElement === focus[0] ||
-      document.activeElement === $("dialog"))
-  ) {
-    e.preventDefault();
-    focus.at(-1)?.focus();
-  } else if (!e.shiftKey && document.activeElement === focus.at(-1)) {
-    e.preventDefault();
-    focus[0]?.focus();
-  }
-});
+$("dialog").addEventListener("keydown",e=>trapDialogFocus(e,$("dialog")));
 window.addEventListener("resize", () => {
   garageFrame = null; lobbyFrame = null;
   if (!renderer) return;
@@ -1771,8 +1831,9 @@ function updateHud() {
   drawMap();
 }
 function tick(now) {
+  if(graphicsState!=='ready'){last=now;raceTiming.reset(now);requestAnimationFrame(tick);return;}
   if (!frameBudget.ready(now,{mobile,hidden:document.hidden,mode,batterySaver:preferences.controls.batterySaver})) {
-    if(document.hidden)last=now;
+    if(document.hidden){last=now;raceTiming.reset(now);}
     requestAnimationFrame(tick);return;
   }
   if(lastRendered&&mode==='racing'&&!preferences.controls.batterySaver){if(adaptiveQuality.sample(now-lastRendered,{active:true}))applyQuality();}
@@ -1780,7 +1841,14 @@ function tick(now) {
   if(lastRendered&&mode==='racing'){performanceSamples.push(now-lastRendered);if(performanceSamples.length>600)performanceSamples.shift();if(now-lastPerformanceReport>60000&&performanceSamples.length>=120){const sorted=[...performanceSamples].sort((a,b)=>a-b);event('performance_sample',{p75_frame_ms:sorted[Math.floor(sorted.length*.75)],quality_level:adaptiveQuality.status.level,draw_calls:renderer.info.render.calls,triangles:renderer.info.render.triangles});lastPerformanceReport=now;performanceSamples=[];}}else performanceSamples=[];
   lastRendered=now;
   const wasFinished = mode === "finished";
-  const dt = Math.min((now - last) / 1000, 0.05);
+  const timing=raceTiming.sample(now,{active:['racing','countdown','finished'].includes(mode)});
+  const dt=timing.visual;
+  let simulationDt=timing.simulation;
+  if(timing.suspended&&['racing','countdown'].includes(mode)){
+    if(adaptiveQuality.noteInterruption(now))applyQuality();
+    pauseGame();
+    const notice=document.createElement('p');notice.className='backup-details';notice.setAttribute('role','status');notice.textContent='The game paused after a long interruption. Your car and race clock are held in place. Resume when your device is ready.';$('dialog-content').prepend(notice);
+  }
   if (['racing', 'countdown'].includes(mode) && steeringMode === 'tilt' && now > tiltGraceUntil && !tiltSteering.fresh()) {
     useTouchSteering('Motion data stopped. Touch steering is ready; enable tilt again in Pause when available.');
     toast('Tilt signal stopped. Use the thumbpad to steer.');
@@ -1794,12 +1862,13 @@ function tick(now) {
     else if(mode==='paused'&&modalKind==='pause'&&$("orientation-gate").hidden)document.querySelector('#dialog-actions button')?.click();
   }
   gamepadPauseHeld=padState.pause;
-  const driveControls = resolveDriveControls({...input, nitro:nitroLatch.sample(input.nitro||padState.nitro,preferences.controls.nitroToggle),brake:input.brake||padState.brake,steer:Math.abs(padState.steer)>.01?padState.steer:analogSteering}, {steeringSensitivity:preferences.steeringSensitivity});
+  const driveControls = resolveDriveControls({...input, nitro:nitroLatch.sample(input.nitro||padState.nitro,preferences.controls.nitroToggle,race.nitro),nitroGesture:nitroLatch.pressId,brake:input.brake||padState.brake,steer:Math.abs(padState.steer)>.01?padState.steer:analogSteering}, {steeringSensitivity:preferences.steeringSensitivity});
   last = now;
   time += dt;
   uiTimer += dt;
   if (mode === "countdown") {
-    count -= dt;
+    count -= simulationDt;
+    simulationDt=Math.max(0,-count);
     const n = Math.ceil(count);
     if (n !== countValue) {
       countValue = n;
@@ -1825,11 +1894,13 @@ function tick(now) {
     }
   }
   if (mode === "racing") {
+    advanceRaceTime(simulationDt,stepDt=>{
+    if(mode!=='racing')return false;
     const lastLap = race.completedLaps;
     stepRace(
       race,
       driveControls,
-      dt,
+      stepDt,
     );
     if (race.elapsed >= nextFrame && frames.length < 9000) {
       frames.push({
@@ -1846,10 +1917,11 @@ function tick(now) {
         duration_seconds: Math.round(race.lastLap),
       });
     }
-    if(school&&school.update(race,driveControls,dt)){event('tutorial_step',{step:Math.min(school.index,LESSONS.length)});renderLesson();if(!school.active)finishSchool();}
+    if(school&&school.update(race,driveControls,stepDt)){event('tutorial_step',{step:Math.min(school.index,LESSONS.length)});renderLesson();if(!school.active)finishSchool();}
     if (race.state === "finished" && mode==='racing') finish();
+    });
   }
-  if (wasFinished && !race.allFinished) stepRace(race, {}, dt);
+  if (wasFinished && !race.allFinished) advanceRaceTime(simulationDt,stepDt=>stepRace(race,{},stepDt));
   if (mode === "finished") updateFinish();
   if (mode === "racing" && race.nitro.active && !nitroWasActive)
     event("nitro_use");
@@ -1920,7 +1992,7 @@ function tick(now) {
       vehicle: race.vehicle,raceId:race.raceId||race,impact:race.impact,pickupEvent:race.pickupEvent,air:race.air,
       listener:race.car,rivals:race.rivals.map(r=>({id:r.id,vehicle:r.vehicle,impact:r.impact,...r.car})),
       road:['coastal','urban'].includes(world.scene.userData.venueEnvironment?.type)?'wet':'asphalt',
-      crowd:Math.max(0,1-Math.min(race.progress||0,TRACK.length-(race.progress||0))/120)*.4,
+      crowd:crowdZoneLevel(race.car,world.scene.userData.grandstands),
       nitro: race.nitro.active,nitroMode:race.nitro.mode,
       drift: race.car.drifting,
       brake: driveControls.brake,
@@ -1958,13 +2030,13 @@ function updatePersonalGhost(){
 function mountTrialSettings(){
  if(preferences.mode!=='time-attack')return;
  const panel=document.createElement('section');panel.className='trial-settings';panel.innerHTML=`<label><input id="trial-stock" type="checkbox" ${preferences.controls.stockTrial?'checked':''}>Stock challenge · equal build</label><label><input id="trial-ghost" type="checkbox" ${preferences.controls.showGhost?'checked':''}>Race my personal-best ghost</label><p>Stock challenges use standard upgrades and the balanced setup. Records are separated by car, circuit, build and handling version. Previous-version times are preserved in your saved data.</p>${challenge?`<p>Friend’s local target: <strong>${format(challenge.time)}</strong>. Shared times are not verified online rankings.</p>`:''}`;$('dialog-content').append(panel);
- $('trial-stock').onchange=e=>{preferences.controls.stockTrial=e.target.checked;saveChoices();records=loadRecords(recordStore);race=newRace();updateMenu();};
+ $('trial-stock').onchange=e=>{preferences.controls.stockTrial=e.target.checked;saveChoices();records=loadRecords(recordStore,{scope:currentRecordScope()});race=newRace();updateMenu();};
  $('trial-ghost').onchange=e=>{preferences.controls.showGhost=e.target.checked;saveChoices();};
 }
 function renderLesson(){
  let panel=$('skill-coach');if(!panel){panel=document.createElement('section');panel.id='skill-coach';panel.className='skill-coach';panel.setAttribute('aria-label','Driving school');panel.hidden=true;document.body.append(panel);}
  if(!school?.lesson){panel.hidden=true;return;}
- const lesson=school.lesson;panel.hidden=false;panel.innerHTML=`<small>DRIVING SCHOOL · ${school.index+1} / ${LESSONS.length}</small><strong>${lesson.title}</strong><p>${lesson.text}</p><div class="coach-actions"><button type="button" id="school-skip">SKIP LESSON</button><button type="button" id="school-exit">END PRACTICE</button></div>`;
+ const lesson=schoolLessonCopy(school.lesson,preferences.controls);panel.hidden=false;panel.innerHTML=`<small>DRIVING SCHOOL · ${school.index+1} / ${LESSONS.length}</small><strong>${lesson.title}</strong><p>${lesson.text}</p><div class="coach-actions"><button type="button" id="school-skip">SKIP LESSON</button><button type="button" id="school-exit">END PRACTICE</button></div>`;
  $('race-feedback-live').textContent=lesson.title+'. '+lesson.text;
  $('school-skip').onclick=()=>{school.skip();renderLesson();if(!school.active)finishSchool();else renderer.domElement.focus({preventScroll:true});};
  $('school-exit').onclick=()=>finishSchool();
@@ -1982,16 +2054,46 @@ function showShareResult(reward){
 }
 function downloadBlob(blob,name){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
 function backupSummary(summary){return `${summary.credits.toLocaleString()} credits · ${summary.campaignEvents} career events · ${summary.records} record sets · ${summary.circuitSetups} circuit setups`;}
-function saveSnapshot(){return exportSaveBackup({storage:localStore(),states:{preferences,progression,paint:paintChoices,favorites:[...favoriteCars],career,campaign,mastery,setups:carSetups}});}
+function saveSnapshot(){
+ const storage=localStore(),states={preferences,progression,paint:paintChoices,favorites:[...favoriteCars],career,campaign,mastery,setups:carSetups};
+ const base=exportSaveBackup({storage,states}),pending=exportPendingRecords(recordStore);
+ if(!base.ok||!pending.entries.length)return base;
+ const merged=new Map(JSON.parse(base.json).data.records.map(item=>[item.key,item.value]));
+ for(const item of pending.entries){
+  const key=STORAGE_KEY+'-'+item.scope;
+  // Reuse the loader's merge and explicit-clear intent for this exact scope.
+  // A pending clear must not resurrect the older browser record in a backup.
+  const scoped={storageIdentity:storage,getItem:()=>storage?.getItem(key)};
+  merged.set(key,loadRecords(scoped,{scope:item.scope}));
+ }
+ return exportSaveBackup({storage,states:{...states,records:[...merged].map(([key,value])=>({key,value}))}});
+}
 function showSaveBackup(){
- dialog({kind:'backup',eyebrow:'YOUR PROGRESS. YOUR FILE.',title:'Take your <em>progress.</em>',html:'<p>Download your credits, upgrades, career, tours, mastery, setups, paint, favourites, controls and saved runs. Transfer the file to another device, then restore it here. No account required.</p><button class="button primary" id="backup-download">'+icon('download')+'<span>DOWNLOAD BACKUP</span></button><p id="backup-status" role="status"></p><label class="backup-details">Restore a Camber Reign backup<input id="backup-file" class="race-backup-input" type="file" accept=".json,application/json"></label><p class="backup-details">Restoring replaces this browser’s progress and ends an unfinished race. Your analytics choice stays unchanged. Keep a current backup first.</p>',actions:[{label:'BACK',action:()=>mode==='paused'?pauseSettingsReturn():closeDialog()}]});
+ dialog({kind:'backup',eyebrow:'YOUR PROGRESS. YOUR FILE.',title:'Take your <em>progress.</em>',html:'<p>Download your credits, upgrades, career, tours, mastery, setups, paint, favourites, controls and saved runs. Transfer the file to another device, then restore it here. No account required.</p><button class="button primary" id="backup-download">'+icon('download')+'<span>DOWNLOAD BACKUP</span></button><p id="backup-status" role="status"></p><label class="backup-details">Restore a Camber Reign backup or unsaved-records file<input id="backup-file" class="race-backup-input" type="file" accept=".json,application/json"></label><p class="backup-details">Restoring replaces this browser’s progress and ends an unfinished race. Your analytics choice stays unchanged. Keep a current backup first.</p>',actions:[{label:'BACK',action:()=>{if(!dialogNavigation.back()){if(mode==='paused')pauseSettingsReturn();else closeDialog();}}}]});
  $('backup-download').onclick=()=>{const result=saveSnapshot();if(!result.ok){$('backup-status').textContent=result.error;return;}downloadBlob(new Blob([result.json],{type:'application/json'}),result.filename);$('backup-status').textContent='Backup prepared: '+backupSummary(result.summary);};
- $('backup-file').onchange=async e=>{const file=e.target.files[0];if(!file)return;if(file.size>32000000){$('backup-status').textContent='Choose a save file smaller than 32 MB.';return;}let raw;try{raw=await file.text();}catch{$('backup-status').textContent='This file could not be read.';return;}const result=inspectSaveBackup(raw);if(!result.ok){$('backup-status').textContent=result.error;return;}
+ $('backup-file').onchange=async e=>{const file=e.target.files[0];if(!file)return;if(file.size>32000000){$('backup-status').textContent='Choose a save file smaller than 32 MB.';return;}let raw;try{raw=await file.text();}catch{$('backup-status').textContent='This file could not be read.';return;}
+ try{if(JSON.parse(raw)?.format==='camber-reign-unsaved-records'){showRecordImport(raw);return;}}catch{}
+ const result=inspectSaveBackup(raw);if(!result.ok){$('backup-status').textContent=result.error;return;}
  dialog({kind:'backup-confirm',eyebrow:'REPLACE SAVED PROGRESS',title:'Restore this <em>backup?</em>',html:'<p>'+backupSummary(result.summary)+'</p><p>This replaces current progress on this device and reloads the game. Your analytics choice is kept.</p><p id="backup-status" role="status"></p>',actions:[{label:'RESTORE & RELOAD',primary:true,action:()=>{const restored=importSaveBackup(raw,{storage:localStore()});if(restored.ok){location.assign(circuitPath(restored.states.preferences.track));return;}$('backup-status').textContent=restored.error;if(restored.recoveryRequired){showRecoveryDialog();}}},{label:'KEEP CURRENT PROGRESS',action:showSaveBackup}]});};
+}
+function showRecordImport(raw){
+ dialog({kind:'record-import',eyebrow:'BRING YOUR BEST RUNS',title:'Restore your <em>records.</em>',html:'<p>This merges valid personal bests and drift scores from the selected records file. Faster existing times, credits, upgrades and preferences are kept.</p><p id="record-import-status" role="status"></p>',actions:[{label:'MERGE RECORDS',primary:true,action:()=>{
+  const result=importPendingRecords(raw,localStore());
+  if(!result.ok){$('record-import-status').textContent=result.error;return;}
+  records=loadRecords(recordStore,{scope:currentRecordScope()});
+  $('record-import-status').textContent=result.persisted?`${result.imported} record sets merged and saved on this device.`:`${result.imported} record sets available this session. Browser storage is still unavailable; keep the records file and retry later.`;
+ }},{label:'BACK',action:showSaveBackup}]});
 }
 function pauseSettingsReturn(){modalKind='';mode=pauseResumeMode;pauseGame();}
 function showRecoveryDialog(){clearInput();mode='paused';updateTouchControls();dialog({kind:'recovery',eyebrow:'SAVE RECOVERY',title:'Protect your <em>progress.</em>',html:'<p>An interrupted restore needs recovery before you continue. Your previous save snapshot is retained.</p><p id="recovery-status" role="status"></p>',actions:[{label:'RETRY RECOVERY',primary:true,action:()=>{const result=recoverSaveImport({storage:localStore()});if(result.ok)location.reload();else $('recovery-status').textContent=result.error;}},{label:'DOWNLOAD PREVIOUS SAVE',action:()=>{const result=exportRecoveryBackup({storage:localStore()});if(result.ok)downloadBlob(new Blob([result.json],{type:'application/json'}),result.filename);else $('recovery-status').textContent=result.error;}}]});}
 function showStartupRecovery(){const overlay=document.createElement('section');overlay.className='startup-recovery';overlay.setAttribute('role','alert');overlay.innerHTML='<h1>Recover your saved progress.</h1><p>An interrupted restore needs recovery before the game can load.</p><button id="startup-retry">RETRY RECOVERY</button><button id="startup-export">DOWNLOAD PREVIOUS SAVE</button><p id="startup-status"></p>';document.body.append(overlay);$('startup-retry').onclick=()=>{const result=recoverSaveImport({storage:localStore()});if(result.ok)location.reload();else $('startup-status').textContent=result.error;};$('startup-export').onclick=()=>{const result=exportRecoveryBackup({storage:localStore()});if(result.ok)downloadBlob(new Blob([result.json],{type:'application/json'}),result.filename);else $('startup-status').textContent=result.error;};$('startup-retry').focus();}
+function showTourRecovery(){
+ if(document.body.classList.contains('is-ready')){clearInput();mode='paused';updateTouchControls();}
+ for(const element of document.body.children)element.inert=true;
+ const overlay=document.createElement('section');overlay.className='startup-recovery';overlay.setAttribute('role','alert');
+ overlay.innerHTML='<h1>Keep your tour together.</h1><p>A storage interruption stopped the next round from saving. Your previous tour is retained in a recovery snapshot. Retry recovery before continuing.</p><button id="tour-retry">RECOVER TOUR</button><p id="tour-recovery-status" role="status"></p>';document.body.append(overlay);
+ $('tour-retry').onclick=()=>{const result=recoverTourAdvance(localStore(),{knownJournal:true});if(result.ok)location.reload();else $('tour-recovery-status').textContent='Storage is still unavailable. Keep this page open and try again when browser storage is available.';};$('tour-retry').focus();
+}
 
 const ghostBadge=document.createElement('div');ghostBadge.id='ghost-split';ghostBadge.className='ghost-split';ghostBadge.hidden=true;document.body.append(ghostBadge);
 const practiceButton=document.createElement('button');practiceButton.className='lobby-practice';practiceButton.type='button';practiceButton.textContent='Driving school · learn by doing';practiceButton.onclick=()=>start({practice:true,introAccepted:true});$('start').after(practiceButton);
@@ -2001,7 +2103,7 @@ updateRaceOptions();
 if (import.meta.env.DEV) {
   window.__blacktopBayQA = Object.freeze({
     snapshot: () => ({
-      mode, quality:{...adaptiveQuality.status,settings:adaptiveQuality.settings,geometry:{...loadedGeometry}},renderer:renderer?{...renderer.info.render,memory:{...renderer.info.memory}}:null,school:school?{index:school.index,active:school.active}:null,controls:structuredClone(preferences.controls),ghostVisible:ghostModel?.group.visible||false,
+      mode, graphicsState, quality:{...adaptiveQuality.status,settings:adaptiveQuality.settings,geometry:{...loadedGeometry}},renderer:renderer?{...renderer.info.render,memory:{...renderer.info.memory}}:null,school:school?{index:school.index,active:school.active}:null,controls:structuredClone(preferences.controls),ghostVisible:ghostModel?.group.visible||false,
       raceId:race.raceId, wreck:race.wreck ? structuredClone(race.wreck) : null, air:race.air ? structuredClone(race.air) : null, pickupEvent:race.pickupEvent ? structuredClone(race.pickupEvent) : null,
       input: {...input, steer: analogSteering, steeringMode},
       car: { ...race.car },

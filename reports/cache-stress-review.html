@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Camber Reign · Local cache stress review</title><style>
+*{box-sizing:border-box}body{margin:0;background:#110017;color:#fff;font:14px/1.5 system-ui,sans-serif}main{max-width:1080px;margin:auto;padding:20px}h1{font-size:24px;margin:0 0 8px}p{max-width:78ch;color:#dfd3ec}button{min-height:48px;padding:10px 24px;border:2px solid #fff71e;background:#fff71e;color:#110017;font:800 15px system-ui;cursor:pointer}button:disabled{opacity:.65;cursor:default}button:focus-visible{outline:3px solid #fff;outline-offset:4px}#viewport{height:260px;background:#021439;border:1px solid #9246ff;margin:16px 0}canvas{display:block;width:100%;height:100%}.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:10px}.stats>div,pre{padding:10px 12px;background:#021439;border:1px solid #9246ff70}.stats span{display:block;color:#d9c8ef;font-size:12px}.stats strong{font-size:19px;font-variant-numeric:tabular-nums}#error{color:#fff;background:#67062b;white-space:pre-wrap;overflow-wrap:anywhere}#error:empty{display:none}pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px}.table-scroll{overflow:auto}table{border-collapse:collapse;min-width:760px;width:100%;font-size:12px;text-align:left}th,td{padding:8px;border-bottom:1px solid #ffffff30}th{background:#021439}code{color:#fff71e}#status{font-weight:700;color:#fff71e}
+</style></head><body><main><h1>Local car cache stress review</h1><p>Twenty distinct car selections using the production loader, model, GPU preparation and disposal APIs. One active car at a time, minimal lighting, no world or gameplay. This local fixture is excluded from production build entries. GPU object counts and estimated cache bytes are diagnostics, not measured device VRAM, heat or battery use.</p><button id="start" type="button">START 20 SELECTIONS</button><p id="status" role="status">Ready. No car assets requested yet.</p><div class="stats"><div><span>Completed</span><strong id="completed">false</strong></div><div><span>Selections rendered</span><strong id="count">0 / 20</strong></div><div><span>Final idle cache bytes</span><strong id="final-idle-bytes">—</strong></div><div><span>Final active templates</span><strong id="final-active-templates">—</strong></div></div><div id="viewport" aria-label="Minimal car rendering review"></div><pre id="error" role="alert"></pre><h2>Peaks</h2><pre id="peaks">Not started</pre><h2>Final diagnostics</h2><pre id="diagnostics">Not started</pre><div class="table-scroll"><table><thead><tr><th>Selection</th><th>Model</th><th>Templates / active</th><th>Idle bytes</th><th>Geometries</th><th>Textures</th><th>Programs</th><th>Draw calls</th></tr></thead><tbody id="steps"></tbody></table></div></main><script type="module">
+import * as THREE from 'three';
+import {MANUFACTURER_ASSETS} from '/src/manufacturer-asset-manifest.js';
+import {prepareManufacturerCar,createManufacturerCar,configureManufacturerRenderer,prepareManufacturerInstances,manufacturerCacheStatus} from '/src/manufacturer-car.js';
+const $=id=>document.getElementById(id),total=20;
+const priority=['mclaren-p1-gtr','porsche-930-turbo','lamborghini-gallardo'];
+const ids=[...priority,...Object.keys(MANUFACTURER_ASSETS).sort().filter(id=>!priority.includes(id))].filter(id=>MANUFACTURER_ASSETS[id]?.low).slice(0,total);
+let renderer=null,scene=null,camera=null,active=null,started=false,disposed=false;
+const samples=[],peaks={templates:0,activeTemplates:0,idleEstimatedBytes:0,estimatedResidentBytes:0,geometries:0,textures:0,programs:0,drawCalls:0};
+const settle=()=>new Promise(resolve=>setTimeout(resolve,50));
+function read(stage,index=0,assetId=null){
+ const cache=manufacturerCacheStatus();
+ const sample={stage,index,assetId,cache,memory:{...renderer.info.memory},programs:renderer.info.programs?.length||0,render:{...renderer.info.render}};
+ for(const name of ['templates','activeTemplates','idleEstimatedBytes','estimatedResidentBytes'])peaks[name]=Math.max(peaks[name],cache[name]);
+ for(const name of ['geometries','textures'])peaks[name]=Math.max(peaks[name],sample.memory[name]);
+ peaks.programs=Math.max(peaks.programs,sample.programs);peaks.drawCalls=Math.max(peaks.drawCalls,sample.render.calls);samples.push(sample);$('peaks').textContent=JSON.stringify(peaks,null,2);return sample;
+}
+function row(sample){const tr=document.createElement('tr');for(const value of [sample.index,sample.assetId,`${sample.cache.templates} / ${sample.cache.activeTemplates}`,sample.cache.idleEstimatedBytes,sample.memory.geometries,sample.memory.textures,sample.programs,sample.render.calls]){const td=document.createElement('td');td.textContent=String(value);tr.append(td);}$('steps').append(tr);}
+function render(){if(renderer&&!disposed&&!renderer.getContext().isContextLost()){scene.updateMatrixWorld(true);camera.updateMatrixWorld(true);renderer.render(scene,camera);}}
+function resize(){if(!renderer||disposed)return;const box=$('viewport').getBoundingClientRect();renderer.setSize(Math.max(1,box.width),Math.max(1,box.height),false);camera.aspect=box.width/box.height;camera.updateProjectionMatrix();render();}
+function release(){if(disposed)return;disposed=true;active?.dispose();active=null;renderer?.dispose();removeEventListener('resize',resize);}
+addEventListener('pagehide',release,{once:true});
+$('start').onclick=async()=>{
+ if(started)return;started=true;$('start').disabled=true;
+ let completed=false,count=0,compression=null,failure=null,initial=null,final=null;
+ try{
+  if(ids.length!==total)throw Error(`Expected ${total} distinct manifest cars, found ${ids.length}.`);
+  renderer=new THREE.WebGLRenderer({antialias:false,powerPreference:'low-power'});renderer.setPixelRatio(1);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1;
+  $('viewport').append(renderer.domElement);scene=new THREE.Scene();scene.background=new THREE.Color('#021439');camera=new THREE.PerspectiveCamera(38,1,.1,100);camera.position.set(7.8,3.8,8.7);camera.lookAt(0,.8,0);
+  scene.add(new THREE.HemisphereLight('#e8e7ff','#261c32',2.3));const key=new THREE.DirectionalLight('#ffffff',3);key.position.set(3,5,4);scene.add(key);const fill=new THREE.DirectionalLight('#bca2ff',1.3);fill.position.set(-4,2,-3);scene.add(fill);
+  renderer.domElement.addEventListener('webglcontextlost',event=>{event.preventDefault();failure='WebGL context lost during cache stress review';$('error').textContent=failure;});
+  compression=configureManufacturerRenderer(renderer,{camera,scene});resize();addEventListener('resize',resize);render();initial=read('initial');
+  for(const [index,assetId]of ids.entries()){
+   if(disposed)throw Error('Review page was closed.');if(failure)throw Error(failure);
+   // Release the previous displayed car before loading/creating the next, so
+   // this diagnostic never retains two active models during selection churn.
+   active?.dispose();active=null;render();await settle();
+   $('status').textContent=`${index+1} / ${total} · Loading ${assetId}`;
+   const began=performance.now();await prepareManufacturerCar(assetId,{low:true,onProgress:event=>{if(event.total)$('status').textContent=`${index+1} / ${total} · Loading ${assetId} · ${Math.round(event.loaded/event.total*100)}%`;}});
+   if(disposed)throw Error('Review page was closed.');
+   active=createManufacturerCar({assetId,low:true});scene.add(active.group);
+   $('status').textContent=`${index+1} / ${total} · Preparing ${assetId} for GPU`;
+   const gpu=await prepareManufacturerInstances(renderer,[active],{camera,scene});
+   active.update({time:0,speed:0,paused:true,reducedMotion:true});render();await settle();render();
+   const sample=read('selection',index+1,assetId);sample.preparation=gpu;sample.elapsedMs=Math.round(performance.now()-began);row(sample);count=index+1;$('count').textContent=`${count} / ${total}`;
+   if(sample.cache.activeTemplates!==1)throw Error(`Selection ${count} has ${sample.cache.activeTemplates} active templates; expected one.`);
+   if(sample.cache.idleEstimatedBytes>sample.cache.idleByteLimit)throw Error(`Selection ${count} exceeds the idle cache byte limit.`);
+   $('diagnostics').textContent=JSON.stringify({completed:false,count,compression,last:sample},null,2);
+  }
+  completed=true;
+ }catch(error){failure=String(error?.stack||error);$('error').textContent=failure;}
+ finally{
+  active?.dispose();active=null;
+  if(renderer&&!disposed){await settle();render();await settle();render();final=read('final',count);}
+  const passed=completed&&!failure&&final?.cache.activeTemplates===0&&final.cache.idleEstimatedBytes<=final.cache.idleByteLimit&&peaks.activeTemplates<=1;
+  if(completed&&!passed&&!failure){failure='Final cache budget or active-template check failed.';$('error').textContent=failure;}
+  $('completed').textContent=String(completed);$('final-idle-bytes').textContent=String(final?.cache.idleEstimatedBytes??'unavailable');$('final-active-templates').textContent=String(final?.cache.activeTemplates??'unavailable');
+  $('status').textContent=passed?'Completed · 20 selections · cache checks passed':`Stopped · ${count} / ${total} selections · see diagnostics`;
+  $('diagnostics').textContent=JSON.stringify({completed,passed,count,total,error:failure,compression,peaks,initial,final,selections:ids,samples},null,2);
+ }
+};
+</script></body></html>

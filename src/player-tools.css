@@ -26,3 +26,18 @@ body.in-race,
   -webkit-touch-callout: default;
 }
 #touch-steer-cue, #touch [data-input] { -webkit-tap-highlight-color: transparent; }
+
+/* Settings use the same readable, touch-sized controls as race actions. */
+.player-tools { min-width:0; }
+.player-tools :is(label,.tool-grid > *,p) { min-width:0; overflow-wrap:anywhere; }
+.player-tools .tool-grid { align-items:start; }
+.player-tools :is(select,input,button):focus-visible,
+.dialog details > summary:focus-visible { outline:3px solid #FFF71E; outline-offset:3px; }
+.dialog details > summary { min-height:44px; align-content:center; cursor:pointer; }
+.player-tools input[type=range] { width:100%; accent-color:#FFF71E; cursor:pointer; }
+.player-tools input[type=checkbox] { accent-color:#9246FF; flex:none; }
+.player-tools .check-field { padding-block:4px; }
+.lobby-race-panel .lobby-practice { margin:0; padding:8px; line-height:1.4; }
+.next-driver-goal { width:100%; overflow-wrap:anywhere; }
+.backup-details { overflow-wrap:anywhere; }
+.race-backup-input { box-sizing:border-box; font-size:14px; }

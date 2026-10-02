@@ -1,12 +1,13 @@
 // Original, synthesized driving sound. Nothing is constructed or played before unlock().
 // Separate music/driving buses and a soft compressor keep the louder mix controlled.
 import { getVehicle } from './vehicles.js';
+import {createAudioLifecycle} from './audio-lifecycle.js';
 
-import { drivingVoice, nitroSoundFrame, createEngineSoundMotion, createTyreSoundMotion, engineSpectrum } from './driving-sound.js';
+import { drivingVoice, nitroSoundFrame, createEngineSoundMotion, createTyreSoundMotion, engineSpectrum, engineDetailFrame } from './driving-sound.js';
 import { lobbyMusicFrame, normalizeLobbyStyle } from './lobby-music.js';
 import {createRaceSoundscape,createSoundEventTracker} from './race-sound.js';
 
-export function createAudio({contextFactory} = {}) {
+export function createAudio({contextFactory, lifecycleOptions} = {}) {
   const doc=globalThis.document;
   let context=null,master=null,engineGate=null,tyreGain=null,squealGain=null,boostGain=null;
   let sfxMix=null,sfxRaceGate=null,soundscape=null;
@@ -15,6 +16,7 @@ export function createAudio({contextFactory} = {}) {
   let engineFilter=null,tyreFilter=null,bodyOsc=null,harmonicOsc=null,subOsc=null,squealOsc=null,boostOsc=null;
   let bodyGain=null,harmonicGain=null,subGain=null;
   let intakeGain=null,intakeFilter=null,engineWaves=null,waveApplied=null;
+  let exhaustOsc=null,exhaustGain=null,turbineOsc=null,turbineGain=null;
   let boostFilter=null,boostLowOsc=null,boostLowGain=null,boostImpactGain=null,boostReleaseGain=null,boostToneGain=null;
   let boostAge=0,boostWasActive=false,boostRelease=0,boostMode='normal';
   let lobby=false,lobbyClock=0,lobbyGate=null,lobbyFilter=null,lobbyBass=null,lobbyPulse=null,lobbyTick=null;
@@ -26,15 +28,22 @@ export function createAudio({contextFactory} = {}) {
   const sources=new Set(),transients=new Set(),nodes=new Set();
   const finite=(value,fallback=0)=>Number.isFinite(Number(value))?Number(value):fallback;
   const clamp=(value,min,max)=>Math.min(max,Math.max(min,value));
-  const visible=()=>!doc?.hidden;
+  let pageActive=true;
+  const visible=()=>pageActive&&!doc?.hidden;
   const node=value=>{nodes.add(value);return value;};
+  let cueUntil = 0;
+  const lifecycle=createAudioLifecycle({...lifecycleOptions,getContext:()=>context,
+    wanted:()=>unlocked&&!muted&&volume>0&&visible()&&!disposed&&(running&&(engineVolume>0||sfxVolume>0)||lobby&&musicVolume>0||Date.now()<cueUntil&&sfxVolume>0),
+    changed:()=>updateGates(false)});
+  const contextStateChanged=()=>lifecycle.stateChanged();
+  const visibilityChanged=()=>updateGates();
 
   function target(parameter,value,seconds=.065) {
     if(!parameter || !context || context.state==='closed')return;
     try { parameter.setTargetAtTime(value,context.currentTime,seconds); } catch { /* Closing audio may race with a frame. */ }
   }
-  function updateGates() {
-    const audible=unlocked && !muted && visible() && !disposed;
+  function updateGates(syncLifecycle = true) {
+    const audible=unlocked && !muted && visible() && !disposed && context?.state==='running' && (running||lobby||Date.now()<cueUntil);
     target(master?.gain,audible?volume*1.6:0,.035);
     target(engineGate?.gain,audible && running?engineVolume:0,.070);
     target(sfxMix?.gain,audible?sfxVolume:0,.035);
@@ -48,6 +57,7 @@ export function createAudio({contextFactory} = {}) {
       boostWasActive=false;boostAge=0;boostRelease=0;boostMode='normal';
       soundscape?.silence();
     }
+    if(syncLifecycle)lifecycle.sync();
   }
   function makeOscillator(type,frequency,gain,destination) {
     const oscillator=node(context.createOscillator()),amplitude=node(context.createGain());
@@ -143,6 +153,10 @@ export function createAudio({contextFactory} = {}) {
       lobbyEcho=node(context.createGain());lobbyEcho.gain.value=0;
       lobbyPulse.amplitude.connect(echo);lobbyLead.amplitude.connect(echo);echo.connect(echoFilter);echoFilter.connect(feedback);feedback.connect(echo);echoFilter.connect(lobbyEcho);lobbyEcho.connect(lobbyGate);
     }
+    // Original load-linked exhaust texture and induction/motor layer. These
+    // bounded voices are reused; no decoded samples or per-frame nodes.
+    ({oscillator:exhaustOsc,amplitude:exhaustGain}=makeOscillator('triangle',70,0,engineFilter));
+    ({oscillator:turbineOsc,amplitude:turbineGain}=makeOscillator('sine',180,0,engineFilter));
     soundscape=createRaceSoundscape({context,noise,engineDestination:engineGate,sfxDestination:sfxRaceGate,node,makeOscillator,target});
   }
 
@@ -156,11 +170,13 @@ export function createAudio({contextFactory} = {}) {
           if(typeof contextFactory!=='function' && typeof AudioContext!=='function')return false;
           context=typeof contextFactory==='function'?contextFactory():new AudioContext({latencyHint:'interactive'});
           constructGraph();
+          context.addEventListener?.('statechange',contextStateChanged);
         }
         if(disposed || context.state==='closed')return false;
         if(context.state!=='running')await context.resume();
         if(disposed)return false;
         unlocked=context.state==='running';
+        if(unlocked)lifecycle.authorize();
         updateGates();return unlocked;
       } catch {
         unlocked=false;updateGates();return false;
@@ -168,6 +184,7 @@ export function createAudio({contextFactory} = {}) {
     })();
     try { return await unlockPromise; } finally { unlockPromise=null; }
   }
+  function setPageActive(value) {pageActive=value!==false;updateGates();}
   function setMuted(value) {
     muted=Boolean(value);updateGates();
   }
@@ -191,8 +208,8 @@ export function createAudio({contextFactory} = {}) {
     const step=clamp(finite(dt,1/60),0,.1),throttle=clamp(finite(state.throttle,1),0,1);
     const motion=engineMotion.update({running,voice,speed,topSpeed:finite(state.topSpeed,vehicle.handling.topSpeed),vehicleId:vehicle.id,raceId:state.raceId,throttle,brake,drift},step);
     const tyres=tyreMotion.update({...state,running,speed,drift,brake},step);
-    if(!context || !unlocked || context.state!=='running')return;
     updateGates();
+    if(!context || !unlocked || context.state!=='running')return;
     if(muted || !visible())return;
     if(lobby)updateLobby(clamp(finite(dt,1/60),0,.1));
     if(!running)return;
@@ -214,8 +231,13 @@ export function createAudio({contextFactory} = {}) {
     target(engineFilter.frequency,280+voice.cutoff*(.22+rev*.65)*(.52+load*.48)+(boost?80:0),.10);
     target(intakeGain.gain,electric?0:(.002+rev*.010)*load*torque,.075);
     target(intakeFilter.frequency,300+rev*370,.12);
+    const detail=engineDetailFrame({voice,motion,vehicle,speed,throttle,brake});
+    target(exhaustOsc.frequency,detail.exhaustFrequency,.045);
+    target(exhaustGain.gain,detail.exhaustGain,.060);
+    target(turbineOsc.frequency,detail.turbineFrequency,.14);
+    target(turbineGain.gain,detail.turbineGain,.12);
     const nextBoostMode=['perfect','burst'].includes(state.nitroMode)?state.nitroMode:'normal';
-    if(boost&&!boostWasActive){boostAge=0;boostRelease=0;}
+    if(boost&&(!boostWasActive||nextBoostMode!==boostMode)){boostAge=0;boostRelease=0;}
     if(boost)boostMode=nextBoostMode;
     if(!boost&&boostWasActive)boostRelease=clamp(boostAge/.18,0,1);
     if(boost)boostAge+=step;
@@ -253,6 +275,15 @@ export function createAudio({contextFactory} = {}) {
     target(lobbySpace?.gain,frame.space,.2);target(lobbyEcho?.gain,frame.echo,.2);
   }
   function beep(frequency=440,duration=.1) {
+    if(unlocked&&!muted&&visible()&&!disposed){
+      cueUntil=Date.now()+1000;
+      if(context?.state==='suspended'){
+        // Countdown/UI cues follow a prior user unlock and keep their own
+        // short wake window, without starting lobby music or racing engines.
+        unlock().then(ok=>{if(ok)beep(frequency,duration);});return;
+      }
+      updateGates();
+    }
     if(disposed || !unlocked || muted || !visible() || context?.state!=='running' || transients.size>=8)return;
     try {
       const oscillator=context.createOscillator(),gain=context.createGain();
@@ -268,7 +299,9 @@ export function createAudio({contextFactory} = {}) {
   }
   function dispose() {
     if(disposed)return;disposed=true;unlocked=false;
-    doc?.removeEventListener?.('visibilitychange',updateGates);
+    lifecycle.dispose();
+    context?.removeEventListener?.('statechange',contextStateChanged);
+    doc?.removeEventListener?.('visibilitychange',visibilityChanged);
     for(const source of [...sources,...transients]) {
       try { source.stop();source.disconnect(); } catch { /* Already-ended sources are harmless. */ }
     }
@@ -277,6 +310,6 @@ export function createAudio({contextFactory} = {}) {
     try { const closing=context?.close();closing?.catch?.(()=>{}); } catch { /* Closing twice is safe for callers. */ }
     context=null;master=null;
   }
-  doc?.addEventListener?.('visibilitychange',updateGates);
-  return {unlock,setMuted,setVolume,setMusicVolume,setEngineVolume,setSfxVolume,setLobbyStyle,update,beep,dispose};
+  doc?.addEventListener?.('visibilitychange',visibilityChanged);
+  return {unlock,setPageActive,setMuted,setVolume,setMusicVolume,setEngineVolume,setSfxVolume,setLobbyStyle,update,beep,dispose};
 }

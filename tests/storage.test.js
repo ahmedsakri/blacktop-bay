@@ -124,7 +124,7 @@ test('blocked reads, quota failures, and absent browser storage do not throw', (
   assert.deepEqual(loadRecords(blocked), defaults);
   assert.equal(saveResult(finished(), frames(), blocked).bestTime, 120);
   assert.equal(setSound(false, blocked).sound, false);
-  assert.deepEqual(clearRecords(blocked), defaults);
+  assert.deepEqual(clearRecords(blocked), {...defaults,sound:false}, 'session sound preference survives denied writes and a record reset');
   const originalStorage = Object.getOwnPropertyDescriptor(globalThis, 'localStorage');
   Object.defineProperty(globalThis, 'localStorage', { configurable: true, get() { throw new Error('storage access denied'); } });
   try {

@@ -17,3 +17,12 @@ export function createDrivingSchool(){let index=0,steered=0,skipped=0,lastScore=
 };}
 export function schoolSeen(storage){try{return ['seen','complete'].includes(storage.getItem(SCHOOL_KEY));}catch{return false;}}
 export function saveSchool(storage,complete=false){try{storage.setItem(SCHOOL_KEY,complete?'complete':'seen');return true;}catch{return false;}}
+
+// Text follows the actual input mode; completion still depends on race facts.
+export function schoolLessonCopy(lesson, controls = {}) {
+ if (!lesson) return null;
+ if (!controls.nitroToggle) return {...lesson};
+ if (lesson.id === 'boost') return {...lesson, text:'Tap Nitro on a clear stretch. Tap again outside the timing windows to stop.', cue:'Tap Nitro to start'};
+ if (lesson.id === 'perfect') return {...lesson, text:'Tap Nitro, then tap again when the marker enters the blue window. Perfect Nitro stays on; tap once more to stop.', cue:'Tap · tap in blue · tap to stop'};
+ return {...lesson};
+}

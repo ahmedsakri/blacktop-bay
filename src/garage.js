@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {createEnvironmentResource} from './environment-resource.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
 // The set is static and separately buildable so its clearance and draw-call
@@ -123,12 +124,11 @@ export function createGarage(renderer, { low = false } = {}) {
   const scene = new THREE.Scene();
   scene.background = new THREE.Color('#110017');
   scene.fog = new THREE.Fog('#110017', 16, 48);
-  const room = new RoomEnvironment();
-  const pmrem = new THREE.PMREMGenerator(renderer);
-  const environment = pmrem.fromScene(room, 0.04);
-  scene.environment = environment.texture;
-  scene.environmentIntensity = .45;
-  room.dispose(); pmrem.dispose();
+  const environment=createEnvironmentResource(scene,()=>{
+    if(renderer.getContext?.().isContextLost())return null;
+    const room=new RoomEnvironment(),pmrem=new THREE.PMREMGenerator(renderer);
+    try{return pmrem.fromScene(room,.04,.1,100,{size:low?128:256});}finally{room.dispose();pmrem.dispose();}
+  });environment.rebuild();scene.environmentIntensity=.45;
   const anchor = createGarageSet({ low }); scene.add(anchor);
   const gallery = anchor.getObjectByName('garage-led-gallery');
   scene.add(new THREE.HemisphereLight('#e3efff', '#404047', .55));
@@ -142,5 +142,5 @@ export function createGarage(renderer, { low = false } = {}) {
   rim.position.set(4, 3, -5); anchor.add(rim, rim.target);
   const fill = new THREE.DirectionalLight('#ffffff', .4);
   fill.position.set(0, 2, 6); anchor.add(fill, fill.target);
-  return { scene, position(car) { anchor.position.set(car.x, 0, car.z); gallery.rotation.y = Number.isFinite(car.yaw) ? car.yaw : 0; } };
+  return { scene, rebuildEnvironment:environment.rebuild,disposeEnvironment:environment.dispose, position(car) { anchor.position.set(car.x, 0, car.z); gallery.rotation.y = Number.isFinite(car.yaw) ? car.yaw : 0; } };
 }

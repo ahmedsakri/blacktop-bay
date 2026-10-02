@@ -240,3 +240,17 @@
   .dialog:is([data-kind="pause"],[data-kind="how"],[data-kind="result"]) *::before,
   .dialog:is([data-kind="pause"],[data-kind="how"],[data-kind="result"]) *::after { animation:none!important; transition:none!important; scroll-behavior:auto; }
 }
+
+/* A record is only called saved after storage verifies it. Recovery actions stay
+   in the scrolling content region and retain full touch targets at every size. */
+.dialog[data-kind="result"] .rd-record-persistence { margin-top:16px; padding:12px 14px; background:#021439; border:1px solid #9246FF; }
+.dialog[data-kind="result"] .rd-record-persistence:empty { display:none; }
+.dialog[data-kind="result"] .rd-record-persistence p { margin:0; color:#FFFFFF; font-size:12px; line-height:1.6; }
+.dialog[data-kind="result"] .rd-record-pending { border-left:3px solid #FFF71E; }
+.dialog[data-kind="result"] .rd-record-persistence strong { color:#FFF71E; }
+.dialog[data-kind="result"] .rd-record-actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+.dialog[data-kind="result"] .rd-record-actions .button { flex:1 1 170px; min-width:0; min-height:44px; height:auto; margin:0; padding:10px 12px; white-space:normal; font:700 12px/1.4 Manrope,sans-serif; }
+.dialog[data-kind="result"] .rd-record-actions .ui-icon { width:18px; height:18px; flex:none; }
+/* Supporting labels stay legible over the shared navy/violet panel surfaces. */
+.dialog[data-kind="result"] :is(.rd-record-card p,.rd-finish-status,.rd-driver > small) { color:#D0C8D6; font-size:11px; }
+.dialog[data-kind="result"] :is(.rd-finish-stats dt,.rd-section-heading > span,.rd-order-time > small) { color:#D0C8D6; font-size:9px; }

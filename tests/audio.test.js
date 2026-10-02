@@ -43,7 +43,7 @@ function environment() {
     setPeriodicWave(wave){this.wave=wave;this.type='custom';}
   }
   class Context {
-    state='suspended';currentTime=0;sampleRate=8000;destination={};oscillators=[];gains=[];compressors=[];panners=[];all=[];
+    state='suspended';stateListeners=new Set();suspends=0;resumes=0;currentTime=0;sampleRate=8000;destination={};oscillators=[];gains=[];compressors=[];panners=[];all=[];
     constructor(){contexts.push(this);}
     make(){const node=new Node();this.all.push(node);return node;}
     createOscillator(){const node=this.make();this.oscillators.push(node);return node;}
@@ -56,7 +56,11 @@ function environment() {
     createDynamicsCompressor(){const node=this.make();this.compressors.push(node);return node;}
     createBufferSource(){return this.make();}
     createBuffer(channels,length){const data=new Float32Array(length);return {getChannelData:()=>data};}
-    async resume(){this.state='running';}
+    addEventListener(type,fn){if(type==='statechange')this.stateListeners.add(fn);}
+    removeEventListener(type,fn){if(type==='statechange')this.stateListeners.delete(fn);}
+    changeState(state){this.state=state;for(const listener of this.stateListeners)listener();}
+    async resume(){this.resumes++;this.changeState('running');}
+    async suspend(){this.suspends++;this.changeState('suspended');}
     async close(){this.state='closed';}
   }
   globalThis.AudioContext=Context;
@@ -299,5 +303,22 @@ test('three reusable stereo rival voices follow real relative position and all s
   for(let i=0;i<1000;i++)audio.update({...base,listener:{x:0,z:0,yaw:i*.001},crowd:.5,road:'wet'});
   assert.equal(ctx.all.length,count);
   audio.update({running:false});assert.equal(ctx.gains[1].gain.value,0);assert.equal(ctx.gains[3].gain.value,0);
+ }finally{audio.dispose();env.restore();}
+});
+
+
+test('actual graph suspends off-page, resumes without allocation and consumes silent event IDs',async()=>{
+ const env=environment(),jobs=new Map();let id=0;
+ const audio=createAudio({lifecycleOptions:{schedule:fn=>{jobs.set(++id,fn);return id;},cancel:key=>jobs.delete(key)}});
+ const settle=async()=>{for(let i=0;i<12;i++)await Promise.resolve();};
+ try{
+  audio.update({running:true,vehicle:'ferrari-enzo',speed:25,raceId:10});await audio.unlock();const ctx=env.contexts[0],nodeCount=ctx.all.length;
+  audio.setPageActive(false);assert.equal(ctx.gains[0].gain.value,0);for(const [key,fn]of jobs){jobs.delete(key);fn();}await settle();assert.equal(ctx.state,'suspended');
+  audio.update({running:true,vehicle:'ferrari-enzo',speed:25,raceId:10,impact:{id:5,kind:'crash',strength:1}});
+  audio.setPageActive(true);await settle();assert.equal(ctx.state,'running');assert.equal(ctx.all.length,nodeCount);
+  const ramps=ctx.all.reduce((sum,node)=>sum+node.gain.ramps.length,0);
+  audio.update({running:true,vehicle:'ferrari-enzo',speed:25,raceId:10,impact:{id:5,kind:'crash',strength:1}});
+  assert.equal(ctx.all.reduce((sum,node)=>sum+node.gain.ramps.length,0),ramps,'old hidden impact does not replay after wake');
+  audio.dispose();assert.equal(ctx.stateListeners.size,0);assert.equal(jobs.size,0);
  }finally{audio.dispose();env.restore();}
 });

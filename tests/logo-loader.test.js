@@ -56,12 +56,12 @@ function preparation({reject=false}={}) {
   const updates=[],pending=[],added=[],fleetRequests=[],old={disposed:false,dispose(){this.disposed=true;}};
   let calls=0;
   const effective={topSpeed:55,acceleration:17,handling:1.1};
-  const context=vm.createContext({preferences:{mode:'race',vehicle:'selected'},mobile:false,school:null,career:normalizeCareer(),nextChampionshipRace,bindChampionshipFleet,persistCareer:()=>true,toast(){},fittedStats:()=>effective,
+  const context=vm.createContext({AbortController,renderer:{},camera:{},prepareManufacturerInstances:async()=>{},preferences:{mode:'race',vehicle:'selected'},mobile:false,school:null,career:normalizeCareer(),nextChampionshipRace,bindChampionshipFleet,persistCareer:()=>true,toast(){},fittedStats:()=>effective,
     createOpponentFleet:options=>{fleetRequests.push(options);return ['first','second'];},getVehicle:id=>({name:id}),
     prepareManufacturerCar:id=>{calls++;if(reject&&calls===1)return Promise.reject(Error('Network'));return new Promise(resolve=>pending.push({id,resolve}));},
     createCar:({vehicle})=>({vehicle,group:{visible:true},disposed:false,dispose(){this.disposed=true;}}),
     world:{scene:{add:group=>added.push(group)}},report:state=>updates.push(state),old});
-  vm.runInContext(`let fleetGeneration=0,rivalModels=[old],rivalVehicles=[];${prepareSource}`,context);
+  vm.runInContext(`let fleetGeneration=0,fleetPreparation=null,rivalModels=[old],rivalVehicles=[];${prepareSource}`,context);
   return {context,updates,pending,added,old,fleetRequests,effective,resolve:id=>{const i=pending.findIndex(task=>task.id===id);assert.ok(i>=0,`No pending load for ${id}`);pending.splice(i,1)[0].resolve();},start:()=>vm.runInContext("prepareOpponents('test',report)",context),state:()=>vm.runInContext('({rivalModels,rivalVehicles})',context)};
 }
 
@@ -76,7 +76,9 @@ test('opponent loader counts constructed cars, including fallback, rather than r
   assert.equal(h.updates.at(-1).progress.completed,1);
   assert.equal(h.old.disposed,false);assert.equal(h.added.length,0,'partial construction must not replace the visible field');
   h.resolve('second');assert.equal(await run,true);
-  assert.equal(h.updates.at(-1).progress.completed,2);assert.equal(h.updates.at(-1).progress.total,2);
+  const lastCount=h.updates.filter(update=>update.progress).at(-1).progress;
+  assert.equal(lastCount.completed,2);assert.equal(lastCount.total,2);
+  assert.equal(h.updates.at(-1).label,'Finishing the grid');
   assert.deepEqual([...h.state().rivalVehicles],['selected','second']);
   assert.equal(h.old.disposed,true);assert.equal(h.added.length,2);
 });

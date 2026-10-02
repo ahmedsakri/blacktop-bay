@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { sampleTrack, projectOnTrack } from './track.js';
 import { getTrackObstacles } from './track-obstacles.js';
+import {coastalGroundingLayout} from './coastal-foundations.js';
 import { broadleafCrownGeometry } from './vegetation-geometry.js';
 
 export const DESTINATION_PROFILES = Object.freeze({
@@ -78,10 +79,17 @@ export function createMountainVenue(scene, track, {low=false}={}) {
   }
   if(track.id==='san-francisco-hills'){
     const houseMaterials=['#d2b29b','#c4c9bc','#b8a7c4','#899fa9'].map(color=>new THREE.MeshStandardMaterial({color,roughness:.9}));
+    group.userData.houseFoundations=[];
+    // Bay houses sit on submerged shoreline shelves and concrete footings.
     // Compact bay houses use distinct roof silhouettes and tall narrow windows.
     for(let i=0;i<22;i++){const p=sampleTrack(track.length*(.2+i*.015),track),side=i%2?1:-1;
       const x=p.x+p.nx*side*25,z=p.z+p.nz*side*25;if(projectOnTrack(x,z,0,track).distance<track.width/2+10)continue;
+      const support=coastalGroundingLayout(track,[{x,z,radius:6.6}],{padding:3,margin:1.5})[0];
+      const shore=mesh(new THREE.CylinderGeometry(1,1.12,1,10),stone,x,-1.5,z);shore.scale.set(support.radius,3,support.radius);
+      group.userData.houseFoundations.push({...support,width:12,depth:14});
       const house=new THREE.Group();house.position.set(x,0,z);house.rotation.y=Math.atan2(p.tx,p.tz);group.add(house);
+      const footing=new THREE.Mesh(new THREE.BoxGeometry(12,2.8,14),concrete);footing.position.y=-1.6;house.add(footing);
+      const coping=new THREE.Mesh(new THREE.BoxGeometry(12,.2,14),concrete);coping.position.y=-.1;house.add(coping);
       const wall=new THREE.Mesh(new THREE.BoxGeometry(8,10+(i%3)*2,10),houseMaterials[i%4]);wall.position.y=(10+(i%3)*2)/2;house.add(wall);
       const roof=new THREE.Mesh(new THREE.ConeGeometry(7,4,4),steel);roof.position.y=12+(i%3)*2;roof.rotation.y=Math.PI/4;house.add(roof);
       for(const dx of [-2,2])for(const y of [3,7]){const w=new THREE.Mesh(new THREE.BoxGeometry(1.3,2,.12),windowMat);w.position.set(dx,y,5.07);house.add(w);}

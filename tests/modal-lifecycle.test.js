@@ -12,6 +12,7 @@ import {normalizeSetups,getCarSetup,selectCarSetup} from '../src/car-setups.js';
 import {recordScope} from '../src/personal-ghost.js';
 import {exportSaveBackup,inspectSaveBackup,importSaveBackup} from '../src/save-backup.js';
 import {icon} from '../src/icons.js';
+import {createDialogNavigation} from '../src/dialog-navigation.js';
 
 // Execute the real orchestration with inert presentation/renderer endpoints.
 // This verifies lifecycle transitions; browser layout/focus still need UI QA.
@@ -30,7 +31,7 @@ function harness({initialMode='countdown',storage=memory()}={}){
   document:{activeElement:null,querySelector:selector=>selector==='#dialog-actions button'?{click:()=>context.lastDialog.actions[0].action()}:null},
   window:{addEventListener:(name,handler)=>listeners.set(name,handler)},$,performance:{now:()=>1000},
   event:(name,data)=>events.push({name,data}),clearInput:()=>{calls.clear++;values.heldKeys.clear();},updateTouchControls:()=>calls.touch++,renderLesson(){},effects:{clear(){}},
-  dialog:config=>{context.lastDialog=config;context.modalKind=config.kind;},closeDialog:()=>{calls.close++;context.modalKind='';},
+  dialog:config=>{values.dialogNavigation.open();context.lastDialog=config;context.modalKind=config.kind;},closeDialog:()=>{calls.close++;context.modalKind='';values.dialogNavigation.close();},
   screenMode:()=>({active:false,label:'Full-screen play'}),pausePanel:options=>{pauseFrames.push(options);return 'pause';},mountSteeringSettings(){},
   needsLandscape:()=>false,orientationGate(){throw Error('Landscape gate should remain closed');},renderer:{domElement:{focus:()=>calls.focus++}},sound:{unlock:()=>calls.unlock++},
   start:()=>calls.start++,menu:()=>calls.menu++,resetCar:()=>calls.reset++,updateFinish:()=>calls.result++,
@@ -38,15 +39,17 @@ function harness({initialMode='countdown',storage=memory()}={}){
   stockTrial:()=>false,getVehicle,circuitPath,format:value=>String(value),makeResultCard:()=>({}),location:{origin:'https://example.test',assign:url=>navigations.push(url)},
   inspectSaveBackup,importSaveBackup,exportSaveBackup,showRecoveryDialog(){throw Error('Unexpected recovery UI');},
  };
+ values.dialogNavigation=createDialogNavigation({document:values.document,dialog:{contains:()=>false,querySelectorAll:()=>[]}});
  context=vm.createContext(values);vm.runInContext(lifecycleSource,context);
  const key=(code='Escape')=>{let prevented=false;listeners.get('keydown')({code,key:code,repeat:false,target:{closest:()=>false},preventDefault(){prevented=true;}});return prevented;};
  return {context,$,race,calls,events,navigations,pauseFrames,storage,key,run:code=>vm.runInContext(code,context),action:label=>context.lastDialog.actions.find(action=>action.label===label).action()};
 }
 
 test('countdown pause survives backup Back and Escape without becoming a running race',()=>{
- for(const leave of ['button','escape']){
+ for(const leave of ['button','escape'])for(const nested of [false,true]){
   const h=harness(),before=JSON.stringify(h.race);h.run('pauseGame()');
   assert.equal(h.context.mode,'paused');assert.equal(h.context.pauseResumeMode,'countdown');assert.equal(h.pauseFrames.at(-1).countdown,true);
+  if(nested)h.run('dialogNavigation.pushParent({restore:pauseSettingsReturn})');
   h.run('showSaveBackup()');assert.equal(h.context.modalKind,'backup');
   if(leave==='button')h.action('BACK');else assert.equal(h.key(),true);
   assert.equal(h.context.modalKind,'pause');assert.equal(h.context.mode,'paused');assert.equal(h.pauseFrames.at(-1).countdown,true);
