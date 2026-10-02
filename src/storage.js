@@ -29,7 +29,11 @@ function cleanFrames(frames, duration) {
       || !bounded(frame.z, -MAX_POSITION, MAX_POSITION)
       || !bounded(frame.yaw, -MAX_YAW, MAX_YAW)) return [];
     previousTime = frame.t;
-    result.push({ t: frame.t, x: frame.x, z: frame.z, yaw: frame.yaw });
+    const clean = { t: frame.t, x: frame.x, z: frame.z, yaw: frame.yaw };
+    for(const [key,min,max] of [['y',-1000,1000],['pitch',-Math.PI*8,Math.PI*8],['roll',-Math.PI*8,Math.PI*8],['progress',0,1]]) {
+      if(frame[key] !== undefined){if(!bounded(frame[key],min,max))return [];clean[key]=frame[key];}
+    }
+    result.push(clean);
   }
   return result;
 }

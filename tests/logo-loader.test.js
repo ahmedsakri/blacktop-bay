@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
 import {logoLoaderMarkup,loaderProgress,bindLogoLoader} from '../src/logo-loader.js';
+import {normalizeCareer,nextChampionshipRace,bindChampionshipFleet} from '../src/race-career.js';
 
 function loaderDOM() {
   const parts=new Map();
@@ -52,15 +53,16 @@ test('updates support real counts, indeterminate stages, readable failures and d
 const main=readFileSync(new URL('../src/main.js',import.meta.url),'utf8');
 const prepareSource=main.slice(main.indexOf('async function prepareOpponents('),main.indexOf('function updateWallet(){'));
 function preparation({reject=false}={}) {
-  const updates=[],pending=[],added=[],old={disposed:false,dispose(){this.disposed=true;}};
+  const updates=[],pending=[],added=[],fleetRequests=[],old={disposed:false,dispose(){this.disposed=true;}};
   let calls=0;
-  const context=vm.createContext({preferences:{mode:'race',vehicle:'selected'},mobile:false,
-    createOpponentFleet:()=>['first','second'],getVehicle:id=>({name:id}),
-    prepareManufacturerCar:()=>{calls++;if(reject&&calls===1)return Promise.reject(Error('Network'));return new Promise(resolve=>pending.push(resolve));},
+  const effective={topSpeed:55,acceleration:17,handling:1.1};
+  const context=vm.createContext({preferences:{mode:'race',vehicle:'selected'},mobile:false,school:null,career:normalizeCareer(),nextChampionshipRace,bindChampionshipFleet,persistCareer:()=>true,toast(){},fittedStats:()=>effective,
+    createOpponentFleet:options=>{fleetRequests.push(options);return ['first','second'];},getVehicle:id=>({name:id}),
+    prepareManufacturerCar:id=>{calls++;if(reject&&calls===1)return Promise.reject(Error('Network'));return new Promise(resolve=>pending.push({id,resolve}));},
     createCar:({vehicle})=>({vehicle,group:{visible:true},disposed:false,dispose(){this.disposed=true;}}),
     world:{scene:{add:group=>added.push(group)}},report:state=>updates.push(state),old});
   vm.runInContext(`let fleetGeneration=0,rivalModels=[old],rivalVehicles=[];${prepareSource}`,context);
-  return {context,updates,pending,added,old,start:()=>vm.runInContext("prepareOpponents('test',report)",context),state:()=>vm.runInContext('({rivalModels,rivalVehicles})',context)};
+  return {context,updates,pending,added,old,fleetRequests,effective,resolve:id=>{const i=pending.findIndex(task=>task.id===id);assert.ok(i>=0,`No pending load for ${id}`);pending.splice(i,1)[0].resolve();},start:()=>vm.runInContext("prepareOpponents('test',report)",context),state:()=>vm.runInContext('({rivalModels,rivalVehicles})',context)};
 }
 
 test('opponent loader counts constructed cars, including fallback, rather than requested downloads',async()=>{
@@ -68,9 +70,12 @@ test('opponent loader counts constructed cars, including fallback, rather than r
   await new Promise(resolve=>setImmediate(resolve));
   assert.equal(h.updates.at(-1).progress.completed,0);
   assert.equal(h.old.disposed,false);assert.equal(h.added.length,0);
-  h.pending.shift()();await new Promise(resolve=>setImmediate(resolve));
+  assert.equal(h.pending.length,2,'parallel preparation keeps two requested loads in flight');
+  assert.equal(h.fleetRequests[0].playerStats,h.effective);
+  h.resolve('selected');await new Promise(resolve=>setImmediate(resolve));
   assert.equal(h.updates.at(-1).progress.completed,1);
-  h.pending.shift()();assert.equal(await run,true);
+  assert.equal(h.old.disposed,false);assert.equal(h.added.length,0,'partial construction must not replace the visible field');
+  h.resolve('second');assert.equal(await run,true);
   assert.equal(h.updates.at(-1).progress.completed,2);assert.equal(h.updates.at(-1).progress.total,2);
   assert.deepEqual([...h.state().rivalVehicles],['selected','second']);
   assert.equal(h.old.disposed,true);assert.equal(h.added.length,2);
@@ -78,14 +83,20 @@ test('opponent loader counts constructed cars, including fallback, rather than r
 
 test('cancelled race preparation cannot complete a loader or replace the current fleet',async()=>{
   const h=preparation(),run=h.start();
-  assert.equal(h.updates.length,1);vm.runInContext('fleetGeneration++',h.context);
-  h.pending.shift()();assert.equal(await run,false);
-  assert.equal(h.updates.length,1);assert.equal(h.updates[0].progress.completed,0);
+  assert.equal(h.updates.length,2);vm.runInContext('fleetGeneration++',h.context);
+  h.resolve('first');h.resolve('second');assert.equal(await run,false);
+  assert.equal(h.updates.length,2);assert.ok(h.updates.every(report=>report.progress.completed===0));
   assert.equal(h.old.disposed,false);assert.equal(h.added.length,0);
 });
 
 test('solo preparation has no invented seven-car progress',async()=>{
   const h=preparation();vm.runInContext("preferences.mode='time-attack'",h.context);
   assert.equal(await h.start(),true);assert.equal(h.updates.length,0);
-  assert.equal(h.pending.length,0);assert.equal(h.added.length,0);
+  assert.equal(h.pending.length,0);assert.equal(h.added.length,0);assert.equal(h.fleetRequests.length,0);
+});
+
+test('driving school preparation uses a real empty practice grid regardless of the lobby mode',async()=>{
+ const h=preparation();vm.runInContext('school={active:true}',h.context);
+ assert.equal(await h.start(),true);assert.equal(h.pending.length,0);assert.equal(h.updates.length,0);
+ assert.equal(h.fleetRequests.length,0);assert.equal(h.state().rivalVehicles.length,0);
 });

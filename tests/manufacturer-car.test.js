@@ -262,3 +262,54 @@ test('silently recovered texture failures reject the new car, release partial re
   assert.ok(materialsOf(recovered.group).some(material => material.map === retried.paint.map));
   recovered.dispose();
 });
+
+
+test('real distance tiers keep the near source intact, switch with hysteresis and dispose instance-owned materials',async t=>{
+ const [id,manifest]=entries.find(([id])=>!isManufacturerCarReady(id));
+ const sources=[];
+ t.mock.method(GLTFLoader.prototype,'loadAsync',async url=>{const source=fixture(manifest);sources.push({url,source});return {scene:source.scene};});
+ await prepareManufacturerCar(id,{low:true});const car=createManufacturerCar({assetId:id,low:true});
+ const nearBody=car.group.getObjectByName('sprung-body');assert.equal(nearBody.visible,true);
+ await car.prepareDistanceDetail();assert.equal(sources.length,2);assert.match(sources[1].url,/-distance.glb/);
+ car.setDistanceDetail(90);assert.equal(car.group.userData.distanceDetail.tier,'distance');assert.equal(nearBody.visible,false);
+ const far=car.group.children.find(child=>child.userData.kind==='manufacturer-car');assert.ok(far.visible);
+ const farMaterials=materialsOf(far);assert.ok(farMaterials.every(m=>!m.isMeshPhysicalMaterial));
+ far.traverse(mesh=>{if(mesh.isMesh){assert.equal(mesh.castShadow,false);assert.equal(mesh.material.normalMap,null);}});
+ car.setDistanceDetail(59);assert.equal(car.group.userData.distanceDetail.tier,'distance');car.setDistanceDetail(40);assert.equal(nearBody.visible,true);assert.equal(far.visible,false);
+ let released=0;farMaterials.forEach(m=>m.addEventListener('dispose',()=>released++));car.dispose();car.dispose();assert.equal(released,farMaterials.length);
+});
+
+test('a failed background distance load leaves the authentic near car visible and usable',async t=>{
+ const [id,manifest]=entries.find(([id])=>!isManufacturerCarReady(id));
+ t.mock.method(GLTFLoader.prototype,'loadAsync',async url=>{if(url.includes('-distance'))throw new Error('offline');return {scene:fixture(manifest).scene};});
+ await prepareManufacturerCar(id,{low:true});const car=createManufacturerCar({assetId:id,low:true});
+ assert.equal(await car.prepareDistanceDetail(),false);car.setDistanceDetail(300);assert.equal(car.group.userData.distanceDetail.tier,'near');
+ assert.equal(car.group.getObjectByName('sprung-body').visible,true);car.update({time:1});car.update({time:1.1,speed:20});car.dispose();
+});
+
+
+test('switching a crashed manufacturer car to distance detail keeps fragment expiry and recovery alive without new deformation',async t=>{
+ const [id,manifest]=entries.find(([id,entry])=>!isManufacturerCarReady(id)&&entry.paintable!==false&&entry.paintMaterialNames?.length);
+ t.mock.method(GLTFLoader.prototype,'loadAsync',async url=>{
+  const source=fixture(manifest);
+  if(!url.includes('-distance')){source.body.geometry.dispose();source.body.geometry=new THREE.BoxGeometry(1.6,.8,4.2,20,12,40);}
+  return {scene:source.scene};
+ });
+ await prepareManufacturerCar(id,{low:true});const car=createManufacturerCar({assetId:id,low:true}),scene=new THREE.Scene();scene.add(car.group);t.after(()=>car.dispose());
+ await car.prepareDistanceDetail();
+ const impact={id:1,kind:'crash',severity:'wreck',remaining:.8,strength:1,localX:-.8,localZ:.3,localNX:1,localNZ:0,nx:1,nz:0,y:0};
+ const input={raceId:'distance-damage',impact,recovery:{id:0},car:{vx:8,vz:4}};
+ car.update({...input,time:0});car.update({...input,time:.02});
+ const stats=car.group.userData.damage,fragments=scene.getObjectByName('detached-body-fragments');
+ assert.equal(stats.fragments,2);assert.equal(stats.dents,1);
+ const before=fragments.children[0].position.clone();car.setDistanceDetail(90);assert.equal(car.group.userData.distanceDetail.tier,'distance');
+ const farInput={...input,impact:{...impact,id:2}};
+ car.update({...farInput,time:.04});assert.notDeepEqual(fragments.children[0].position.toArray(),before.toArray(),'existing world debris continues moving');
+ assert.equal(stats.dents,1,'distant impacts do not scan and deform the hidden source');
+ for(let i=1;i<=180;i++)car.update({...farInput,time:.04+i/60});
+ assert.equal(stats.fragments,0,'world debris expires while the car remains distant');
+ car.setDistanceDetail(40);car.update({...farInput,time:3.06});assert.equal(stats.dents,1,'a consumed distant impact is not replayed on the near body');
+ car.setDistanceDetail(90);car.update({...farInput,recovery:{id:1},impact:{...impact,id:2,remaining:0},time:3.08});
+ assert.equal(stats.dents,0,'recovery restores the hidden near body');
+ assert.equal(car.group.getObjectByName('crash-undertray'),undefined);
+});

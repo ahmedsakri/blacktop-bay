@@ -1,6 +1,7 @@
 import { getVehicle } from './vehicles.js';
 import { getTrack } from './track.js';
 import { icon } from './icons.js';
+import { CONTROL_DEFAULTS, normalizePlayerControls, actionForKey, keyLabel } from './player-controls.js';
 
 // Presentation only. Race state, record persistence and reward transactions stay
 // with their existing owners; rendering a panel never earns or spends credits.
@@ -32,18 +33,34 @@ export function pausePanel({ race, track, sound = false, fullscreen = false, scr
   </div>`;
 }
 
-export function howToPlayPanel({ touch = false } = {}) {
+export function howToPlayPanel({ touch = false, controls } = {}) {
+  const settings = normalizePlayerControls(controls), bindings = settings.bindings;
+  const aliases = {left: ['KeyA'], right: ['KeyD'], brake: ['KeyS'], nitro: ['ShiftRight'], pause: ['KeyP']};
+  const activeKeys = action => [bindings[action], ...(aliases[action] || []).filter(code => code !== bindings[action] && actionForKey(code, settings) === action)];
+  const readableKey = code => code.startsWith('Arrow') ? `${keyLabel(code)} arrow` : keyLabel(code);
+  const keyText = action => activeKeys(action).map(readableKey).join(' / ');
+  const arrows = bindings.left === CONTROL_DEFAULTS.left && bindings.right === CONTROL_DEFAULTS.right;
+  const defaultSteering = arrows && actionForKey('KeyA', settings) === 'left' && actionForKey('KeyD', settings) === 'right';
+  const nitroKey = activeKeys('nitro').includes('ShiftLeft') && activeKeys('nitro').includes('ShiftRight') ? 'Shift' : keyLabel(bindings.nitro);
+  const boostCue = `${settings.nitroToggle ? 'TAP' : 'HOLD'} ${touch ? 'NITRO' : nitroKey.toUpperCase()}`;
+  const boostText = settings.nitroToggle ? 'Tap to start Nitro on a clear straight. Tap again to stop and recharge while driving and drifting.' : 'Boost on a clear straight. Release to recharge while driving and drifting.';
+  const phoneBoost = settings.nitroToggle ? 'tap Nitro on and off' : 'hold Nitro to boost';
+  const keyMarkup = code => {
+    const glyph = {'ArrowLeft': 'arrow-left', 'ArrowRight': 'arrow-right', 'ArrowDown': 'chevron-down'}[code];
+    return `<kbd aria-label="${escape(readableKey(code))}">${glyph ? icon(glyph) : escape(keyLabel(code))}</kbd>`;
+  };
+  const keyRow = action => activeKeys(action).map(keyMarkup).join('<span>or</span>');
   const cards = [
-    { title: 'Find your line', icon: icons.steer, cue: touch ? 'HOLD / DRAG TO STEER' : 'ARROWS / A + D', text: touch ? 'Hold either side of the thumbpad or drag on the road. Lift to straighten. Optional tilt controls are below and in Pause.' : 'Steer with the arrow keys or A / D. You can also drag on the road.' },
+    { title: 'Find your line', icon: icons.steer, cue: touch ? 'HOLD / DRAG TO STEER' : defaultSteering ? 'ARROWS / A + D' : `${keyLabel(bindings.left)} / ${keyLabel(bindings.right)}`.toUpperCase(), text: touch ? 'Hold either side of the thumbpad or drag on the road. Lift to straighten. Optional tilt controls are below and in Pause.' : `Steer left with ${escape(keyText('left'))} and right with ${escape(keyText('right'))}. You can also drag on the road.` },
     { title: 'Let it slide', icon: icons.drift, cue: 'TURN AT SPEED', text: 'Turn sharply at speed to drift. Ease back into line to bank your points.' },
-    { title: 'Make your move', icon: icons.nitro, cue: touch ? 'HOLD NITRO' : 'HOLD SHIFT', text: 'Boost on a clear straight. Release to recharge while driving and drifting.' },
+    { title: 'Make your move', icon: icons.nitro, cue: escape(boostCue), text: boostText },
   ];
   return `<div class="rd-how-panel">
     <div class="rd-drive-rule"><span class="rd-rule-icon" aria-hidden="true">${icon('arrow-up-right')}</span><div><strong>Automatic acceleration. You choose the line.</strong><p>${touch ? 'Nitro is your only driving button. Use your other thumb to steer.' : 'Focus on steering, drift and boost. The car accelerates for you.'}</p></div></div>
     <div class="rd-control-cards">${cards.map((card, i) => `<section class="rd-control-card"><span class="rd-control-icon">${card.icon}</span><span class="rd-control-step">0${i + 1}</span><h3>${card.title}</h3><strong class="rd-control-cue">${card.cue}</strong><p>${card.text}</p></section>`).join('')}</div>
-    <div class="rd-how-details"><section><h3>${icons.flag}Three laps. Your challenge.</h3><p>Race seven rivals, chase a solo Time attack or enter a three-race tour. Stay clear of barriers: a hit loses the drift points you haven’t banked.</p></section><section><h3>${icons.trophy}Race. Earn. Improve.</h3><p>Finish runs to earn credits. Fit upgrades in Garage / Performance. Best times are saved by car, circuit, mode and difficulty on this device.</p></section></div>
-    <div class="rd-phone-note">${icons.rotate}<p><strong>On a phone, turn to landscape.</strong> Turning upright pauses the race. Drag to steer and hold Nitro to boost.</p></div>
-    <div class="rd-keyboard"><span class="rd-label">KEYBOARD SHORTCUTS</span><dl><div><dt>Steer</dt><dd><kbd aria-label="Left arrow">${icon('arrow-left')}</kbd><kbd aria-label="Right arrow">${icon('arrow-right')}</kbd><span>or</span><kbd>A</kbd><kbd>D</kbd></dd></div><div><dt>Boost</dt><dd><kbd>Shift</kbd></dd></div><div><dt>Brake</dt><dd><kbd aria-label="Down arrow"><span class="rd-down-key">${icon('chevron-down')}</span></kbd><span>or</span><kbd>S</kbd></dd></div><div><dt>Handbrake</dt><dd><kbd>Space</kbd></dd></div><div><dt>Reset</dt><dd><kbd>R</kbd></dd></div><div><dt>Pause</dt><dd><kbd>Esc</kbd></dd></div></dl></div>
+    <div class="rd-how-details"><section><h3>${icons.flag}Three laps. Your challenge.</h3><p>Race seven rivals, chase a solo Time attack or enter a three-race tour. Stay clear of barriers: a hit loses the drift points you haven’t banked.</p></section><section><h3>${icons.trophy}Race. Earn. Improve.</h3><p>Finish runs to earn credits. Fit upgrades in Garage / Performance. Best times are saved by car, circuit, mode, build and handling version on this device. Rival races also separate difficulty.</p></section></div>
+    <div class="rd-phone-note">${icons.rotate}<p><strong>On a phone, turn to landscape.</strong> Turning upright pauses the race. Drag to steer and ${phoneBoost}.</p></div>
+    <div class="rd-keyboard"><span class="rd-label">YOUR KEYBOARD SHORTCUTS</span><dl><div><dt>Steer left / right</dt><dd>${keyRow('left')}<span>/</span>${keyRow('right')}</dd></div><div><dt>Boost · ${settings.nitroToggle ? 'tap on / off' : 'hold'}</dt><dd>${keyRow('nitro')}</dd></div><div><dt>Brake</dt><dd>${keyRow('brake')}</dd></div><div><dt>Handbrake</dt><dd>${keyRow('drift')}</dd></div><div><dt>Reset</dt><dd>${keyRow('reset')}</dd></div><div><dt>Pause</dt><dd>${keyRow('pause')}</dd></div></dl></div>
   </div>`;
 }
 
@@ -68,7 +85,8 @@ export function finishPanel({ race, track, isBest = false, previousBest = null, 
   const suffix = position === 1 ? 'ST' : position === 2 ? 'ND' : position === 3 ? 'RD' : 'TH';
   const earned = reward?.awarded === true ? count(reward.credits) : 0;
   const improvement = isBest && Number.isFinite(previousBest) && Number.isFinite(race?.elapsed) && previousBest > race.elapsed ? previousBest - race.elapsed : null;
-  const bestLabel = isBest ? improvement === null ? 'First benchmark set' : `${improvement.toFixed(2)} sec quicker than your previous best` : 'For this car, circuit, mode and difficulty';
+  const bestLabel = isBest ? improvement === null ? 'First benchmark set' : `${improvement.toFixed(2)} sec quicker than your previous best` : 'Saved on this device';
+  const recordScopeLabel = `For this car, circuit, ${solo ? '' : 'mode, difficulty, '}build and handling version`;
   const record = Number.isFinite(bestTime) && bestTime > 0 ? bestTime : isBest ? race?.elapsed : null;
   const classification = solo
     ? '<span class="rd-rank"><span>SOLO</span></span><strong>TIME ATTACK COMPLETE</strong>'
@@ -84,7 +102,7 @@ export function finishPanel({ race, track, isBest = false, previousBest = null, 
     <div class="rd-result-context"><span>${escape(car.name)}</span><span>${escape(venue.name)} <i aria-hidden="true">·</i> ${lapCount(race)} LAPS</span></div>
     <div class="rd-result-hero"><div class="rd-classification">${classification}</div><div class="rd-result-time"><span class="rd-label">YOUR ${solo ? 'RUN' : 'RACE'} TIME</span><strong>${formatRaceTime(race?.elapsed)}</strong>${isBest ? '<span class="rd-best-badge">NEW PERSONAL BEST</span>' : '<span class="rd-time-caption">THREE LAPS. ALL YOURS.</span>'}</div><span class="rd-result-flag" aria-hidden="true">${icons.flag}</span></div>
     <div class="rd-results-grid">${order}
-      <div class="rd-result-insights"><section class="rd-record-card${isBest ? ' rd-new-record' : ''}"><span class="rd-label">${isBest ? 'PERSONAL BEST' : 'YOUR PERSONAL BEST'}</span><strong>${formatRaceTime(record)}</strong><p>${bestLabel}</p></section><dl class="rd-finish-stats"><div><dt>BEST LAP</dt><dd>${formatRaceTime(race?.bestLap)}</dd></div><div><dt>DRIFT POINTS</dt><dd>${number(race?.score)}</dd></div><div><dt>ROAD RESETS</dt><dd>${number(race?.recoveries)}</dd></div></dl></div>
+      <div class="rd-result-insights"><section class="rd-record-card${isBest ? ' rd-new-record' : ''}"><span class="rd-label">${isBest ? 'PERSONAL BEST' : 'YOUR PERSONAL BEST'}</span><strong>${formatRaceTime(record)}</strong><p>${bestLabel}</p><p class="rd-record-scope">${recordScopeLabel}</p></section><dl class="rd-finish-stats"><div><dt>BEST LAP</dt><dd>${formatRaceTime(race?.bestLap)}</dd></div><div><dt>DRIFT POINTS</dt><dd>${number(race?.score)}</dd></div><div><dt>ROAD RESETS</dt><dd>${number(race?.recoveries)}</dd></div></dl></div>
     </div>
     <div class="rd-reward"><div class="rd-reward-earned"><span class="rd-label">RACE CREDITS EARNED</span><strong>+${number(earned)} <small>CR</small></strong><span>${reward?.awarded === true ? 'Ready for your next upgrade' : 'No new credits awarded'}</span></div><div class="rd-reward-wallet"><span class="rd-label">AVAILABLE IN WORKSHOP</span><strong>${number(credits)} <small>CR</small></strong><span>Garage / Performance</span></div></div>
     ${reward?.awarded && reward.persisted === false ? '<p class="rd-save-note" role="status">Credits are available for this session. Your browser could not save them for next time.</p>' : ''}

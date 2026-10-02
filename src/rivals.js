@@ -13,16 +13,24 @@ function obstaclesFor(track) {
 // Every opponent supplies ordinary controls to the same vehicle simulation as
 // the player. Grid and lane choices are deterministic; no rubber-band teleports.
 export const RIVAL_GRID = [
-  { id: 'mira', name: 'Mira', vehicle: 'rimac-nevera', color: '#ffd166', s: 28, lane: 2.8, pace: .97 },
-  { id: 'jax', name: 'Jax', vehicle: 'aston-martin-one-77', color: '#72edac', s: 28, lane: -2.8, pace: .96 },
-  { id: 'nova', name: 'Nova', vehicle: 'koenigsegg-one-1', color: '#689cff', s: 20, lane: 2.8, pace: .95 },
-  { id: 'ren', name: 'Ren', vehicle: 'ferrari-testarossa', color: '#ff486e', s: 20, lane: -2.8, pace: .94 },
-  { id: 'kai', name: 'Kai', vehicle: 'audi-r18', color: '#c3fb13', s: 12, lane: 2.8, pace: .93 },
-  { id: 'aria', name: 'Aria', vehicle: 'audi-r8-lms-gt3', color: '#b99aff', s: 12, lane: -2.8, pace: .92 },
-  { id: 'leo', name: 'Leo', vehicle: 'rimac-concept-one', color: '#ffac76', s: 4, lane: 2.8, pace: .91 },
+  { id: 'mira', name: 'Mira', vehicle: 'rimac-nevera', color: '#ffd166', s: 28, lane: 2.8, personality: 'precise', pace: .97 },
+  { id: 'jax', name: 'Jax', vehicle: 'aston-martin-one-77', color: '#72edac', s: 28, lane: -2.8, personality: 'patient', pace: .96 },
+  { id: 'nova', name: 'Nova', vehicle: 'koenigsegg-one-1', color: '#689cff', s: 20, lane: 2.8, personality: 'opportunist', pace: .95 },
+  { id: 'ren', name: 'Ren', vehicle: 'ferrari-testarossa', color: '#ff486e', s: 20, lane: -2.8, personality: 'patient', pace: .94 },
+  { id: 'kai', name: 'Kai', vehicle: 'audi-r18', color: '#c3fb13', s: 12, lane: 2.8, personality: 'precise', pace: .93 },
+  { id: 'aria', name: 'Aria', vehicle: 'audi-r8-lms-gt3', color: '#b99aff', s: 12, lane: -2.8, personality: 'opportunist', pace: .92 },
+  { id: 'leo', name: 'Leo', vehicle: 'rimac-concept-one', color: '#ffac76', s: 4, lane: 2.8, personality: 'patient', pace: .91 },
 ];
 
+const PERSONALITIES = Object.freeze({
+  balanced: {lane: 2.5, corner: 1, reserve: .32, cooldown: 2.6},
+  precise: {lane: 2.4, corner: 1.005, reserve: .38, cooldown: 2.8},
+  patient: {lane: 2.3, corner: .99, reserve: .44, cooldown: 3.2},
+  opportunist: {lane: 2.7, corner: 1, reserve: .28, cooldown: 2.4},
+});
+
 export function rivalControls(racer, field, track, specs, dt) {
+  const personality = PERSONALITIES[racer.personality] || PERSONALITIES.balanced;
   const car = racer.car;
   const projection = projectOnTrack(car.x, car.z, racer._trackIndex, track, car.y);
   const near = sampleTrack(projection.s + 3, track), far = sampleTrack(projection.s + 22, track);
@@ -77,14 +85,24 @@ export function rivalControls(racer, field, track, specs, dt) {
     desiredLane=away*Math.min(3.2,track.width/2-2.6);
     racer._passLane=desiredLane;racer._passTime=1.2;
   }
-  racer._lane += (desiredLane - racer._lane) * (1 - Math.exp(-dt * 2.5));
+  racer._lane += (desiredLane - racer._lane) * (1 - Math.exp(-dt * personality.lane));
   const aim = sampleTrack(projection.s + 10 + car.speed * 0.45, track);
   const aimX = aim.x + aim.nx * racer._lane, aimZ = aim.z + aim.nz * racer._lane;
   const error = wrap(Math.atan2(aimX - car.x, aimZ - car.z) - car.yaw);
   const straight = curvature < 0.004 && Math.abs(error) < 0.12 && !blocked
     && !(nearest && nearest.speed < 5);
-  const nitro = straight && racer.nitro.charge > 0.5 && !racer.nitro.locked;
-  const targetSpeed = Math.min(specs.topSpeed * 0.83 + (nitro ? 6 : 0), Math.sqrt(10.2 * specs.handling / Math.max(0.003, curvature))) * racer._pace;
+  // Commit boost to a settled exit or an open passing lane. Keep a reserve and
+  // a short recovery between bursts, so a flickering straight test cannot spam it.
+  racer._boostCooldown = Math.max(0, (racer._boostCooldown || 0) - dt);
+  const useful = straight && car.speed > 12 && Math.abs(error) < .10 && !obstacleAhead;
+  if (!useful && racer._boostTime > 0) {racer._boostTime = 0; racer._boostCooldown = personality.cooldown;}
+  if (useful && !(racer._boostTime > 0) && !racer._boostCooldown && racer.nitro.charge > racer.nitro.capacity * personality.reserve) racer._boostTime = 1.4;
+  const nitro = useful && racer._boostTime > 0 && racer.nitro.charge > .15 && !racer.nitro.locked;
+  if (racer._boostTime > 0) {
+    racer._boostTime = Math.max(0, racer._boostTime - dt);
+    if (!racer._boostTime || racer.nitro.locked) {racer._boostTime = 0; racer._boostCooldown = personality.cooldown;}
+  }
+  const targetSpeed = Math.min(specs.topSpeed * 0.83 + (nitro ? 6 : 0), Math.sqrt(10.2 * specs.handling / Math.max(0.003, curvature)) * personality.corner) * racer._pace;
   return {
     steer: clamp(-error * 2.9 / specs.handling, -1, 1), throttle: blocked ? 0.4 : 1,
     // Keep a walking-speed crawl while steering around a stopped car; braking

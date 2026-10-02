@@ -7,6 +7,13 @@ import { MANUFACTURER_ASSETS } from './manufacturer-asset-manifest.js';
 export const MANUFACTURER_RIVAL_VEHICLES = Object.freeze(RIVAL_GRID.map(grid => grid.vehicle));
 const validVehicles = new Set(VEHICLES.map(vehicle => vehicle.id));
 
+export function fleetPerformanceGap(candidate, player) {
+  return ['topSpeed', 'acceleration', 'handling'].reduce((gap, key, index) => {
+    const target = Number.isFinite(player?.[key]) && player[key] > 0 ? player[key] : candidate[key];
+    return gap + Math.abs(Math.log(candidate[key] / target)) * [.5, .3, .2][index];
+  }, 0);
+}
+
 export function opponentFleetCost(ids) {
   return ids.reduce((cost, id) => {
     const asset = MANUFACTURER_ASSETS[id]?.variants?.low;
@@ -20,13 +27,17 @@ function randomFor(seed) {
   return () => { state += 0x6d2b79f5; let value = state; value = Math.imul(value ^ value >>> 15, value | 1); value ^= value + Math.imul(value ^ value >>> 7, value | 61); return ((value ^ value >>> 14) >>> 0) / 4294967296; };
 }
 
-export function createOpponentFleet({ playerVehicle, seed = 'blacktop-bay', mobile = false } = {}) {
+export function createOpponentFleet({ playerVehicle, playerStats, seed = 'blacktop-bay', mobile = false } = {}) {
+  const effective = playerStats || VEHICLES.find(car => car.id === playerVehicle)?.handling;
   const random = randomFor(seed), pool = VEHICLES.filter(car => car.id !== playerVehicle && MANUFACTURER_ASSETS[car.id]?.low)
-    .map(car => ({ ...car, random: random(), ...MANUFACTURER_ASSETS[car.id].variants.low }));
+    .map(car => ({ ...car, random: random(), gap: fleetPerformanceGap(car.handling, effective), ...MANUFACTURER_ASSETS[car.id].variants.low }));
   const budget = { triangles: mobile ? 650_000 : 900_000, bytes: mobile ? 12_000_000 : 18_000_000 };
   const selected = [], brands = new Set(); let triangles = 0, bytes = 0;
   while (selected.length < RIVAL_GRID.length && pool.length) {
-    pool.sort((a, b) => Number(brands.has(a.brand)) - Number(brands.has(b.brand)) || a.random - b.random);
+    // Pace similarity leads, with enough variation to avoid a repeated grid.
+    // Selection changes bodies only; no hidden catch-up or runtime stat changes.
+    pool.sort((a, b) => (a.gap * 2 + a.random * .32 + Number(brands.has(a.brand)) * .065)
+      - (b.gap * 2 + b.random * .32 + Number(brands.has(b.brand)) * .065));
     const remaining = RIVAL_GRID.length - selected.length - 1;
     let index = pool.findIndex(candidate => {
       const rest = pool.filter(car => car !== candidate).sort((a, b) => a.triangles - b.triangles).slice(0, remaining);

@@ -5,6 +5,11 @@ import vm from 'node:vm';
 import {STORAGE_KEY,loadRecords,saveResult} from '../src/storage.js';
 import {RACE_MODES,normalizeRaceOptions,getDifficulty,raceFieldSize} from '../src/race-options.js';
 import {getCampaignEvent,canStartCampaignEvent,normalizeCampaign} from '../src/driver-campaign.js';
+import {recordScope} from '../src/personal-ghost.js';
+import {normalizePlayerControls} from '../src/player-controls.js';
+import {normalizeSetups,getCarSetup} from '../src/car-setups.js';
+import {normalizeMastery} from '../src/car-mastery.js';
+import {nextGoalSuggestion} from '../src/driver-development-ui.js';
 
 // Exercise the real lobby orchestration and record adapter with an inert DOM.
 // Renderer/audio/network behavior belongs to their own tests and browser QA.
@@ -20,22 +25,23 @@ const optionsSource=section('function updateWallet(){','async function continueT
 const campaignSource=section('function selectedCampaignEvent() {','const fittedStats =');
 const soundRestore=section('if (typeof preferences.sound === "boolean") records.sound = preferences.sound;','sound.setMuted(!records.sound);');
 const navSource=section("for(const button of document.querySelectorAll('[data-lobby-mode]'))button.onclick=", "$('hq-wallet').onclick=");
-const key=(mode,difficulty='street')=>`${STORAGE_KEY}-harbor-mclaren-p1-gtr-${mode}-${difficulty}-race-v3`;
+const recordScopeSource=section('function currentRecordScope(){','const newRace =');
+const key=(mode,difficulty='street',upgrades={})=>`${STORAGE_KEY}-${recordScope({track:'harbor',vehicle:'mclaren-p1-gtr',mode,difficulty,upgrades,setup:'balanced'})}`;
 function harness({savedSound,blocked=false,campaignEventId=null}={}){
   const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
   const modes=[...html.matchAll(/data-lobby-mode="([^"]+)"/g)].map(match=>match[1]);
   const nodes=new Map(),buttons=modes.map(mode=>({dataset:{lobbyMode:mode},attributes:{},setAttribute(name,value){this.attributes[name]=value;}}));
   const values=new Map(),writes=[];
   for(const [mode,bestTime] of [['race',120],['time-attack',103],['championship',132]])values.set(key(mode),JSON.stringify({bestTime,bestScore:100,ghost:[],sound:mode==='race'?savedSound??true:true}));
-  const preferences={track:'harbor',vehicle:'mclaren-p1-gtr',mode:'race',difficulty:'street'};
+  const preferences={track:'harbor',vehicle:'mclaren-p1-gtr',mode:'race',difficulty:'street',controls:normalizePlayerControls()};
   const selected=getCampaignEvent(campaignEventId,preferences.vehicle);
   if(selected)Object.assign(preferences,{track:selected.track,mode:selected.mode,difficulty:selected.difficulty});
   const $=id=>{if(!nodes.has(id))nodes.set(id,{textContent:'',attributes:{},setAttribute(name,value){this.attributes[name]=value;}});return nodes.get(id);};
-  const context=vm.createContext({preferences,preferenceKey:'blacktop-bay-choices-v1',loadRecords,saveResult,RACE_MODES,normalizeRaceOptions,getDifficulty,raceFieldSize,getCampaignEvent,canStartCampaignEvent,normalizeCampaign,campaignEventId,
-    progression:{credits:1200},$,document:{querySelectorAll:selector=>{assert.equal(selector,'[data-lobby-mode]');return buttons;}},
+  const context=vm.createContext({preferences,preferenceKey:'blacktop-bay-choices-v1',loadRecords,saveResult,RACE_MODES,normalizeRaceOptions,getDifficulty,raceFieldSize,getCampaignEvent,canStartCampaignEvent,normalizeCampaign,campaignEventId,recordScope,getCarSetup,nextGoalSuggestion,mastery:normalizeMastery(),carSetups:normalizeSetups(),showCampaign(){},
+    progression:{credits:1200,cars:{}},$,document:{querySelectorAll:selector=>{assert.equal(selector,'[data-lobby-mode]');return buttons;}},
     localStorage:{getItem(k){if(blocked)throw Error('Unavailable');return values.get(k)??null;},setItem(k,v){if(blocked)throw Error('Unavailable');values.set(k,v);writes.push(k);}},
     updateGarageCopy(){},format:t=>`${t} SEC`});
-  vm.runInContext(`${storeSource}\nlet campaign=normalizeCampaign(),selectedCampaignId=campaignEventId;\n${campaignSource}\nlet records=loadRecords(recordStore);\n${soundRestore}\n${optionsSource}\n${menuSource}\n${navSource}\nupdateMenu();`,context);
+  vm.runInContext(`${storeSource}\nlet campaign=normalizeCampaign(),selectedCampaignId=campaignEventId;\n${campaignSource}\n${recordScopeSource}\nlet records=loadRecords(recordStore);\n${soundRestore}\n${optionsSource}\n${menuSource}\n${navSource}\nupdateMenu();`,context);
   return {context,preferences,buttons,$,values,writes,click:mode=>buttons.find(button=>button.dataset.lobbyMode===mode).onclick(),records:()=>vm.runInContext('records',context)};
 }
 
@@ -58,18 +64,23 @@ test('lobby mode navigation refreshes the real field, selected state and mode-sp
   assert.equal(h.preferences.vehicle,'mclaren-p1-gtr');assert.equal(h.preferences.track,'harbor');
 });
 
-test('each mode and difficulty keeps its own benchmark and unplayed combinations show no invented best',()=>{
+test('race difficulty and fitted builds keep separate benchmarks while solo difficulty shares the same rules',()=>{
   const h=harness();h.preferences.difficulty='pro';h.click('time-attack');
+  assert.equal(h.records().bestTime,103,'solo rules do not change with an opponent difficulty setting');
+  vm.runInContext("progression.cars['mclaren-p1-gtr']={engine:1};updateMenu();",h.context);
   assert.equal(h.records().bestTime,null);assert.equal(h.$('menu-best').textContent,'YOUR FIRST NIGHT STARTS HERE.');
   vm.runInContext("saveResult({state:'finished',elapsed:99,score:250,completedLaps:3,totalLaps:3},[],recordStore); updateMenu();",h.context);
   assert.equal(h.records().bestTime,99);assert.match(h.$('menu-best').textContent,/99 SEC/);
   h.click('race');assert.equal(h.records().bestTime,null);
+  vm.runInContext("progression.cars['mclaren-p1-gtr']={};updateMenu();",h.context);
+  assert.equal(h.records().bestTime,null,'unplayed Pro race cannot borrow the Sport record');
   h.preferences.difficulty='street';h.click('race');assert.equal(h.records().bestTime,120);
   h.click('time-attack');assert.equal(h.records().bestTime,103);
   // Tour remains available in Race setup, rather than a third lobby shortcut.
   h.preferences.mode='championship';vm.runInContext('updateMenu()',h.context);
   assert.equal(h.records().bestTime,132);assert.equal(h.$('hq-field-size').textContent,'08');
-  assert.equal(JSON.parse(h.values.get(key('time-attack','pro'))).bestTime,99);
+  assert.equal(JSON.parse(h.values.get(key('time-attack','pro',{engine:1}))).bestTime,99);
+  assert.equal(JSON.parse(h.values.get(key('time-attack'))).bestTime,103,'fitted result preserves the original stock record');
 });
 
 test('legacy record mute is promoted to the global preference before switching lobby modes',()=>{

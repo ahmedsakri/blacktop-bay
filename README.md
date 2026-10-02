@@ -10,6 +10,10 @@ Camber Reign uses a new Firebase Hosting address. Browser saves belong to their 
 
 The receiver verifies the old origin, exact popup, one-use random nonce, recognised keys and bounded JSON data. It asks before replacing existing earned progress and saves a local backup before writing. A failed write attempts to restore the current save; if the browser blocks that restoration, the page exposes a backup download. The old save remains untouched. Analytics consent is excluded and must be chosen separately on the new address. Save contents never appear in a URL and are not uploaded to a server. All existing gameplay storage keys remain unchanged for compatibility.
 
+## Keep a portable backup
+
+Use **Save backup** to export a versioned JSON file and import it on another browser or device. The file covers preferences and controls, credits, upgrades, paint, favorites, campaign, mastery, per-circuit setups, tour history, driving-school progress and race records/replays. Import previews the contents before replacing local progress. It validates every section, keeps a durable recovery snapshot and verifies the writes; failure restores the previous save or keeps recovery available. Analytics consent and authentication data are excluded. There are no accounts, sign-in or automatic cloud sync.
+
 ## Find your next race
 
 The Race HQ lobby keeps your selected car on the studio floor, with its current speed, Nitro capacity and installed upgrade count. Use the bottom navigation to switch between Circuit race, Time attack and Three-race tour. The race settings button below the circuit preview changes rival difficulty and shows medal targets or a saved tour. Changing a mode updates its own record immediately; Race Now starts the selected mode.
@@ -19,6 +23,12 @@ Choose **Cars** to open the full 33-car collection. Preview a car using its card
 Choose **Circuits** in the bottom navigation, or select the circuit name, to open the 38-route collection. Inspect the scenic preview, actual playable route and lap length, then use **Select circuit** to return to Race HQ with that venue. Previewing a card does not start a race. Search, region and series filters narrow the route strip; **Full grid** shows every matching circuit together.
 
 Use the steering-wheel control in the top rail for driving help, steering sensitivity and sound levels. The speaker mutes the entire game; fullscreen has its own control. Menus and collections work in portrait, while racing uses landscape on phones. Short landscape screens keep primary actions in view, respect the display cutout and home indicator, and scroll longer dialog content inside the dialog. Medal targets expand separately in race setup.
+
+## Campaign and car development
+
+**Career** offers 18 events in six chapters, preserving the original twelve event records. Advanced goals track Perfect Nitro, Burst Nitro, clean overtakes, pickups and clean sectors from the actual simulation. Complete the first objective to advance; return for optional bonuses. The next-goal suggestion names the action and circuit. Mastery tracks five per-car accomplishments without adding hidden performance.
+
+**Upgrades → Setup & mastery** provides a car default and an optional setup for the current circuit. The screen shows each setup's gains, costs, resulting speed and acceleration; existing upgrade previews compare current and next-level values using the effective setup. Other circuits keep their own choices. [Implementation and save compatibility](docs/driver-development.md).
 
 ## Driving
 
@@ -45,7 +55,7 @@ After a valid lap, a short notice shows the last lap time and the next lap numbe
 
 - **Circuit race:** eight actual car models, three laps, and Club, Sport or Pro rival pace. Opponents use the same driving simulation and must reach every checkpoint; difficulty never moves a rival forward.
 - **Time attack:** the same three-lap course with no opponents. Beat your own time and work toward Bronze, Silver and Gold circuit targets.
-- **Three-race tour:** one car, one difficulty and three different circuits. The first round starts at your chosen venue. Each real finish earns ordinary race credits and 25/18/15/12/10/8/6/4 tour points by finishing position. The tour summary adds those earned results; it does not invent a separate cash bonus or claim a multiplayer championship.
+- **Three-race tour:** one car, one difficulty and three different circuits. The first round starts at your chosen venue. Each real finish earns ordinary race credits and 25/18/15/12/10/8/6/4 tour points by finishing position. Persistent standings track all eight drivers and keep the same rival cars between rounds. Only actual finishes earn points. When you explicitly leave results or continue, unfinished rivals become DNF with zero points and no invented finish time. Equal points use wins; equal wins remain tied. There is no separate cash bonus or multiplayer championship.
 
 Medal targets are game challenges derived from the playable layout and the selected car’s base tuning, not real-world venue records. Upgrades can help reach them. Records are kept separately by car, circuit, mode and difficulty. Tours require working browser storage so the next circuit can restore the same car and earned rounds. Your tour resumes from this browser; choosing a different car, circuit or difficulty offers Continue tour or Start new tour before replacing unfinished progress. The next tour round keeps the selected car and difficulty.
 
@@ -218,7 +228,7 @@ Local: http://127.0.0.1:4180/. Production output: `dist/`.
 
 ## Privacy and services
 
-No player account, name or email is required. GA4 `G-RC925EV263` loads through dedicated GTM `GTM-PZHDLVK8` only after analytics consent on the production hostname. Advertising consent stays denied. Query strings and page fragments are excluded from analytics page locations. Users can revoke consent in Privacy. AdSense metadata and ads.txt support the review request; no advertising script or ad unit is active. See the live privacy notice for details.
+No player account, name or email is required. GA4 `G-RC925EV263` loads through dedicated GTM `GTM-PZHDLVK8` only after analytics consent on the production hostname. Advertising consent stays denied. Query strings and page fragments are excluded from analytics page locations. Users can revoke consent in Privacy. The allowlist also supports loading, driving-school, upgrade and result-action funnels plus bounded occasional rendering summaries, using only known choices and numeric counters. Raw controls, sensors, saves, files and challenge URLs are excluded. [Event contract and GTM integration](docs/analytics-events.md). AdSense metadata and ads.txt support the review request; no advertising script or ad unit is active. See the live privacy notice for details.
 
 Google/Bing verification tags, robots.txt, sitemap.xml and crawlable guide/privacy/credits pages are included. VideoGame, FAQPage and HowTo JSON-LD describe visible facts. Structured data does not guarantee rankings, rich results or AI citations.
 

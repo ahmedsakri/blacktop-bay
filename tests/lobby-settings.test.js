@@ -8,6 +8,7 @@ import {normalizeSteeringSensitivity} from '../src/driving-controls.js';
 import {DEFAULT_VEHICLE_ID,getVehicle} from '../src/vehicles.js';
 import {normalizeQuality} from '../src/render-quality.js';
 import {icon} from '../src/icons.js';
+import {normalizePlayerControls} from '../src/player-controls.js';
 
 // These tests exercise actual settings orchestration with a small inert DOM
 // double, not a browser or an audio implementation.
@@ -15,18 +16,18 @@ const main=readFileSync(new URL('../src/main.js',import.meta.url),'utf8');
 const loadSource=main.slice(main.indexOf('const preferenceKey ='),main.indexOf('let campaign ='));
 const mountSource=main.slice(main.indexOf('function mountSteeringSettings()'),main.indexOf("bindSteeringPad($('touch-steer-cue')"));
 function load(stored){
- const context=vm.createContext({localStorage:{getItem:()=>JSON.stringify(stored),setItem(){}},DEFAULT_VEHICLE_ID,getVehicle,normalizeRaceOptions,normalizeSteeringSensitivity,normalizeLobbyStyle,normalizeQuality,TRACKS:[{id:'harbor'}],clamp:(v,min,max)=>Math.min(max,Math.max(min,v))});
+ const context=vm.createContext({localStorage:{getItem:()=>JSON.stringify(stored),setItem(){}},DEFAULT_VEHICLE_ID,getVehicle,normalizeRaceOptions,normalizeSteeringSensitivity,normalizeLobbyStyle,normalizeQuality,normalizePlayerControls,TRACKS:[{id:'harbor'}],clamp:(v,min,max)=>Math.min(max,Math.max(min,v))});
  return vm.runInContext(`${loadSource}; preferences;`,context);
 }
 function settings({musicVolume=.65,volume=.75}={}){
- const elements=new Map(),calls=[],writes=[];
+ const elements=new Map(),calls=[],writes=[],qualityChanges=[],playerTools=[];
  const element=()=>({value:'',textContent:'',innerHTML:'',className:'',children:[],append(node){this.children.push(node);}});
  const $=id=>{if(!elements.has(id))elements.set(id,element());return elements.get(id);};
- const preferences={lobbyStyle:'liquid-lines',musicVolume,volume,engineVolume:1,sfxVolume:.85,quality:'auto',gamepadSwap:false};
- const context=vm.createContext({document:{createElement:element},$,preferences,icon,screenMode:()=>({standalone:false,ios:false}),canInstallPWA:()=>false,requestInstallPWA:()=>{throw new Error('Must not install automatically');},usesTouchControls:()=>false,normalizeQuality,applyQuality:()=>calls.push(['quality',preferences.quality]),
+ const preferences={lobbyStyle:'liquid-lines',musicVolume,volume,engineVolume:1,sfxVolume:.85,quality:'auto',gamepadSwap:false,controls:normalizePlayerControls()};
+ const context=vm.createContext({document:{createElement:element},$,preferences,icon,screenMode:()=>({standalone:false,ios:false}),canInstallPWA:()=>false,requestInstallPWA:()=>{throw new Error('Must not install automatically');},usesTouchControls:()=>false,normalizeQuality,normalizePlayerControls,mobile:true,devicePixelRatio:2,adaptiveQuality:{configure:settings=>qualityChanges.push({...settings})},mountPlayerTools:(container,callbacks)=>{assert.equal(container,$('dialog-content'));playerTools.push(callbacks);},showSaveBackup(){throw Error('Backup must require a user action');},applyQuality:()=>calls.push(['quality',preferences.quality]),
   sound:{setVolume:value=>calls.push(['volume',value]),setMusicVolume:value=>calls.push(['music',value]),setEngineVolume:value=>calls.push(['engine',value]),setSfxVolume:value=>calls.push(['sfx',value])},saveChoices(){writes.push({...preferences});}});
  vm.runInContext(`${mountSource}; mountSteeringSettings();`,context);
- return {$,calls,writes,preferences,elements};
+ return {$,calls,writes,preferences,elements,qualityChanges,playerTools};
 }
 
 test('first run, old selections and malformed music preferences all use approved Liquid Lines',()=>{
@@ -81,6 +82,8 @@ test('display and controller settings apply and persist without changing audio o
  h.$('controller-layout').onchange({target:{value:'swap'}});
  assert.equal(h.preferences.quality,'performance');assert.equal(h.preferences.gamepadSwap,true);
  assert.deepEqual(h.calls,[['quality','performance']]);assert.equal(h.writes.length,2);
+ assert.deepEqual(h.qualityChanges,[{choice:'performance',mobile:true,dpr:2}]);
+ assert.equal(h.playerTools.length,1);assert.equal(h.playerTools[0].getControls(),h.preferences.controls);
  assert.equal(h.preferences.volume,.75);assert.equal(h.preferences.musicVolume,.65);
  assert.equal(h.preferences.engineVolume,1);assert.equal(h.preferences.sfxVolume,.85);
 });

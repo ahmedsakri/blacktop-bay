@@ -84,3 +84,11 @@
 
 /* Keep one visible title; the outer label still names the accessible dialog. */
 .dialog:is([data-kind="campaign"],[data-kind="car-development"])>#dialog-title,.dialog:is([data-kind="campaign"],[data-kind="car-development"])>#dialog-eyebrow{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+
+.setup-scope { display:flex; flex-wrap:wrap; gap:8px; margin:12px 0; }
+.setup-scope button { min-height:44px; padding:10px 16px; color:#fff; border:1px solid #9246ff; background:#021439; font:inherit; font-weight:700; }
+.setup-scope button[aria-pressed="true"] { background:#9246ff; border-color:#fff; }
+.setup-scope button:focus-visible { outline:3px solid #fff71e; outline-offset:3px; }
+.car-setup-preview { display:block; color:#fff; font-size:12px; line-height:1.5; padding-top:8px; border-top:1px solid #ffffff25; }
+.development-next-goal { padding:12px 14px; border-left:3px solid #fff71e; background:#021439; color:#fff; line-height:1.5; }
+.development-next-goal strong { display:block; color:#fff71e; font-size:11px; letter-spacing:.08em; }

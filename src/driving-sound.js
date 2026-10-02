@@ -104,3 +104,22 @@ export function nitroSoundFrame({active=false,age=0,speed=0,electric=false,mode=
     release:active?0:.021*(burst?1.10:1),
   };
 }
+
+
+// Continuous tyre load avoids a full-volume switch at the visual drift flag.
+// The envelope is independent of render cadence and uses no extra audio nodes.
+export function createTyreSoundMotion() {
+ let scrub = 0, identity;
+ return {update(state = {}, dt = 1 / 60) {
+  const key = `${state.vehicle || ''}:${state.raceId || ''}`;
+  if (key !== identity || !state.running) {scrub = 0; identity = key;}
+  const step = clamp(number(dt, 1 / 60), 0, .1), speed = clamp(number(state.speed), 0, 100);
+  const grounded = state.air?.phase !== 'airborne';
+  const slip = Number.isFinite(state.slipAngle) ? clamp((Math.abs(state.slipAngle) - .045) / .40, 0, 1) : clamp(number(state.drift), 0, 1);
+  const tyreLoad = slip * slip * (3 - 2 * slip);
+  const desired = state.running && grounded ? Math.max(tyreLoad, clamp(number(state.brake), 0, 1) * .22) * clamp((speed - 3) / 12, 0, 1) : 0;
+  scrub += (desired - scrub) * (1 - Math.exp(-step / (desired > scrub ? .095 : .055)));
+  return {scrub, gain: scrub ** 1.35 * .105, cutoff: 680 + scrub * 480 + Math.min(speed, 60) * 3.5,
+    squealGain: scrub ** 2.8 * .0038, squealFrequency: 760 + scrub * 160 + Math.min(speed, 60) * 1.2};
+ }};
+}

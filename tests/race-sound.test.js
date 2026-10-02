@@ -92,3 +92,10 @@ test('wreck, light contact, landing and refill envelopes have separate bounded t
   assert.ok(sound.noiseGain>=0&&sound.noiseGain<=.11);
  }
 });
+
+
+test('a pack alongside keeps aggregate engine headroom and avoids hard one-ear panning',()=>{
+ const frames=spatialRivalFrames({x:0,z:0,yaw:0},[{id:1,x:1,z:0},{id:2,x:-1,z:0},{id:3,x:0,z:1}]);
+ assert.equal(frames.length,3);assert.ok(frames.reduce((sum,f)=>sum+f.gain,0)<=.08500001);
+ assert.ok(frames.every(f=>Math.abs(f.pan)<=.86&&f.gain>0));
+});

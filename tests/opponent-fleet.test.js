@@ -4,7 +4,7 @@ import { MANUFACTURER_RIVAL_VEHICLES, resolveRivalVehicles, createOpponentFleet,
 import { VEHICLES } from '../src/vehicles.js';
 import { RIVAL_GRID, rivalControls } from '../src/rivals.js';
 import { MANUFACTURER_ASSETS } from '../src/manufacturer-asset-manifest.js';
-import { createRace, startRace, stepRace, resetCar, VEHICLE_SPECS, getTrack, projectOnTrack, sampleTrack } from '../src/physics.js';
+import { createRace, startRace, stepRace, resetCar, getUpgradeStats, VEHICLE_SPECS, getTrack, projectOnTrack, sampleTrack } from '../src/physics.js';
 
 test('the real opponent fleet stays bounded for phones and supplies seven distinct actual models', () => {
   assert.equal(new Set(MANUFACTURER_RIVAL_VEHICLES).size, 7);
@@ -126,3 +126,29 @@ for (const [track, difficulty, seed] of [['dockyard', 'pro', 17], ['monaco', 'pr
     assert.equal(race.completedLaps, 0); assert.equal(race.position, 8);
   });
 }
+
+
+test('effective player performance changes the bounded roster while keeping real stock rival physics',()=>{
+ const playerVehicle='lotus-elise',stock=getUpgradeStats(playerVehicle),upgraded=getUpgradeStats(playerVehicle,{engine:5,tyres:5,handling:5});
+ let stockSpeed=0,upgradedSpeed=0;
+ for(let seed=0;seed<100;seed++){
+  for(const [stats,tuned] of [[stock,false],[upgraded,true]]){
+   const fleet=createOpponentFleet({playerVehicle,playerStats:stats,seed,mobile:true}),cost=opponentFleetCost(fleet);
+   assert.equal(fleet.length,7);assert.equal(new Set(fleet).size,7);
+   assert.ok(cost.triangles<=650000&&cost.bytes<=12000000);
+   const speed=fleet.reduce((sum,id)=>sum+VEHICLE_SPECS[id].topSpeed,0)/7;
+   if(tuned)upgradedSpeed+=speed;else stockSpeed+=speed;
+  }
+ }
+ assert.ok(upgradedSpeed/100>stockSpeed/100+1,'fitted performance must materially influence the selected field');
+});
+
+test('rival personalities commit useful straight-line Nitro and release it for corners and cooldown',()=>{
+ const race=createRace({track:'harbor'});startRace(race);const track=getTrack(race.track),rival=race.rivals[0],p=sampleTrack(110,track);
+ Object.assign(rival.car,{x:p.x,z:p.z,yaw:Math.atan2(p.tx,p.tz),speed:28});rival._trackIndex=p.index;rival._lane=rival._baseLane=0;
+ const first=rivalControls(rival,[rival],track,rival.specs,1/120);assert.equal(first.nitro,true);
+ assert.ok(rival._boostTime>1);rival.car.yaw+=.4;
+ assert.equal(rivalControls(rival,[rival],track,rival.specs,1/120).nitro,false);
+ assert.ok(rival._boostCooldown>2);
+ rival.car.yaw-=.4;assert.equal(rivalControls(rival,[rival],track,rival.specs,1/120).nitro,false);
+});

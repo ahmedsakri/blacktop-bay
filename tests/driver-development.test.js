@@ -3,9 +3,9 @@ import assert from 'node:assert/strict';
 import { VEHICLES, DEFAULT_VEHICLE_ID } from '../src/vehicles.js';
 import { TRACKS } from '../src/track.js';
 import { getUpgradeStats, createRace, startRace } from '../src/physics.js';
-import { CAR_SETUPS, SETUPS_KEY, normalizeSetups, normalizeSetup, getCarSetup, selectCarSetup, applyCarSetup, loadSetups, persistSetups } from '../src/car-setups.js';
+import { CAR_SETUPS, SETUPS_KEY, normalizeSetups, normalizeSetup, getCarSetup, selectCarSetup, clearCircuitSetup, applyCarSetup, loadSetups, persistSetups } from '../src/car-setups.js';
 import { CAMPAIGN_KEY, CAMPAIGN_CHAPTERS, CAMPAIGN_EVENTS, normalizeCampaign, getCampaignEvent, getNextCampaignEvent,
-  canStartCampaignEvent, isCampaignEventComplete, recordCampaignResult, loadCampaign, persistCampaign } from '../src/driver-campaign.js';
+  canStartCampaignEvent, isCampaignEventComplete, recordCampaignResult, loadCampaign, persistCampaign, getCampaignSuggestion } from '../src/driver-campaign.js';
 import { MASTERY_KEY, normalizeMastery, getCarMastery, recordMasteryResult, loadMastery, persistMastery } from '../src/car-mastery.js';
 import { getMedalTargets } from '../src/race-career.js';
 import { campaignPanel, carDevelopmentPanel, developmentResultMarkup, mountCampaignPanel, mountCarDevelopment } from '../src/driver-development-ui.js';
@@ -49,9 +49,9 @@ test('setups are per-car, default to factory balance and reject unknown choices 
   assert.deepEqual(normalizeSetups({version:1,cars:{unknown:'sprint',[DEFAULT_VEHICLE_ID]:'bad'}}).cars, {[DEFAULT_VEHICLE_ID]:'balanced'});
 });
 
-test('campaign has twelve valid authored events and personalised stock-car targets in all four chapters', () => {
-  assert.equal(CAMPAIGN_CHAPTERS.length, 4); assert.equal(CAMPAIGN_EVENTS.length, 12);
-  const ids = new Set(CAMPAIGN_EVENTS.map(item => item.id)); assert.equal(ids.size, 12);
+test('campaign has eighteen valid authored events and personalised stock-car targets in all six chapters', () => {
+  assert.equal(CAMPAIGN_CHAPTERS.length, 6); assert.equal(CAMPAIGN_EVENTS.length, 18);
+  const ids = new Set(CAMPAIGN_EVENTS.map(item => item.id)); assert.equal(ids.size, 18);
   for (const definition of CAMPAIGN_EVENTS) for (const car of VEHICLES) {
     const event = getCampaignEvent(definition.id, car.id);
     assert.ok(TRACKS.some(track => track.id === event.track));
@@ -97,21 +97,21 @@ test('primary campaign goals gate progression while replay bonuses accumulate wi
   assert.equal(repeat.newlyEarned.length, 0);
 });
 
-test('all twelve campaign events advance only through their authored primary condition and end with no invented next event', () => {
+test('all eighteen campaign events advance only through their authored primary condition and end with no invented next event', () => {
   let state = normalizeCampaign();
   for (const [index, definition] of CAMPAIGN_EVENTS.entries()) {
     const event = getNextCampaignEvent(state, DEFAULT_VEHICLE_ID);
     assert.equal(event.id, definition.id);
     const elapsed = getMedalTargets(event.track, event.vehicle).gold;
     const result = recordCampaignResult(state, finished({...event, elapsed, lapTimes:[elapsed/3,elapsed/3,elapsed/3],
-      raceId:`race-campaign-complete-${index}`,position:1,score:2000,recoveries:0}), receipt);
+      raceId:`race-campaign-complete-${index}`,position:1,score:2000,recoveries:0,objectiveStats:{perfectNitro:5,burstNitro:5,pickups:10,cleanOvertakes:8,cleanSectors:12}}), receipt);
     assert.equal(result.recorded, true); assert.equal(result.completed, true);
     assert.equal(result.newlyEarned.length, 3);
     state = result.state;
   }
   assert.equal(getNextCampaignEvent(state), null);
-  assert.equal(CAMPAIGN_EVENTS.filter(event => isCampaignEventComplete(state,event.id)).length,12);
-  assert.match(campaignPanel(state),/ALL FOUR CHAPTERS COMPLETE/);
+  assert.equal(CAMPAIGN_EVENTS.filter(event => isCampaignEventComplete(state,event.id)).length,18);
+  assert.match(campaignPanel(state),/ALL CHAPTERS COMPLETE/);
 });
 
 test('consistency requires all three real lap timings, not a fabricated one-lap array or mismatched elapsed total', () => {
@@ -232,4 +232,36 @@ test('a physics-driven campaign finish carries its setup and advances mastery on
   assert.equal(duplicate.awarded,false);
   assert.equal(recordCampaignResult(campaign.state,race,duplicate).recorded,false);
   assert.equal(recordMasteryResult(mastery.state,race,duplicate).recorded,false);
+});
+
+
+test('legacy per-car setups migrate and circuit overrides do not leak to another track or car',()=>{
+  const legacy={version:1,cars:{[DEFAULT_VEHICLE_ID]:'grip'}};
+  const fitted=selectCarSetup(legacy,DEFAULT_VEHICLE_ID,'sprint','monza');
+  assert.equal(getCarSetup(fitted.state,DEFAULT_VEHICLE_ID,'monza'),'sprint');
+  assert.equal(getCarSetup(fitted.state,DEFAULT_VEHICLE_ID,'harbor'),'grip');
+  assert.equal(getCarSetup(fitted.state,'audi-r18','monza'),'balanced');
+  assert.deepEqual(legacy,{version:1,cars:{[DEFAULT_VEHICLE_ID]:'grip'}});
+  const defaultChanged=selectCarSetup(fitted.state,DEFAULT_VEHICLE_ID,'endurance');
+  assert.equal(getCarSetup(defaultChanged.state,DEFAULT_VEHICLE_ID,'monza'),'sprint');
+  const cleared=clearCircuitSetup(defaultChanged.state,DEFAULT_VEHICLE_ID,'monza');
+  assert.equal(getCarSetup(cleared.state,DEFAULT_VEHICLE_ID,'monza'),'endurance');
+  assert.equal(selectCarSetup(cleared.state,DEFAULT_VEHICLE_ID,'grip','unknown').selected,false);
+  assert.deepEqual(normalizeSetups(JSON.parse(JSON.stringify(fitted.state))),fitted.state);
+});
+
+test('advanced campaign uses actual bounded event counters and preserves the first twelve earned events',()=>{
+  const old=normalizeCampaign();
+  for(const definition of CAMPAIGN_EVENTS.slice(0,12))old.events[definition.id]={runs:1,objectives:definition.objectives.map((item,index)=>`${index}-${item.id}`),bestTime:150};
+  const original=structuredClone(old), event=getNextCampaignEvent(old);
+  assert.equal(event.id,'harbor-perfect');
+  for(const metric of [undefined,NaN,Infinity,-1,1.5,100001,1]){
+    const result=recordCampaignResult(old,finished({...event,position:1,objectiveStats:{perfectNitro:metric}}),receipt);
+    assert.equal(result.completed,false,`invalid/insufficient counter ${metric}`);
+  }
+  const result=recordCampaignResult(old,finished({...event,position:1,objectiveStats:{perfectNitro:2,pickups:3}}),receipt);
+  assert.equal(result.completed,true);assert.equal(result.newlyEarned.length,3);
+  for(const id of Object.keys(original.events))assert.deepEqual(result.state.events[id],original.events[id]);
+  assert.deepEqual(old,original);
+  assert.match(getCampaignSuggestion(result.state).description,/Burst Nitro twice/);
 });

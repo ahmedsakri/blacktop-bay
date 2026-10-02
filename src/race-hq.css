@@ -13,3 +13,12 @@
 @media(max-width:600px) and (max-height:360px) and (orientation:landscape){.hq-wallet{min-width:98px;right:130px;top:12px;gap:6px;padding:5px 8px}.hq-wallet>.ui-icon{width:16px;height:16px}.hq-wallet small{font-size:6px}.hq-wallet strong{font-size:19px}.menu .race-entry{grid-template-columns:40px minmax(0,1fr) 150px;gap:8px;bottom:37px}.menu .car-spec{top:69px;width:210px}.menu-copy{top:68px}.menu h1{font-size:31px;margin-block:10px}.menu #how{min-height:44px}.menu .race-entry .track-facts{gap:8px}.menu #browse-circuits strong{font-size:20px}.menu .car-spec #selected-car-name{font-size:24px!important}.menu .car-spec #open-garage{margin-top:8px}.hq-setup-button{font-size:8px}.hq-setup-button>.ui-icon:first-child{display:none}}
 
 .dialog[data-kind="race-setup"]{max-width:800px}
+
+.tour-standings { margin-top:16px; padding:14px; background:#021439; border:1px solid #9246ff; }
+.tour-standings p { color:#e2dced; font-size:12px; line-height:1.5; }
+.tour-standings-scroll { overflow-x:auto; max-width:100%; }
+.tour-standings table { border-collapse:collapse; width:100%; color:#fff; font-size:13px; }
+.tour-standings th,.tour-standings td { padding:8px 6px; text-align:left; border-bottom:1px solid #ffffff26; white-space:nowrap; }
+.tour-standings thead th { color:#fff71e; font-size:11px; }
+.tour-standings .is-player { background:#9246ff45; }
+.tour-standings-scroll:focus-visible { outline:3px solid #fff71e; }

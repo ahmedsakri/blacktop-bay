@@ -42,12 +42,16 @@ export function spatialRivalFrames(listener,rivals=[]) {
   const rev=clamp(speed/Math.max(1,vehicle.handling.topSpeed));
   const proximity=(1-clamp(distance/72))**2;
   const gain=proximity*.047*(forward<0?.76:1)*(.52+clamp(rival.throttle??1)*.48);
-  frames.push({id:rival.id,distance,pan:clamp(side/Math.max(5,distance),-1,1),
+  frames.push({id:rival.id,distance,pan:clamp(side/Math.max(5,distance),-.86,.86),
    frequency:(voice.idle+rev*voice.range)*clamp(343/(343+radial),.88,1.12),
    gain,harmonicGain:gain*(voice.electric?.075:.19),electric:voice.electric,
    cutoff:(380+voice.cutoff*(.3+rev*.7))*(1-clamp(distance/90)*.45)});
  }
- return frames.sort((a,b)=>b.gain-a.gain||a.distance-b.distance||String(a.id).localeCompare(String(b.id))).slice(0,RIVAL_VOICE_LIMIT);
+ const chosen=frames.sort((a,b)=>b.gain-a.gain||a.distance-b.distance||String(a.id).localeCompare(String(b.id))).slice(0,RIVAL_VOICE_LIMIT);
+ // Three cars alongside should not bury the driver's engine or force the
+ // compressor to pump. Preserve their relative levels and stereo positions.
+ const headroom=Math.min(1,.085/Math.max(.0001,chosen.reduce((sum,frame)=>sum+frame.gain,0)));
+ return chosen.map(frame=>({...frame,gain:frame.gain*headroom,harmonicGain:frame.harmonicGain*headroom}));
 }
 
 // Event IDs are consumed even when muted/paused/locked, so old impacts never

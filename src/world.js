@@ -8,6 +8,8 @@ import { createTracksideServices } from './trackside-services.js';
 import { broadleafCrownGeometry, coniferBoughGeometry } from './vegetation-geometry.js';
 import { createMountainVenue, DESTINATION_PROFILES } from './mountain-venue.js';
 import { ORIGINAL_VENUE_PROFILES, originalLandmarkLayout, createOriginalLandmarks } from './original-venues.js';
+import {createSpatialInstances,createDistanceDetail} from './spatial-detail.js';
+import {applyShowcaseSurface,createShowcaseVenue} from './showcase-venues.js';
 import { createCinematicBackdrop, CINEMATIC_BACKDROP_GLSL } from './cinematic-backdrop.js';
 
 const TAU = Math.PI * 2;
@@ -77,10 +79,9 @@ function ribbon(offset, width, height, material) {
  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3)); g.setIndex(indices); g.computeVertexNormals(); return new THREE.Mesh(g, material);
 }
 function instances(scene, geo, mat, list) {
- const mesh = new THREE.InstancedMesh(geo, mat, list.length);
- list.forEach((v, i) => { dummy.position.set(v.x, v.y, v.z); dummy.rotation.set(v.rx || 0, v.ry || 0, v.rz || 0,v.order||'XYZ'); dummy.scale.set(v.sx ?? 1, v.sy ?? 1, v.sz ?? 1); dummy.updateMatrix(); mesh.setMatrixAt(i, dummy.matrix); if (v.color) mesh.setColorAt(i, new THREE.Color(v.color)); });
- mesh.castShadow = false; mesh.receiveShadow = true; scene.add(mesh); return mesh;
+ return createSpatialInstances(scene,geo,mat,list);
 }
+
 function segment(list, a, b, radius) {
  const va = new THREE.Vector3(...a), vb = new THREE.Vector3(...b), delta = vb.clone().sub(va), mid = va.clone().add(vb).multiplyScalar(.5);
  dummy.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), delta.clone().normalize()); list.push({ x: mid.x, y: mid.y, z: mid.z, sx: radius, sy: delta.length(), sz: radius, rx: dummy.rotation.x, ry: dummy.rotation.y, rz: dummy.rotation.z });
@@ -240,7 +241,7 @@ export function createWorld(renderer, { low = false, reducedMotion = false } = {
   for(let s=0;s<TRACK.length;s+=5){const p=sampleTrack(s);foundations.push({x:p.x,y:-.56,z:p.z,sx:TRACK.width+10.9,sy:.90,sz:5.12,ry:Math.atan2(p.tx,p.tz)});}
   instances(scene,box,new THREE.MeshStandardMaterial({color:'#555e61',roughness:.96}),foundations);
  }
- const road = new THREE.Mesh(roadGeometry(TRACK.width), new THREE.MeshStandardMaterial({ color: '#b5bbc2', map: asphalt, bumpMap: asphalt, bumpScale: .012, roughness: .86, metalness: .015, envMapIntensity: .16 })); road.position.y = .011; road.receiveShadow = true; scene.add(road);
+ const road = new THREE.Mesh(roadGeometry(TRACK.width), new THREE.MeshStandardMaterial({ color: '#b5bbc2', map: asphalt, bumpMap: asphalt, bumpScale: .012, roughness: .86, metalness: .015, envMapIntensity: .16 })); road.position.y = .011; road.receiveShadow = true; applyShowcaseSurface(road,TRACK); scene.add(road);
  const wetShader = {
   name: 'RainPolishedAsphalt', uniforms: { color: { value: null }, tDiffuse: { value: null }, textureMatrix: { value: null } },
   vertexShader: `uniform mat4 textureMatrix;varying vec4 vUv;varying vec3 vWorld;void main(){vUv=textureMatrix*vec4(position,1.);vWorld=(modelMatrix*vec4(position,1.)).xyz;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
@@ -592,6 +593,7 @@ export function createWorld(renderer, { low = false, reducedMotion = false } = {
  }
  // Three synchronized twin-lamp columns use the existing countdown hook.
  createMountainVenue(scene, TRACK, {low});
+ createShowcaseVenue(scene,TRACK,{low,stands:standLayouts,crowd,rng:crowdRng});
  const lampHousing = new THREE.Mesh(new THREE.BoxGeometry(3.55, 1.13, .42), metal); lampHousing.position.set(0, 5.83, -.08); finishArch.add(lampHousing);
  const startLights = [];
  for (let i = 0; i < 3; i++) {
@@ -603,5 +605,8 @@ export function createWorld(renderer, { low = false, reducedMotion = false } = {
   }
  }
  crowd.render(scene);
- return { scene, reflection, sun, startLights, backdrop, update(time, car, motion = {}) { backdrop.update(time,{reducedMotion:motion.reducedMotion??reducedMotion});fallbackRidge.material.opacity=1-backdrop.uniforms.cinematicAmount.value;fallbackRidge.visible=fallbackRidge.material.opacity>.001;crowd.update(time, car, motion); landmarks.update(time,{paused:motion.paused,reducedMotion:motion.reducedMotion??reducedMotion}); sea.material.uniforms.time.value = time; boat.position.y = -.8 + Math.sin(time * .7) * .065; if (car) { sun.position.set(car.x - 150,venue.sunHeight+(car.y||0),car.z + 130); sun.target.position.set(car.x, car.y||0, car.z); } } };
+ const detail=createDistanceDetail(scene,{low});scene.userData.distanceDetail=detail.stats;
+ let motionTime=0,lastWorldTime=null;
+ return { scene, reflection, sun, startLights, backdrop, setQuality:settings=>detail.setQuality(settings), update(time, car, motion = {}) {
+ const dt=lastWorldTime===null?0:Math.max(0,Math.min(.1,time-lastWorldTime));lastWorldTime=time;if(!motion.paused&&!(motion.reducedMotion??reducedMotion))motionTime+=dt;detail.update(time,car); backdrop.update(time,{reducedMotion:motion.reducedMotion??reducedMotion});fallbackRidge.material.opacity=1-backdrop.uniforms.cinematicAmount.value;fallbackRidge.visible=fallbackRidge.material.opacity>.001;crowd.update(time, car, motion); landmarks.update(time,{paused:motion.paused,reducedMotion:motion.reducedMotion??reducedMotion}); sea.material.uniforms.time.value = motionTime; boat.position.y = -.8 + Math.sin(motionTime * .7) * .065; if (car) { sun.position.set(car.x - 150,venue.sunHeight+(car.y||0),car.z + 130); sun.target.position.set(car.x, car.y||0, car.z); } } };
 }

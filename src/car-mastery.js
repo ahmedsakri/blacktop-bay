@@ -51,3 +51,12 @@ export function recordMasteryResult(value, race, receipt) {
 }
 export const loadMastery = storage => loadDriverState(MASTERY_KEY, normalizeMastery, storage);
 export const persistMastery = (state, storage) => persistDriverState(MASTERY_KEY, normalizeMastery, state, storage);
+
+export function getNextMasteryGoal(value, vehicle) {
+  const mastery = getCarMastery(value, vehicle);
+  const goal = mastery.goals.filter(item => !item.complete).sort((a, b) => b.current / b.target - a.current / a.target)[0];
+  if (!goal) return null;
+  const remaining = goal.target - goal.current;
+  const units = {finishes:'completed run', circuits:'new circuit', strongFinishes:'podium or solo gold', driftScore:'banked drift point', resetFreeFinishes:'reset-free run'};
+  return {...goal, kind:'mastery', vehicle, remaining, description:`${remaining.toLocaleString('en-US')} more ${units[goal.metric]}${remaining === 1 ? '' : 's'} to earn ${goal.label}.`};
+}

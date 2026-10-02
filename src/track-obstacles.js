@@ -1,4 +1,5 @@
 import {sampleTrack} from './track.js';
+import {carContactShape} from './vehicle-dynamics.js';
 
 export function getTrackObstacles(track) {
   return (track.obstacles || []).map(obstacle => {
@@ -8,21 +9,23 @@ export function getTrackObstacles(track) {
   });
 }
 
-export function obstacleBlocksPosition(obstacle, x, y, z, clearance=2.2) {
-  return y < obstacle.y+obstacle.height && y+1.4 > obstacle.y
+export function obstacleBlocksPosition(obstacle, x, y, z, clearance=2.2, height=1.4) {
+  return y < obstacle.y+obstacle.height && y+height > obstacle.y
     && Math.hypot(x-obstacle.x,z-obstacle.z)<obstacle.radius+clearance;
 }
 
 // Return actual contacts to the caller's event system. Bounded normal rebound
 // retains glancing travel and cannot launch the car through adjacent barriers.
 export function resolveTrackObstacles(racer, obstacles) {
-  const car=racer.car,contacts=[];
+  const car=racer.car,contacts=[],shape=carContactShape(racer);
   for(const obstacle of obstacles){
-    if(car.y>=obstacle.y+obstacle.height || car.y+1.4<=obstacle.y)continue;
-    if(Math.hypot(car.x-obstacle.x,car.z-obstacle.z)>obstacle.radius+2.2)continue;
-    for(const axle of [-1.15,1.15]){
+    if(car.y>=obstacle.y+obstacle.height || car.y+shape.height<=obstacle.y)continue;
+    if(Math.hypot(car.x-obstacle.x,car.z-obstacle.z)>obstacle.radius+shape.length/2)continue;
+    const forwardX=Math.sin(car.yaw),forwardZ=Math.cos(car.yaw);
+    const axle=Math.max(-shape.halfSegment,Math.min(shape.halfSegment,(obstacle.x-car.x)*forwardX+(obstacle.z-car.z)*forwardZ));
+    {
       const dx=car.x+Math.sin(car.yaw)*axle-obstacle.x,dz=car.z+Math.cos(car.yaw)*axle-obstacle.z;
-      const distance=Math.hypot(dx,dz),overlap=obstacle.radius+.95-distance;
+      const distance=Math.hypot(dx,dz),overlap=obstacle.radius+shape.radius-distance;
       if(overlap<=0)continue;
       const nx=distance>1e-6?dx/distance:-obstacle.tx,nz=distance>1e-6?dz/distance:-obstacle.tz;
       const outward=-(car.vx*nx+car.vz*nz),speed=Math.hypot(car.vx,car.vz);

@@ -56,9 +56,13 @@ After a valid lap, a short notice shows the last lap time and the next lap numbe
 
 - Circuit race: one player and seven computer-controlled opponents over three laps. Club, Sport and Pro change rival pace; opponents still follow the same physical simulation and checkpoints.
 - Time attack: solo three-lap runs, local personal bests and Bronze/Silver/Gold targets for the chosen car and course.
-- Three-race tour: the same car and difficulty across three distinct circuits. Every valid finish earns its ordinary race credits, and the tour totals earned credits and position points.
+- Three-race tour: the same player car, rival identities and rival cars across three distinct circuits. Persistent standings award 25/18/15/12/10/8/6/4 points for actual finishes. Explicitly leaving or continuing classifies unfinished rivals as DNF with zero points and no invented time. Equal points use wins; equal wins remain tied. Normal credits apply without a separate tour cash bonus.
 - Medal targets describe this arcade game, not real-world motorsport records. Records are separate by car, circuit, mode and difficulty. Medals are saved in this browser when storage is available. Tours require working browser storage to carry the same car and earned rounds between circuits. An unfinished tour is replaced only after an explicit Start new tour choice.
 - Circuit race and tour finish rewards: 900/650/500/350/300/250/200/150 credits for places 1–8. Solo time attack: 350 credits. Both add one credit per 20 drift points, up to a 500-credit bonus. Incomplete and over-15-minute runs do not award credits.
+
+- Driver campaign: 18 authored events across six chapters. Original twelve event records remain compatible. Advanced objectives use actual Perfect Nitro, Burst Nitro, clean-overtake, pickup and clean-sector simulation counters. Complete the first objective to advance; optional bonuses can be earned later.
+- Car setup: Factory balance, Corner grip, Straight-line and Nitro reserve have explicit performance tradeoffs. Save a car default or an override for a specific circuit; remove an override to use the default. Mastery records five per-car achievements without hidden performance boosts.
+- Portable backups: export/import a validated versioned JSON file covering preferences/controls, credits/upgrades, paint, favorites, campaign/mastery/setups, tour history, driving school, records and replay data. Imports preserve analytics consent, exclude authentication data and use a verified rollback/recovery snapshot. No accounts, sign-in or automatic cloud sync; manual files support transfer between devices.
 
 ## Key Facts
 

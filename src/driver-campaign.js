@@ -12,6 +12,7 @@ const resets = value => goal('resets', 'resets', value, value === 0 ? 'Finish wi
 const drift = value => goal('drift', 'drift', value, `Bank ${value.toLocaleString('en-US')} drift points`);
 const clock = medal => goal('time', 'time', medal, `Beat the ${medal} three-lap target`);
 const consistency = seconds => goal('consistency', 'consistency', seconds, `Keep all three lap times within ${seconds} seconds`);
+const skill = (type, value, label) => goal(type, type, value, label);
 const event = (id, name, track, mode, difficulty, description, objectives) => Object.freeze({
   id, name, track, mode, difficulty, description, objectives: Object.freeze(objectives),
 });
@@ -35,6 +36,16 @@ export const CAMPAIGN_CHAPTERS = Object.freeze([
     event('neon-contender', 'Freight runner', 'neon-freight', 'race', 'pro', 'Finish among the first five against the Pro field.', [place(5), goal('podium', 'position', 3, 'Finish on the podium'), drift(1000)]),
     event('bay-final', 'Bay contender', 'grandprix', 'race', 'pro', 'Take a Pro podium at the Bay Grand Prix.', [place(3), place(1), resets(0)]),
     event('coast-reign', 'Own the coast', 'coast', 'time-attack', 'street', 'Return to the coast and put together a gold-target drive.', [clock('gold'), consistency(4), resets(0)]),
+  ] },
+  { id: 'nitro-lab', name: 'Boost with purpose', description: 'Time your Nitro. Find the pickups. Protect your clean sectors.', events: [
+    event('harbor-perfect', 'Perfect timing', 'harbor', 'time-attack', 'street', 'Start Nitro, release, then press again in the timing window. Activate Perfect Nitro twice.', [skill('perfectNitro', 2, 'Activate Perfect Nitro twice'), skill('pickups', 3, 'Collect three Nitro pickups'), resets(0)]),
+    event('monza-burst', 'Full charge', 'monza', 'time-attack', 'street', 'Build full charge, then use Burst on open straights.', [skill('burstNitro', 2, 'Activate Burst Nitro twice'), skill('cleanSectors', 4, 'Complete four sectors without contact or recovery'), clock('silver')]),
+    event('coast-supply', 'Coastal supply run', 'coast', 'race', 'street', 'Plan a line through the recharge pickups without losing the pack.', [skill('pickups', 5, 'Collect five Nitro pickups'), place(3), skill('perfectNitro', 3, 'Activate Perfect Nitro three times')]),
+  ] },
+  { id: 'racecraft', name: 'Racecraft academy', description: 'Pass with space. Link clean sectors. Make every boost count.', events: [
+    event('suzuka-clean-pass', 'Room to race', 'suzuka', 'race', 'street', 'Pass moving rivals and keep clear of contact before and after each pass.', [skill('cleanOvertakes', 3, 'Make three clean overtakes'), skill('cleanSectors', 5, 'Complete five clean sectors'), resets(0)]),
+    event('spa-clean-sectors', 'Sector by sector', 'spa', 'time-attack', 'street', 'Keep the car away from contact between consecutive timing checkpoints.', [skill('cleanSectors', 8, 'Complete eight clean sectors'), skill('perfectNitro', 3, 'Activate Perfect Nitro three times'), clock('gold')]),
+    event('bay-racecraft-final', 'Complete driver', 'grandprix', 'race', 'pro', 'Bring the advanced skills together against the Pro grid.', [place(1), skill('cleanOvertakes', 4, 'Make four clean overtakes'), skill('burstNitro', 3, 'Activate Burst Nitro three times')]),
   ] },
 ].map(chapter => Object.freeze({ ...chapter, events: Object.freeze(chapter.events) })));
 export const CAMPAIGN_EVENTS = Object.freeze(CAMPAIGN_CHAPTERS.flatMap(chapter => chapter.events));
@@ -96,6 +107,8 @@ function earnedObjective(objective, race) {
     case 'drift': return race.score >= objective.target;
     case 'time': return race.elapsed <= objective.target;
     case 'consistency': return hasConsistentLaps(race, objective.target);
+    case 'perfectNitro': case 'burstNitro': case 'cleanOvertakes': case 'pickups': case 'cleanSectors':
+      return whole(race.objectiveStats?.[objective.type], 100_000) && race.objectiveStats[objective.type] >= objective.target;
     default: return false;
   }
 }
@@ -119,3 +132,15 @@ export function recordCampaignResult(value, race, receipt) {
 }
 export const loadCampaign = storage => loadDriverState(CAMPAIGN_KEY, normalizeCampaign, storage);
 export const persistCampaign = (state, storage) => persistDriverState(CAMPAIGN_KEY, normalizeCampaign, state, storage);
+
+// A concrete next action, including unearned bonus goals after the main path.
+export function getCampaignSuggestion(value, vehicle = DEFAULT_VEHICLE_ID) {
+  const state = normalizeCampaign(value);
+  const next = getNextCampaignEvent(state, vehicle);
+  const selected = next || CAMPAIGN_EVENTS.map(item => getCampaignEvent(item.id, vehicle)).find(item =>
+    item && item.objectives.some(goal => !state.events[item.id]?.objectives.includes(goal.id)));
+  if (!selected) return null;
+  const objective = selected.objectives.find(goal => !state.events[selected.id]?.objectives.includes(goal.id));
+  return {kind: 'campaign', eventId: selected.id, vehicle, track: selected.track, label: selected.name,
+    description: `${objective.label} at ${selected.trackName}.`, objective, bonus: !next};
+}

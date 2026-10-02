@@ -149,7 +149,7 @@ test('strip/grid switching preserves cards, hides irrelevant arrows and honours 
 test('header shows validated saved credits and refreshes after another tab changes the wallet without writing', () => {
   const {elements,document,writes,setCredits}=mount({credits:8765});
   assert.equal(elements['atlas-credits'].attrs['aria-label'],'8,765 saved upgrade credits');
-  assert.match(elements['atlas-credits'].innerHTML, /race-icons\.svg\?v=20261002-3#credits/);
+  assert.match(elements['atlas-credits'].innerHTML, /race-icons\.svg\?v=[^#]+#credits/);
   setCredits(9900); document.visibilitychange();
   assert.equal(elements['atlas-credits'].attrs['aria-label'],'9,900 saved upgrade credits');
   assert.deepEqual(writes, []);

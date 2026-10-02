@@ -42,3 +42,16 @@ test('mobile frames remain bounded across 60/120Hz hardware, with less idle work
  }
  const desktop=createFrameBudget();for(let frame=0;frame<120;frame++)assert.equal(desktop.ready(frame*1000/120),true);
 });
+
+
+test('battery saver caps active phone driving at 30 Hz and leaves desktop and lifecycle behavior intact',()=>{
+ for(const hz of [60,120])for(const mode of ['racing','countdown','finished']){
+  const budget=createFrameBudget();let rendered=0;
+  for(let frame=0;frame<hz*10;frame++)if(budget.ready(frame*1000/hz,{mobile:true,batterySaver:true,mode}))rendered++;
+  assert.ok(Math.abs(rendered-300)<=2,`${mode} ${hz} Hz: ${rendered}`);
+  assert.equal(budget.ready(20000,{mobile:true,batterySaver:true,mode,hidden:true}),false);
+  assert.equal(budget.ready(20001,{mobile:true,batterySaver:true,mode}),true);
+  budget.reset();assert.equal(budget.ready(20002,{mobile:true,batterySaver:true,mode}),true);
+ }
+ const desktop=createFrameBudget();for(let frame=0;frame<120;frame++)assert.equal(desktop.ready(frame*1000/120,{mobile:false,batterySaver:true,mode:'racing'}),true);
+});

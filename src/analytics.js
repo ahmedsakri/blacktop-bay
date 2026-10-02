@@ -17,13 +17,30 @@ export const ANALYTICS_EVENTS = Object.freeze([
   "circuit_select",
   "garage_open",
   "nitro_use",
+  "load_ready", "load_failure",
+  "tutorial_start", "tutorial_step", "tutorial_complete",
+  "upgrade_purchase", "result_action", "challenge_share", "performance_sample",
 ]);
+const eventEnums = Object.freeze({
+  load_ready: {stage:['lobby','race']}, load_failure: {stage:['lobby','race']},
+  upgrade_purchase: {component:['engine','tyres','nitro','handling']},
+  result_action: {action:['replay','next_round','next_event','garage','share','home']},
+  challenge_share: {action:['download','copy']},
+});
+const eventNumbers = Object.freeze({
+  tutorial_start: {step:[0,5,true]}, tutorial_step: {step:[0,5,true]}, tutorial_complete: {step:[0,5,true]},
+  upgrade_purchase: {level:[1,5,true]},
+  performance_sample: {p75_frame_ms:[0,150,false],quality_level:[0,3,true],draw_calls:[0,10000,true],triangles:[0,10000000,true]},
+});
+export const ANALYTICS_PARAMETERS = Object.freeze(['circuit','vehicle','race_mode','difficulty','position','duration_seconds','drift_score','resets','lap',
+  'stage','step','component','level','action','p75_frame_ms','quality_level','draw_calls','triangles']);
 const consentKey = "blacktop-bay-analytics-consent-v1";
 let currentConsent = null,
   initialized = false,
   loaded = false;
 export function sanitizeGameEvent(name, values = {}) {
   if (!ANALYTICS_EVENTS.includes(name)) return null;
+  if (!values || typeof values !== "object" || Array.isArray(values)) values = {};
   const result = { event: name, game_name: "Camber Reign" };
   if (TRACKS.some(track => track.id === values.circuit))
     result.circuit = values.circuit;
@@ -47,6 +64,11 @@ export function sanitizeGameEvent(name, values = {}) {
       value <= max
     )
       result[key] = Math.round(value);
+  }
+  for (const [key, choices] of Object.entries(eventEnums[name] || {})) if (choices.includes(values[key])) result[key] = values[key];
+  for (const [key, [min,max,integer]] of Object.entries(eventNumbers[name] || {})) {
+    const value=values[key];
+    if (typeof value==='number' && Number.isFinite(value) && value>=min && value<=max && (!integer || Number.isSafeInteger(value))) result[key]=Math.round(value);
   }
   return result;
 }
@@ -149,17 +171,7 @@ export function trackEvent(name, values = {}) {
   if (!event) return false;
   initializeAnalytics();
   // GTM version-2 variables merge state; clear optional values between events.
-  window.dataLayer.push({
-    circuit: undefined,
-    vehicle: undefined,
-    race_mode: undefined,
-    difficulty: undefined,
-    position: undefined,
-    duration_seconds: undefined,
-    drift_score: undefined,
-    resets: undefined,
-    lap: undefined,
-  });
+  window.dataLayer.push(Object.fromEntries(ANALYTICS_PARAMETERS.map(key => [key, undefined])));
   window.dataLayer.push(event);
   return true;
 }

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {drivingVoice,nitroSoundFrame,createEngineSoundMotion,engineSpectrum} from '../src/driving-sound.js';
+import {drivingVoice,nitroSoundFrame,createEngineSoundMotion,createTyreSoundMotion,engineSpectrum} from '../src/driving-sound.js';
 import {VEHICLES} from '../src/vehicles.js';
 
 test('boost opens gently into low turbine thrust with restrained air and a short release',()=>{
@@ -102,4 +102,24 @@ test('normal, perfect and full-charge burst have distinct bounded timbres rather
   assert.ok(frame.coreFrequency<300&&frame.lowFrequency>=44);
  }
  assert.deepEqual(nitroSoundFrame({mode:'unknown'}),nitroSoundFrame());
+});
+
+
+test('tyre feedback follows real slip with a smooth quiet transition, clears in air and never jumps on a drift flag',()=>{
+ const motion=createTyreSoundMotion(),state={running:true,raceId:'tyres',speed:30,slipAngle:.08,drift:false};
+ let frame;for(let i=0;i<60;i++)frame=motion.update(state,1/60);
+ const straight=frame.gain;
+ const flagOnly=motion.update({...state,drift:true},1/60);assert.ok(flagOnly.gain<.002);
+ const onset=motion.update({...state,slipAngle:.4},1/60);assert.ok(onset.gain>straight&&onset.gain<.02);
+ for(let i=0;i<90;i++)frame=motion.update({...state,slipAngle:.8},1/60);
+ assert.ok(frame.gain<=.105&&frame.squealGain<=.0038);
+ for(let i=0;i<40;i++)frame=motion.update({...state,slipAngle:.8,air:{phase:'airborne'}},1/60);
+ assert.ok(frame.gain<1e-7,'airborne tyres do not sustain impossible road scrub');
+ assert.equal(motion.update({...state,running:false},1/60).gain,0);
+ for(const hz of [30,60,120]){
+  const sampled=createTyreSoundMotion();let out;
+  for(let i=0;i<hz;i++)out=sampled.update({...state,slipAngle:.3},1/hz);
+  assert.ok(Number.isFinite(out.gain)&&out.gain>0&&out.gain<.105);
+  if(hz===30)frame=out;else assert.ok(Math.abs(out.gain-frame.gain)<1e-10);
+ }
 });

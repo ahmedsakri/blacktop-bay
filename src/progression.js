@@ -100,3 +100,6 @@ export function awardRaceCredits(state, result, storage) {
   const persisted = persist(state, storage);
   return { awarded: true, credits, base, driftBonus, persisted };
 }
+
+// Shared by portable backups; never mutates the supplied value.
+export const normalizeProgression = value => clean(value);

@@ -2,7 +2,7 @@
 // Separate music/driving buses and a soft compressor keep the louder mix controlled.
 import { getVehicle } from './vehicles.js';
 
-import { drivingVoice, nitroSoundFrame, createEngineSoundMotion, engineSpectrum } from './driving-sound.js';
+import { drivingVoice, nitroSoundFrame, createEngineSoundMotion, createTyreSoundMotion, engineSpectrum } from './driving-sound.js';
 import { lobbyMusicFrame, normalizeLobbyStyle } from './lobby-music.js';
 import {createRaceSoundscape,createSoundEventTracker} from './race-sound.js';
 
@@ -11,7 +11,7 @@ export function createAudio({contextFactory} = {}) {
   let context=null,master=null,engineGate=null,tyreGain=null,squealGain=null,boostGain=null;
   let sfxMix=null,sfxRaceGate=null,soundscape=null;
   const soundEvents=createSoundEventTracker();
-  const engineMotion=createEngineSoundMotion();
+  const engineMotion=createEngineSoundMotion(),tyreMotion=createTyreSoundMotion();
   let engineFilter=null,tyreFilter=null,bodyOsc=null,harmonicOsc=null,subOsc=null,squealOsc=null,boostOsc=null;
   let bodyGain=null,harmonicGain=null,subGain=null;
   let intakeGain=null,intakeFilter=null,engineWaves=null,waveApplied=null;
@@ -189,7 +189,8 @@ export function createAudio({contextFactory} = {}) {
     const pending=soundEvents.consume(state);
     const vehicle=getVehicle(state.vehicle),voice=drivingVoice(vehicle),electric=voice.electric;
     const step=clamp(finite(dt,1/60),0,.1),throttle=clamp(finite(state.throttle,1),0,1);
-    const motion=engineMotion.update({running,voice,speed,topSpeed:vehicle.handling.topSpeed,vehicleId:vehicle.id,raceId:state.raceId,throttle,brake,drift},step);
+    const motion=engineMotion.update({running,voice,speed,topSpeed:finite(state.topSpeed,vehicle.handling.topSpeed),vehicleId:vehicle.id,raceId:state.raceId,throttle,brake,drift},step);
+    const tyres=tyreMotion.update({...state,running,speed,drift,brake},step);
     if(!context || !unlocked || context.state!=='running')return;
     updateGates();
     if(muted || !visible())return;
@@ -206,7 +207,7 @@ export function createAudio({contextFactory} = {}) {
     const {pitch,rev,load,torque}=motion;
     target(bodyOsc.frequency,pitch,.028);
     target(harmonicOsc.frequency,pitch*(vehicle.family==='formula'?3.002:2.003),.035);
-    target(subOsc.frequency,pitch*.5,.045);
+    target(subOsc.frequency,Math.max(32,pitch*.5),.045);
     target(bodyGain.gain,voice.body*(.48+load*.52)*torque,.045);
     target(harmonicGain.gain,voice.harmonic*(.16+load*.44)*torque,.055);
     target(subGain.gain,voice.sub*(.68+load*.32),.08);
@@ -214,9 +215,9 @@ export function createAudio({contextFactory} = {}) {
     target(intakeGain.gain,electric?0:(.002+rev*.010)*load*torque,.075);
     target(intakeFilter.frequency,300+rev*370,.12);
     const nextBoostMode=['perfect','burst'].includes(state.nitroMode)?state.nitroMode:'normal';
-    if(boost&&(!boostWasActive||nextBoostMode!==boostMode)){boostAge=0;boostRelease=0;}
+    if(boost&&!boostWasActive){boostAge=0;boostRelease=0;}
     if(boost)boostMode=nextBoostMode;
-    if(!boost&&boostWasActive)boostRelease=1;
+    if(!boost&&boostWasActive)boostRelease=clamp(boostAge/.18,0,1);
     if(boost)boostAge+=step;
     else boostRelease*=Math.exp(-step*13);
     const thrust=nitroSoundFrame({active:boost,age:boostAge,speed,electric,mode:boostMode});
@@ -229,12 +230,10 @@ export function createAudio({contextFactory} = {}) {
     target(boostImpactGain.gain,thrust.impact,.029);
     target(boostReleaseGain.gain,thrust.release*boostRelease,.024);
     boostWasActive=boost;
-    const moving=clamp((speed-3)/12,0,1);
-    const scrub=Math.max(drift,brake*.22)*moving;
-    target(tyreGain.gain,Math.pow(scrub,1.35)*.16,.060);
-    target(tyreFilter.frequency,720+scrub*570+Math.min(speed,60)*4,.12);
-    target(squealGain.gain,Math.pow(scrub,2.8)*.0055,.12);
-    target(squealOsc.frequency,780+scrub*190+Math.min(speed,60)*1.4,.16);
+    target(tyreGain.gain,tyres.gain,.040);
+    target(tyreFilter.frequency,tyres.cutoff,.10);
+    target(squealGain.gain,tyres.squealGain,.09);
+    target(squealOsc.frequency,tyres.squealFrequency,.14);
     soundscape.update({...state,speed},step,pending);
   }
   function updateLobby(dt) {

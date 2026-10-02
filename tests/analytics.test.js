@@ -211,3 +211,53 @@ test('revocation disables measurement, clears only GA cookies and cannot queue f
     assert.equal(window[`ga-disable-${analytics.ANALYTICS_CONFIG.measurementId}`], false);
   });
 });
+
+test('new opt-in funnel events retain only bounded event-specific enums and numeric counters', async()=>{
+  await withBrowser({},({analytics})=>{
+    const cases=[
+      ['load_ready',{stage:'lobby',duration_seconds:12},{stage:'lobby',duration_seconds:12}],
+      ['load_failure',{stage:'race',duration_seconds:7,error:'private filesystem path',filename:'my-save.json'},{stage:'race',duration_seconds:7}],
+      ['tutorial_start',{step:0},{step:0}],['tutorial_step',{step:3},{step:3}],['tutorial_complete',{step:5},{step:5}],
+      ['upgrade_purchase',{component:'tyres',level:4,credits:200,user_id:'hidden'},{component:'tyres',level:4}],
+      ['result_action',{action:'next_event'},{action:'next_event'}],['challenge_share',{action:'copy',url:'https://example.test/private'},{action:'copy'}],
+      ['performance_sample',{p75_frame_ms:16.6,quality_level:1,draw_calls:245,triangles:650000,sensor:{beta:30},device_id:'hidden'},{p75_frame_ms:17,quality_level:1,draw_calls:245,triangles:650000}],
+    ];
+    for(const [name,values,expected]of cases)assert.deepEqual(analytics.sanitizeGameEvent(name,values),{event:name,game_name:'Camber Reign',...expected});
+    assert.deepEqual(analytics.sanitizeGameEvent('load_ready',{stage:'lobby',step:3,level:4,action:'copy',p75_frame_ms:17}),{event:'load_ready',game_name:'Camber Reign',stage:'lobby'});
+    for(const values of [null,undefined,'private',42,[]])assert.deepEqual(analytics.sanitizeGameEvent('performance_sample',values),{event:'performance_sample',game_name:'Camber Reign'});
+  });
+});
+
+test('new event enums reject free text and all numeric limits reject nonfinite, fractional discrete and out-of-range values',async()=>{
+  await withBrowser({},({analytics})=>{
+    for(const name of ['load_ready','load_failure','tutorial_start','tutorial_step','tutorial_complete','upgrade_purchase','result_action','challenge_share','performance_sample']){
+      const minimal={event:name,game_name:'Camber Reign'};
+      for(const invalid of [NaN,Infinity,-Infinity,-1,'2',null,{},[],true,10000000001]){
+        assert.deepEqual(analytics.sanitizeGameEvent(name,{stage:invalid,step:invalid,component:invalid,level:invalid,action:invalid,p75_frame_ms:invalid,quality_level:invalid,draw_calls:invalid,triangles:invalid}),minimal);
+      }
+    }
+    const invalidCases=[['load_ready',{stage:'private@example.test'}],['tutorial_step',{step:6}],['tutorial_step',{step:.5}],['upgrade_purchase',{component:'account',level:0}],['upgrade_purchase',{level:5.1}],['result_action',{action:'copy'}],['challenge_share',{action:'garage'}],['performance_sample',{p75_frame_ms:150.1,quality_level:4,draw_calls:10001,triangles:10000001}],['performance_sample',{quality_level:.5,draw_calls:1.5,triangles:.5}]];
+    for(const [event,values]of invalidCases)assert.deepEqual(analytics.sanitizeGameEvent(event,values),{event,game_name:'Camber Reign'});
+    assert.deepEqual(analytics.sanitizeGameEvent('performance_sample',{p75_frame_ms:150,quality_level:3,draw_calls:10000,triangles:10000000}),{event:'performance_sample',game_name:'Camber Reign',p75_frame_ms:150,quality_level:3,draw_calls:10000,triangles:10000000});
+  });
+});
+
+test('every optional funnel and performance parameter is cleared before the next GTM event',async()=>{
+  await withBrowser({consent:'granted'},({analytics,window})=>{
+    analytics.trackEvent('performance_sample',{p75_frame_ms:45,quality_level:2,draw_calls:100,triangles:400000});
+    analytics.trackEvent('result_action',{action:'replay'});
+    analytics.trackEvent('garage_open',{});
+    const reset=window.dataLayer.at(-2);
+    for(const key of analytics.ANALYTICS_PARAMETERS){assert.ok(Object.hasOwn(reset,key),key);assert.equal(reset[key],undefined,key);}
+    assert.deepEqual(measuredEvents(window).at(-1),{event:'garage_open',game_name:'Camber Reign'});
+  });
+});
+
+test('new funnel and performance events keep the original consent and production-host gates',async()=>{
+  for(const options of [{},{consent:'denied'},{blockedStorage:true},{hostname:'localhost',consent:'granted'}]){
+    await withBrowser(options,({analytics,window,scripts})=>{
+      for(const name of ['load_ready','load_failure','tutorial_start','tutorial_step','tutorial_complete','upgrade_purchase','result_action','challenge_share','performance_sample'])assert.equal(analytics.trackEvent(name,{stage:'race',step:1,component:'engine',level:1,action:'copy',p75_frame_ms:17}),false);
+      assert.deepEqual(measuredEvents(window),[]);assert.equal(scripts.length,0);
+    });
+  }
+});

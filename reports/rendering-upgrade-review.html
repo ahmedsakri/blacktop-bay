@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Camber Reign · Local renderer review</title><style>
+@font-face{font-family:'Barlow Condensed';src:url('/assets/barlow-condensed-extrabold-italic.woff2') format('woff2');font-weight:700;font-display:swap}
+*{box-sizing:border-box}body{margin:0;background:#110017;color:white;font:14px system-ui}header{padding:10px 16px;background:#021439;display:flex;gap:10px;align-items:end;flex-wrap:wrap;border-bottom:2px solid #9246ff}h1{font-size:16px;margin:0 15px 0 0}label{display:grid;gap:4px;font-size:12px}select,button{font:inherit;min-height:44px;padding:5px 9px;color:white;background:#110017;border:1px solid #ab84ec;border-radius:3px}select:focus-visible,button:focus-visible{outline:3px solid #fff71e}#note{margin:8px 16px;color:#e2d5ed;font-size:12px}#diagnostics{position:absolute;bottom:12px;left:12px;margin:0;padding:8px 12px;background:#110017df;max-width:calc(100% - 24px);font:12px/1.5 monospace;pointer-events:none}canvas{display:block;width:100%}#error{color:#fff71e;padding:12px}
+</style></head><body><header><h1>Local renderer review</h1><label>Circuit<select id="track"><option value="harbor">Harbor Flow</option><option value="fuji-skyline">Fuji Skyline</option><option value="san-francisco-hills">San Francisco Hills</option></select></label><label>Camera<select id="view"><option value="landmark">Authored landmark</option><option value="drive">Driving approach</option><option value="car">Car comparison</option></select></label><label>Sector<select id="sector"><option value="0">Sector 1</option><option value="1">Sector 2</option><option value="2">Sector 3</option></select></label><label>Car<select id="car"></select></label><label>Geometry<select id="tier"><option value="near">Near / existing low</option><option value="distance">Actual distance mesh</option></select></label><label>World detail<select id="low"><option value="1">Phone</option><option value="0">Desktop</option></select></label><button id="load">Load view</button></header><p id="note">Development fixture using the production renderer. Car comparison deliberately enlarges the distant mesh for inspection. This is not a completed gameplay or physical-phone test.</p><div id="error" hidden></div><div id="viewport"></div><pre id="diagnostics">Preparing production meshes and shaders…</pre><script type="module">
+import * as T from 'three';
+import {createWorld} from '/src/world.js';
+import {setTrack,sampleTrack} from '/src/track.js';
+import {MANUFACTURER_ASSETS} from '/src/manufacturer-asset-manifest.js';
+import {prepareManufacturerCar,createManufacturerCar,manufacturerCacheStatus} from '/src/manufacturer-car.js';
+import {qualitySettings} from '/src/render-quality.js';
+const $=id=>document.getElementById(id),params=new URLSearchParams(location.search);
+for(const [id,asset]of Object.entries(MANUFACTURER_ASSETS)){const option=document.createElement('option');option.value=id;option.textContent=asset.brand+' '+asset.model;$('car').append(option);}
+for(const id of ['track','view','sector','car','tier','low'])if(params.has(id))$(id).value=params.get(id);
+if(!params.has('car'))$('car').value='ferrari-458-italia';
+$('load').onclick=()=>{const query=new URLSearchParams();for(const id of ['track','view','sector','car','tier','low'])query.set(id,$(id).value);location.search=query.toString();};
+const error=message=>{$('error').hidden=false;$('error').textContent=String(message);};
+addEventListener('error',e=>error(e.message));addEventListener('unhandledrejection',e=>error(e.reason));
+try{
+ await document.fonts.load('700 32px "Barlow Condensed"');await document.fonts.ready;
+ const track=setTrack($('track').value),low=$('low').value==='1',view=$('view').value;
+ const renderer=new T.WebGLRenderer({antialias:true});renderer.setPixelRatio(1);renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.1;renderer.outputColorSpace=T.SRGBColorSpace;$('viewport').append(renderer.domElement);
+ const world=createWorld(renderer,{low,reducedMotion:true}),q=qualitySettings('performance',{mobile:low,dpr:1});world.setQuality(q);world.reflection.visible=false;renderer.shadowMap.enabled=false;
+ const camera=new T.PerspectiveCamera(view==='car'?38:54,1,.2,2600),sites=world.scene.userData.showcaseSectors,site=sites[Number($('sector').value)]||sites[0],p=sampleTrack(site.s,track);
+ let focus={x:site.x,y:site.y,z:site.z,speed:0},model=null;
+ if(view==='car'){
+  const assetId=$('car').value;await prepareManufacturerCar(assetId,{low:true});model=createManufacturerCar({assetId,low:true});
+  if($('tier').value==='distance'){if(!await model.prepareDistanceDetail())throw new Error('Distance mesh unavailable');model.setDistanceDetail(100);}
+  const start=sampleTrack(8,track);model.group.position.set(start.x,start.y+.055,start.z);model.group.rotation.y=Math.atan2(start.tx,start.tz);world.scene.add(model.group);
+  camera.position.set(start.x+start.nx*6.4+start.tx*8.3,start.y+3.3,start.z+start.nz*6.4+start.tz*8.3);camera.lookAt(start.x,start.y+.85,start.z);focus={...start,speed:0};
+ }else if(view==='drive'){
+  const start=sampleTrack(site.s-55,track),look=sampleTrack(site.s+8,track);
+  camera.position.set(start.x,start.y+3.1,start.z);camera.lookAt(look.x,look.y+1.25,look.z);focus={...start,speed:0};
+ }else{
+  const dx=p.x-site.x,dz=p.z-site.z,n=Math.hypot(dx,dz)||1;
+  camera.position.set(site.x+dx/n*21-p.tx*21,site.y+10,site.z+dz/n*21-p.tz*21);camera.lookAt(site.x,site.y+3,site.z);
+ }
+ const resize=()=>{const height=Math.max(180,innerHeight-$('viewport').getBoundingClientRect().top);renderer.setSize(innerWidth,height);camera.aspect=innerWidth/height;camera.updateProjectionMatrix();};resize();addEventListener('resize',resize);
+ let frame=0;renderer.setAnimationLoop(time=>{world.update(time/1000,focus,{paused:false,reducedMotion:true});model?.update({time:time/1000,speed:0,paused:true,reducedMotion:true});renderer.render(world.scene,camera);if(frame++%30===0){const stats=world.scene.userData.distanceDetail,car=model?.group.userData.distanceDetail;$('diagnostics').textContent=`${track.name} / ${site.label}\nDraws ${renderer.info.render.calls} · triangles ${renderer.info.render.triangles.toLocaleString()}\nScenery ${stats.visibleBatches}/${stats.batches} batches · ${stats.visibleInstances}/${stats.totalInstances} instances\n${car?`Car ${car.tier} · near ${car.nearTriangles.toLocaleString()} / distant ${car.distanceTriangles.toLocaleString()} triangles`:world.scene.userData.spectatorCount+' authored spectators'}\nCache estimated ${Math.round(manufacturerCacheStatus().estimatedResidentBytes/1048576)} MiB · actual production shaders`;}});
+ window.addEventListener('pagehide',()=>{model?.dispose();world.backdrop.dispose();renderer.dispose();});
+}catch(e){error(e.stack||e);}
+</script></body></html>

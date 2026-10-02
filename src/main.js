@@ -1,3 +1,9 @@
+import { exportSaveBackup, inspectSaveBackup, importSaveBackup, recoverSaveImport, exportRecoveryBackup } from './save-backup.js';
+import { normalizePlayerControls, actionForKey, keyLabel, createNitroLatch } from './player-controls.js';
+import { mountPlayerTools, makeResultCard } from './player-tools-ui.js';
+import { recordScope, interpolateGhost, ghostTimeAtProgress, createGhostTiming, challengeURL, readChallenge } from './personal-ghost.js';
+import { LESSONS, createDrivingSchool, schoolSeen, saveSchool } from './driving-school.js';
+import { createAdaptiveQuality } from './adaptive-quality.js';
 import { waitForPaint } from './paint-readiness.js';
 import { PAINT_COLORS, PAINT_FINISHES, loadPaint, savePaint, getPaint, applyPaint } from './paint.js';
 import "./style.css";
@@ -24,11 +30,12 @@ import { screenMode, toggleScreenMode, screenHelpMarkup } from './screen-mode.js
 import { createFrameBudget } from './frame-budget.js';
 import { registerPWA, canInstallPWA, requestInstallPWA } from './pwa.js';
 import './mobile-viewport.css';
+import './player-tools.css';
 import { logoLoaderMarkup, bindLogoLoader, mountLogoLoader } from "./logo-loader.js";
 import { loadCampaign, persistCampaign, getCampaignEvent, canStartCampaignEvent, recordCampaignResult } from "./driver-campaign.js";
 import { loadMastery, persistMastery, recordMasteryResult } from "./car-mastery.js";
-import { CAR_SETUPS, loadSetups, persistSetups, getCarSetup, selectCarSetup } from "./car-setups.js";
-import { mountCampaignPanel, mountCarDevelopment, developmentResultMarkup } from "./driver-development-ui.js";
+import { CAR_SETUPS, loadSetups, persistSetups, getCarSetup, selectCarSetup, clearCircuitSetup } from "./car-setups.js";
+import { mountCampaignPanel, mountCarDevelopment, developmentResultMarkup, nextGoalSuggestion } from "./driver-development-ui.js";
 import { saveCampaignIntent, consumeCampaignIntent } from "./campaign-intent.js";
 import { createPickupView } from "./race-pickup-view.js";
 import { readGamepad } from "./gamepad-controls.js";
@@ -37,8 +44,8 @@ import { circuitFromPath, circuitPath } from "./circuit-routes.js";
 import { carFromPath, carPath } from "./car-routes.js";
 import { drawRaceMap } from "./race-map.js";
 import { RACE_MODES, getDifficulty, normalizeRaceOptions, raceFieldSize } from "./race-options.js";
-import { CAREER_KEY, normalizeCareer, beginChampionship, nextChampionshipRace, recordCareerResult } from "./race-career.js";
-import { raceSetupMarkup, careerResultMarkup } from "./race-hq.js";
+import { CAREER_KEY, normalizeCareer, beginChampionship, nextChampionshipRace, recordCareerResult, bindChampionshipFleet, refreshChampionshipRound, finalizeChampionshipRound, finalizeInterruptedTourRounds } from "./race-career.js";
+import { raceSetupMarkup, careerResultMarkup, championshipStandingsMarkup } from "./race-hq.js";
 import { NEW_CARS, loadFavorites, saveFavorites, findCars, hasCarFilters, clearCarFilters, carLibraryMarkup, carLibraryCard, circuitLibraryMarkup, circuitLibraryCards, findCircuits } from "./collection-browser.js";
 import { pausePanel, howToPlayPanel, finishPanel, finishRowsMarkup, finishStatusText } from "./race-dialogs.js";
 import { icon } from './icons.js';
@@ -103,12 +110,20 @@ const format = (t) => {
 for (const el of document.querySelectorAll("[data-brand]"))
   el.textContent = BRAND.name.toUpperCase();
 document.title = `${BRAND.name} — AppsOverFlow`;
+function localStore(){try{return localStorage;}catch{return null;}}
+const saveRecovery=recoverSaveImport({storage:localStore()});
+if(saveRecovery.recoveryRequired){showStartupRecovery();throw new Error('Save recovery required before loading game progress.');}
+let school=null, pendingStartOptions={}, ghostModel=null, ghostReference=[], ghostTiming=null, lastGhostSector=0;
+const nitroLatch=createNitroLatch();
+let challenge=null,lastResultDialog=null,pauseResumeMode="racing";
+const bootTime=performance.now();
 const preferenceKey = "blacktop-bay-choices-v1";
-let preferences = { vehicle: DEFAULT_VEHICLE_ID, track: "harbor", mode:"race", difficulty:"street", steeringSensitivity:1,volume:.75,musicVolume:.65,engineVolume:1,sfxVolume:.85,quality:"auto",gamepadSwap:false,lobbyStyle:normalizeLobbyStyle() };
+let preferences = { vehicle: DEFAULT_VEHICLE_ID, track: "harbor", mode:"race", difficulty:"street", steeringSensitivity:1,volume:.75,musicVolume:.65,engineVolume:1,sfxVolume:.85,quality:"auto",gamepadSwap:false,controls:normalizePlayerControls(),lobbyStyle:normalizeLobbyStyle() };
 try {
   const stored = JSON.parse(localStorage.getItem(preferenceKey));
   if (stored && typeof stored === "object") {
     Object.assign(preferences, normalizeRaceOptions(stored));
+    preferences.controls=normalizePlayerControls(stored.controls);
     preferences.steeringSensitivity = normalizeSteeringSensitivity(stored.steeringSensitivity);
     preferences.lobbyStyle = normalizeLobbyStyle(stored.lobbyStyle);
     preferences.quality=normalizeQuality(stored.quality);preferences.gamepadSwap=stored.gamepadSwap===true;
@@ -136,6 +151,8 @@ if (campaignArrival) {
   selectedCampaignId = campaignArrival.id;
   Object.assign(preferences, {vehicle:campaignArrival.vehicle, track:campaignArrival.track, mode:campaignArrival.mode, difficulty:campaignArrival.difficulty});
 }
+challenge=readChallenge(location.hash,{cars:VEHICLES.map(v=>v.id),tracks:TRACKS.map(t=>t.id),track:preferences.track});
+if(challenge){preferences.vehicle=challenge.vehicle;preferences.mode='time-attack';preferences.controls.stockTrial=true;}
 setTrack(preferences.track);
 if(circuitFromPath(location.pathname))document.title=`${TRACK.name} — ${BRAND.name}`;
 if (requestedTrack || requestedVehicle) {
@@ -146,24 +163,25 @@ if (requestedVehicle) document.title = `${getVehicle(requestedVehicle).name} —
 const recordStore = {
   getItem(key) {
     return localStorage.getItem(
-      `${key}-${preferences.track}-${preferences.vehicle}-${preferences.mode}-${preferences.difficulty}-race-v3`,
+      `${key}-${currentRecordScope()}`,
     );
   },
   setItem(key, value) {
     localStorage.setItem(
-      `${key}-${preferences.track}-${preferences.vehicle}-${preferences.mode}-${preferences.difficulty}-race-v3`,
+      `${key}-${currentRecordScope()}`,
       value,
     );
   },
 };
 function saveChoices() {
   try {
-    localStorage.setItem(preferenceKey, JSON.stringify(preferences));
-  } catch {}
+    localStorage.setItem(preferenceKey, JSON.stringify(preferences));return true;
+  } catch {return false;}
 }
 const progression = loadProgression();
 let career = normalizeCareer();
 try { const raw=localStorage.getItem(CAREER_KEY); if(raw && raw.length<2000000) career=normalizeCareer(JSON.parse(raw)); } catch {}
+const interruptedTour=finalizeInterruptedTourRounds(career);career=interruptedTour.state;if(interruptedTour.changed)persistCareer();
 function persistCareer(){try{localStorage.setItem(CAREER_KEY,JSON.stringify(career));return true;}catch{return false;}}
 const paintChoices = loadPaint();
 const favoriteCars = loadFavorites();
@@ -174,10 +192,12 @@ function selectedCampaignEvent() {
   const event = getCampaignEvent(selectedCampaignId, preferences.vehicle);
   return event && canStartCampaignEvent(campaign,event.id) && event.track===preferences.track && event.mode===preferences.mode && event.difficulty===preferences.difficulty ? event : null;
 }
-const fittedStats = (vehicle = preferences.vehicle, upgrades = progression.cars[vehicle]) => getUpgradeStats(vehicle,upgrades,getCarSetup(carSetups,vehicle));
+const stockTrial=()=>preferences.mode==='time-attack'&&preferences.controls.stockTrial;
+const fittedStats = (vehicle = preferences.vehicle, upgrades = progression.cars[vehicle]) => getUpgradeStats(vehicle,upgrades,getCarSetup(carSetups,vehicle,preferences.track));
+function currentRecordScope(){return recordScope({...preferences,stock:stockTrial(),upgrades:progression.cars[preferences.vehicle],setup:getCarSetup(carSetups,preferences.vehicle,preferences.track)});}
 const newRace = () =>
-  createRace({ vehicle: preferences.vehicle, track: preferences.track, upgrades: progression.cars[preferences.vehicle], rivalVehicles, mode:preferences.mode, difficulty:preferences.difficulty,
-    setup:getCarSetup(carSetups,preferences.vehicle), campaignEventId:selectedCampaignEvent()?.id || null });
+  createRace({ vehicle: preferences.vehicle, track: preferences.track, upgrades:stockTrial()?{}:progression.cars[preferences.vehicle], rivalVehicles:school?[]:rivalVehicles, mode:school?'time-attack':preferences.mode, difficulty:school?'relaxed':preferences.difficulty,
+    setup:stockTrial()?'balanced':getCarSetup(carSetups,preferences.vehicle,preferences.track), campaignEventId:school?null:selectedCampaignEvent()?.id || null });
 function event(name, extra = {}) {
   trackEvent(name, {
     circuit: preferences.track,
@@ -218,8 +238,20 @@ const input = {
   dragSteering = createDragSteering(),
   tiltSteering = createTiltSteering(),
   heldKeys = new Set(),
-  heldPads = new Set(),
-  reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  heldPads = new Set();
+const motionQuery=matchMedia('(prefers-reduced-motion: reduce)');
+let reduced=preferences.controls.motion==='reduced'||preferences.controls.motion==='system'&&motionQuery.matches;
+function updatePlayerControls(){
+ reduced=preferences.controls.motion==='reduced'||preferences.controls.motion==='system'&&motionQuery.matches;
+ document.body.classList.toggle('motion-reduced',reduced);
+ document.body.classList.toggle('controls-left-handed',preferences.controls.leftHanded);
+ const c=preferences.controls;document.body.style.setProperty('--control-scale',c.touchSize);document.body.style.setProperty('--control-inset',c.touchInset+'px');document.body.style.setProperty('--control-lift',c.touchLift+'px');
+ const b=c.bindings;const hint=document.querySelector('.drive-hint');if(hint)hint.textContent=`${keyLabel(b.left)} / ${keyLabel(b.right)} STEER · ${keyLabel(b.brake)} BRAKE · ${keyLabel(b.nitro)} NITRO`;
+ document.querySelector('.nitro-touch-hint').textContent=c.nitroToggle?'TAP ON / TAP OFF':'HOLD TO BOOST';
+ document.querySelector('[data-input="nitro"]').setAttribute('aria-label',c.nitroToggle?'Tap to toggle Nitro boost':'Hold for Nitro boost');
+ if(renderer?.domElement)renderer.domElement.setAttribute('aria-label',`Race canvas. Automatic acceleration. ${keyLabel(b.left)} and ${keyLabel(b.right)} steer. ${keyLabel(b.brake)} brakes. ${keyLabel(b.nitro)} boosts. ${keyLabel(b.reset)} resets. ${keyLabel(b.pause)} pauses.`);
+}
+motionQuery.addEventListener('change',()=>updatePlayerControls());
 const mobile = usesTouchControls();
 let steeringMode = 'touch', tiltPending = false, tiltRequest = 0, tiltTimer = null;
 let tiltGraceUntil = 0, analogSteering = 0;
@@ -234,9 +266,11 @@ updateSound();
 let renderer, world, player, effects, camera, composer, carFill, garageStudio, renderPass, bloomPass;
 let garageFrame = null, lobbyFrame = null, pickupView=null, gamepadPauseHeld=false;
 const frameBudget = createFrameBudget();
+const adaptiveQuality=createAdaptiveQuality({mobile,dpr:devicePixelRatio,choice:preferences.quality});
+let lastRendered=0, performanceSamples=[], lastPerformanceReport=0;
 let directRender = false;
-function applyQuality(){if(!renderer)return;const q=qualitySettings(preferences.quality,{mobile,dpr:devicePixelRatio});directRender=!q.bloom;renderer.setPixelRatio(q.pixelRatio);renderer.shadowMap.enabled=q.shadows;if(composer){composer.setPixelRatio(q.pixelRatio);composer.setSize(innerWidth,innerHeight);}if(bloomPass)bloomPass.enabled=q.bloom;if(world?.reflection)world.reflection.visible=q.reflection&&!TRACK.elevationProfile&&!["desert","parkland"].includes(world.scene.userData.venueEnvironment?.type);}
-function renderScene(){if(directRender)renderer.render(renderPass.scene,camera);else composer.render();}
+function applyQuality(){if(!renderer)return;const q=adaptiveQuality.settings;world?.setQuality?.(q);directRender=!q.bloom;renderer.setPixelRatio(q.pixelRatio);renderer.shadowMap.enabled=q.shadows;if(composer){composer.setPixelRatio(q.pixelRatio);composer.setSize(innerWidth,innerHeight);}if(bloomPass)bloomPass.enabled=q.bloom;if(world?.reflection)world.reflection.visible=q.reflection&&!TRACK.elevationProfile&&!["desert","parkland"].includes(world.scene.userData.venueEnvironment?.type);}
+function renderScene(){renderer.info.reset();if(directRender)renderer.render(renderPass.scene,camera);else composer.render();}
 let carSelectionPending = false, racePreparing = false, fleetGeneration = 0;
 updateMenu();
 let garageYaw = -.75,
@@ -260,24 +294,32 @@ const camTarget = new THREE.Vector3(),
   smoothedLook = new THREE.Vector3();
 async function prepareOpponents(seed, onProgress = () => {}) {
   const generation=++fleetGeneration;
-  const ids=preferences.mode==='time-attack'?[]:createOpponentFleet({playerVehicle:preferences.vehicle,seed,mobile});
+  const fixedField=preferences.mode==='championship'?nextChampionshipRace(career)?.rivalVehicles:null;
+  const ids=school||preferences.mode==='time-attack'?[]:fixedField||createOpponentFleet({playerVehicle:preferences.vehicle,playerStats:fittedStats(),seed,mobile});
   const prepared=[],loadedIds=[];
   try {
-    for(const [index,id] of ids.entries()){
-      if(generation!==fleetGeneration){prepared.forEach(m=>m.dispose());return false;}
-      onProgress({label:`Preparing opponent ${index+1} of ${ids.length}…`,detail:getVehicle(id).name,progress:{completed:index,total:ids.length}});
-      let model,loaded=id;
-      try {await prepareManufacturerCar(id,{low:true});if(generation!==fleetGeneration){prepared.forEach(m=>m.dispose());return false;}model=createCar({vehicle:id,low:true});}
-      catch {if(generation!==fleetGeneration){prepared.forEach(m=>m.dispose());return false;}await prepareManufacturerCar(preferences.vehicle,{low:mobile});if(generation!==fleetGeneration){prepared.forEach(m=>m.dispose());return false;}model=createCar({vehicle:preferences.vehicle,low:mobile});loaded=preferences.vehicle;}
-      model.group.visible=false;prepared.push(model);loadedIds.push(loaded);
-      onProgress({label:`${index+1} of ${ids.length} opponents ready`,detail:'Building the starting grid.',progress:{completed:index+1,total:ids.length}});
+    let completed=0;
+    for(let offset=0;offset<ids.length;offset+=2){
+      const outcomes=await Promise.allSettled(ids.slice(offset,offset+2).map(async(id,localIndex)=>{
+        if(generation!==fleetGeneration)return;
+        onProgress({label:`Preparing the grid · ${completed} of ${ids.length}`,detail:getVehicle(id).name,progress:{completed,total:ids.length}});
+        let model,loaded=id;
+        try{await prepareManufacturerCar(id,{low:true});if(generation!==fleetGeneration)return;model=createCar({vehicle:id,low:true});}
+        catch{if(generation!==fleetGeneration)return;await prepareManufacturerCar(preferences.vehicle,{low:mobile});if(generation!==fleetGeneration)return;model=createCar({vehicle:preferences.vehicle,low:mobile});loaded=preferences.vehicle;}
+        if(generation!==fleetGeneration){model.dispose();return;}
+        model.group.visible=false;prepared[offset+localIndex]=model;loadedIds[offset+localIndex]=loaded;completed++;
+        onProgress({label:`${completed} of ${ids.length} opponents ready`,detail:'Building the starting grid.',progress:{completed,total:ids.length}});
+      }));
+      const failed=outcomes.find(result=>result.status==='rejected');if(failed)throw failed.reason;
+      if(generation!==fleetGeneration){prepared.forEach(m=>m?.dispose());return false;}
     }
-    if(generation!==fleetGeneration){prepared.forEach(m=>m.dispose());return false;}
+    if(generation!==fleetGeneration){prepared.forEach(m=>m?.dispose());return false;}
     rivalModels.forEach(m=>m.dispose());rivalModels=prepared;
     rivalVehicles.splice(0,rivalVehicles.length,...loadedIds);
+    if(preferences.mode==='championship'&&!school){const bound=bindChampionshipFleet(career,loadedIds);career=bound.state;if(bound.changed&&!persistCareer())toast('Tour grid saved for this session only.');}
     for(const model of rivalModels)world.scene.add(model.group);
     return true;
-  } catch(error){prepared.forEach(m=>m.dispose());if(generation!==fleetGeneration)return false;throw error;}
+  } catch(error){prepared.forEach(m=>m?.dispose());if(generation!==fleetGeneration)return false;throw error;}
 }
 function updateWallet(){
   $('hq-credit-value').textContent=progression.credits.toLocaleString();
@@ -294,8 +336,10 @@ function updateRaceOptions(){
   $('open-campaign').setAttribute('aria-pressed',String(Boolean(campaignEvent)));
   records=loadRecords(recordStore);if(typeof preferences.sound==='boolean')records.sound=preferences.sound;
   updateWallet();
+  const goalButton=$("next-driver-goal");if(goalButton){const goal=nextGoalSuggestion({campaign,mastery,vehicle:preferences.vehicle});goalButton.textContent="NEXT GOAL · "+goal.label;goalButton.title=goal.description;goalButton.onclick=showCampaign;}
 }
-async function continueTour(){const next=nextChampionshipRace(career);if(!next)return;
+function finalizeTour(){if(mode!=="finished")return;const result=finalizeChampionshipRound(career,race);career=result.state;if(result.changed&&!persistCareer())toast("Tour standings saved for this session only.");}
+async function continueTour(){finalizeTour();const next=nextChampionshipRace(career);if(!next)return;
   const nextPreferences={...preferences,vehicle:next.vehicle,track:next.track,mode:next.mode,difficulty:next.difficulty};
   // Commit the reload's inputs before changing the visible selection. A failed
   // write leaves the current car, world and pending tour intact.
@@ -313,6 +357,7 @@ function showRaceSetup(){
   for(const b of document.querySelectorAll('[data-race-mode]'))b.onclick=()=>{selectedCampaignId=null;preferences.mode=b.dataset.raceMode;saveChoices();updateRaceOptions();showRaceSetup();document.querySelector(`[data-race-mode="${preferences.mode}"]`)?.focus();};
   $('race-difficulty').onchange=e=>{selectedCampaignId=null;preferences.difficulty=e.target.value;saveChoices();updateRaceOptions();};
   if($('resume-tour'))$('resume-tour').onclick=continueTour;
+  mountTrialSettings();
 }
 async function initGame() {
   try {
@@ -324,6 +369,7 @@ async function initGame() {
       powerPreference: "high-performance",
     });
     renderer.setPixelRatio(qualitySettings(preferences.quality,{mobile,dpr:devicePixelRatio}).pixelRatio);
+    renderer.info.autoReset=false;
     renderer.setSize(innerWidth, innerHeight);
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.1;
@@ -375,7 +421,7 @@ async function initGame() {
     loadProgress("Building your circuit…", "Preparing the track, scenery and race lighting.");
     await nextPaint();
     // Track signage is rasterized once; load its typeface before painting it.
-    if(document.fonts) await document.fonts.load('32px "Racing Sans One"').catch(()=>{});
+    if(document.fonts) await Promise.all(['32px "Racing Sans One"','800 32px "Barlow Condensed"'].map(font=>document.fonts.load(font))).catch(()=>{});
     world = createWorld(renderer, { low: mobile, reducedMotion: reduced });
     loadProgress("Preparing your car…", getVehicle(preferences.vehicle).name);
     await nextPaint();
@@ -430,10 +476,13 @@ async function initGame() {
     document.body.classList.add("is-ready");
     $("start").disabled = false;
     $("menu").inert = false;
+    updatePlayerControls();
     updateMenu();
+    event("load_ready",{stage:"lobby",duration_seconds:(performance.now()-bootTime)/1000});
     if (requestedVehicle) openGarage();
     initializePrivacyChoice();
     if (campaignArrival) showCampaign();
+    if(saveRecovery.recovered)toast("Interrupted import recovered. Your previous progress is safe.");
     setTimeout(() => {$("loading").hidden = true;startupLoader.destroy();}, reduced ? 0 : 250);
     last = performance.now();
     requestAnimationFrame(tick);
@@ -503,7 +552,7 @@ function checkOrientation() {
   }
   if (!$("orientation-gate").hidden) {
     orientationGate(false);
-    if (pendingLandscapeStart) { pendingLandscapeStart = false; start(); }
+    if (pendingLandscapeStart) { pendingLandscapeStart = false; start(pendingStartOptions); }
   }
 }
 $("orientation-fullscreen").onclick = requestLandscape;
@@ -589,7 +638,7 @@ function mountSteeringSettings() {
   const display=document.createElement('details');display.className='steering-settings';
   display.innerHTML=`<summary><h3>Display &amp; controller</h3></summary><div class="race-settings-grid"><label>Graphics<select id="graphics-quality"><option value="auto">Automatic</option><option value="performance">Performance</option><option value="balanced">Balanced</option><option value="ultra">High detail</option></select></label><label>Controller buttons<select id="controller-layout"><option value="standard">A / right trigger: Nitro</option><option value="swap">B / right trigger: Nitro</option></select></label></div><p>Standard gamepads: left stick or D-pad steers. Left trigger brakes. Menu pauses. Touch and keyboard remain available.</p>`;
   $('dialog-content').append(display);$('graphics-quality').value=preferences.quality;
-  $('graphics-quality').onchange=e=>{preferences.quality=normalizeQuality(e.target.value);saveChoices();applyQuality();};
+  $('graphics-quality').onchange=e=>{preferences.quality=normalizeQuality(e.target.value);adaptiveQuality.configure({choice:preferences.quality,mobile,dpr:devicePixelRatio});saveChoices();applyQuality();};
   $('controller-layout').value=preferences.gamepadSwap?'swap':'standard';
   $('controller-layout').onchange=e=>{preferences.gamepadSwap=e.target.value==='swap';saveChoices();};
   const install = document.createElement('section'); install.className = 'app-install-card';
@@ -606,6 +655,7 @@ function mountSteeringSettings() {
       : screenMode().ios ? screenHelpMarkup(screenMode())
       : '<p>Open your browser’s menu and choose <strong>Install Camber Reign</strong>, <strong>Install this page as an app</strong>, or <strong>Add to Home Screen</strong>. On a Mac in Safari, choose <strong>File → Add to Dock</strong>.</p><p>If installation is unavailable, you can keep playing in this browser.</p>';
   };
+  mountPlayerTools($('dialog-content'),{getControls:()=>preferences.controls,onChange(next){const before=preferences.controls.showGhost;preferences.controls=normalizePlayerControls(next);clearInput();updatePlayerControls();if(!before&&preferences.controls.showGhost&&race.mode==="time-attack"&&["paused","racing"].includes(mode))startPersonalGhost();return saveChoices();},onBackup:showSaveBackup});
   if (!usesTouchControls()) return;
   const section = document.createElement('section'); section.className = 'steering-settings';
   section.setAttribute('aria-labelledby', 'steering-settings-heading');
@@ -626,7 +676,7 @@ function syncInput() {
   const pressedPointers = pointerInputs.read();
   for (const key in input)
     input[key] =
-      [...heldKeys].some((code) => keyMap[code] === key) ||
+      [...heldKeys].some((code) => actionForKey(code,preferences.controls) === key) ||
       pressedPointers[key] || heldPads.has(key);
   for (const b of document.querySelectorAll("[data-input]")) {
     b.classList.toggle("pressed", input[b.dataset.input]);
@@ -634,6 +684,7 @@ function syncInput() {
   }
 }
 function clearInput() {
+  nitroLatch.clear();
   heldKeys.clear();
   heldPads.clear();
   dragSteering.clear();
@@ -692,7 +743,7 @@ function dialog({ kind, title, eyebrow, html, actions }) {
     const actionIcon = /BACK|HOME|GOT IT/.test(a.label) ? 'arrow-left' : /GARAGE/.test(a.label) ? 'garage' : /RESTART|RESET|CLEAR/.test(a.label) ? 'restart' : /RACE|DRIV/.test(a.label) ? 'play' : 'check';
     b.innerHTML = icon(actionIcon);
     const label = document.createElement('span'); label.textContent = a.label; b.append(label);
-    b.onclick = a.action;
+    b.onclick = () => {if(kind==="result")event("result_action",{action:/TOUR/.test(a.label)?"next_round":/CAMPAIGN/.test(a.label)?"next_event":/AGAIN/.test(a.label)?"replay":/GARAGE/.test(a.label)?"garage":/SHARE/.test(a.label)?"share":"home"});a.action();};
     $("dialog-actions").append(b);
   }
   $("menu").inert = true;
@@ -740,7 +791,7 @@ function updateGarageCopy() {
   }
 }
 function showUpgrades(focusComponent) {
-  dialog({kind: "upgrades", eyebrow: "THE WORKSHOP · BUILT FOR YOUR NEXT RACE", title: `Make it <em>yours.</em>`, html: `<div class="driver-development workshop-development-link"><button class="button secondary" type="button" id="open-car-development">${icon('steering')} SETUP & MASTERY</button><p>${CAR_SETUPS.find(setup=>setup.id===getCarSetup(carSetups,preferences.vehicle)).name} fitted · free setup changes</p></div>` + upgradePanel(progression, preferences.vehicle,getCarSetup(carSetups,preferences.vehicle)), actions: [{label:"BACK TO GARAGE",primary:true,action:()=>{closeDialog();$("open-upgrades").focus();}}]});
+  dialog({kind: "upgrades", eyebrow: "THE WORKSHOP · BUILT FOR YOUR NEXT RACE", title: `Make it <em>yours.</em>`, html: `<div class="driver-development workshop-development-link"><button class="button secondary" type="button" id="open-car-development">${icon('steering')} SETUP & MASTERY</button><p>${CAR_SETUPS.find(setup=>setup.id===getCarSetup(carSetups,preferences.vehicle,preferences.track)).name} fitted · free setup changes</p></div>` + upgradePanel(progression, preferences.vehicle,getCarSetup(carSetups,preferences.vehicle,preferences.track)), actions: [{label:"BACK TO GARAGE",primary:true,action:()=>{closeDialog();$("open-upgrades").focus();}}]});
   previousFocus = $("open-upgrades");
   $("open-car-development").onclick=showCarDevelopment;
   for (const button of document.querySelectorAll("[data-upgrade]")) {
@@ -748,6 +799,7 @@ function showUpgrades(focusComponent) {
       const component = button.dataset.upgrade;
       const result = buyUpgrade(progression, preferences.vehicle, component);
       if (!result.ok) return;
+      event("upgrade_purchase",{component,level:result.level});
       race = newRace();
       updateGarageCopy();
       showUpgrades(component);
@@ -758,7 +810,7 @@ function showUpgrades(focusComponent) {
 }
 function showCampaign() {
   if (!["menu","garage","finished"].includes(mode)) return;
-  dialog({kind:"campaign",eyebrow:"FOUR CHAPTERS · TWELVE EVENTS",title:"Driver <em>career.</em>",html:'<div id="campaign-view"></div>',actions:[{label:"BACK",primary:true,action:closeDialog}]});
+  dialog({kind:"campaign",eyebrow:"SIX CHAPTERS · EIGHTEEN EVENTS",title:"Driver <em>career.</em>",html:'<div id="campaign-view"></div>',actions:[{label:"BACK",primary:true,action:closeDialog}]});
   previousFocus=$("open-campaign");
   developmentView=mountCampaignPanel($("campaign-view"),{state:campaign,vehicle:preferences.vehicle,selectedEventId:selectedCampaignId,onStart:selectCampaignEvent});
 }
@@ -781,11 +833,11 @@ async function selectCampaignEvent(selected) {
 function showCarDevelopment() {
   dialog({kind:"car-development",eyebrow:"THE WORKSHOP · YOUR DRIVING STYLE",title:"Setup & <em>mastery.</em>",html:'<div id="car-development-view"></div>',actions:[{label:"BACK TO UPGRADES",primary:true,action:()=>showUpgrades()}]});
   previousFocus=$("open-upgrades");
-  developmentView=mountCarDevelopment($("car-development-view"),{vehicle:preferences.vehicle,baseSpecs:getUpgradeStats(preferences.vehicle,progression.cars[preferences.vehicle],"balanced"),setupState:carSetups,masteryState:mastery,onSelect(id){
-    const result=selectCarSetup(carSetups,preferences.vehicle,id);if(!result.selected)return;
+  developmentView=mountCarDevelopment($("car-development-view"),{vehicle:preferences.vehicle,baseSpecs:getUpgradeStats(preferences.vehicle,progression.cars[preferences.vehicle],"balanced"),setupState:carSetups,masteryState:mastery,track:preferences.track,onClearCircuit(track){const result=clearCircuitSetup(carSetups,preferences.vehicle,track);carSetups=result.state;const saved=persistSetups(carSetups);race=newRace();updateGarageCopy();developmentView.update({setupState:carSetups});document.querySelector("[data-development-save-status]").textContent=saved?"Circuit override removed. Car default restored.":"Circuit override removed for this session.";},onSelect(id,{track}={}){
+    const result=selectCarSetup(carSetups,preferences.vehicle,id,track);if(!result.selected)return;
     carSetups=result.state;const saved=persistSetups(carSetups);race=newRace();updateGarageCopy();
     developmentView.update({setupState:carSetups});
-    document.querySelector('[data-development-save-status]').textContent=saved ? "Setup fitted and saved for this car." : "Setup is active for this session. Browser storage is unavailable.";
+    document.querySelector('[data-development-save-status]').textContent=saved ? (track?"Setup saved for this car on this circuit.":"Default setup saved for this car.") : "Setup is active for this session. Browser storage is unavailable.";
   }});
 }
 function showPaint() {
@@ -922,7 +974,12 @@ function openCarLibrary() {
   $('clear-car-filters').onclick = resetFilters;
   refresh();
 }
-async function start({replaceTour=false}={}) {
+async function start({replaceTour=false,practice=false,introAccepted=false}={}) {
+  finalizeTour();
+  if(!practice&&!introAccepted&&!schoolSeen(localStore())&&!selectedCampaignId){
+    dialog({kind:'intro',eyebrow:'YOUR FIRST CORNER',title:'Make the road <em>yours.</em>',html:'<p>Try a short solo skills session for steering, drifting, Nitro pickups and Perfect Nitro. Skip any lesson. Your credits and records stay untouched.</p>',actions:[{label:'TRY DRIVING SCHOOL',primary:true,action:()=>{saveSchool(localStore());start({practice:true,introAccepted:true});}},{label:'GO STRAIGHT TO RACE',action:()=>{saveSchool(localStore());start({introAccepted:true});}}]});return;
+  }
+  pendingStartOptions={replaceTour,practice,introAccepted:true};
   if (carSelectionPending || racePreparing) return;
   // Preserve the initial tap activation before a physical rotation starts the race.
   sound.unlock();
@@ -936,7 +993,8 @@ async function start({replaceTour=false}={}) {
   }
   pendingLandscapeStart = false;
   orientationGate(false);
-  if(preferences.mode==='championship'){
+  school=practice?createDrivingSchool():null;
+  if(preferences.mode==='championship'&&!school){
     let next=nextChampionshipRace(career);
     const changesTour=next&&(next.vehicle!==preferences.vehicle||next.track!==preferences.track||next.difficulty!==preferences.difficulty);
     if(changesTour&&!replaceTour){
@@ -955,15 +1013,21 @@ async function start({replaceTour=false}={}) {
   }
   clearTimeout(countdownTimer);
   clearInput();
+  const preparationStarted=performance.now();
   racePreparing=true;mode="preparing";updateTouchControls();
   dialog({kind:'preparing',eyebrow:preferences.mode==='time-attack'?'YOUR CIRCUIT. YOUR CLOCK.':'FILLING YOUR STARTING GRID',title:preferences.mode==='time-attack'?'Preparing your <em>run.</em>':'Preparing your <em>grid.</em>',html:logoLoaderMarkup({label:preferences.mode==='time-attack'?'Preparing your solo run…':'Preparing the race cars…',detail:preferences.mode==='time-attack'?'One car. One circuit. Your best time.':'Loading the cars for this race.'}),actions:[{label:'BACK',action:()=>{fleetGeneration++;racePreparing=false;menu();}}]});
   const gridLoader=bindLogoLoader($('dialog-content').querySelector('[data-logo-loader]'));
-  try {if(!await prepareOpponents(crypto.randomUUID(),state=>gridLoader.update(state)))return;}catch(error){racePreparing=false;dialog({kind:'preparing',eyebrow:'CONNECTION INTERRUPTED',title:'Let’s try <em>again.</em>',html:'<p>A car could not finish loading. Check your connection and try again.</p>',actions:[{label:'BACK TO HOME',primary:true,action:menu}]});return;}finally{gridLoader.destroy();}
+  try {if(!await prepareOpponents(crypto.randomUUID(),state=>gridLoader.update(state)))return;}catch(error){event("load_failure",{stage:"race"});racePreparing=false;dialog({kind:'preparing',eyebrow:'CONNECTION INTERRUPTED',title:'Let’s try <em>again.</em>',html:'<p>A car could not finish loading. Check your connection and try again.</p>',actions:[{label:'BACK TO HOME',primary:true,action:menu}]});return;}finally{gridLoader.destroy();}
   racePreparing=false;
+  event("load_ready",{stage:"race",duration_seconds:(performance.now()-preparationStarted)/1000});
   closeDialog();
   renderer.domElement.focus({ preventScroll: true });
   sound.unlock();
   race = newRace();
+  records=loadRecords(recordStore);
+  startPersonalGhost();
+  if(school)event("tutorial_start");
+  renderLesson();
   frames = [];
   driftSnapshot = null; driftBankUntil = 0; lastBankedPoints = 0;
   nextFrame = 0;
@@ -986,11 +1050,13 @@ async function start({replaceTour=false}={}) {
   $("ghost-label").textContent = preferences.mode==='time-attack'?"SOLO · TIME ATTACK":`YOU · ${race.rivals.length} RIVALS`;
   placeCar();
   updateRivals();
+  updatePersonalGhost();
   updateCamera(0.016, false);
   updateHud();
-  event("race_start");
+  if(!school)event("race_start");
 }
 function menu() {
+  finalizeTour();school=null;renderLesson();disposeGhost();
   if(racePreparing){fleetGeneration++;racePreparing=false;}
   pendingLandscapeStart = false;
   orientationGate(false);
@@ -1023,7 +1089,7 @@ function menu() {
 }
 function pauseGame() {
   if (mode !== "racing" && mode !== "countdown") return;
-  const was = mode;
+  const was = mode;pauseResumeMode=was;
   event("race_pause");
   mode = "paused";
   updateTouchControls();
@@ -1054,7 +1120,7 @@ function pauseGame() {
         mode = was; updateTouchControls(); last = performance.now();
         renderer.domElement.focus({ preventScroll: true });
       } },
-      { label: "RESTART", action: start },
+      { label: "RESTART", action:()=>start({practice:Boolean(school),introAccepted:true}) },
       { label: "BACK TO HOME", action: menu },
     ],
   });
@@ -1078,9 +1144,10 @@ function how() {
     kind: "how",
     eyebrow: "FIND YOUR LINE",
     title: "Find your <em>line.</em>",
-    html: howToPlayPanel({touch:usesTouchControls()}),
+    html: howToPlayPanel({touch:usesTouchControls(),controls:preferences.controls}),
     actions: [
       { label: "GOT IT", primary: true, action: closeDialog },
+      { label: "DRIVING SCHOOL", action:()=>start({practice:true,introAccepted:true}) },
       { label: "LET’S DRIVE", action: start },
     ],
   });
@@ -1133,6 +1200,7 @@ function clearRaceRecords() {
 }
 function finishRows() { return finishRowsMarkup(race); }
 function updateFinish() {
+  const refreshed=refreshChampionshipRound(career,race);career=refreshed.state;if(refreshed.changed)persistCareer();const table=$("tour-standings");if(table&&refreshed.tour){const markup=championshipStandingsMarkup(refreshed.tour);if(table.outerHTML!==markup)table.outerHTML=markup;}
   if (modalKind !== "result") return;
   const list = $("finish-order");
   if (list) {
@@ -1144,6 +1212,7 @@ function updateFinish() {
     status.textContent = finishStatusText(race);
 }
 function finish() {
+  if(school){finishSchool();return;}
   clearTimeout(countdownTimer);
   $("countdown").hidden = true;
   mode = "finished";
@@ -1171,7 +1240,7 @@ function finish() {
     drift_score: race.score,
     resets: race.recoveries,
   });
-  dialog({
+  lastResultDialog={
     kind: "result",
     eyebrow: `${TRACK.name.toUpperCase()} · ${race.mode==='time-attack'?'TIME ATTACK':'CLASSIFIED'}`,
     title:
@@ -1189,9 +1258,11 @@ function finish() {
           openGarage();
         },
       },
+      { label: "SHARE RESULT", action:()=>showShareResult(reward) },
       { label: "HOME", action: menu },
     ],
-  });
+  };
+  dialog(lastResultDialog);
   updateFinish();
 }
 function initializePrivacyChoice() {
@@ -1301,17 +1372,7 @@ $("home-link").onclick = (e) => {
   else if (mode === "menu") $("start").focus();
   else if (mode === "garage") menu();
 };
-const keyMap = {
-  ArrowLeft: "left",
-  KeyA: "left",
-  ArrowRight: "right",
-  KeyD: "right",
-  ArrowDown: "brake",
-  KeyS: "brake",
-  Space: "drift",
-  ShiftLeft: "nitro",
-  ShiftRight: "nitro",
-};
+
 window.addEventListener("keydown", (e) => {
   if (isDrivingShortcut(e)) {
     if (heldKeys.delete(e.code)) syncInput();
@@ -1327,14 +1388,16 @@ window.addEventListener("keydown", (e) => {
     }
     return;
   }
-  if ((e.code === "Escape" || e.code === "KeyP") && e.repeat) return;
+  const action=actionForKey(e.code,preferences.controls);
+  if ((e.code === "Escape" || action === "pause") && e.repeat) return;
   if (modalKind) {
-    if (e.code === "Escape" || (e.code === "KeyP" && modalKind === "pause")) {
+    if (e.code === "Escape" || (action === "pause" && modalKind === "pause")) {
       e.preventDefault();
       if (modalKind === "pause")
         document.querySelector("#dialog-actions button")?.click();
       else if(modalKind === "preparing") menu();
-      else if (modalKind !== "result") closeDialog();
+      else if(modalKind==="share"){dialog(lastResultDialog);updateFinish();}
+      else if (!["result","recovery","school-result"].includes(modalKind)) {if(mode==="paused")pauseSettingsReturn();else closeDialog();}
     }
     return;
   }
@@ -1342,26 +1405,26 @@ window.addEventListener("keydown", (e) => {
     menu();
     return;
   }
-  if (e.code === "Escape" || e.code === "KeyP") {
+  if (action === "pause") {
     if (["racing", "countdown"].includes(mode)) e.preventDefault();
     pauseGame();
     return;
   }
   if (mode !== "racing" && mode !== "countdown") return;
   if (e.code === "Space" && e.target.closest?.("button,a")) return;
-  if (keyMap[e.code]) {
+  if (["left","right","brake","drift","nitro"].includes(action)) {
     e.preventDefault();
     heldKeys.add(e.code);
     syncInput();
   }
-  if (e.code === "KeyR" && !e.repeat) {
+  if (action === "reset" && !e.repeat) {
     resetCar(race);
     event("car_reset");
     effects.clear();
   }
 });
 window.addEventListener("keyup", (e) => {
-  if (keyMap[e.code]) {
+  if (heldKeys.has(e.code)) {
     const wasHeld = heldKeys.has(e.code);
     heldKeys.delete(e.code);
     syncInput();
@@ -1556,21 +1619,21 @@ function updateCamera(dt, instant = false) {
     lookTarget.copy(pos).addScaledVector(forward, 4.0);
     lookTarget.y = roadY+0.8;
     camera.fov =
-      (phoneChase ? 48 : 50) + cameraSpeed * 0.08 + (race.nitro.active && !reduced ? 3 : 0);
+      (phoneChase ? 48 : 50) + (!reduced&&!preferences.controls.stableCamera ? cameraSpeed * 0.08 + (race.nitro.active ? 3 : 0) : 0);
   }
   const blend = instant ? 1 : 1 - Math.exp(-dt * (mode === "menu" ? 2 : 7));
   camera.position.sub(cameraImpactOffset);
   cameraImpactOffset.set(0, 0, 0);
   camera.position.lerp(camTarget, blend);
   smoothedLook.lerp(lookTarget, instant ? 1 : 1 - Math.exp(-dt * 8));
-  if (!reduced && mode === "racing") {
+  if (!reduced && !preferences.controls.stableCamera && mode === "racing") {
     const impulse = impactCameraOffset(cameraKickAge, cameraKick, cameraKickX, cameraKickZ);
     cameraImpactOffset.set(impulse.x, impulse.y, impulse.z);
     camera.position.add(cameraImpactOffset);
   }
   camera.lookAt(smoothedLook);
   const targetBank =
-    !reduced && mode === "racing"
+    !reduced && !preferences.controls.stableCamera && mode === "racing"
       ? -c.steering * Math.min(c.speed / 35, 1) * 0.013
       : 0;
   cameraBank += (targetBank - cameraBank) * (1 - Math.exp(-dt * 4));
@@ -1592,6 +1655,7 @@ function updateRivals() {
     model.group.position.set(r.car.x,(r.car.y||0)+.055,r.car.z);
     const crash=collisionPose(r,{reducedMotion:reduced});model.group.position.y+=crash.lift;
     model.group.rotation.set(-(r.car.pitch||0)+crash.pitch,r.car.yaw+crash.yaw,(r.car.roll||0)+crash.roll,'YXZ');
+    model.setDistanceDetail?.(Math.hypot(r.car.x-race.car.x,r.car.z-race.car.z),adaptiveQuality.settings);
     model.update({
       speed:
         (mode === "racing" || mode === "finished") && r.state !== "finished"
@@ -1706,10 +1770,14 @@ function updateHud() {
   drawMap();
 }
 function tick(now) {
-  if (!frameBudget.ready(now,{mobile,hidden:document.hidden,mode})) {
+  if (!frameBudget.ready(now,{mobile,hidden:document.hidden,mode,batterySaver:preferences.controls.batterySaver})) {
     if(document.hidden)last=now;
     requestAnimationFrame(tick);return;
   }
+  if(lastRendered&&mode==='racing'&&!preferences.controls.batterySaver){if(adaptiveQuality.sample(now-lastRendered,{active:true}))applyQuality();}
+  else adaptiveQuality.reset();
+  if(lastRendered&&mode==='racing'){performanceSamples.push(now-lastRendered);if(performanceSamples.length>600)performanceSamples.shift();if(now-lastPerformanceReport>60000&&performanceSamples.length>=120){const sorted=[...performanceSamples].sort((a,b)=>a-b);event('performance_sample',{p75_frame_ms:sorted[Math.floor(sorted.length*.75)],quality_level:adaptiveQuality.status.level,draw_calls:renderer.info.render.calls,triangles:renderer.info.render.triangles});lastPerformanceReport=now;performanceSamples=[];}}else performanceSamples=[];
+  lastRendered=now;
   const wasFinished = mode === "finished";
   const dt = Math.min((now - last) / 1000, 0.05);
   if (['racing', 'countdown'].includes(mode) && steeringMode === 'tilt' && now > tiltGraceUntil && !tiltSteering.fresh()) {
@@ -1725,7 +1793,7 @@ function tick(now) {
     else if(mode==='paused'&&modalKind==='pause'&&$("orientation-gate").hidden)document.querySelector('#dialog-actions button')?.click();
   }
   gamepadPauseHeld=padState.pause;
-  const driveControls = resolveDriveControls({...input, nitro:input.nitro||padState.nitro,brake:input.brake||padState.brake,steer:Math.abs(padState.steer)>.01?padState.steer:analogSteering}, {steeringSensitivity:preferences.steeringSensitivity});
+  const driveControls = resolveDriveControls({...input, nitro:nitroLatch.sample(input.nitro||padState.nitro,preferences.controls.nitroToggle),brake:input.brake||padState.brake,steer:Math.abs(padState.steer)>.01?padState.steer:analogSteering}, {steeringSensitivity:preferences.steeringSensitivity});
   last = now;
   time += dt;
   uiTimer += dt;
@@ -1767,7 +1835,7 @@ function tick(now) {
         t: race.elapsed,
         x: race.car.x,
         z: race.car.z,
-        yaw: race.car.yaw,
+        yaw: race.car.yaw,y:race.car.y||0,pitch:race.car.pitch||0,roll:race.car.roll||0,progress:race.raceProgress,
       });
       nextFrame += 0.1;
     }
@@ -1777,7 +1845,8 @@ function tick(now) {
         duration_seconds: Math.round(race.lastLap),
       });
     }
-    if (race.state === "finished") finish();
+    if(school&&school.update(race,driveControls,dt)){event('tutorial_step',{step:Math.min(school.index,LESSONS.length)});renderLesson();if(!school.active)finishSchool();}
+    if (race.state === "finished" && mode==='racing') finish();
   }
   if (wasFinished && !race.allFinished) stepRace(race, {}, dt);
   if (mode === "finished") updateFinish();
@@ -1795,6 +1864,8 @@ function tick(now) {
     time,
   });
   updateRivals();
+  updatePersonalGhost();
+  if($("skill-coach"))$("skill-coach").hidden=!school?.lesson||!["racing","countdown"].includes(mode)||Boolean(modalKind);
   const showroom = mode === "menu" || mode === "garage";
   pickupView?.update(race.pickups,time,!showroom,reduced,mode==="racing"?dt:0);
   if (!showroom) effects.update(race.car, dt, time, mode === "racing", {
@@ -1844,7 +1915,7 @@ function tick(now) {
   updateCamera(dt);
   sound.update(
     {
-      speed: race.car.speed,
+      speed: race.car.speed,topSpeed:race.specs.topSpeed,slipAngle:race.car.slipAngle,
       vehicle: race.vehicle,raceId:race.raceId||race,impact:race.impact,pickupEvent:race.pickupEvent,air:race.air,
       listener:race.car,rivals:race.rivals.map(r=>({id:r.id,vehicle:r.vehicle,impact:r.impact,...r.car})),
       road:['coastal','urban'].includes(world.scene.userData.venueEnvironment?.type)?'wet':'asphalt',
@@ -1866,10 +1937,70 @@ function tick(now) {
   requestAnimationFrame(tick);
 }
 
+
+function disposeGhost(){ghostModel?.dispose();ghostModel=null;ghostReference=[];ghostTiming=null;const badge=$('ghost-split');if(badge)badge.hidden=true;}
+function startPersonalGhost(){
+ disposeGhost();if(school||race.mode!=='time-attack'||!preferences.controls.showGhost||records.ghost.length<2)return;
+ ghostReference=records.ghost;ghostTiming=createGhostTiming(ghostReference);lastGhostSector=0;
+ try{ghostModel=createCar({vehicle:preferences.vehicle,ghost:true,low:mobile});ghostModel.group.visible=false;world.scene.add(ghostModel.group);}catch{ghostReference=[];}
+}
+function updatePersonalGhost(){
+ const badge=$('ghost-split');if(!ghostModel){if(badge)badge.hidden=true;return;}
+ const active=['racing','paused'].includes(mode)&&race.mode==='time-attack'&&preferences.controls.showGhost;
+ const pose=active?interpolateGhost(ghostReference,race.elapsed):null;ghostModel.group.visible=Boolean(pose);
+ if(pose){ghostModel.group.position.set(pose.x,pose.y+.055,pose.z);ghostModel.group.rotation.set(-pose.pitch,pose.yaw,pose.roll,'YXZ');}
+ if(!active){if(badge)badge.hidden=true;return;}
+ if(uiTimer<=.075)return;
+ const reference=ghostTimeAtProgress(ghostReference,race.raceProgress);const split=ghostTiming.update(race.raceProgress,race.elapsed);
+ if(badge){badge.hidden=reference===null;const delta=reference===null?0:race.elapsed-reference;badge.classList.toggle('ahead',delta<0);badge.textContent=`PERSONAL BEST  ${delta<0?'−':'+'}${Math.abs(delta).toFixed(2)}s${split.last?' · S'+split.last.sector:''}`;}
+}
+function mountTrialSettings(){
+ if(preferences.mode!=='time-attack')return;
+ const panel=document.createElement('section');panel.className='trial-settings';panel.innerHTML=`<label><input id="trial-stock" type="checkbox" ${preferences.controls.stockTrial?'checked':''}>Stock challenge · equal build</label><label><input id="trial-ghost" type="checkbox" ${preferences.controls.showGhost?'checked':''}>Race my personal-best ghost</label><p>Stock challenges use standard upgrades and the balanced setup. Records are separated by car, circuit, build and handling version. Previous-version times are preserved in your saved data.</p>${challenge?`<p>Friend’s local target: <strong>${format(challenge.time)}</strong>. Shared times are not verified online rankings.</p>`:''}`;$('dialog-content').append(panel);
+ $('trial-stock').onchange=e=>{preferences.controls.stockTrial=e.target.checked;saveChoices();records=loadRecords(recordStore);race=newRace();updateMenu();};
+ $('trial-ghost').onchange=e=>{preferences.controls.showGhost=e.target.checked;saveChoices();};
+}
+function renderLesson(){
+ let panel=$('skill-coach');if(!panel){panel=document.createElement('section');panel.id='skill-coach';panel.className='skill-coach';panel.setAttribute('aria-label','Driving school');panel.hidden=true;document.body.append(panel);}
+ if(!school?.lesson){panel.hidden=true;return;}
+ const lesson=school.lesson;panel.hidden=false;panel.innerHTML=`<small>DRIVING SCHOOL · ${school.index+1} / ${LESSONS.length}</small><strong>${lesson.title}</strong><p>${lesson.text}</p><div class="coach-actions"><button type="button" id="school-skip">SKIP LESSON</button><button type="button" id="school-exit">END PRACTICE</button></div>`;
+ $('race-feedback-live').textContent=lesson.title+'. '+lesson.text;
+ $('school-skip').onclick=()=>{school.skip();renderLesson();if(!school.active)finishSchool();else renderer.domElement.focus({preventScroll:true});};
+ $('school-exit').onclick=()=>finishSchool();
+}
+function finishSchool(){
+ if(!school)return;const completed=!school.active&&school.skipped===0,learned=Math.max(0,school.index-school.skipped);saveSchool(localStore(),completed);event('tutorial_complete',{step:learned});school=null;renderLesson();clearInput();mode='paused';updateTouchControls();effects.clear();
+ dialog({kind:'school-result',eyebrow:'YOUR NEXT CORNER IS WAITING',title:completed?'Skills <em>unlocked.</em>':'Keep finding <em>your line.</em>',html:`<p>${learned} of ${LESSONS.length} skills demonstrated. Practice does not change credits, records or campaign progress. Return whenever you want to sharpen your timing.</p>`,actions:[{label:'START MY RACE',primary:true,action:()=>start({introAccepted:true})},{label:'PRACTISE AGAIN',action:()=>start({practice:true,introAccepted:true})},{label:'HOME',action:menu}]});
+}
+function showShareResult(reward){
+ const stock=stockTrial()&&race.mode==='time-attack';
+ const url=stock?challengeURL({track:race.track,vehicle:race.vehicle,time:race.elapsed}):location.origin+circuitPath(race.track);
+ const card=makeResultCard({car:getVehicle(race.vehicle).name,track:TRACK.name,time:format(race.elapsed),position:race.position,stock,credits:reward.credits});
+ dialog({kind:'share',eyebrow:stock?'SAME CAR. SAME RULES.':'A FINISH WORTH SHARING',title:stock?'Beat my <em>time.</em>':'Your race <em>receipt.</em>',html:'<div id="share-preview"></div><p>Local race result. Challenge links use stock cars and the same handling version; they are not an online leaderboard.</p><label class="backup-details">Race link<input id="share-url" readonly style="display:block;width:100%;min-height:44px"></label><p id="share-status" role="status"></p>',actions:[{label:'DOWNLOAD CARD',primary:true,action:()=>{card.toBlob(blob=>{if(!blob)return;downloadBlob(blob,'camber-reign-result.png');event('challenge_share',{action:'download'});},'image/png');}},{label:'COPY LINK',action:async()=>{try{await navigator.clipboard.writeText(url);$('share-status').textContent='Link copied.';event('challenge_share',{action:'copy'});}catch{$('share-url').focus();$('share-url').select();$('share-status').textContent='Select and copy the link above.';}}},{label:'BACK TO RESULT',action:()=>{dialog(lastResultDialog);updateFinish();}}]});
+ card.className='share-result-preview';$('share-preview').append(card);$('share-url').value=url;
+}
+function downloadBlob(blob,name){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+function backupSummary(summary){return `${summary.credits.toLocaleString()} credits · ${summary.campaignEvents} career events · ${summary.records} record sets · ${summary.circuitSetups} circuit setups`;}
+function saveSnapshot(){return exportSaveBackup({storage:localStore(),states:{preferences,progression,paint:paintChoices,favorites:[...favoriteCars],career,campaign,mastery,setups:carSetups}});}
+function showSaveBackup(){
+ dialog({kind:'backup',eyebrow:'YOUR PROGRESS. YOUR FILE.',title:'Take your <em>progress.</em>',html:'<p>Download your credits, upgrades, career, tours, mastery, setups, paint, favourites, controls and saved runs. Transfer the file to another device, then restore it here. No account required.</p><button class="button primary" id="backup-download">'+icon('download')+'<span>DOWNLOAD BACKUP</span></button><p id="backup-status" role="status"></p><label class="backup-details">Restore a Camber Reign backup<input id="backup-file" class="race-backup-input" type="file" accept=".json,application/json"></label><p class="backup-details">Restoring replaces this browser’s progress and ends an unfinished race. Your analytics choice stays unchanged. Keep a current backup first.</p>',actions:[{label:'BACK',action:()=>mode==='paused'?pauseSettingsReturn():closeDialog()}]});
+ $('backup-download').onclick=()=>{const result=saveSnapshot();if(!result.ok){$('backup-status').textContent=result.error;return;}downloadBlob(new Blob([result.json],{type:'application/json'}),result.filename);$('backup-status').textContent='Backup prepared: '+backupSummary(result.summary);};
+ $('backup-file').onchange=async e=>{const file=e.target.files[0];if(!file)return;if(file.size>32000000){$('backup-status').textContent='Choose a save file smaller than 32 MB.';return;}let raw;try{raw=await file.text();}catch{$('backup-status').textContent='This file could not be read.';return;}const result=inspectSaveBackup(raw);if(!result.ok){$('backup-status').textContent=result.error;return;}
+ dialog({kind:'backup-confirm',eyebrow:'REPLACE SAVED PROGRESS',title:'Restore this <em>backup?</em>',html:'<p>'+backupSummary(result.summary)+'</p><p>This replaces current progress on this device and reloads the game. Your analytics choice is kept.</p><p id="backup-status" role="status"></p>',actions:[{label:'RESTORE & RELOAD',primary:true,action:()=>{const restored=importSaveBackup(raw,{storage:localStore()});if(restored.ok){location.assign(circuitPath(restored.states.preferences.track));return;}$('backup-status').textContent=restored.error;if(restored.recoveryRequired){showRecoveryDialog();}}},{label:'KEEP CURRENT PROGRESS',action:showSaveBackup}]});};
+}
+function pauseSettingsReturn(){modalKind='';mode=pauseResumeMode;pauseGame();}
+function showRecoveryDialog(){clearInput();mode='paused';updateTouchControls();dialog({kind:'recovery',eyebrow:'SAVE RECOVERY',title:'Protect your <em>progress.</em>',html:'<p>An interrupted restore needs recovery before you continue. Your previous save snapshot is retained.</p><p id="recovery-status" role="status"></p>',actions:[{label:'RETRY RECOVERY',primary:true,action:()=>{const result=recoverSaveImport({storage:localStore()});if(result.ok)location.reload();else $('recovery-status').textContent=result.error;}},{label:'DOWNLOAD PREVIOUS SAVE',action:()=>{const result=exportRecoveryBackup({storage:localStore()});if(result.ok)downloadBlob(new Blob([result.json],{type:'application/json'}),result.filename);else $('recovery-status').textContent=result.error;}}]});}
+function showStartupRecovery(){const overlay=document.createElement('section');overlay.className='startup-recovery';overlay.setAttribute('role','alert');overlay.innerHTML='<h1>Recover your saved progress.</h1><p>An interrupted restore needs recovery before the game can load.</p><button id="startup-retry">RETRY RECOVERY</button><button id="startup-export">DOWNLOAD PREVIOUS SAVE</button><p id="startup-status"></p>';document.body.append(overlay);$('startup-retry').onclick=()=>{const result=recoverSaveImport({storage:localStore()});if(result.ok)location.reload();else $('startup-status').textContent=result.error;};$('startup-export').onclick=()=>{const result=exportRecoveryBackup({storage:localStore()});if(result.ok)downloadBlob(new Blob([result.json],{type:'application/json'}),result.filename);else $('startup-status').textContent=result.error;};$('startup-retry').focus();}
+
+const ghostBadge=document.createElement('div');ghostBadge.id='ghost-split';ghostBadge.className='ghost-split';ghostBadge.hidden=true;document.body.append(ghostBadge);
+const practiceButton=document.createElement('button');practiceButton.className='lobby-practice';practiceButton.type='button';practiceButton.textContent='Driving school · learn by doing';practiceButton.onclick=()=>start({practice:true,introAccepted:true});$('start').after(practiceButton);
+const nextGoalButton=document.createElement('button');nextGoalButton.id='next-driver-goal';nextGoalButton.className='next-driver-goal';nextGoalButton.type='button';$('lobby-mode-description').after(nextGoalButton);
+updateRaceOptions();
+
 if (import.meta.env.DEV) {
   window.__blacktopBayQA = Object.freeze({
     snapshot: () => ({
-      mode,
+      mode, quality:{...adaptiveQuality.status,settings:adaptiveQuality.settings},renderer:renderer?{...renderer.info.render,memory:{...renderer.info.memory}}:null,school:school?{index:school.index,active:school.active}:null,controls:structuredClone(preferences.controls),ghostVisible:ghostModel?.group.visible||false,
       raceId:race.raceId, wreck:race.wreck ? structuredClone(race.wreck) : null, air:race.air ? structuredClone(race.air) : null, pickupEvent:race.pickupEvent ? structuredClone(race.pickupEvent) : null,
       input: {...input, steer: analogSteering, steeringMode},
       car: { ...race.car },

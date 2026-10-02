@@ -131,19 +131,37 @@ export function createMountainVenue(scene, track, {low=false}={}) {
   // bridge or streetscape therefore doesn't cost one draw call per window.
   group.updateMatrixWorld(true);
   const batches=new Map(),old=[];
+  const centerX=track.samples.reduce((sum,p)=>sum+p.x,0)/track.samples.length;
+  const centerZ=track.samples.reduce((sum,p)=>sum+p.z,0)/track.samples.length;
   group.traverse(item=>{if(!item.isMesh||Array.isArray(item.material))return;
+    const bounds=new THREE.Box3().setFromObject(item),center=bounds.getCenter(new THREE.Vector3()),size=bounds.getSize(new THREE.Vector3());
+    const distantLandmark=Math.max(size.x,size.y,size.z)>90||item.material===concrete||item.material===red;
     const key=item.material.uuid+':'+Object.keys(item.geometry.attributes).sort().join(',');
     const geometry=item.geometry.index?item.geometry.toNonIndexed():item.geometry.clone();geometry.applyMatrix4(item.matrixWorld);
-    if(!batches.has(key))batches.set(key,{material:item.material,geometries:[]});
-    batches.get(key).geometries.push(geometry);old.push(item);
+    if(!batches.has(key))batches.set(key,{material:item.material,items:[],triangles:0,distantLandmark:false});
+    const batch=batches.get(key);batch.items.push({geometry,sector:`${center.x>=centerX?1:0}:${center.z>=centerZ?1:0}`});
+    batch.triangles+=geometry.attributes.position.count/3;batch.distantLandmark||=distantLandmark;old.push(item);
   });
   for(const item of old){item.removeFromParent();item.geometry.dispose();}
-  for(const {material,geometries} of batches.values()){
-    const combined=mergeGeometries(geometries,false);
-    for(const geometry of geometries)geometry.dispose();
-    if(!combined)continue;const batch=new THREE.Mesh(combined,material);batch.receiveShadow=true;batch.castShadow=false;group.add(batch);
+  // Large foliage benefits from local rejection. Tiny architectural parts cost
+  // less as one material draw than as dozens of sectors. Keep the established
+  // 20-draw phone ceiling; spend spare draws only on groups above 1,000 triangles.
+  const renderBatches=[],maxBatches=low?20:28;let plannedBatches=batches.size;
+  for(const batch of [...batches.values()].sort((a,b)=>b.triangles-a.triangles)){
+    const sectors=new Map();for(const item of batch.items){if(!sectors.has(item.sector))sectors.set(item.sector,[]);sectors.get(item.sector).push(item.geometry);}
+    if(!batch.distantLandmark&&batch.triangles>1000&&sectors.size>1&&plannedBatches+sectors.size-1<=maxBatches){
+      plannedBatches+=sectors.size-1;for(const geometries of sectors.values())renderBatches.push({...batch,geometries});
+    }else renderBatches.push({...batch,geometries:batch.items.map(item=>item.geometry)});
   }
-  group.userData.sourceMeshes=old.length;group.userData.drawBatches=batches.size;
+  let drawBatches=0;
+  for(const {material,geometries,distantLandmark} of renderBatches){
+    const combined=mergeGeometries(geometries,false);
+    // Preserve transformed parts if a future attribute mismatch prevents merging.
+    const outputs=combined?[combined]:geometries;
+    if(combined)for(const geometry of geometries)geometry.dispose();
+    for(const geometry of outputs){const batch=new THREE.Mesh(geometry,material);batch.receiveShadow=true;batch.castShadow=false;if(!distantLandmark)batch.userData.distanceDetail={distance:500};group.add(batch);drawBatches++;}
+  }
+  group.userData.sourceMeshes=old.length;group.userData.drawBatches=drawBatches;
   return group;
 
 }

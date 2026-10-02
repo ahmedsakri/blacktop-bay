@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
+import { MANUFACTURER_DISTANCE_ASSETS } from './manufacturer-distance-manifest.js';
 import { MANUFACTURER_ASSETS } from './manufacturer-asset-manifest.js';
 import { configureManufacturerPaint } from './manufacturer-paint.js';
 import { createChassisMotion } from './chassis-motion.js';
@@ -17,9 +18,11 @@ const BRAKE_COLOR = new THREE.Color('#ff1708');
 let activeLoads = 0, useCounter = 0;
 const WHEELS = ['wheel_front_left', 'wheel_front_right', 'wheel_rear_left', 'wheel_rear_right'];
 const finite = (value, fallback = 0) => Number.isFinite(value) ? value : fallback;
-const keyFor = (id, low) => `${id}:${low ? 'low' : 'high'}`;
+const keyFor = (id, low, distant=false) => `${id}:${distant?'distance':low ? 'low' : 'high'}`;
 const manifestFor = id => Object.hasOwn(MANUFACTURER_ASSETS, id) ? MANUFACTURER_ASSETS[id] : null;
-const templateFor = (id, low) => templates.get(keyFor(id, low)) || templates.get(keyFor(id, !low));
+const templateFor = (id, low, distant=false) => templates.get(keyFor(id, low,distant)) || (!distant&&templates.get(keyFor(id, !low)));
+
+export function manufacturerCacheStatus(){return {templates:templates.size,activeLoads,queuedLoads:loadQueue.length,activeTemplates:[...templates.values()].filter(entry=>entry.references>0).length,estimatedResidentBytes:[...templates.values()].reduce((n,entry)=>n+(entry.estimatedBytes||0),0)};}
 
 function trimCache() {
   const idle = [...templates.entries()].filter(([, entry]) => entry.references === 0)
@@ -31,9 +34,9 @@ function trimCache() {
   }
 }
 
-function scheduleLoad(load) {
+function scheduleLoad(load,priority=0) {
   return new Promise((resolve, reject) => {
-    loadQueue.push({load, resolve, reject});
+    loadQueue.push({load, resolve, reject,priority});loadQueue.sort((a,b)=>a.priority-b.priority);
     pumpLoads();
   });
 }
@@ -78,20 +81,22 @@ function inspectSource(scene, manifest) {
   scene.traverse(object => {
     if (object.isSkinnedMesh) throw new Error('Manufacturer cars require static meshes with separate wheel pivots.');
   });
-  return {scene, dimensions: {length: size.z, width: size.x, height: size.y}, references: 0, lastUsed: ++useCounter};
+  const buffers=new Set(),textures=new Set();let estimatedBytes=0;
+  scene.traverse(mesh=>{if(!mesh.isMesh)return;for(const attribute of [...Object.values(mesh.geometry.attributes),mesh.geometry.index].filter(Boolean)){const data=attribute.isInterleavedBufferAttribute?attribute.data.array:attribute.array;if(data&&!buffers.has(data.buffer)){buffers.add(data.buffer);estimatedBytes+=data.buffer.byteLength;}}for(const material of Array.isArray(mesh.material)?mesh.material:[mesh.material])for(const value of Object.values(material))if(value?.isTexture&&!textures.has(value)){textures.add(value);const image=value.image;estimatedBytes+=(image?.width||0)*(image?.height||0)*4*4/3;}});
+  return {scene,estimatedBytes:Math.ceil(estimatedBytes), dimensions: {length: size.z, width: size.x, height: size.y}, references: 0, lastUsed: ++useCounter};
 }
 
 /** Load one car and one quality level. A failed request can be retried. */
-export function prepareManufacturerCar(assetId, {low = false, baseURL, onProgress} = {}) {
+export function prepareManufacturerCar(assetId, {low = false, distant=false, baseURL, onProgress} = {}) {
   const manifest = manifestFor(assetId);
   if (!manifest) return Promise.reject(new Error(`Unknown manufacturer car: ${assetId}`));
-  const key = keyFor(assetId, low);
+  const key = keyFor(assetId, low,distant);
   if (templates.has(key)) {
     const entry = templates.get(key); entry.lastUsed = ++useCounter;
     return Promise.resolve(entry);
   }
   if (pending.has(key)) return pending.get(key);
-  const path = low ? manifest.low : manifest.high;
+  const path = distant?MANUFACTURER_DISTANCE_ASSETS[assetId]?.path:low ? manifest.low : manifest.high;
   if (!path) return Promise.reject(new Error(`No ${low ? 'mobile' : 'desktop'} asset is available for ${assetId}.`));
   const failedResources = new Set();
   const manager = new THREE.LoadingManager();
@@ -101,9 +106,9 @@ export function prepareManufacturerCar(assetId, {low = false, baseURL, onProgres
   const loader = new GLTFLoader(manager);
   loader.setMeshoptDecoder(MeshoptDecoder);
   let url = baseURL ? new URL(path, baseURL).href : path;
-  const hash = manifest.variants?.[low ? 'low' : 'high']?.sha256;
+  const hash = distant?MANUFACTURER_DISTANCE_ASSETS[assetId]?.sha256:manifest.variants?.[low ? 'low' : 'high']?.sha256;
   if (typeof hash === 'string' && /^[a-f0-9]{64}$/i.test(hash)) url += `${url.includes('?') ? '&' : '?'}v=${hash.slice(0, 16)}`;
-  const request = scheduleLoad(() => loader.loadAsync(url, onProgress)).then(gltf => {
+  const request = scheduleLoad(() => loader.loadAsync(url, onProgress),distant?1:0).then(gltf => {
     try {
       if (failedResources.size) throw new Error(`The ${manifest.brand} ${manifest.model} textures could not be loaded. Please try again.`);
       const template = inspectSource(gltf.scene, manifest);
@@ -119,15 +124,18 @@ export function prepareManufacturerCar(assetId, {low = false, baseURL, onProgres
   return request;
 }
 
-export function isManufacturerCarReady(assetId, {low = false} = {}) {
-  return Boolean(manifestFor(assetId) && templateFor(assetId, low));
+export function isManufacturerCarReady(assetId, {low = false,distant=false} = {}) {
+  return Boolean(manifestFor(assetId) && templateFor(assetId, low,distant));
 }
 
-function cloneMaterial(source, paintable, ghost, color) {
+function cloneMaterial(source, paintable, ghost, color,distant=false) {
   let material;
   // Physical clearcoat gives paint a real second reflection layer while copying
   // all authored maps, UV transforms, transparency and source surface normals.
-  if (paintable && source.isMeshStandardMaterial && !source.isMeshPhysicalMaterial) {
+  if(distant&&source.isMeshStandardMaterial){
+    material=new THREE.MeshStandardMaterial();THREE.MeshStandardMaterial.prototype.copy.call(material,source);
+    material.normalMap=null;material.bumpMap=null;material.aoMap=null;
+  }else if (paintable && source.isMeshStandardMaterial && !source.isMeshPhysicalMaterial) {
     material = new THREE.MeshPhysicalMaterial();
     THREE.MeshStandardMaterial.prototype.copy.call(material, source);
     material.defines = {...material.defines, PHYSICAL: ''};
@@ -156,8 +164,8 @@ function cloneMaterial(source, paintable, ghost, color) {
 }
 
 /** Create an instance after preparation; never substitutes another car's body. */
-export function createManufacturerCar({assetId, vehicle, color, low = false, ghost = false} = {}) {
-  const manifest = manifestFor(assetId), template = templateFor(assetId, low);
+export function createManufacturerCar({assetId, vehicle, color, low = false, ghost = false,distant=false} = {}) {
+  const manifest = manifestFor(assetId), template = templateFor(assetId, low,distant);
   if (!manifest) throw new Error(`Unknown manufacturer car: ${assetId}`);
   if (!template) throw new Error(`The ${manifest.brand} ${manifest.model} model is not ready. Await prepareManufacturerCar('${assetId}') first.`);
 
@@ -175,7 +183,7 @@ export function createManufacturerCar({assetId, vehicle, color, low = false, gho
     if (!mesh.isMesh) return;
     const copy = source => {
       if (materialCopies.has(source)) return materialCopies.get(source);
-      const material = cloneMaterial(source, paintable && paintNames.has(source.name), ghost, color);
+      const material = cloneMaterial(source, paintable && paintNames.has(source.name), ghost, color,distant);
       configureManufacturerPaint(material, assetId, {customColor: color !== undefined && color !== null});
       materialCopies.set(source, material);
       if (!ghost && material.emissive && (brakeNames.has(source.name) || source.userData.brakeLight === true)) {
@@ -188,8 +196,8 @@ export function createManufacturerCar({assetId, vehicle, color, low = false, gho
     // cabin or receive self-shadow acne, particularly on mobile shadow maps.
     const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
     const optical = materials.every(material => material.transparent && material.opacity < .95);
-    mesh.castShadow = !ghost && !optical;
-    mesh.receiveShadow = !ghost && !optical;
+    mesh.castShadow = !ghost && !optical && !distant;
+    mesh.receiveShadow = !ghost && !optical && !distant;
   });
 
   group.updateMatrixWorld(true);
@@ -235,18 +243,48 @@ export function createManufacturerCar({assetId, vehicle, color, low = false, gho
 
   template.references++;
   template.lastUsed = ++useCounter;
-  let lastTime = null, disposed = false;
+  let lastTime = null, disposed = false,distanceModel=null,distanceRequest=null,usingDistance=false,nextVisualTime=0;
+  const distanceStatus={tier:distant?'distance':'near',loading:false,available:Boolean(MANUFACTURER_DISTANCE_ASSETS[assetId]),nearTriangles:manifest.variants?.[low?'low':'high']?.triangles,distanceTriangles:MANUFACTURER_DISTANCE_ASSETS[assetId]?.triangles};
+  group.userData.distanceDetail=distanceStatus;
+  const ownChildren=[...group.children];
+  const prepareDistanceDetail=()=>{
+    if(distant||ghost||disposed||!distanceStatus.available)return Promise.resolve(false);
+    if(distanceModel)return Promise.resolve(true);if(distanceRequest)return distanceRequest;
+    distanceStatus.loading=true;
+    distanceRequest=prepareManufacturerCar(assetId,{low:true,distant:true}).then(()=>{
+      if(disposed)return false;distanceModel=createManufacturerCar({assetId,vehicle,color,low:true,distant:true});
+      distanceModel.group.visible=false;group.add(distanceModel.group);return true;
+    }).catch(()=>{distanceStatus.available=false;return false;}).finally(()=>{distanceStatus.loading=false;});
+    return distanceRequest;
+  };
+  const setDistanceDetail=(distance,{detailDistanceScale=1}={})=>{
+    if(disposed||distant||ghost)return;
+    const scale=Math.max(.5,Math.min(1.3,detailDistanceScale)),threshold=(usingDistance?52:65)*scale;
+    const far=Number.isFinite(distance)&&distance>threshold;
+    if(far&&!distanceModel&&distanceStatus.available)prepareDistanceDetail();
+    const use=far&&Boolean(distanceModel);if(use===usingDistance)return;usingDistance=use;nextVisualTime=0;
+    for(const child of ownChildren)child.visible=!use;distanceModel.group.visible=use;distanceStatus.tier=use?'distance':'near';
+    if(use){const current=new Map([...materialCopies.values()].filter(m=>m.userData.bodyPaint).map(m=>[m.name,m]));
+      distanceModel.group.traverse(mesh=>{if(!mesh.isMesh)return;for(const material of Array.isArray(mesh.material)?mesh.material:[mesh.material]){const near=current.get(material.name);if(near&&material.color){material.color.copy(near.color);material.roughness=near.roughness;material.metalness=near.metalness;if(material.userData.bodyPaintMask&&near.userData.bodyPaintMask)material.userData.bodyPaintMask.enabled.value=near.userData.bodyPaintMask.enabled.value;}}});}
+  };
   const suspension = createChassisMotion();
-  const damage = ghost ? null : createCarDamage(group, chassis, {low});
+  const damage = ghost||distant ? null : createCarDamage(group, chassis, {low});
   group.userData.damage = damage?.stats || null;
   const update = ({speed = 0, actualSpeed=speed, steering = 0, brake = 0, time = 0, air, impact, recovery, car, active=true,paused=false,reducedMotion=false,raceId} = {}) => {
     if (disposed) return;
     time = finite(time, lastTime ?? 0);
-    const dt = lastTime === null ? 0 : THREE.MathUtils.clamp(time - lastTime, 0, .06);
+    if(distant&&time<nextVisualTime)return;nextVisualTime=time+.10;
+    const dt = lastTime === null ? 0 : THREE.MathUtils.clamp(time - lastTime, 0, distant?.20:.06);
     lastTime = time;
+    if(usingDistance){
+      // Detached fragments live beside this car in the world. Keep their
+      // expiry/recovery lifecycle alive without scanning hidden body vertices.
+      damage?.update({impact,recovery,car,active,paused,reducedMotion,raceId,deform:false},dt);
+      distanceModel.update({speed,actualSpeed,steering,brake,time,active,paused,reducedMotion,raceId});return;
+    }
     speed = finite(speed);
     const steer = -THREE.MathUtils.clamp(finite(steering), -1, 1) * .40;
-    const body=suspension.update({speed:actualSpeed,steering,brake,air,impact,active,paused,raceId},dt);
+    const body=distant?{front:0,rear:0,roll:0,pitch:0,heave:0}:suspension.update({speed:actualSpeed,steering,brake,air,impact,active,paused,raceId},dt);
     damage?.update({impact, recovery, car, active, paused, reducedMotion, raceId}, dt);
     for (const wheel of wheels) {
       wheel.angle = (wheel.angle + speed * dt / wheel.radius) % (Math.PI * 2);
@@ -264,7 +302,7 @@ export function createManufacturerCar({assetId, vehicle, color, low = false, gho
   const dispose = () => {
     if (disposed) return;
     disposed = true;
-    damage?.dispose();
+    damage?.dispose();distanceModel?.dispose();
     group.removeFromParent();
     materialCopies.forEach(material => material.dispose());
     template.references--;
@@ -273,5 +311,5 @@ export function createManufacturerCar({assetId, vehicle, color, low = false, gho
     // templates stay cached, so inspecting the entire catalogue is bounded.
     trimCache();
   };
-  return {group, update, dispose};
+  return {group, update, dispose,prepareDistanceDetail,setDistanceDetail};
 }

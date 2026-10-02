@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {
   formatRaceTime, pausePanel, howToPlayPanel, finishPanel, finishRowsMarkup, finishStatusText,
 } from '../src/race-dialogs.js';
+import {CONTROL_DEFAULTS} from '../src/player-controls.js';
 
 const race = () => ({
   vehicle: 'porsche-930-turbo', track: 'coast', totalLaps: 3, completedLaps: 3,
@@ -113,4 +114,29 @@ test('a solo run with missing lap timings shows no invented lap time or personal
   const html = finishPanel({race: {...race(), mode: 'time-attack', lapTimes: [NaN, null, '43']}});
   assert.equal((html.match(/<time>—<\/time>/g) || []).length, 3);
   assert.doesNotMatch(html, /<time>00:00\.00<\/time>|NEW PERSONAL BEST/);
+});
+
+
+test('help reflects active remaps and tap Nitro throughout keyboard and phone instructions',()=>{
+ const controls={bindings:{left:'KeyQ',right:'KeyE',brake:'KeyB',drift:'KeyH',nitro:'KeyF',reset:'KeyT',pause:'KeyX'},nitroToggle:true};
+ const desktop=howToPlayPanel({controls}),phone=howToPlayPanel({touch:true,controls});
+ assert.match(desktop,/Q \/ E/);assert.match(desktop,/Steer left with Q and right with E/);assert.match(desktop,/TAP F/);
+ assert.match(desktop,/<kbd aria-label="B">B<\/kbd>/);assert.match(desktop,/<kbd aria-label="H">H<\/kbd>/);
+ assert.match(desktop,/<kbd aria-label="T">T<\/kbd>/);assert.match(desktop,/<kbd aria-label="X">X<\/kbd>/);
+ for(const html of [desktop,phone]){
+  assert.match(html,/Tap again to stop/);assert.match(html,/tap Nitro on and off/);
+  assert.doesNotMatch(html,/HOLD SHIFT|HOLD NITRO|hold Nitro to boost|Release to recharge|ARROWS \/ A|Left Shift|Right Shift|<kbd[^>]*>Space</);
+ }
+ assert.match(phone,/TAP NITRO/);
+ const shadowed=howToPlayPanel({controls:{bindings:{...CONTROL_DEFAULTS,reset:'KeyA'}}});
+ assert.doesNotMatch(shadowed,/ARROWS \/ A \+ D/);
+ assert.match(shadowed,/Steer left with Left arrow and right with Right arrow \/ D/);
+});
+
+test('result record descriptions identify the build and handling version for both old and new benchmarks',()=>{
+ for(const isBest of [false,true])for(const mode of ['race','time-attack']){
+  const html=finishPanel({race:{...race(),mode},isBest,bestTime:140});
+  assert.match(html,/build and handling version/);
+  if(mode==='race')assert.match(html,/mode, difficulty, build/);
+ }
 });

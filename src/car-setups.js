@@ -1,4 +1,4 @@
-import { driverVehicleIds, loadDriverState, persistDriverState } from './driver-progress.js';
+import { driverVehicleIds, driverTrackIds, loadDriverState, persistDriverState } from './driver-progress.js';
 
 export const SETUPS_KEY = 'camber-reign-setups-v1';
 export const CAR_SETUPS = Object.freeze([
@@ -17,19 +17,29 @@ export const CAR_SETUPS = Object.freeze([
 
 export function normalizeSetup(id) { return CAR_SETUPS.some(setup => setup.id === id) ? id : 'balanced'; }
 export function normalizeSetups(value) {
-  const state = { version: 1, cars: {} };
+  const state = { version: 1, cars: {}, circuits: {} };
   if (value?.version !== 1 || !value.cars || typeof value.cars !== 'object' || Array.isArray(value.cars)) return state;
   for (const id of driverVehicleIds) if (Object.hasOwn(value.cars, id)) state.cars[id] = normalizeSetup(value.cars[id]);
+  for (const id of driverVehicleIds) {
+    const saved = value.circuits?.[id];
+    if (!saved || typeof saved !== 'object' || Array.isArray(saved)) continue;
+    const circuits = {};
+    for (const track of driverTrackIds) if (Object.hasOwn(saved, track) && CAR_SETUPS.some(setup => setup.id === saved[track])) circuits[track] = saved[track];
+    if (Object.keys(circuits).length) state.circuits[id] = circuits;
+  }
   return state;
 }
-export function getCarSetup(state, vehicle) {
-  return driverVehicleIds.has(vehicle) ? normalizeSetup(state?.cars?.[vehicle]) : 'balanced';
+export function getCarSetup(state, vehicle, track = null) {
+  if (!driverVehicleIds.has(vehicle)) return 'balanced';
+  const circuit = driverTrackIds.has(track) ? state?.circuits?.[vehicle]?.[track] : null;
+  return normalizeSetup(circuit ?? state?.cars?.[vehicle]);
 }
-export function selectCarSetup(value, vehicle, setupId) {
+export function selectCarSetup(value, vehicle, setupId, track = null) {
   const state = normalizeSetups(value);
-  if (!driverVehicleIds.has(vehicle) || !CAR_SETUPS.some(setup => setup.id === setupId)) return { state, selected: false };
-  state.cars[vehicle] = setupId;
-  return { state, selected: true, setup: setupId };
+  if (!driverVehicleIds.has(vehicle) || (track !== null && !driverTrackIds.has(track)) || !CAR_SETUPS.some(setup => setup.id === setupId)) return { state, selected: false };
+  if (track === null) state.cars[vehicle] = setupId;
+  else { state.circuits[vehicle] ||= {}; state.circuits[vehicle][track] = setupId; }
+  return { state, selected: true, setup: setupId, track };
 }
 export function applyCarSetup(baseSpecs, setupId = 'balanced') {
   const specs = { ...baseSpecs }, setup = CAR_SETUPS.find(item => item.id === normalizeSetup(setupId));
@@ -41,3 +51,10 @@ export function applyCarSetup(baseSpecs, setupId = 'balanced') {
 }
 export const loadSetups = storage => loadDriverState(SETUPS_KEY, normalizeSetups, storage);
 export const persistSetups = (state, storage) => persistDriverState(SETUPS_KEY, normalizeSetups, state, storage);
+
+export function clearCircuitSetup(value, vehicle, track) {
+  const state = normalizeSetups(value);
+  if (!driverVehicleIds.has(vehicle) || !driverTrackIds.has(track)) return {state, selected: false};
+  if (state.circuits[vehicle]) { delete state.circuits[vehicle][track]; if (!Object.keys(state.circuits[vehicle]).length) delete state.circuits[vehicle]; }
+  return {state, selected: true, setup: getCarSetup(state, vehicle), track};
+}

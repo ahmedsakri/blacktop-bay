@@ -140,7 +140,7 @@ export function createCarDamage(group, body, {low = false} = {}) {
   }
   return {
     stats,
-    update({impact, recovery, raceId, car, active = true, paused = false, reducedMotion = false} = {}, dt = 0) {
+    update({impact, recovery, raceId, car, active = true, paused = false, reducedMotion = false, deform = true} = {}, dt = 0) {
       if (disposed) return;
       if (identity !== raceId || (recovery?.id || 0) !== recoveryId || !active && !paused) {
         restore(); identity = raceId; recoveryId = recovery?.id || 0; impactId = !active ? impact?.id || 0 : 0;
@@ -149,7 +149,7 @@ export function createCarDamage(group, body, {low = false} = {}) {
       if (reducedMotion && fragments.length) clearFragments();
       if (active && impact?.id > impactId) {
         impactId = impact.id;
-        if (impact.kind === 'crash' && impact.remaining > 0 && hits < MAX_HITS) {
+        if (deform && impact.kind === 'crash' && impact.remaining > 0 && hits < MAX_HITS) {
           const normal = new THREE.Vector3(impact.localNX || 0, 0, impact.localNZ || 0);
           if (normal.lengthSq() > .1) {
             normal.normalize(); hits++;
