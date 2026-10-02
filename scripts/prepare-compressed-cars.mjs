@@ -1,6 +1,8 @@
 /** Optional GPU-compressed low sources. Originals and attribution stay intact.
- * node scripts/prepare-compressed-cars.mjs --toktx /path/to/toktx
- * Uses the same pinned /tmp/camber-distance-tools dependencies as distance prep.
+ * node scripts/prepare-compressed-cars.mjs --toktx /path/to/toktx [--force]
+ * Uses the pinned /tmp/camber-distance-tools dependencies from distance prep.
+ * Unchanged, hash-verified derivatives are reused. Material-only cars are audited
+ * but never acquire fabricated textures or pointless duplicate assets.
  */
 import {createRequire} from 'node:module';
 import {pathToFileURL,fileURLToPath} from 'node:url';
@@ -11,30 +13,46 @@ import {createHash} from 'node:crypto';
 import {execFile} from 'node:child_process';
 import {promisify} from 'node:util';
 import {MANUFACTURER_ASSETS} from '../src/manufacturer-asset-manifest.js';
+import {MANUFACTURER_COMPRESSED_ASSETS as previous} from '../src/manufacturer-compressed-manifest.js';
 const args=process.argv.slice(2),option=(name,fallback)=>args.includes(name)?args[args.indexOf(name)+1]:fallback;
 const require=createRequire(resolve(option('--tools','/tmp/camber-distance-tools'),'package.json'));
 const load=name=>import(pathToFileURL(require.resolve(name)).href);
 const [{NodeIO},{ALL_EXTENSIONS,KHRTextureBasisu},{getTextureColorSpace},{MeshoptDecoder,MeshoptEncoder},sharpModule]=await Promise.all([load('@gltf-transform/core'),load('@gltf-transform/extensions'),load('@gltf-transform/functions'),load('meshoptimizer'),load('sharp')]);
 await Promise.all([MeshoptDecoder.ready,MeshoptEncoder.ready]);
 const io=new NodeIO().registerExtensions(ALL_EXTENSIONS).registerDependencies({'meshopt.decoder':MeshoptDecoder,'meshopt.encoder':MeshoptEncoder});
-const toktx=option('--toktx','toktx'),run=promisify(execFile),base=fileURLToPath(new URL('../',import.meta.url)),temp=await mkdtemp(join(tmpdir(),'camber-ktx-')),report={};
-const ids=['mclaren-p1-gtr','porsche-930-turbo','lamborghini-gallardo'];
+const toktx=option('--toktx','toktx'),run=promisify(execFile),base=fileURLToPath(new URL('../',import.meta.url)),temp=await mkdtemp(join(tmpdir(),'camber-ktx-')),report={},coverage={};
+const sha=bytes=>createHash('sha256').update(bytes).digest('hex');
 try{
- for(const id of ids){
-  const manifest=MANUFACTURER_ASSETS[id],doc=await io.read(resolve(base,'public'+manifest.low)),root=doc.getRoot();let sourceBytes=0,compressedBytes=0;
+ for(const [id,manifest] of Object.entries(MANUFACTURER_ASSETS)){
+  const source=await readFile(resolve(base,'public'+manifest.low));
+  if(sha(source)!==manifest.variants.low.sha256)throw new Error('Source hash mismatch: '+id);
+  const json=JSON.parse(source.subarray(20,20+source.readUInt32LE(12)));
+  const count=json.images?.length||0;
+  coverage[id]={sourceSha256:manifest.variants.low.sha256,textures:count,status:count?'gpu-compressed':'material-only'};
+  if(!count){console.log(id,'material-only: no texture work required');continue;}
+  const cached=previous[id];
+  if(!args.includes('--force')&&cached?.sourceSha256===manifest.variants.low.sha256&&cached.textures===count){
+   try{const bytes=await readFile(resolve(base,'public'+cached.path));
+    if(bytes.length===cached.bytes&&sha(bytes)===cached.sha256){report[id]={...cached,sourceBytes:source.length};console.log(id,'unchanged derivative reused');continue;}
+   }catch(error){if(error.code!=='ENOENT')throw error;}
+  }
+  const doc=await io.read(resolve(base,'public'+manifest.low)),root=doc.getRoot();let sourceTextureBytes=0,block8TextureBytes=0;
   for(const [index,texture] of root.listTextures().entries()){
-   const image=texture.getImage(),metadata=await sharpModule.default(image).metadata();sourceBytes+=metadata.width*metadata.height*4*4/3;
+   const image=texture.getImage(),metadata=await sharpModule.default(image).metadata();
+   for(let w=metadata.width,h=metadata.height;;w=Math.max(1,w>>1),h=Math.max(1,h>>1)){
+    sourceTextureBytes+=w*h*4;block8TextureBytes+=Math.ceil(w/4)*Math.ceil(h/4)*16;if(w===1&&h===1)break;
+   }
    const png=join(temp,index+'.png'),ktx=join(temp,index+'.ktx2');await sharpModule.default(image).ensureAlpha().png().toFile(png);
    await run(toktx,['--t2','--genmipmap','--encode','uastc','--uastc_quality','2','--uastc_rdo_l','1','--zcmp','18','--assign_oetf',getTextureColorSpace(texture)==='srgb'?'srgb':'linear',ktx,png],{maxBuffer:1024*1024});
-   const bytes=await readFile(ktx);texture.setImage(bytes).setMimeType('image/ktx2').setURI(index+'.ktx2');compressedBytes+=Math.ceil(metadata.width/4)*Math.ceil(metadata.height/4)*16*4/3;
+   const bytes=await readFile(ktx);texture.setImage(bytes).setMimeType('image/ktx2').setURI(index+'.ktx2');
   }
   doc.createExtension(KHRTextureBasisu).setRequired(true);
   const extras=root.getAsset().extras||{};root.getAsset().extras={...extras,detail:'low-gpu-compressed',derivedFrom:manifest.low,changes:(extras.changes||'')+' Embedded maps encoded as mipmapped KTX2 UASTC; source geometry, UVs, material roles and credits preserved.'};
   const path='/assets/cars/manufacturers/'+id+'-low-ktx2.glb',file=resolve(base,'public'+path);await io.write(file,doc);const bytes=await readFile(file);
-  report[id]={path,sha256:createHash('sha256').update(bytes).digest('hex'),sourceSha256:manifest.variants.low.sha256,bytes:bytes.length,textures:root.listTextures().length,sourceTextureBytes:Math.round(sourceBytes),block8TextureBytes:Math.round(compressedBytes),triangles:manifest.variants.low.triangles};
+  report[id]={path,sha256:sha(bytes),sourceSha256:manifest.variants.low.sha256,bytes:bytes.length,sourceBytes:source.length,textures:root.listTextures().length,sourceTextureBytes,block8TextureBytes,triangles:manifest.variants.low.triangles};
   console.log(id,report[id]);
  }
- await writeFile(resolve(base,'src/manufacturer-compressed-manifest.js'),'// Generated by prepare-compressed-cars.mjs; originals and attribution are preserved.\nexport const MANUFACTURER_COMPRESSED_ASSETS=Object.freeze('+JSON.stringify(report,null,2)+');\n');
+ await writeFile(resolve(base,'src/manufacturer-compressed-manifest.js'),'// Generated by prepare-compressed-cars.mjs; originals and attribution are preserved.\nexport const MANUFACTURER_COMPRESSED_ASSETS=Object.freeze('+JSON.stringify(report,null,2)+');\n\n// Every catalogue source is audited, including cars without texture maps.\nexport const MANUFACTURER_COMPRESSION_COVERAGE=Object.freeze('+JSON.stringify(coverage,null,2)+');\n');
  // Never replace the CSP-safe decoder with stock dynamic-code bindings.
  await import('./prepare-csp-transcoder.mjs');
 }finally{await rm(temp,{recursive:true,force:true});}

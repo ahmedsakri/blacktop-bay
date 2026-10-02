@@ -13,7 +13,7 @@ export const DESTINATION_PROFILES = Object.freeze({
 });
 
 /** Original mesh scenery, including load-bearing viaduct piers and real ramps. */
-export function createMountainVenue(scene, track, {low=false}={}) {
+export function createMountainVenue(scene, track, {low=false,landmarks=[]}={}) {
   if (!track.elevationProfile) return;
   const group=new THREE.Group();group.name=`destination-${track.id}`;scene.add(group);
   const concrete=new THREE.MeshStandardMaterial({color:'#8f9690',roughness:.85});
@@ -55,7 +55,7 @@ export function createMountainVenue(scene, track, {low=false}={}) {
   for(let i=0;i<(low?42:70);i++){
     const p=sampleTrack(track.length*i/(low?42:70),track),side=i%2?1:-1;
     const x=p.x+p.nx*side*(track.width/2+13),z=p.z+p.nz*side*(track.width/2+13);
-    if(p.y>8||projectOnTrack(x,z,0,track).distance<track.width/2+7)continue;
+    if(p.y>8||projectOnTrack(x,z,0,track).distance<track.width/2+7||landmarks.some(site=>Math.hypot(x-site.x,z-site.z)<site.radius+4))continue;
     mesh(new THREE.CylinderGeometry(.16,.24,3.8,7),trunk,x,1.9,z);
     const crown=mesh(broadleafCrownGeometry({low}),cherry,x,4.2,z);crown.scale.set(3.0,1.56,2.4);
   }
@@ -83,7 +83,7 @@ export function createMountainVenue(scene, track, {low=false}={}) {
     // Bay houses sit on submerged shoreline shelves and concrete footings.
     // Compact bay houses use distinct roof silhouettes and tall narrow windows.
     for(let i=0;i<22;i++){const p=sampleTrack(track.length*(.2+i*.015),track),side=i%2?1:-1;
-      const x=p.x+p.nx*side*25,z=p.z+p.nz*side*25;if(projectOnTrack(x,z,0,track).distance<track.width/2+10)continue;
+      const x=p.x+p.nx*side*25,z=p.z+p.nz*side*25;if(projectOnTrack(x,z,0,track).distance<track.width/2+10||landmarks.some(site=>Math.hypot(x-site.x,z-site.z)<site.radius+10))continue;
       const support=coastalGroundingLayout(track,[{x,z,radius:6.6}],{padding:3,margin:1.5})[0];
       const shore=mesh(new THREE.CylinderGeometry(1,1.12,1,10),stone,x,-1.5,z);shore.scale.set(support.radius,3,support.radius);
       group.userData.houseFoundations.push({...support,width:12,depth:14});

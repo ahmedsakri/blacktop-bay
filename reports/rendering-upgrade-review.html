@@ -5,11 +5,12 @@
 </style></head><body><header><h1>Local renderer review</h1><label>Circuit<select id="track"><option value="harbor">Harbor Flow</option><option value="fuji-skyline">Fuji Skyline</option><option value="san-francisco-hills">San Francisco Hills</option></select></label><label>Camera<select id="view"><option value="landmark">Authored landmark</option><option value="drive">Driving approach</option><option value="car">Car comparison</option></select></label><label>Sector<select id="sector"><option value="0">Sector 1</option><option value="1">Sector 2</option><option value="2">Sector 3</option></select></label><label>Car<select id="car"></select></label><label>Geometry<select id="tier"><option value="near">Near / existing low</option><option value="distance">Actual distance mesh</option></select></label><label>World detail<select id="low"><option value="1">Phone</option><option value="0">Desktop</option></select></label><button id="load">Load view</button></header><p id="note">Development fixture using the production renderer. Car comparison deliberately enlarges the distant mesh for inspection. This is not a completed gameplay or physical-phone test.</p><div id="error" hidden></div><div id="viewport"></div><pre id="diagnostics">Preparing production meshes and shaders…</pre><script type="module">
 import * as T from 'three';
 import {createWorld} from '/src/world.js';
-import {setTrack,sampleTrack} from '/src/track.js';
+import {TRACKS,setTrack,sampleTrack} from '/src/track.js';
 import {MANUFACTURER_ASSETS} from '/src/manufacturer-asset-manifest.js';
 import {prepareManufacturerCar,createManufacturerCar,manufacturerCacheStatus,configureManufacturerRenderer,prepareManufacturerInstances} from '/src/manufacturer-car.js';
 import {qualitySettings} from '/src/render-quality.js';
 const $=id=>document.getElementById(id),params=new URLSearchParams(location.search);
+for(const track of TRACKS)if(![...$('track').options].some(option=>option.value===track.id)){const option=document.createElement('option');option.value=track.id;option.textContent=track.name;$('track').append(option);}
 for(const [id,asset]of Object.entries(MANUFACTURER_ASSETS)){const option=document.createElement('option');option.value=id;option.textContent=asset.brand+' '+asset.model;$('car').append(option);}
 for(const id of ['track','view','sector','car','tier','low'])if(params.has(id))$(id).value=params.get(id);
 if(!params.has('car'))$('car').value='ferrari-458-italia';

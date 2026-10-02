@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { TRACKS, getTrack, projectOnTrack, sampleTrack } from '../src/track.js';
+import {venueLighting,VENUE_REGIONS} from '../src/showcase-lighting.js';
 import { grandstandLayout, getVenueProfile, venueSceneryLayout } from '../src/world.js';
 
 test('all circuits provide spectator stands whose full footprints clear the entire driving route', () => {
@@ -33,12 +34,12 @@ test('spectator stands stay separated and face the starting straight', () => {
   }
 });
 
-test('inland settings replace bay water while original terrain stays intact and Harbor uses its approved showcase lighting', () => {
+test('inland settings replace bay water while original terrain stays intact and all lighting follows coordinated regional grades', () => {
   for(const id of ['harbor','dockyard','coast','summit','grandprix']){
     const profile=getVenueProfile(getTrack(id));
     assert.equal(profile.original,true);
     if(id==='harbor')assert.deepEqual([profile.sun,profile.sky,profile.fill,profile.sunlight],['#ffd3a0','#9cb9d9','#9fc9ed',1.28],'Harbor uses the coordinated coastal showcase finish');
-    else assert.equal(profile.sun,'#ffb679',`${id} retains its original sunlight`);
+    else assert.equal(profile.sun,venueLighting(getTrack(id)).sun,`${id} uses its coordinated regional sunlight`);
     assert.equal(profile.skyStyle,0);
     assert.equal(profile.horizonRadius,990);
   }
@@ -81,4 +82,16 @@ test('new scenery is deterministic, bounded on phones, and clears the full route
   }
   const track=getTrack('singapore');
   assert.deepEqual(venueSceneryLayout(track,{low:true}),venueSceneryLayout(track,{low:true}));
+});
+
+test('every current circuit has an explicit coordinated regional lighting grade',()=>{
+ assert.equal(Object.keys(VENUE_REGIONS).length,TRACKS.length);
+ const regions=new Set();
+ for(const {id} of TRACKS){
+  const track=getTrack(id),profile=getVenueProfile(track),grade=venueLighting(track);regions.add(profile.lightingRegion);
+  for(const key of ['sky','bounce','sun','fill','fog','environmentIntensity','backdropTint','backdropExposure'])assert.equal(profile[key],grade[key],id+' '+key);
+  assert.ok(profile.environmentIntensity>=.6&&profile.environmentIntensity<=.85);
+  assert.ok(profile.sunlight>=.8&&profile.sunlight<=1.5);
+ }
+ assert.equal(regions.size,8,'coherent regional treatment is richer than three special cases');
 });

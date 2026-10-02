@@ -1,0 +1,52 @@
+Camber Reign — recorded engine texture sources
+Provenance and exact edits: ENGINE-SOURCES.json
+Derivative loop banks: engines/*.wav
+Checked 2 October 2026.
+
+ferrari-355-v1.wav
+Adapted from “ferrari355underhood4.mp3” by enginemusic, copyright 1997 as
+stated by the recorder; published on Freesound 4 November 2007.
+https://freesound.org/people/enginemusic/sounds/43484/
+Creative Commons Attribution 3.0 Unported (CC BY 3.0)
+https://creativecommons.org/licenses/by/3.0/
+https://creativecommons.org/licenses/by/3.0/legalcode
+Original describes a Ferrari 355 Spider underhood recording, with one
+microphone by the intake and one by the valve cover. The redistributed
+file is a derivative of the publicly available HQ MP3 preview. Modified
+by AppsOverFlow: selected segments, mono downmix, resampling, filtering,
+DC and loop-seam correction, overlap and amplitude normalization.
+Retain this source/author/license credit when redistributing the derivative.
+No endorsement by the recorder, Ferrari or other manufacturers is implied.
+
+porsche-911-v1.wav
+Adapted from “porsche_911.wav” by mharo.
+https://freesound.org/people/mharo/sounds/55727/
+CC0 1.0 Universal: https://creativecommons.org/publicdomain/zero/1.0/
+Original is described as a Porsche 911 street recording in Barcelona.
+Year, variant and microphone position are unspecified. Derived from the
+public HQ MP3 preview using the same processing steps above.
+
+mustang-idle-v1.wav
+Adapted from “Ford Mustang Engine (1985).wav” by lmbubec.
+https://freesound.org/people/lmbubec/sounds/119449/
+CC0 1.0 Universal: https://creativecommons.org/publicdomain/zero/1.0/
+Original describes idling and engine shutdown. Cylinder count is not
+asserted by the source page. Derived from the public HQ MP3 preview with
+the same processing steps above; only the idle portion is used.
+
+aston-acceleration-v1.wav
+Adapted from “Acceleration Aston Martin”, sound 0600,
+by Joseph SARDIN / BigSoundBank.
+https://bigsoundbank.com/acceleration-aston-martin-s0600.html
+CC0 1.0 Universal: https://creativecommons.org/publicdomain/zero/1.0/
+Source permissions: https://bigsoundbank.com/licenses.html
+Original is an outdoor acceleration recording; the Aston Martin model,
+cylinder count and microphone position are unspecified. Derived from the
+public WAV with the same processing steps above.
+
+All banks are adapted sound textures for an arcade mix. The game's car
+mappings are proxies: none of these banks is claimed to have been recorded
+from the exact represented game model. Playback speed and normalized-rev
+bands are authored, not measured RPM. Where no suitable bank is assigned,
+Camber Reign retains its original procedural voice. Nitro, impact and tyre
+layers and the Liquid Lines lobby soundtrack remain original synthesis.

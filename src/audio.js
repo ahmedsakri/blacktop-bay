@@ -1,16 +1,17 @@
-// Original, synthesized driving sound. Nothing is constructed or played before unlock().
+// Original synthesis plus credited recording textures. Nothing is constructed or played before unlock().
 // Separate music/driving buses and a soft compressor keep the louder mix controlled.
 import { getVehicle } from './vehicles.js';
 import {createAudioLifecycle} from './audio-lifecycle.js';
+import {createRecordedEngine} from './recorded-engine.js';
 
 import { drivingVoice, nitroSoundFrame, createEngineSoundMotion, createTyreSoundMotion, engineSpectrum, engineDetailFrame } from './driving-sound.js';
 import { lobbyMusicFrame, normalizeLobbyStyle } from './lobby-music.js';
 import {createRaceSoundscape,createSoundEventTracker} from './race-sound.js';
 
-export function createAudio({contextFactory, lifecycleOptions} = {}) {
+export function createAudio({contextFactory, lifecycleOptions, recordedEngineOptions} = {}) {
   const doc=globalThis.document;
   let context=null,master=null,engineGate=null,tyreGain=null,squealGain=null,boostGain=null;
-  let sfxMix=null,sfxRaceGate=null,soundscape=null;
+  let sfxMix=null,sfxRaceGate=null,soundscape=null,recordedEngine=null;
   const soundEvents=createSoundEventTracker();
   const engineMotion=createEngineSoundMotion(),tyreMotion=createTyreSoundMotion();
   let engineFilter=null,tyreFilter=null,bodyOsc=null,harmonicOsc=null,subOsc=null,squealOsc=null,boostOsc=null;
@@ -28,7 +29,7 @@ export function createAudio({contextFactory, lifecycleOptions} = {}) {
   const sources=new Set(),transients=new Set(),nodes=new Set();
   const finite=(value,fallback=0)=>Number.isFinite(Number(value))?Number(value):fallback;
   const clamp=(value,min,max)=>Math.min(max,Math.max(min,value));
-  let pageActive=true;
+  let pageActive=true,engineFocus=1;
   const visible=()=>pageActive&&!doc?.hidden;
   const node=value=>{nodes.add(value);return value;};
   let cueUntil = 0;
@@ -46,6 +47,7 @@ export function createAudio({contextFactory, lifecycleOptions} = {}) {
     const audible=unlocked && !muted && visible() && !disposed && context?.state==='running' && (running||lobby||Date.now()<cueUntil);
     target(master?.gain,audible?volume*1.6:0,.035);
     target(engineGate?.gain,audible && running?engineVolume:0,.070);
+    recordedEngine?.setAudible(Boolean(audible && running && engineVolume>0));
     target(sfxMix?.gain,audible?sfxVolume:0,.035);
     target(sfxRaceGate?.gain,audible && running?1:0,.045);
     target(lobbyGate?.gain,audible && lobby && !running?musicVolume*lobbyTransition:0,.28);
@@ -158,6 +160,7 @@ export function createAudio({contextFactory, lifecycleOptions} = {}) {
     ({oscillator:exhaustOsc,amplitude:exhaustGain}=makeOscillator('triangle',70,0,engineFilter));
     ({oscillator:turbineOsc,amplitude:turbineGain}=makeOscillator('sine',180,0,engineFilter));
     soundscape=createRaceSoundscape({context,noise,engineDestination:engineGate,sfxDestination:sfxRaceGate,node,makeOscillator,target});
+    recordedEngine=createRecordedEngine({...recordedEngineOptions,context,destination:engineGate});
   }
 
   async function unlock() {
@@ -208,11 +211,21 @@ export function createAudio({contextFactory, lifecycleOptions} = {}) {
     const step=clamp(finite(dt,1/60),0,.1),throttle=clamp(finite(state.throttle,1),0,1);
     const motion=engineMotion.update({running,voice,speed,topSpeed:finite(state.topSpeed,vehicle.handling.topSpeed),vehicleId:vehicle.id,raceId:state.raceId,throttle,brake,drift},step);
     const tyres=tyreMotion.update({...state,running,speed,drift,brake},step);
+    // Briefly make space for impact and boost onsets without raising SFX peaks.
+    engineFocus+=(1-engineFocus)*(1-Math.exp(-step/.22));
+    if(!running)engineFocus=1;
+    else if(unlocked&&!muted&&visible()&&sfxVolume>0){
+      const impact=pending.reduce((value,event)=>['crash','landing'].includes(event.type)?Math.max(value,finite(event.strength)):value,0);
+      engineFocus=Math.min(engineFocus,1-Math.min(.18,impact*.18));
+      if(state.nitro&&!boostWasActive&&throttle>.1&&brake<.1)engineFocus=Math.min(engineFocus,.94);
+    }
     updateGates();
     if(!context || !unlocked || context.state!=='running')return;
     if(muted || !visible())return;
     if(lobby)updateLobby(clamp(finite(dt,1/60),0,.1));
     if(!running)return;
+    const recordingBlend=recordedEngine?.update(vehicle,{...motion,focus:engineFocus},step)||0;
+    const synthesisMix=(1-.42*recordingBlend)*engineFocus;
     if(waveApplied!==electric){
       if(!electric&&engineWaves){bodyOsc.setPeriodicWave(engineWaves[0]);harmonicOsc.setPeriodicWave(engineWaves[1]);}
       else {bodyOsc.type=electric?'sine':'triangle';harmonicOsc.type=electric?'sine':'triangle';}
@@ -225,15 +238,15 @@ export function createAudio({contextFactory, lifecycleOptions} = {}) {
     target(bodyOsc.frequency,pitch,.028);
     target(harmonicOsc.frequency,pitch*(vehicle.family==='formula'?3.002:2.003),.035);
     target(subOsc.frequency,Math.max(32,pitch*.5),.045);
-    target(bodyGain.gain,voice.body*(.48+load*.52)*torque,.045);
-    target(harmonicGain.gain,voice.harmonic*(.16+load*.44)*torque,.055);
-    target(subGain.gain,voice.sub*(.68+load*.32),.08);
+    target(bodyGain.gain,voice.body*(.48+load*.52)*torque*synthesisMix,.045);
+    target(harmonicGain.gain,voice.harmonic*(.16+load*.44)*torque*synthesisMix,.055);
+    target(subGain.gain,voice.sub*(.68+load*.32)*synthesisMix,.08);
     target(engineFilter.frequency,280+voice.cutoff*(.22+rev*.65)*(.52+load*.48)+(boost?80:0),.10);
-    target(intakeGain.gain,electric?0:(.002+rev*.010)*load*torque,.075);
+    target(intakeGain.gain,electric?0:(.002+rev*.010)*load*torque*synthesisMix,.075);
     target(intakeFilter.frequency,300+rev*370,.12);
     const detail=engineDetailFrame({voice,motion,vehicle,speed,throttle,brake});
     target(exhaustOsc.frequency,detail.exhaustFrequency,.045);
-    target(exhaustGain.gain,detail.exhaustGain,.060);
+    target(exhaustGain.gain,detail.exhaustGain*synthesisMix,.060);
     target(turbineOsc.frequency,detail.turbineFrequency,.14);
     target(turbineGain.gain,detail.turbineGain,.12);
     const nextBoostMode=['perfect','burst'].includes(state.nitroMode)?state.nitroMode:'normal';
@@ -300,6 +313,7 @@ export function createAudio({contextFactory, lifecycleOptions} = {}) {
   function dispose() {
     if(disposed)return;disposed=true;unlocked=false;
     lifecycle.dispose();
+    recordedEngine?.dispose();
     context?.removeEventListener?.('statechange',contextStateChanged);
     doc?.removeEventListener?.('visibilitychange',visibilityChanged);
     for(const source of [...sources,...transients]) {
@@ -311,5 +325,5 @@ export function createAudio({contextFactory, lifecycleOptions} = {}) {
     context=null;master=null;
   }
   doc?.addEventListener?.('visibilitychange',visibilityChanged);
-  return {unlock,setPageActive,setMuted,setVolume,setMusicVolume,setEngineVolume,setSfxVolume,setLobbyStyle,update,beep,dispose};
+  return {unlock,setPageActive,setMuted,setVolume,setMusicVolume,setEngineVolume,setSfxVolume,setLobbyStyle,update,beep,dispose,recordingStatus:()=>recordedEngine?.status()||{available:false,active:null,voices:0,fetches:0}};
 }

@@ -2,10 +2,12 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as THREE from 'three';
 import {getTrack,projectOnTrack,sampleTrack} from '../src/track.js';
-import {grandstandLayout} from '../src/world.js';
+import {grandstandLayout,venueSceneryLayout} from '../src/world.js';
+import {originalLandmarkLayout} from '../src/original-venues.js';
+import {tracksideServiceLayout} from '../src/trackside-services.js';
 import {SHOWCASE_VENUES,SHOWCASE_CROWD_PALETTES,showcaseLayout,showcaseSurfaceAt,applyShowcaseSurface,createShowcaseVenue} from '../src/showcase-venues.js';
 
-test('all three authored showcases have three distinct safe sector landmarks',()=>{
+test('all 38 circuits have three distinct safe sector landmarks',()=>{
  for(const id of Object.keys(SHOWCASE_VENUES)){
   const track=getTrack(id),stands=grandstandLayout(track),sites=showcaseLayout(track,{stands});assert.equal(sites.length,3,id);
   for(const site of sites){assert.ok(projectOnTrack(site.x,site.z,undefined,track).distance>=track.width/2+site.radius+7);for(const stand of stands)assert.ok(Math.hypot(stand.x-site.x,stand.z-site.z)>=site.radius+17);}
@@ -32,7 +34,7 @@ test('constructing each actual showcase preserves every triangle without attribu
   const scene=new THREE.Scene(),track=getTrack(id),group=createShowcaseVenue(scene,track,{low,stands:grandstandLayout(track)});
   const stats=group.userData.geometryStats;assert.ok(stats.sourceTriangles>300,id+' contains actual architecture');
   assert.equal(stats.batchedTriangles,stats.sourceTriangles,id+' retains every authored triangle');assert.equal(stats.fallbackBatches,0,id+' batches are compatible');
-  assert.ok(stats.drawBatches<={harbor:19,'fuji-skyline':21,'san-francisco-hills':27}[id],id+' has bounded authored sector draws');
+  assert.ok(stats.drawBatches<=({harbor:19,'fuji-skyline':21,'san-francisco-hills':27}[id]||24),id+' has bounded authored sector draws');
   group.traverse(mesh=>{if(!mesh.isMesh)return;assert.ok(mesh.geometry.attributes.position.count>0);assert.ok([...mesh.geometry.attributes.position.array].every(Number.isFinite));});
  }
 });
@@ -85,4 +87,20 @@ test('showcase terraces keep bounded populations with coordinated clothing and o
 
 test('grandstand sound-zone heights match the authored elevated road rather than falling back to ground level',()=>{
  for(const id of Object.keys(SHOWCASE_VENUES)){const track=getTrack(id);for(const stand of grandstandLayout(track))assert.equal(stand.y,sampleTrack(stand.distance,track).y||0);}
+});
+
+test('all catalogue terraces have grounded support, road-safe corners, and no original landmark or tree overlap',()=>{
+ for(const id of Object.keys(SHOWCASE_VENUES)){
+  const track=getTrack(id),stands=grandstandLayout(track),sites=showcaseLayout(track,{stands});
+  for(const site of sites){
+   for(const other of originalLandmarkLayout(track,{stands}))assert.ok(Math.hypot(site.x-other.x,site.z-other.z)>=site.radius+other.radius+6,id+' existing landmarks clear terraces');
+   for(const other of venueSceneryLayout(track,{low:true}))assert.ok(Math.hypot(site.x-other.x,site.z-other.z)>=site.radius+other.radius+4,id+' trees and buildings clear terraces');
+   for(const other of tracksideServiceLayout(track,{stands,landmarks:sites,low:true}))assert.ok(Math.hypot(site.x-other.x,site.z-other.z)>=site.radius+other.radius+4,id+' event services clear terraces');
+   // Largest terrace is the 17m quay; corners, not just its centre, clear the road.
+   for(const x of [-8.5,0,8.5])for(const z of [-8.5,0,8.5]){
+    const c=Math.cos(site.yaw),s=Math.sin(site.yaw),px=site.x+c*x+s*z,pz=site.z-s*x+c*z;
+    assert.ok(projectOnTrack(px,pz,undefined,track).distance>track.width/2+6,id+' terrace corner clears the driving route');
+   }
+  }
+ }
 });

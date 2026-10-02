@@ -103,6 +103,6 @@ body:not(.in-race):not(.in-garage) .topbar{background:transparent}
   }
   #menu .lobby-nav { height:68px; }
   #menu footer { flex-wrap:wrap; justify-content:flex-start; gap:4px 16px; padding:8px 0 4px; font-size:11px; }
-  #menu footer > span { flex-wrap:wrap; gap:4px 12px; }
-  #menu footer :is(a,button) { min-height:44px; }
+  #menu footer > span { flex-wrap:wrap; gap:4px 12px; font:inherit; letter-spacing:normal; }
+  #menu footer :is(a,button) { min-height:44px; font:inherit; letter-spacing:normal; }
 }

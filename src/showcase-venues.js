@@ -1,10 +1,12 @@
 import * as THREE from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
-import {sampleTrack,projectOnTrack} from './track.js';
+import {sampleTrack,projectOnTrack,TRACKS} from './track.js';
+import {VENUE_REGIONS} from './showcase-lighting.js';
+import {originalLandmarkLayout} from './original-venues.js';
 
 // These are authored sectors on the game's original arcade routes. Fractions
 // describe the driving line, never claim surveyed real-world road geometry.
-export const SHOWCASE_VENUES=Object.freeze({
+const AUTHORED_SHOWCASES={
  harbor:{name:'Harbor Flow',surface:'#b7bdc5',sectors:[
   {s:.13,label:'QUAYSIDE',kind:'sail-terminal',side:1,roughness:.62,wear:.23},
   {s:.43,label:'CRANE CHANNEL',kind:'signal-house',side:-1,roughness:.84,wear:.46},
@@ -20,8 +22,23 @@ export const SHOWCASE_VENUES=Object.freeze({
   {s:.45,label:'TERRACE CLIMB',kind:'bay-shelter',side:1,roughness:.92,wear:.50},
   {s:.76,label:'PACIFIC DESCENT',kind:'bay-shelter',side:-1,roughness:.82,wear:.26},
  ]},
-});
-export const SHOWCASE_CROWD_PALETTES=Object.freeze({harbor:['#e6dfc8','#42697e','#c7b46d','#535669'],'fuji-skyline':['#dfc9c4','#705a71','#d3d3bf','#52675c'],'san-francisco-hills':['#d2a555','#334d68','#b95e52','#d9d8ce']});
+};
+const REGIONAL_SECTORS={
+ maritime:{kind:'sail-terminal',surface:'#b7bdc5',labels:['WATERFRONT','TERMINAL RUN','COASTAL RETURN'],palette:['#e6dfc8','#42697e','#c7b46d','#535669']},
+ mediterranean:{kind:'arcade-terrace',surface:'#c1beb5',labels:['SUN TERRACE','CIRCUIT GALLERY','FINAL PROMENADE'],palette:['#dbbc92','#445f73','#bf6a50','#ece6d2']},
+ woodland:{kind:'motorsport-canopy',surface:'#bcc2bd',labels:['PADDOCK GARDEN','WOODLAND VIEW','HOME STRAIGHT'],palette:['#c4c7a6','#3f6152','#7e6572','#e3ddc9']},
+ alpine:{kind:'mountain-pavilion',surface:'#bac3c5',labels:['RIDGE VIEW','TIMBER TERRACE','SUMMIT GALLERY'],palette:['#dfc9c4','#705a71','#d3d3bf','#52675c']},
+ tropical:{kind:'tropical-canopy',surface:'#bbc3bf',labels:['PALM TERRACE','CANOPY CORNER','COASTAL GALLERY'],palette:['#debd73','#3c716a','#af6861','#e0ddd0']},
+ arid:{kind:'arcade-terrace',surface:'#c6baa9',labels:['DUNE PAVILION','SHADED GALLERY','SUNSET RETURN'],palette:['#ddc6a0','#9d6252','#495970','#d7dbd0']},
+ metropolitan:{kind:'city-gallery',surface:'#afb8c1',labels:['SKYLINE GALLERY','CITY TERRACE','LIGHTS RETURN'],palette:['#b4a1cb','#d4c7a5','#3b5170','#b7657b']},
+ industrial:{kind:'signal-house',surface:'#b3b8b9',labels:['SIGNAL YARD','CRANE GALLERY','DOCKSIDE RETURN'],palette:['#d6b370','#4b6572','#ae6c59','#cdd3cd']},
+};
+export const SHOWCASE_VENUES=Object.freeze(Object.fromEntries(TRACKS.map(track=>{
+ const family=REGIONAL_SECTORS[VENUE_REGIONS[track.id]]||REGIONAL_SECTORS.maritime;
+ return [track.id,AUTHORED_SHOWCASES[track.id]||{name:track.name,surface:family.surface,region:VENUE_REGIONS[track.id],sectors:family.labels.map((label,i)=>({s:[.13,.43,.74][i],label,kind:family.kind,side:i%2?-1:1,roughness:[.78,.90,.83][i],wear:[.18,.35,.24][i]}))}];
+})));
+const AUTHORED_CROWD_PALETTES=Object.freeze({harbor:['#e6dfc8','#42697e','#c7b46d','#535669'],'fuji-skyline':['#dfc9c4','#705a71','#d3d3bf','#52675c'],'san-francisco-hills':['#d2a555','#334d68','#b95e52','#d9d8ce']});
+export const SHOWCASE_CROWD_PALETTES=Object.freeze(Object.fromEntries(TRACKS.map(track=>[track.id,AUTHORED_CROWD_PALETTES[track.id]||(REGIONAL_SECTORS[VENUE_REGIONS[track.id]]||REGIONAL_SECTORS.maritime).palette])));
 const wrap=(x)=>((x%1)+1)%1;
 export function showcaseSurfaceAt(track,fraction){
  const showcase=SHOWCASE_VENUES[track.id];if(!showcase)return {roughness:.86,wear:0};
@@ -54,13 +71,15 @@ export function applyShowcaseSurface(road,track){
 }
 export function showcaseLayout(track,{stands=[]}={}){
  const result=[],showcase=SHOWCASE_VENUES[track.id];if(!showcase)return result;
+ const existing=originalLandmarkLayout(track,{stands});
  for(const [index,sector] of showcase.sectors.entries()){
-  for(const delta of [0,.014,-.014,.028,-.028,.045,-.045]){
-   const s=track.length*wrap(sector.s+delta),p=sampleTrack(s,track),radius=9;
+  for(const delta of [0,.014,-.014,.028,-.028,.045,-.045,.07,-.07,.09,-.09]){
+   const s=track.length*wrap(sector.s+delta),p=sampleTrack(s,track),radius=12.2;
    const offset=sector.side*(track.width/2+radius+12),x=p.x+p.nx*offset,z=p.z+p.nz*offset;
    if(projectOnTrack(x,z,undefined,track).distance<track.width/2+radius+7)continue;
    if(stands.some(other=>Math.hypot(other.x-x,other.z-z)<radius+17))continue;
    if(result.some(other=>Math.hypot(other.x-x,other.z-z)<radius*2+7))continue;
+   if(existing.some(other=>Math.hypot(other.x-x,other.z-z)<radius+other.radius+6))continue;
    result.push({...sector,index,s,x,y:p.y||0,z,radius,yaw:Math.atan2(p.tx,p.tz),nx:p.nx,nz:p.nz,tx:p.tx,tz:p.tz});break;
   }
  }
@@ -108,7 +127,12 @@ export function createShowcaseVenue(scene,track,{low=false,stands=[],crowd,rng=M
    for(const x of [-5.6,5.6])for(const z of [-5.6,0,5.6])piece(site,box,mats.concrete,x,-site.y/2-.375,z,1.15,site.y-.45,1.15);
    for(const side of [-1,1]){piece(site,box,mats.concrete,0,-.75,side*6.3,14,.55,.65);piece(site,box,mats.concrete,side*6.3,-.75,0,.65,.55,14);}
    (root.userData.foundations||=[]).push({sector:site.index,x:site.x,z:site.z,yaw:site.yaw,deckTop:site.y,deckBottom:site.y-.6,bottom:-3.15,quayTop:-.15,piers:6,width:17});
-  }else if(site.y>1)piece(site,box,mats.concrete,0,-site.y/2-.3,0,13,site.y,13);
+  }else {
+   // All terraces have support down to terrain or below coastal water level.
+   // A 5 cm gap under a zero-elevation deck is still a visible floating asset.
+   piece(site,box,mats.concrete,0,-site.y/2-.55,0,13,site.y+1.1,13);
+   (root.userData.foundations||=[]).push({sector:site.index,x:site.x,z:site.z,yaw:site.yaw,deckTop:site.y,deckBottom:site.y-.6,bottom:-1.1,width:15});
+  }
   if(site.kind==='sail-terminal'){
    for(const x of [-5,5]){piece(site,cylinder,mats.steel,x,4,0,.13,8,.13);piece(site,box,mats.warm,x,3.7,-.35,.85,.08,.25);}
    // Two stretched triangular sails: architectural fabric with a ridged edge.
@@ -140,6 +164,43 @@ export function createShowcaseVenue(scene,track,{low=false,stands=[],crowd,rng=M
    const clock=piece(site,cylinder,mats.steel,5.6,7,2.24,.58,.10,.58);clock.rotation.x=Math.PI/2;
    for(let tick=0;tick<12;tick++){const angle=tick*Math.PI/6;const mark=piece(site,box,mats.cream,5.6+Math.sin(angle)*.465,7+Math.cos(angle)*.465,2.175,.035,tick%3===0?.13:.065,.035);mark.rotation.z=-angle;}
    piece(site,box,mats.cream,5.6,7.2,2.16,.055,.4,.05);piece(site,box,mats.cream,5.8,7,2.16,.4,.055,.05);
+  }else if(site.kind==='city-gallery'){
+   // A glass viewing gallery, louvred facade and illuminated vertical fins.
+   for(const x of [-4.8,4.8])piece(site,box,mats.steel,x,3.2,0,.30,6.4,6.2);
+   piece(site,box,mats.roof,0,6.25,0,10.4,.35,6.5);
+   piece(site,box,mats.glass,0,3.5,2.5,9.2,4.5,.14);
+   for(let x=-4;x<=4;x+=1)piece(site,box,mats.steel,x,3.6,2.35,.09,4.7,.20);
+   for(const x of [-4.95,4.95]){piece(site,box,mats.accent,x,3.45,-3.15,.07,5.6,.09);piece(site,box,mats.warm,x,6.5,0,.12,.1,6.2);}
+   piece(site,box,mats.concrete,0,.40,3.7,10,.8,1.2);
+   for(let x=-3.6;x<4;x+=1.8)piece(site,box,mats.timber,x,.9,3.7,1.4,.12,.7);
+  }else if(site.kind==='arcade-terrace'){
+   // Repeated open arches give Mediterranean/desert venues a shaded colonnade.
+   for(const x of [-4.8,-2.4,0,2.4,4.8])for(const z of [-2.7,2.7])piece(site,box,mats.cream,x,1.55,z,.32,3.1,.36);
+   for(const z of [-2.7,2.7])for(let bay=0;bay<4;bay++){
+    const center=-3.6+bay*2.4;
+    for(let segment=0;segment<12;segment++){
+     const a=segment*Math.PI/12,b=(segment+1)*Math.PI/12;
+     rod(site,[center+Math.cos(a)*1.2,3.05+Math.sin(a)*1.15,z],[center+Math.cos(b)*1.2,3.05+Math.sin(b)*1.15,z],mats.cream,.18);
+    }
+   }
+   piece(site,box,mats.cream,0,4.5,0,10.4,.40,6.2);
+   for(let x=-4.8;x<=4.8;x+=.8)piece(site,box,mats.timber,x,4.83,0,.24,.18,6.6);
+   for(const x of [-4,4])piece(site,box,mats.timber,x,.65,0,1.3,.19,3.9);
+  }else if(site.kind==='motorsport-canopy'||site.kind==='tropical-canopy'){
+   const tropical=site.kind==='tropical-canopy';
+   for(const x of [-4.6,4.6])for(const z of [-3,3])piece(site,cylinder,tropical?mats.timber:mats.steel,x,2.7,z,.15,5.4,.15);
+   if(tropical){
+    // A double-curved fabric roof with an elevated central spine.
+    const g=new THREE.BufferGeometry(),v=[],ix=[],n=12;
+    for(let z=0;z<=n;z++)for(let x=0;x<=n;x++){const xx=(x/n-.5)*11,zz=(z/n-.5)*8;v.push(xx,5.25+Math.sin(x/n*Math.PI)*1.25-Math.sin(z/n*Math.PI)*.38,zz);}
+    for(let z=0;z<n;z++)for(let x=0;x<n;x++){const i=z*(n+1)+x;ix.push(i,i+n+1,i+1,i+1,i+n+1,i+n+2);}
+    g.setAttribute('position',new THREE.Float32BufferAttribute(v,3));g.setIndex(ix);g.computeVertexNormals();piece(site,g,mats.cream,0,0,0,1,1,1);
+   }else{
+    piece(site,box,mats.roof,0,5.5,0,11.3,.24,8.1);
+    for(const z of [-3.8,3.8])for(let x=-4.8;x<4.8;x+=1.6){rod(site,[x,5,z],[x+.8,5.4,z],mats.steel,.065);rod(site,[x+.8,5.4,z],[x+1.6,5,z],mats.steel,.065);}
+    for(const side of [-1,1])piece(site,box,mats.warm,0,5.24,side*3.8,10,.06,.08);
+   }
+   for(const x of [-3.2,0,3.2]){piece(site,box,mats.timber,x,.73,2,2.4,.15,.82);piece(site,box,mats.steel,x,.40,2,.12,.7,.62);}
   }else{
    piece(site,box,mats.concrete,0,2.6,0,5,5.2,5);piece(site,box,mats.glass,0,5.9,0,5.5,1.5,5.5);piece(site,box,mats.roof,0,6.9,0,6.5,.3,6.5);
    piece(site,cylinder,mats.steel,0,9.7,0,.09,5.5,.09);piece(site,box,mats.warm,0,12.45,0,.32,.2,.32);

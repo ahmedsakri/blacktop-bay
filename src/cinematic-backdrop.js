@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import {SHOWCASE_LIGHTING} from './showcase-lighting.js';
+import {venueLighting} from './showcase-lighting.js';
 
 // Original illustrated scenery; its loaded, graded sky also supplies the world reflection map.
 // A race requests just one image. Smaller phone textures avoid retaining four
@@ -97,8 +97,8 @@ export function createCinematicBackdrop({track, venue, low = false, reducedMotio
     cinematicAmount: {value: 0},
     cinematicHaze: {value: new THREE.Color(venue?.fog || '#344052')},
     cinematicHorizon: {value: source.horizonV},
-    cinematicTint: {value:new THREE.Color(SHOWCASE_LIGHTING[track?.id]?.backdropTint||'#ffffff')},
-    cinematicExposure: {value:SHOWCASE_LIGHTING[track?.id]?.backdropExposure||1},
+    cinematicTint: {value:new THREE.Color(venueLighting(track||{}).backdropTint)},
+    cinematicExposure: {value:venueLighting(track||{}).backdropExposure},
   };
   const status = {family: source.family, detail: source.detail, state: 'loading', url: source.url};
   let disposed = false, texture = null, startedAt = null;

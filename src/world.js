@@ -9,9 +9,9 @@ import { broadleafCrownGeometry, coniferBoughGeometry } from './vegetation-geome
 import { createMountainVenue, DESTINATION_PROFILES } from './mountain-venue.js';
 import { ORIGINAL_VENUE_PROFILES, originalLandmarkLayout, createOriginalLandmarks } from './original-venues.js';
 import {createSpatialInstances,createDistanceDetail} from './spatial-detail.js';
-import {applyShowcaseSurface,createShowcaseVenue} from './showcase-venues.js';
+import {applyShowcaseSurface,createShowcaseVenue,showcaseLayout} from './showcase-venues.js';
 import { createCinematicBackdrop, CINEMATIC_BACKDROP_GLSL } from './cinematic-backdrop.js';
-import {SHOWCASE_LIGHTING} from './showcase-lighting.js';
+import {venueLighting} from './showcase-lighting.js';
 import {createCoastalGrounding} from './coastal-foundations.js';
 import {createEnvironmentResource} from './environment-resource.js';
 
@@ -24,8 +24,8 @@ const VENUE_ENVIRONMENTS = {
  parkland: { water:false, night:false, background:'#789cb4', fog:'#9eb3b7', fogDensity:.00085, sky:'#c7dfeb', bounce:'#66755d', ambient:1.25, sun:'#ffedc9', sunlight:1.45, sunHeight:160, fill:'#b3d0e0', fillIntensity:.45, ground:'#506447', horizon:'#60796f', horizonScale:1.1, vegetation:'woodland', towers:0, skyStyle:3 },
 };
 
-// Existing five circuits keep their approved scenery. New routes use metadata,
-// with scenery scaled to their real arcade bounds rather than the original bay.
+// Existing five circuits keep their terrain and scenery. Regional grades now
+// coordinate every circuit, with scenery scaled to its actual arcade bounds.
 export function getVenueProfile(track = TRACK) {
  const original = ORIGINAL_VENUES.has(track.id);
  const environment = original ? 'coastal' : Object.hasOwn(VENUE_ENVIRONMENTS, track.environment) ? track.environment : 'parkland';
@@ -33,7 +33,7 @@ export function getVenueProfile(track = TRACK) {
  for(const p of track.samples){minX=Math.min(minX,p.x);maxX=Math.max(maxX,p.x);minZ=Math.min(minZ,p.z);maxZ=Math.max(maxZ,p.z);}
  const centerX=(minX+maxX)/2,centerZ=(minZ+maxZ)/2;
  let radius=0;for(const p of track.samples)radius=Math.max(radius,Math.hypot(p.x-centerX,p.z-centerZ));
- return {...VENUE_ENVIRONMENTS[environment],...ORIGINAL_VENUE_PROFILES[track.scenery],...DESTINATION_PROFILES[track.id],...SHOWCASE_LIGHTING[track.id],environment,original,centerX,centerZ,radius,
+ return {...VENUE_ENVIRONMENTS[environment],...ORIGINAL_VENUE_PROFILES[track.scenery],...DESTINATION_PROFILES[track.id],...venueLighting(track),environment,original,centerX,centerZ,radius,
   horizonRadius:original?990:Math.max(990,radius+480),groundRadius:Math.max(1400,radius+650)};
 }
 
@@ -42,7 +42,7 @@ export function getVenueProfile(track = TRACK) {
 export function venueSceneryLayout(track=TRACK,{low=false}={}) {
  const profile=getVenueProfile(track);if(profile.original)return [];
  const seed=[...track.id].reduce((sum,char)=>(Math.imul(sum,31)+char.charCodeAt(0))|0,173),rng=random(seed),stands=grandstandLayout(track),items=[];
- const landmarks=originalLandmarkLayout(track,{stands,low});
+ const landmarks=[...originalLandmarkLayout(track,{stands,low}),...showcaseLayout(track,{stands})];
  const count=low?74:118;
  for(let i=0;i<count;i++){
   const p=sampleTrack(track.length*(i+.35)/count,track),side=i%2?1:-1;
@@ -375,7 +375,7 @@ export function createWorld(renderer, { low = false, reducedMotion = false } = {
  for(const side of [-1,1]){const banner=new THREE.Mesh(new THREE.PlaneGeometry(TRACK.width+3.7,1.45),bannerMaterial);banner.position.set(0,7.35,side*.37);if(side<0)banner.rotation.y=Math.PI;finishArch.add(banner);}
  const underside=new THREE.Mesh(new THREE.BoxGeometry(TRACK.width+2.7,.035,.75),cyan);underside.position.y=6.55;finishArch.add(underside);scene.add(finishArch);
 
- const standLayouts = grandstandLayout(), standStructure = [], standRoof = [], standSeats = [], standRails = [];
+ const standLayouts = grandstandLayout(), showcaseSites=showcaseLayout(TRACK,{stands:grandstandLayout()}), standStructure = [], standRoof = [], standSeats = [], standRails = [];
  scene.userData.grandstands = standLayouts.map(({ x, y, z, yaw, side, distance }) => ({ x, y, z, yaw, side, distance }));
  for (const stand of standLayouts) {
   const { x, z, yaw, side, distance } = stand, cos = Math.cos(yaw), sin = Math.sin(yaw);
@@ -490,7 +490,7 @@ export function createWorld(renderer, { low = false, reducedMotion = false } = {
   }
  }
  const landmarks=createOriginalLandmarks(scene,TRACK,{low,stands:standLayouts});
- createTracksideServices(scene,TRACK,{low,stands:standLayouts,landmarks:scene.userData.originalLandmarks||[],crowd,rng:crowdRng});
+ createTracksideServices(scene,TRACK,{low,stands:standLayouts,landmarks:[...(scene.userData.originalLandmarks||[]),...showcaseSites],crowd,rng:crowdRng});
  const mountainPositions = [], mountainIndices = [];
  const ridgeSegments = 320;
  for (let i = 0; i <= ridgeSegments; i++) {
@@ -509,7 +509,7 @@ export function createWorld(renderer, { low = false, reducedMotion = false } = {
  const trunks = [], fronds = [], crowns = [], planters = [];
  for (let s = 16; s < (summit || !venue.water || venue.vegetation!=='palms' ? 0 : TRACK.length); s += grandPrix ? 72 : low ? 33 : 27) {
   const p = sampleTrack(s), sign = p.x * p.nx + p.z * p.nz > 0 ? 1 : -1, o = sign * (TRACK.width / 2 + 3.5 + rng() * .6), x = p.x + p.nx * o, z = p.z + p.nz * o, h = 7.8 + rng() * 4.3, leanX = (rng() - .5) * 1.7, leanZ = (rng() - .5) * 1.7;
-  if (standLayouts.some(stand => Math.hypot(x - stand.x, z - stand.z) < 14)) continue;
+  if (standLayouts.some(stand => Math.hypot(x - stand.x, z - stand.z) < 14)||showcaseSites.some(site=>Math.hypot(x-site.x,z-site.z)<site.radius+6)) continue;
   for (let j = 0; j < 7; j++) { const a = j / 7, b = (j + 1) / 7; segment(trunks, [x + leanX * a * a, h * a, z + leanZ * a * a], [x + leanX * b * b, h * b, z + leanZ * b * b], .21 - a * .07); }
   const topX = x + leanX, topZ = z + leanZ;
   crowns.push({ x: topX, y: h -.05, z: topZ, sx: .48, sy: .6, sz: .48 });
@@ -566,7 +566,7 @@ export function createWorld(renderer, { low = false, reducedMotion = false } = {
   for (let distance = 8; distance < TRACK.length; distance += low ? 22 : 15) for (const side of [-1, 1]) {
    const p = sampleTrack(distance), offset = side * (20 + rng() * 18), x = p.x + p.nx * offset, z = p.z + p.nz * offset;
    if (projectOnTrack(x, z).distance < 17) continue;
-   if (standLayouts.some(stand => Math.hypot(x - stand.x, z - stand.z) < 14)) continue;
+   if (standLayouts.some(stand => Math.hypot(x - stand.x, z - stand.z) < 14)||showcaseSites.some(site=>Math.hypot(x-site.x,z-site.z)<site.radius+6)) continue;
    const height = 6 + rng() * 8;
    pineTrunks.push({ x, z, y: height * .36, sx: .22, sy: height * .72, sz: .22 });
    for (let tier = 0; tier < 3; tier++) pines.push({ x, z, y: height * (.46 + tier * .16), sx: height * (.26 - tier * .05), sy: height * .58, sz: height * (.26 - tier * .05), ry: rng() * TAU, color: tier % 2 ? '#243c35' : '#304940' });
@@ -604,7 +604,7 @@ export function createWorld(renderer, { low = false, reducedMotion = false } = {
   const nameboard = new THREE.Mesh(new THREE.PlaneGeometry(28, 3.5), new THREE.MeshBasicMaterial({ map: identity }));nameboard.rotation.y = Math.PI / 2;nameboard.position.set(-18.80, 6.65, 0);paddock.add(nameboard);
  }
  // Three synchronized twin-lamp columns use the existing countdown hook.
- createMountainVenue(scene, TRACK, {low});
+ createMountainVenue(scene, TRACK, {low,landmarks:showcaseSites});
  createShowcaseVenue(scene,TRACK,{low,stands:standLayouts,crowd,rng:crowdRng});
  const lampHousing = new THREE.Mesh(new THREE.BoxGeometry(3.55, 1.13, .42), metal); lampHousing.position.set(0, 5.83, -.08); finishArch.add(lampHousing);
  const startLights = [];

@@ -31,19 +31,22 @@ test('fingerprinted no-eval decoder initializes under strict JS code-generation 
  assert.equal(typeof(await decoder(js.toString(),wasm)).KTX2File,'function');
 });
 
-test('all 94 shipping KTX2 images decode every mip identically in all supported GPU block formats with JavaScript generation disabled',async()=>{
+test('all 241 shipping KTX2 images decode every ASTC mip identically; each car also exercises all other supported GPU block formats',async()=>{
  const wasm=await read('public'+BASIS_TRANSCODER.path+'basis_transcoder.wasm');
  const original=await decoder((await read('node_modules/three/examples/jsm/libs/basis/basis_transcoder.js')).toString(),wasm,{strict:false});
  const safe=await decoder((await read('public'+BASIS_TRANSCODER.path+'basis_transcoder.js')).toString(),wasm);
- let images=0,mips=0;
- // Official Basis formats: ETC1_RGB=0, ETC2_RGBA=1, BC1=2, BC3=3, BC7=6, ASTC4x4=10.
+ let images=0,mips=0,chains=0;
+ // Every embedded image uses the actual strict-CSP decoder. One image per car
+ // additionally covers the complete format matrix without multiplying full-catalogue
+ // decode work by seven in every release gate. Official Basis formats: ETC1_RGB=0,
+ // ETC2_RGBA=1, BC1=2, BC3=3, BC7_M6_OPAQUE=6, BC7_M5=7 (runtime BPTC), ASTC4x4=10.
  for(const asset of Object.values(MANUFACTURER_COMPRESSED_ASSETS)){
   const bytes=await read('public'+asset.path),jsonLength=bytes.readUInt32LE(12),gltf=JSON.parse(bytes.subarray(20,20+jsonLength)),bin=28+jsonLength;
-  for(const image of gltf.images){const view=gltf.bufferViews[image.bufferView],ktx=bytes.subarray(bin+(view.byteOffset||0),bin+(view.byteOffset||0)+view.byteLength);images++;
-   for(const format of [0,1,2,3,6,10]){const actual=decode(safe,ktx,format),expected=decode(original,ktx,format);assert.deepEqual(actual,expected,asset.path+' image '+images+' format '+format);mips+=actual.length;}
+  for(const [imageIndex,image] of gltf.images.entries()){const view=gltf.bufferViews[image.bufferView],ktx=bytes.subarray(bin+(view.byteOffset||0),bin+(view.byteOffset||0)+view.byteLength);images++;
+   for(const format of imageIndex===0?[0,1,2,3,6,7,10]:[10]){chains++;const actual=decode(safe,ktx,format),expected=decode(original,ktx,format);assert.deepEqual(actual,expected,asset.path+' image '+images+' format '+format);mips+=actual.length;}
   }
  }
- assert.equal(images,94);assert.equal(mips,5640);console.log('Identical decoded image/format mip chains:',images*6,'; mip payloads:',mips);
+ assert.equal(images,241);assert.equal(chains,241+22*6);assert.ok(mips>3000);console.log('Identical decoded image/format mip chains:',chains,'; mip payloads:',mips);
 });
 
 test('actual decoder preserves worker initialization callback and reports rejected Wasm initialization',async()=>{

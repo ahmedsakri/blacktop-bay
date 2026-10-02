@@ -8,7 +8,8 @@ export const MANUFACTURER_COMPRESSED_ASSETS=Object.freeze({
     "textures": 51,
     "sourceTextureBytes": 71303168,
     "block8TextureBytes": 17825792,
-    "triangles": 71888
+    "triangles": 71888,
+    "sourceBytes": 1429772
   },
   "porsche-930-turbo": {
     "path": "/assets/cars/manufacturers/porsche-930-turbo-low-ktx2.glb",
@@ -18,7 +19,96 @@ export const MANUFACTURER_COMPRESSED_ASSETS=Object.freeze({
     "textures": 24,
     "sourceTextureBytes": 31457280,
     "block8TextureBytes": 7864320,
-    "triangles": 175803
+    "triangles": 175803,
+    "sourceBytes": 2346336
+  },
+  "lotus-elise": {
+    "path": "/assets/cars/manufacturers/lotus-elise-low-ktx2.glb",
+    "sha256": "7332d4feb3e7a2d2e0720a1075cfbbddae2095efed92012a81e54676e1a50684",
+    "sourceSha256": "fa8a09eea2ab7c9ec172cd154f8a557db99e758ee737ab339679a6c986e6ceb7",
+    "bytes": 2236532,
+    "sourceBytes": 2105316,
+    "textures": 2,
+    "sourceTextureBytes": 1747632,
+    "block8TextureBytes": 436992,
+    "triangles": 191463
+  },
+  "audi-r8": {
+    "path": "/assets/cars/manufacturers/audi-r8-low-ktx2.glb",
+    "sha256": "66cf752352936d3899a06fe7a3bd6af5a72af9f558bc3c4e9074b19755d0608b",
+    "sourceSha256": "de1470ddeb75d5ea54e149f5e7b2c32abf710d9f6e15a7a1a8ce6b69f1af484f",
+    "bytes": 2146268,
+    "sourceBytes": 1566072,
+    "textures": 11,
+    "sourceTextureBytes": 15379100,
+    "block8TextureBytes": 3845072,
+    "triangles": 184384
+  },
+  "koenigsegg-one-1": {
+    "path": "/assets/cars/manufacturers/koenigsegg-one-1-low-ktx2.glb",
+    "sha256": "995d71a953c234a8bee2bc480667e602ad9a7198bcc8090ca46c47185a467c9d",
+    "sourceSha256": "c2f50d13707fdcdc7d7daa08165c3ee5ce0aebba177f3d040ccc1240fa0f6811",
+    "bytes": 2730392,
+    "sourceBytes": 1210776,
+    "textures": 15,
+    "sourceTextureBytes": 20971500,
+    "block8TextureBytes": 5243280,
+    "triangles": 42879
+  },
+  "maserati-mc-stradale": {
+    "path": "/assets/cars/manufacturers/maserati-mc-stradale-low-ktx2.glb",
+    "sha256": "8d396c1d2505a0da8833efd6f71c9e0905f423db329da92cf0af58f385ff05e4",
+    "sourceSha256": "98f910f1c061d99875d4739f50dd37d06f304de656bdf04fb8b4eaa91edae07d",
+    "bytes": 2881488,
+    "sourceBytes": 2032884,
+    "textures": 6,
+    "sourceTextureBytes": 7689552,
+    "block8TextureBytes": 1922560,
+    "triangles": 189511
+  },
+  "bugatti-veyron": {
+    "path": "/assets/cars/manufacturers/bugatti-veyron-low-ktx2.glb",
+    "sha256": "f399032c3b4522aa25413b6ac18f18b4fcb6de59cdf7714fd25d2831e07e72de",
+    "sourceSha256": "9841ca79769de389ad40050b20df423e369469f6f5db2b1eb7470927f6f6d990",
+    "bytes": 739488,
+    "sourceBytes": 710636,
+    "textures": 6,
+    "sourceTextureBytes": 226984,
+    "block8TextureBytes": 56928,
+    "triangles": 81505
+  },
+  "aston-martin-one-77": {
+    "path": "/assets/cars/manufacturers/aston-martin-one-77-low-ktx2.glb",
+    "sha256": "22fce8ce311a7f78e22ab3c009fef260e2c2e8e802d05718288fef6bb6603be3",
+    "sourceSha256": "3e616fa4fad368c0b44086f074acc7ed2ecc36a6501c11c645a30260f9102561",
+    "bytes": 948768,
+    "sourceBytes": 560068,
+    "textures": 3,
+    "sourceTextureBytes": 4194300,
+    "block8TextureBytes": 1048656,
+    "triangles": 30561
+  },
+  "rimac-nevera": {
+    "path": "/assets/cars/manufacturers/rimac-nevera-low-ktx2.glb",
+    "sha256": "f3f7b96a36c846453bca3acfc4b7c4b080d873b717a25a75161fe9d5e08dd536",
+    "sourceSha256": "c31a7d79573e1b78e63eee6c13212a7c3ca4a91f2e9a5e4d0268c4d44dbe5253",
+    "bytes": 598800,
+    "sourceBytes": 459000,
+    "textures": 4,
+    "sourceTextureBytes": 2468560,
+    "block8TextureBytes": 617408,
+    "triangles": 29180
+  },
+  "mclaren-570s": {
+    "path": "/assets/cars/manufacturers/mclaren-570s-low-ktx2.glb",
+    "sha256": "06b6a1835f7b6058a4c7634ce128d706149c680730f74fc2278b21fc19fe330a",
+    "sourceSha256": "cfbe4e033fa675125619af7eb8490c19dc559a5893d3e9e5f8da7569f8ffdc55",
+    "bytes": 2590152,
+    "sourceBytes": 2225592,
+    "textures": 6,
+    "sourceTextureBytes": 8388600,
+    "block8TextureBytes": 2097312,
+    "triangles": 197327
   },
   "lamborghini-gallardo": {
     "path": "/assets/cars/manufacturers/lamborghini-gallardo-low-ktx2.glb",
@@ -28,6 +118,297 @@ export const MANUFACTURER_COMPRESSED_ASSETS=Object.freeze({
     "textures": 19,
     "sourceTextureBytes": 25515349,
     "block8TextureBytes": 6378837,
-    "triangles": 82146
+    "triangles": 82146,
+    "sourceBytes": 894272
+  },
+  "audi-r8-lms-gt3": {
+    "path": "/assets/cars/manufacturers/audi-r8-lms-gt3-low-ktx2.glb",
+    "sha256": "3ca7873ad7597327e3dda03a669f3eabdf766e51d2f71a66afb363a5a6c83570",
+    "sourceSha256": "71160542912f813c09beca6316f562f8c3f1d07211845fa2f232b3853c2b06c4",
+    "bytes": 2206364,
+    "sourceBytes": 1096752,
+    "textures": 14,
+    "sourceTextureBytes": 19573400,
+    "block8TextureBytes": 4893728,
+    "triangles": 48677
+  },
+  "audi-r18": {
+    "path": "/assets/cars/manufacturers/audi-r18-low-ktx2.glb",
+    "sha256": "95f98348c67a4d85397e310625445db04628f6963336614cdcf10dd153af4e06",
+    "sourceSha256": "dfdf48774dc7ae7d09cb9349b10905531c8b4cffc1dd7e563158fe9d8c4bbccd",
+    "bytes": 751164,
+    "sourceBytes": 464472,
+    "textures": 3,
+    "sourceTextureBytes": 4194300,
+    "block8TextureBytes": 1048656,
+    "triangles": 43796
+  },
+  "ferrari-250-gto": {
+    "path": "/assets/cars/manufacturers/ferrari-250-gto-low-ktx2.glb",
+    "sha256": "35032157aeeeab81344c7705cb14afd0e607ae56ae9c103ab62bd1af32642cce",
+    "sourceSha256": "8ef806c671ec4c57946cfdffb381c03d5eb6888d235dad2ab710c86287fdaa63",
+    "bytes": 2280324,
+    "sourceBytes": 1188752,
+    "textures": 12,
+    "sourceTextureBytes": 16777200,
+    "block8TextureBytes": 4194624,
+    "triangles": 97846
+  },
+  "ferrari-testarossa": {
+    "path": "/assets/cars/manufacturers/ferrari-testarossa-low-ktx2.glb",
+    "sha256": "8060ad69f8a2d8a3135103fe416c56f097ef42fdd9862501fe6457f9efabbcf7",
+    "sourceSha256": "104e1d417e87317cabe3410605c2c648dd0a4c3ff7e0cd33c4a81968d78b75a5",
+    "bytes": 1251828,
+    "sourceBytes": 496060,
+    "textures": 7,
+    "sourceTextureBytes": 9786700,
+    "block8TextureBytes": 2446864,
+    "triangles": 24972
+  },
+  "bmw-i8": {
+    "path": "/assets/cars/manufacturers/bmw-i8-low-ktx2.glb",
+    "sha256": "92bd5f6f20617578ce4052c96863d4fc99e02b56a942848bb3f1a1b8a11a4b64",
+    "sourceSha256": "30462219eb39cc471733a3390035a41b3f11117350c5dba085f0ee68b279054e",
+    "bytes": 2867272,
+    "sourceBytes": 2222728,
+    "textures": 7,
+    "sourceTextureBytes": 9786700,
+    "block8TextureBytes": 2446864,
+    "triangles": 189554
+  },
+  "bmw-f22-eurofighter": {
+    "path": "/assets/cars/manufacturers/bmw-f22-eurofighter-low-ktx2.glb",
+    "sha256": "6562a7b3a612307a141ff74351f5469353d265a7f958009e7c5000a2515894d0",
+    "sourceSha256": "18a3c825d535c685881df634e45ed35a3c2611cc03422f7de6ac4a90728fb23a",
+    "bytes": 4419148,
+    "sourceBytes": 2702352,
+    "textures": 22,
+    "sourceTextureBytes": 21889016,
+    "block8TextureBytes": 5472928,
+    "triangles": 199351
+  },
+  "nissan-gt-r-2018": {
+    "path": "/assets/cars/manufacturers/nissan-gt-r-2018-low-ktx2.glb",
+    "sha256": "46c734acd07a027319750c63d00c2345a92752512bec5ea0e2f49f61dcc52a6d",
+    "sourceSha256": "50696348224a60cef094686644116f9dba02934164855b8f0de0de0ca9925008",
+    "bytes": 4472648,
+    "sourceBytes": 3711816,
+    "textures": 8,
+    "sourceTextureBytes": 9808544,
+    "block8TextureBytes": 2452352,
+    "triangles": 188894
+  },
+  "mclaren-650s-gt3": {
+    "path": "/assets/cars/manufacturers/mclaren-650s-gt3-low-ktx2.glb",
+    "sha256": "f76e6f139ef6982ad5a7c890d9dd0a0363b1d45c7fcc9972fa35468619a478ab",
+    "sourceSha256": "5974038476d9880ee01f8de69e291aef0872187fd5313c23d489c358c2adae80",
+    "bytes": 1845620,
+    "sourceBytes": 1591988,
+    "textures": 3,
+    "sourceTextureBytes": 4194300,
+    "block8TextureBytes": 1048656,
+    "triangles": 133697
+  },
+  "bmw-m3-e46": {
+    "path": "/assets/cars/manufacturers/bmw-m3-e46-low-ktx2.glb",
+    "sha256": "3039c2fb204d7d673ed3296895a0d39b9e6a4968a26d0937d7214e91c0ca2293",
+    "sourceSha256": "d5c702fea7a07eb24000f5c582cc88a292cc548f8865b58e0e785cafaf2446b7",
+    "bytes": 1431192,
+    "sourceBytes": 1421372,
+    "textures": 2,
+    "sourceTextureBytes": 2796200,
+    "block8TextureBytes": 699104,
+    "triangles": 154061
+  },
+  "ferrari-enzo": {
+    "path": "/assets/cars/manufacturers/ferrari-enzo-low-ktx2.glb",
+    "sha256": "240b16e88fbb3e5f5a57b0ef88b3b0937979c7445f82d86596c80cddaa0e12f8",
+    "sourceSha256": "8151697100ec7da8cb93ed5623a5665c26f12d3c74eaec540f919209c9075d9e",
+    "bytes": 1210100,
+    "sourceBytes": 1158220,
+    "textures": 6,
+    "sourceTextureBytes": 786432,
+    "block8TextureBytes": 196800,
+    "triangles": 154563
+  },
+  "porsche-919-hybrid": {
+    "path": "/assets/cars/manufacturers/porsche-919-hybrid-low-ktx2.glb",
+    "sha256": "58bc6a4379e9cb2752e52d2f5f4ece3bed5de73a515c99a5de7bace8ea375b12",
+    "sourceSha256": "8ec16b6086a53e282b536e78f6e3c9d24101f88428b3bd6081679c1ed89ec580",
+    "bytes": 2416944,
+    "sourceBytes": 1695236,
+    "textures": 10,
+    "sourceTextureBytes": 11971232,
+    "block8TextureBytes": 2993088,
+    "triangles": 152340
+  }
+});
+
+// Every catalogue source is audited, including cars without texture maps.
+export const MANUFACTURER_COMPRESSION_COVERAGE=Object.freeze({
+  "lamborghini-aventador": {
+    "sourceSha256": "4a0551fd799a82cc2323701ee00f4ec8871bb640cc2a7600bb7353c99093f41a",
+    "textures": 0,
+    "status": "material-only"
+  },
+  "ferrari-458-italia": {
+    "sourceSha256": "59e3bc3fa3f12581a20e8d7e051f741e71afd6a9310c3e4bf5e28b7e973a413a",
+    "textures": 0,
+    "status": "material-only"
+  },
+  "mclaren-p1-gtr": {
+    "sourceSha256": "a7a24cd9f49fda0f9aa0e01d814fd4b3d6fa1e62dba08f6f497b7952ae417dfc",
+    "textures": 51,
+    "status": "gpu-compressed"
+  },
+  "porsche-930-turbo": {
+    "sourceSha256": "d292203834d7ce72850bec49261b590e7bb93558a64989a39a24477975d04a0e",
+    "textures": 24,
+    "status": "gpu-compressed"
+  },
+  "lotus-elise": {
+    "sourceSha256": "fa8a09eea2ab7c9ec172cd154f8a557db99e758ee737ab339679a6c986e6ceb7",
+    "textures": 2,
+    "status": "gpu-compressed"
+  },
+  "audi-r8": {
+    "sourceSha256": "de1470ddeb75d5ea54e149f5e7b2c32abf710d9f6e15a7a1a8ce6b69f1af484f",
+    "textures": 11,
+    "status": "gpu-compressed"
+  },
+  "rimac-concept-one": {
+    "sourceSha256": "2683fe180e3a38ec62fd9e1b8accc8050a1c3e679c7d5db94418154ca8a9fd64",
+    "textures": 0,
+    "status": "material-only"
+  },
+  "koenigsegg-one-1": {
+    "sourceSha256": "c2f50d13707fdcdc7d7daa08165c3ee5ce0aebba177f3d040ccc1240fa0f6811",
+    "textures": 15,
+    "status": "gpu-compressed"
+  },
+  "pagani-zonda-c12": {
+    "sourceSha256": "2408f6ea5930d3707e61500c85baca7f1ea55c89d0ab046c4b4106e904e84b94",
+    "textures": 0,
+    "status": "material-only"
+  },
+  "maserati-mc-stradale": {
+    "sourceSha256": "98f910f1c061d99875d4739f50dd37d06f304de656bdf04fb8b4eaa91edae07d",
+    "textures": 6,
+    "status": "gpu-compressed"
+  },
+  "bugatti-veyron": {
+    "sourceSha256": "9841ca79769de389ad40050b20df423e369469f6f5db2b1eb7470927f6f6d990",
+    "textures": 6,
+    "status": "gpu-compressed"
+  },
+  "gma-t50": {
+    "sourceSha256": "30fb15c70dd3ac436e1901bc177a54782d05abcaf49f5750c1875c8f1dc04bca",
+    "textures": 0,
+    "status": "material-only"
+  },
+  "aston-martin-one-77": {
+    "sourceSha256": "3e616fa4fad368c0b44086f074acc7ed2ecc36a6501c11c645a30260f9102561",
+    "textures": 3,
+    "status": "gpu-compressed"
+  },
+  "rimac-nevera": {
+    "sourceSha256": "c31a7d79573e1b78e63eee6c13212a7c3ca4a91f2e9a5e4d0268c4d44dbe5253",
+    "textures": 4,
+    "status": "gpu-compressed"
+  },
+  "mclaren-570s": {
+    "sourceSha256": "cfbe4e033fa675125619af7eb8490c19dc559a5893d3e9e5f8da7569f8ffdc55",
+    "textures": 6,
+    "status": "gpu-compressed"
+  },
+  "mclaren-senna": {
+    "sourceSha256": "5b75617af4f3e5495df9b5a20104e4749375ae663f5fce698a3fba3224ea6a87",
+    "textures": 0,
+    "status": "material-only"
+  },
+  "porsche-911-gt3": {
+    "sourceSha256": "79c53bcdf43ea04f86cbf1465e8f6765c97fe084f93f84c8a739a09ef70e99fc",
+    "textures": 0,
+    "status": "material-only"
+  },
+  "lamborghini-gallardo": {
+    "sourceSha256": "bab83f49926452339c1dacbb8b90df731dee6a072cf3ae52ee83e9f28e3665f5",
+    "textures": 19,
+    "status": "gpu-compressed"
+  },
+  "lamborghini-huracan": {
+    "sourceSha256": "62f5f9aad88f0b4af1c9151f06f733e95cb5e74c6da773360941a169e41f78c2",
+    "textures": 0,
+    "status": "material-only"
+  },
+  "audi-r8-lms-gt3": {
+    "sourceSha256": "71160542912f813c09beca6316f562f8c3f1d07211845fa2f232b3853c2b06c4",
+    "textures": 14,
+    "status": "gpu-compressed"
+  },
+  "audi-r18": {
+    "sourceSha256": "dfdf48774dc7ae7d09cb9349b10905531c8b4cffc1dd7e563158fe9d8c4bbccd",
+    "textures": 3,
+    "status": "gpu-compressed"
+  },
+  "ferrari-250-gto": {
+    "sourceSha256": "8ef806c671ec4c57946cfdffb381c03d5eb6888d235dad2ab710c86287fdaa63",
+    "textures": 12,
+    "status": "gpu-compressed"
+  },
+  "ferrari-testarossa": {
+    "sourceSha256": "104e1d417e87317cabe3410605c2c648dd0a4c3ff7e0cd33c4a81968d78b75a5",
+    "textures": 7,
+    "status": "gpu-compressed"
+  },
+  "bmw-i8": {
+    "sourceSha256": "30462219eb39cc471733a3390035a41b3f11117350c5dba085f0ee68b279054e",
+    "textures": 7,
+    "status": "gpu-compressed"
+  },
+  "bmw-f22-eurofighter": {
+    "sourceSha256": "18a3c825d535c685881df634e45ed35a3c2611cc03422f7de6ac4a90728fb23a",
+    "textures": 22,
+    "status": "gpu-compressed"
+  },
+  "mercedes-amg-gt": {
+    "sourceSha256": "f0044aeb4c87a4eb7ba8ad330c838e7f65ed0a4c65777088ce388bd0ecbb53b3",
+    "textures": 0,
+    "status": "material-only"
+  },
+  "nissan-gt-r-2018": {
+    "sourceSha256": "50696348224a60cef094686644116f9dba02934164855b8f0de0de0ca9925008",
+    "textures": 8,
+    "status": "gpu-compressed"
+  },
+  "mclaren-650s-gt3": {
+    "sourceSha256": "5974038476d9880ee01f8de69e291aef0872187fd5313c23d489c358c2adae80",
+    "textures": 3,
+    "status": "gpu-compressed"
+  },
+  "bmw-m3-e46": {
+    "sourceSha256": "d5c702fea7a07eb24000f5c582cc88a292cc548f8865b58e0e785cafaf2446b7",
+    "textures": 2,
+    "status": "gpu-compressed"
+  },
+  "audi-quattro-rally": {
+    "sourceSha256": "3345d812ef3be7bac5d8ab5fb547e593fb496c8ba21bb8622f27a7760dbb147b",
+    "textures": 0,
+    "status": "material-only"
+  },
+  "lamborghini-countach-lp500s": {
+    "sourceSha256": "eaf00b78d4d6f5881bbe7c35050750736c7cc906c0826080a3c4838cbe743f9e",
+    "textures": 0,
+    "status": "material-only"
+  },
+  "ferrari-enzo": {
+    "sourceSha256": "8151697100ec7da8cb93ed5623a5665c26f12d3c74eaec540f919209c9075d9e",
+    "textures": 6,
+    "status": "gpu-compressed"
+  },
+  "porsche-919-hybrid": {
+    "sourceSha256": "8ec16b6086a53e282b536e78f6e3c9d24101f88428b3bd6081679c1ed89ec580",
+    "textures": 10,
+    "status": "gpu-compressed"
   }
 });
