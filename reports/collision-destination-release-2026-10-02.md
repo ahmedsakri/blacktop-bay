@@ -55,3 +55,11 @@ No real-device FPS, thermal, memory, gyroscope or multi-touch performance result
 Startup, car changes and opponent preparation now use the approved Camber Reign logo with a tracing shield, yellow circuit stroke and masked light sweep. Unknown downloads show a named phase without a fabricated percentage; opponent preparation counts completed models. The old forced 1.25-second intro minimum is removed. Existing cars remain visible during a model change; completion, cancellation and failure clean up the scoped loader. Optional scenery does not block gameplay.
 
 Actual startup captures were checked at 1280×800, 390×844 and 568×320 with no horizontal overflow. The browser reported the shield, sweep, rail and ambient animations running; switching to reduced motion removed all loader animations. Race preparation displayed “Preparing opponent 4 of 7” with 3/7 completed, then entered the race and removed the loader. Cached preparation finished before a manual Back click could be exercised; cancellation is covered by the focused async tests. Network and motion emulation were restored after these checks. Screenshots: `/tmp/camber-reign-loader-desktop.png` and `/tmp/camber-reign-loader-mobile.png`.
+
+## Published release
+
+- Implementation commit `4cfe7e6` pushed to `ahmedsakri/camber-reign`, branch `main`.
+- Firebase production release completed for hosting site `camber-reign` in project `echo-heist`, using the requested account. The mandatory gameplay tests completed successfully; the following production build included the final loader and directional cue.
+- Home, circuit collection and all four destination routes returned HTTP 200. Live `game-BSHE3Ss2.js` and `game-U0wKIY9z.css` exactly matched the locally built files by SHA-256.
+- The live browser loaded the new shared loader, then the saved car and 38-circuit lobby, with no console errors observed. The production loader screenshot is `/tmp/camber-reign-loader-live.png`.
+- Vite reported its existing large-chunk warning: the main game bundle is approximately 994 kB uncompressed / 304 kB gzip. This warning is not a measured phone performance result.
