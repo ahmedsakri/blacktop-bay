@@ -4,6 +4,8 @@ import { TRACK, sampleTrack, projectOnTrack } from './track.js';
 import { RIVAL_GRID } from './rivals.js';
 import { cornerApproachMarkers } from './track-details.js';
 import { createCrowd } from './crowd.js';
+import { createTracksideServices } from './trackside-services.js';
+import { broadleafCrownGeometry, coniferBoughGeometry } from './vegetation-geometry.js';
 import { createMountainVenue, DESTINATION_PROFILES } from './mountain-venue.js';
 import { ORIGINAL_VENUE_PROFILES, originalLandmarkLayout, createOriginalLandmarks } from './original-venues.js';
 import { createCinematicBackdrop, CINEMATIC_BACKDROP_GLSL } from './cinematic-backdrop.js';
@@ -456,7 +458,7 @@ export function createWorld(renderer, { low = false, reducedMotion = false } = {
   }
   if(foliage.length){
    instances(scene,new THREE.CylinderGeometry(1,1.1,1,6),new THREE.MeshStandardMaterial({color:'#594d3d',roughness:1}),treeTrunks);
-   instances(scene,venue.vegetation==='conifers'?new THREE.ConeGeometry(1,1,low?7:10):new THREE.IcosahedronGeometry(1,2),new THREE.MeshStandardMaterial({color:'white',roughness:1}),foliage);
+   instances(scene,venue.vegetation==='conifers'?coniferBoughGeometry({low}):broadleafCrownGeometry({low}),new THREE.MeshStandardMaterial({color:'white',vertexColors:true,roughness:1}),foliage);
   }
   if(rocks.length)instances(scene,new THREE.DodecahedronGeometry(1,1),new THREE.MeshStandardMaterial({color:'white',roughness:1}),rocks);
   if(cityBlocks.length){
@@ -475,6 +477,7 @@ export function createWorld(renderer, { low = false, reducedMotion = false } = {
   }
  }
  const landmarks=createOriginalLandmarks(scene,TRACK,{low,stands:standLayouts});
+ createTracksideServices(scene,TRACK,{low,stands:standLayouts,landmarks:scene.userData.originalLandmarks||[],crowd,rng:crowdRng});
  const mountainPositions = [], mountainIndices = [];
  const ridgeSegments = 320;
  for (let i = 0; i <= ridgeSegments; i++) {
@@ -557,7 +560,7 @@ export function createWorld(renderer, { low = false, reducedMotion = false } = {
   }
   instances(scene, new THREE.DodecahedronGeometry(1, 2), new THREE.MeshStandardMaterial({ color: 'white', roughness: .98, flatShading: true }), rocks);
   instances(scene, new THREE.CylinderGeometry(1, 1, 1, 7), new THREE.MeshStandardMaterial({ color: '#4c4137', roughness: 1 }), pineTrunks);
-  instances(scene, new THREE.ConeGeometry(1, 1, 11), new THREE.MeshStandardMaterial({ color: 'white', roughness: 1 }), pines);
+  instances(scene, coniferBoughGeometry({low}), new THREE.MeshStandardMaterial({ color: 'white', vertexColors:true, roughness: 1 }), pines);
  }
  if (grandPrix) {
   const p = sampleTrack(105), paddock = new THREE.Group();paddock.name = 'bay-grand-prix-paddock';paddock.position.set(p.x, 0, p.z);paddock.rotation.y = Math.atan2(p.tx, p.tz);scene.add(paddock);

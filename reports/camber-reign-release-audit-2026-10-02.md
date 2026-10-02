@@ -1,5 +1,7 @@
 # Camber Reign release audit — 2 October 2026
 
+> **Historical receipt; account status superseded later on 2 October.** The original deployment checks and the earlier locked-session account snapshot below are retained as recorded. A subsequent Safari review verified GTM version 3 live for the new hostname, updated GA4 names/stream URL, an AdSense review request, accepted Search Console migration and verified Bing ownership/sitemap submission. Search Console’s submitted sitemap still reports “Couldn’t fetch,” despite a successful live fetch; Bing is processing and AdSense approval remains pending. See [the current mobile and services receipt](mobile-and-services-release-2026-10-02.md) for exact states, evidence and outstanding physical-device validation. The 650-test count below belongs to the original deployment, not the later mobile changes.
+
 Status: **no blocking failures found in the completed automated and HTTP checks**.
 
 The release coordinator confirmed **650 / 650 tests passed** before deployment. This independent audit ran after both the Camber Reign release and the former Blacktop Bay host migration were confirmed live. HTTP evidence timestamp: 2026-10-01T20:09:57.292053+00:00.
@@ -29,7 +31,7 @@ The independent review found and fixed a retry path that could overwrite the pre
 
 This audit checks HTTP responses, published assets, metadata and targeted code behavior. It does not establish search-engine indexing, visual rendering, race behavior, or live popup transfer behavior. The live cross-origin Safari transfer smoke test remains pending because the Mac was locked during this audit. The AppsOverFlow deployment was reported complete by the release coordinator; its separate audit is maintained by the AppsOverFlow agent.
 
-## Published state and remaining account work
+## Published state and remaining account work — historical snapshot
 
 Camber Reign is live at https://camber-reign.web.app/. AppsOverFlow is live with its new listing at https://appsoverflow.web.app/projects/camber-reign/. Both repositories have been pushed to their main branches; the game repository is now https://github.com/ahmedsakri/camber-reign and the local checkout is `/Users/ahmedsakri/Documents/Personal/Games/camber-reign`.
 

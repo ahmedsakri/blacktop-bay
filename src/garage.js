@@ -5,11 +5,23 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 // budget can be checked without allocating a renderer or changing car materials.
 export function createGarageSet({ low = false } = {}) {
   const set = new THREE.Group(); set.name = 'garage-architecture';
-  const graphite = new THREE.MeshStandardMaterial({ color: '#34343a', roughness: .48, metalness: .21 });
+  const graphite = new THREE.MeshStandardMaterial({ color: '#303037', roughness: .46, metalness: .22 });
+  // Radial machining is evaluated in object space, with derivative filtering
+  // so a grazing camera never turns the turntable into a moiré pattern.
+  graphite.onBeforeCompile = shader => {
+    shader.vertexShader = 'varying vec3 studioPosition;\n' + shader.vertexShader;
+    shader.vertexShader = shader.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\nstudioPosition=position;');
+    shader.fragmentShader = 'varying vec3 studioPosition;\n' + shader.fragmentShader;
+    shader.fragmentShader = shader.fragmentShader.replace('#include <roughnessmap_fragment>', `#include <roughnessmap_fragment>
+      float radial=length(studioPosition.xz)*145.;
+      float grain=(.5+.5*sin(radial))*max(0.,1.-fwidth(radial)*.33);
+      roughnessFactor+=grain*.016;`);
+  };
+  graphite.customProgramCacheKey = () => 'garage-machined-turntable-v1';
   const violet = new THREE.MeshBasicMaterial({ color: '#9246FF', toneMapped: false });
   const seam = new THREE.MeshBasicMaterial({ color: '#323039' });
   const floor = new THREE.Mesh(new THREE.PlaneGeometry(140, 140), new THREE.MeshStandardMaterial({
-    color: '#29292f', roughness: .64, metalness: .16,
+    color: '#26252c', roughness: .62, metalness: .14,
   }));
   floor.name = 'garage-floor'; floor.rotation.x = -Math.PI / 2;
   floor.position.y = .006; floor.receiveShadow = true; set.add(floor);
@@ -61,6 +73,14 @@ export function createGarageSet({ low = false } = {}) {
         float panel=abs(fract(uv.x*18.+.5)-.5);
         float joint=1.-smoothstep(.007,.013+fwidth(uv.x)*18.,panel);
         colour*=1.-joint*.20;
+        // Broad, inset display bays sit in dark architectural ribs. The floor
+        // and top coves are real geometry; this authored LED content remains
+        // static, and does not change the neutral paint reflection environment.
+        float bay=fract(uv.x*12.);
+        float rib=1.-smoothstep(.013,.022+fwidth(uv.x)*12.,min(bay,1.-bay));
+        float vertical=smoothstep(.055,.13,uv.y)*(1.-smoothstep(.80,.97,uv.y));
+        colour*=.56+.44*vertical;
+        colour=mix(colour,vec3(.027,.020,.037),rib*.90);
         gl_FragColor=vec4(colour,1.);
         #include <colorspace_fragment>
       }`,
@@ -76,7 +96,25 @@ export function createGarageSet({ low = false } = {}) {
   const wash = new THREE.MeshBasicMaterial({color: '#542980', transparent: true, opacity: .14, depthWrite: false, side: THREE.DoubleSide});
   // RingGeometry angles run along X, unlike CylinderGeometry's Z-based angles.
   ring('garage-mural-floor-wash', radius - 1.1, radius, wash, .010, start - Math.PI / 2, length, mural);
-  set.userData.stats = { muralRadius: radius, muralHeight: height, architecturalDrawCalls: 3, dynamicObjects: 0 };
+  const coveMaterial = new THREE.MeshStandardMaterial({color:'#323139',roughness:.36,metalness:.63,side:THREE.BackSide});
+  const cove = (name, points) => {
+    const geometry = new THREE.LatheGeometry(points.map(([r,y])=>new THREE.Vector2(r,y)),low?64:112);
+    const mesh=new THREE.Mesh(geometry,coveMaterial);mesh.name=name;mural.add(mesh);return mesh;
+  };
+  // Inward-facing profiles always sit beyond the car even when a phone's
+  // camera has to move outside the studio to fit a narrow showcase frame.
+  cove('garage-lower-cove',[[11.65,.04],[11.65,.18],[11.83,.31],[11.91,.55],[11.91,.88],[12,.96]]);
+  cove('garage-upper-cove',[[12,6.45],[11.92,6.53],[11.64,6.69],[11.46,7.05],[11.46,7.35]]);
+  const neutral = new THREE.MeshBasicMaterial({color:'#e0e4e8',toneMapped:false,side:THREE.DoubleSide});
+  // A suspended softbox ring provides a physical studio ceiling. Its
+  // single surface avoids individual fixtures and any real-time lights.
+  const ceiling=new THREE.Mesh(new THREE.RingGeometry(6.2,6.62,low?80:128),neutral);
+  ceiling.name='garage-ceiling-softbox';ceiling.rotation.x=Math.PI/2;ceiling.position.y=6.8;set.add(ceiling);
+  const grooveMaterial=new THREE.MeshBasicMaterial({color:'#16131b',side:THREE.DoubleSide});
+  ring('garage-platform-edge',4.345,4.40,grooveMaterial,.039);
+  ring('garage-platform-inner-trim',4.08,4.10,neutral,.039);
+  let drawCalls=0;set.traverse(item=>{if(item.isMesh)drawCalls++;});
+  set.userData.stats = { muralRadius: radius, muralHeight: height, architecturalDrawCalls: drawCalls, dynamicObjects: 0 };
   return set;
 }
 

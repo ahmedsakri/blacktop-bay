@@ -1,0 +1,16 @@
+.screen-mode-steps{list-style:none;counter-reset:screen-step;display:grid;gap:12px;padding:0;margin:20px 0;text-align:left}
+.screen-mode-steps li{counter-increment:screen-step;display:grid;grid-template-columns:32px minmax(0,1fr);column-gap:12px;padding:14px;background:#021439;border:1px solid #ffffff24;border-left:3px solid #9246ff}
+.screen-mode-steps li:before{content:counter(screen-step);grid-row:1/3;display:grid;place-items:center;width:32px;height:32px;background:#fff71e;color:#110017;font:800 20px/1 var(--display-font,'Barlow Condensed',sans-serif)}
+.screen-mode-steps strong{font-size:16px;color:#fff;line-height:1.35}
+.screen-mode-steps span{font-size:14px;line-height:1.5;color:#cdd1de;margin-top:5px}
+.screen-mode-note{color:#bec6d3;font-size:13px;line-height:1.55}
+#pause-screen-help{margin-top:16px;border-top:1px solid #ffffff24;padding-top:12px}
+#pause-screen-help>p{font-size:14px;line-height:1.5}
+.app-install-card{margin-top:16px;padding:16px;border:1px solid #ffffff24;background:#02143980}
+.app-install-card>.button{min-height:44px}
+.app-install-card p{font-size:13px;line-height:1.55;color:#d5d8e3}
+#orientation-screen-help{max-width:560px;margin:16px auto;text-align:left}
+.orientation-gate:has(#orientation-screen-help){align-items:start}
+#orientation-screen-help .screen-mode-steps{gap:6px;margin:10px 0}
+#orientation-screen-help .screen-mode-steps li{padding:10px}
+@media(max-height:440px){.screen-mode-steps{gap:8px;margin:12px 0}.screen-mode-steps li{padding:10px}.screen-mode-steps strong{font-size:14px}.screen-mode-steps span{font-size:13px}}

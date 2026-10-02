@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { sampleTrack, projectOnTrack } from './track.js';
 import { getTrackObstacles } from './track-obstacles.js';
+import { broadleafCrownGeometry } from './vegetation-geometry.js';
 
 export const DESTINATION_PROFILES = Object.freeze({
   'fuji-skyline': {background:'#8daebf',fog:'#aebdc0',fogDensity:.00065,sky:'#d6e7ef',sun:'#fff1d9',sunlight:1.5,ground:'#546749',vegetation:'woodland',towers:0},
@@ -17,7 +18,7 @@ export function createMountainVenue(scene, track, {low=false}={}) {
   const concrete=new THREE.MeshStandardMaterial({color:'#8f9690',roughness:.85});
   const stone=new THREE.MeshStandardMaterial({color:'#596967',roughness:1});
   const snow=new THREE.MeshStandardMaterial({color:'#e9efeb',roughness:.82});
-  const cherry=new THREE.MeshStandardMaterial({color:'#deb1ba',roughness:1});
+  const cherry=new THREE.MeshStandardMaterial({color:'#deb1ba',vertexColors:true,roughness:1});
   const trunk=new THREE.MeshStandardMaterial({color:'#55463f',roughness:1});
   const mesh=(geo,mat,x,y,z)=>{const m=new THREE.Mesh(geo,mat);m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;group.add(m);return m;};
   for(let s=0;s<track.length;s+=24){const p=sampleTrack(s,track);if(p.y<2)continue;
@@ -55,7 +56,7 @@ export function createMountainVenue(scene, track, {low=false}={}) {
     const x=p.x+p.nx*side*(track.width/2+13),z=p.z+p.nz*side*(track.width/2+13);
     if(p.y>8||projectOnTrack(x,z,0,track).distance<track.width/2+7)continue;
     mesh(new THREE.CylinderGeometry(.16,.24,3.8,7),trunk,x,1.9,z);
-    const crown=mesh(new THREE.IcosahedronGeometry(2.4,1),cherry,x,4.2,z);crown.scale.set(1.25,.65,1);
+    const crown=mesh(broadleafCrownGeometry({low}),cherry,x,4.2,z);crown.scale.set(3.0,1.56,2.4);
   }
   }
   const steel=new THREE.MeshStandardMaterial({color:'#34455b',metalness:.72,roughness:.33});

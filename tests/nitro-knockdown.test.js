@@ -30,7 +30,7 @@ test('earned Burst or Perfect Nitro front contact causes one opponent wreck with
   assert.equal(race.wreck.phase,'none');assert.equal(race.knockdownEvent.kind,'knockdown');
   assert.equal(race.knockdownEvent.mode,mode);assert.equal(race.knockdownEvent.victimId,rival.id);
   assert.equal(rival.recoveries,0,'impact animation precedes any safe recovery');
-  for(let frame=0;frame<180;frame++)stepRace(race,{throttle:1,nitro:true},1/120);
+  for(let frame=0;frame<420;frame++)stepRace(race,{throttle:1,nitro:true},1/120);
   assert.equal(race.knockdownEvent.id,1,'one collision cannot farm repeated events');
   assert.equal(rival.recoveries,1);assert.ok(rival.recovery.toS<rival.recovery.fromS);
   assert.equal(rival.completedLaps,0);assert.equal(rival.score,0);

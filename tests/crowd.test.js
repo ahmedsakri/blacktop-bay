@@ -127,3 +127,16 @@ test('foreground animation is smoother but capped; distant garment details leave
  crowd.update(1.4,{x:0,z:0,speed:25});assert.equal(details.count,nearCount,'foreground detail returns without rebuilding meshes');
  crowd.dispose();
 });
+
+test('mobile distance culling removes complete distant people from GPU draws and restores them on approach',()=>{
+ const crowd=createCrowd({low:true}),scene=new THREE.Scene(),rng=random();
+ for(let i=0;i<15;i++)crowd.add(i*.3,0,0,0,false,rng);
+ for(let i=0;i<90;i++)crowd.add(400+i*.3,0,0,0,false,rng);
+ crowd.render(scene);crowd.update(.1,{x:0,z:0,speed:20});
+ const heads=scene.children.find(mesh=>mesh.name==='race-spectators-heads');
+ assert.equal(heads.count,15);assert.equal(scene.userData.crowd.visiblePeople,15);
+ crowd.update(.2,{x:405,z:0,speed:20});assert.equal(heads.count,90);
+ crowd.update(.3,{x:1000,z:1000,speed:20});assert.ok(scene.children.every(mesh=>mesh.count===0));
+ crowd.update(.4,{x:0,z:0,speed:20},{reducedMotion:true});assert.equal(heads.count,15);
+ assert.equal(scene.userData.crowd.foregroundAnimated,0,'reduced motion still culls crowds but never animates them');crowd.dispose();
+});

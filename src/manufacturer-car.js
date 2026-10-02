@@ -4,6 +4,7 @@ import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { MANUFACTURER_ASSETS } from './manufacturer-asset-manifest.js';
 import { configureManufacturerPaint } from './manufacturer-paint.js';
 import { createChassisMotion } from './chassis-motion.js';
+import { createCarDamage } from './car-damage.js';
 
 // This module downloads only the requested car. Geometry and texture images are
 // immutable cache resources; every displayed car owns its mutable materials.
@@ -236,7 +237,9 @@ export function createManufacturerCar({assetId, vehicle, color, low = false, gho
   template.lastUsed = ++useCounter;
   let lastTime = null, disposed = false;
   const suspension = createChassisMotion();
-  const update = ({speed = 0, actualSpeed=speed, steering = 0, brake = 0, time = 0, air, impact, active=true,paused=false,raceId} = {}) => {
+  const damage = ghost ? null : createCarDamage(group, chassis, {low});
+  group.userData.damage = damage?.stats || null;
+  const update = ({speed = 0, actualSpeed=speed, steering = 0, brake = 0, time = 0, air, impact, recovery, car, active=true,paused=false,reducedMotion=false,raceId} = {}) => {
     if (disposed) return;
     time = finite(time, lastTime ?? 0);
     const dt = lastTime === null ? 0 : THREE.MathUtils.clamp(time - lastTime, 0, .06);
@@ -244,6 +247,7 @@ export function createManufacturerCar({assetId, vehicle, color, low = false, gho
     speed = finite(speed);
     const steer = -THREE.MathUtils.clamp(finite(steering), -1, 1) * .40;
     const body=suspension.update({speed:actualSpeed,steering,brake,air,impact,active,paused,raceId},dt);
+    damage?.update({impact, recovery, car, active, paused, reducedMotion, raceId}, dt);
     for (const wheel of wheels) {
       wheel.angle = (wheel.angle + speed * dt / wheel.radius) % (Math.PI * 2);
       wheel.rolling.rotation.x = wheel.angle;
@@ -260,6 +264,7 @@ export function createManufacturerCar({assetId, vehicle, color, low = false, gho
   const dispose = () => {
     if (disposed) return;
     disposed = true;
+    damage?.dispose();
     group.removeFromParent();
     materialCopies.forEach(material => material.dispose());
     template.references--;

@@ -7,6 +7,7 @@ import {normalizeRaceOptions} from '../src/race-options.js';
 import {normalizeSteeringSensitivity} from '../src/driving-controls.js';
 import {DEFAULT_VEHICLE_ID,getVehicle} from '../src/vehicles.js';
 import {normalizeQuality} from '../src/render-quality.js';
+import {icon} from '../src/icons.js';
 
 // These tests exercise actual settings orchestration with a small inert DOM
 // double, not a browser or an audio implementation.
@@ -22,7 +23,7 @@ function settings({musicVolume=.65,volume=.75}={}){
  const element=()=>({value:'',textContent:'',innerHTML:'',className:'',children:[],append(node){this.children.push(node);}});
  const $=id=>{if(!elements.has(id))elements.set(id,element());return elements.get(id);};
  const preferences={lobbyStyle:'liquid-lines',musicVolume,volume,engineVolume:1,sfxVolume:.85,quality:'auto',gamepadSwap:false};
- const context=vm.createContext({document:{createElement:element},$,preferences,usesTouchControls:()=>false,normalizeQuality,applyQuality:()=>calls.push(['quality',preferences.quality]),
+ const context=vm.createContext({document:{createElement:element},$,preferences,icon,screenMode:()=>({standalone:false,ios:false}),canInstallPWA:()=>false,requestInstallPWA:()=>{throw new Error('Must not install automatically');},usesTouchControls:()=>false,normalizeQuality,applyQuality:()=>calls.push(['quality',preferences.quality]),
   sound:{setVolume:value=>calls.push(['volume',value]),setMusicVolume:value=>calls.push(['music',value]),setEngineVolume:value=>calls.push(['engine',value]),setSfxVolume:value=>calls.push(['sfx',value])},saveChoices(){writes.push({...preferences});}});
  vm.runInContext(`${mountSource}; mountSteeringSettings();`,context);
  return {$,calls,writes,preferences,elements};

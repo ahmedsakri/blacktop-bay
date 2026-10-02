@@ -1,0 +1,35 @@
+# Renderer refinement — 2 October 2026
+
+Implemented locally. No publication or commit performed by the visual-work agent.
+
+## Changes
+
+- Nitro pickups now use a manufactured pressure-vessel model with a shaped metal shell, a genuinely open glass inspection window around the cyan charge, titanium clamps and fasteners, a pressure dial, outlet, valve wheel and protective base. The locator and contact shadow remain on the road while the vessel moves subtly above them. Collection removes the bottle and emits a brief widening ground wake. Reduced motion removes the movement/wake. All six pickups share nine instanced draws; no new dynamic lights, transmission/refraction pass, texture downloads or pickup-physics changes.
+- The garage now has physically shaped upper/lower studio coves, dark inset display ribs, a suspended neutral softbox ring, perimeter trim and restrained radial machining on the turntable. Its architecture is capped at fourteen meshes. The existing neutral reflection/lighting environment and car materials remain intact. The inward-facing walls/coves are checked across all orbit angles, including cameras outside the studio radius, to prevent obscuring cars on small viewports.
+- Distributed fan areas and marshal stations add real roadside canopies, desks, equipment cases, guardrails, draped flags and staff/fans beyond the barriers. Staff use lookout and one-handed radio poses. The existing articulated crowd draws these people; route-wide props cost five shared batches. The low-detail mode has at most six sites and fewer fans. Full circular footprints clear the entire route, stands and authored landmarks. Elevated bridge sections omit unsupported stations; event platforms have support piles.
+- Broadleaf trees now use clustered, irregular crowns; conifers have irregular branch whorls. These replace the original single spheres/cones inside existing foliage batches. The tree footprint stays within the clearance radius, and phones receive simpler geometry.
+- Crowd distance culling now removes complete distant people from GPU instance draws. Previously only small details left the draw while every distant torso/head/limb remained rendered. Low detail culls beyond 76 m; full detail beyond 130 m, restoring approaching spectators without rebuilding meshes. Reduced motion still culls visibility while freezing animation. Existing foreground caps, bone lengths, pause handling and shared texture cleanup remain tested.
+
+## Verification
+
+- 18 focused renderer tests passed across garage, crowd, pickup presentation, services and vegetation, including complete crowd culling/restoration and reduced motion. The previously run world/destination checks also passed (11 tests).
+- Actual local IAB render: Nitro at inspection and 13 m distance, daylight/night lighting, collection and reset; fan-zone and corrected marshal poses; no console errors observed in the fixture.
+- Actual game garage at 1280×800: Porsche 919 Hybrid framed clearly with controls, and quarter-turn rotation worked. The floor material was then made less reflective to reduce strong grazing-angle glare. Responsive CSS and physical-phone checks belong to the mobile/release work.
+- Local captures: `/tmp/camber-nitro-canister-review.jpg`, `/tmp/camber-nitro-distance-review.jpg`, `/tmp/camber-nitro-night-review.jpg`, `/tmp/camber-fan-zone-review.jpg`, `/tmp/camber-marshals-review.jpg`, `/tmp/camber-studio-desktop-review.jpg`.
+- `reports/visual-quality-review.html` is a labelled development fixture using production modules, not a completed gameplay test. It is not part of the production build.
+
+## Limits and remaining release work
+
+These are original procedural WebGL assets. The crowd remains stylized and the scenery does not have the volume, authored animation or material detail of a large-budget racing title. The canister is visibly more physical, but is a game collectible with an energy window and subtle hover, not a claim about real pressurized gas.
+
+On the real iPhone, performance/heat and clipped landscape controls were reported during parallel testing. Crowd draw culling addresses a measurable waste, but no sustained physical-device thermal/FPS result has been established by this visual-work agent. The root and mobile agents are handling the remaining performance and responsive fixes.
+
+After additional shared hot-reloads, the actual game remained at graphics preparation with no captured console error. Investigation showed that the status is set before a two-animation-frame paint wait, so the status alone did not establish a shader stall. A production-world diagnostic run by the release owner completed both world and garage compilation: 70 programs, zero pending, context not lost. The paint wait now handles hidden documents and visibility changes without depending on suspended animation frames; visible documents still receive two frames. Four lifecycle tests passed. Shader compilation remains genuinely awaited, with no timeout or blind fallback. Final main-route/race smoke, full tests/build, final responsive/physical-phone verification and release approval remain with the release owner. The earlier screenshot and isolated fixtures do not establish that those final checks passed.
+
+## Actual gameplay and contact blackout investigation
+
+A fresh native Chrome main-route boot reached the lobby, prepared the actual opponent fleet and started Harbor Flow. The starting grid, crowd and cars rendered clearly. In Automatic/High detail, live barrier/car contact then produced a large dark rectangular obstruction. Pausing cleared the condition, so an early paused bloom comparison was not sufficient evidence. There were no game JavaScript errors or WebGL context loss reported. Chrome itself also crashed twice during native DevTools interaction; macOS crash reports showed main-process SIGTRAP, so this is recorded separately from the rendering defect.
+
+The actual Graphics UI was used to select Performance. Live repeated barrier contact, smoke and driving remained visible, with the new canister readable on the road ahead (`/tmp/camber-race-performance-contact.png`). The release owner independently reproduced the blackout in live Balanced mode, then disabled only UnrealBloomPass while the same race kept running: the obstruction disappeared without a pause, and contact/smoke remained visible. This isolates the failing bloom pass; it does not establish a specific shader, alpha or floating-point root cause.
+
+The production render loop now enables bloom only for the lobby/garage. Race, countdown, pause and results use the clear scene with the existing SMAA/Output passes where enabled, retaining preset lighting, shadows/reflections and contact effects. Mobile Performance continues its existing direct-render path. The temporary inspection getter was removed. Syntax and whitespace checks passed. No source-text assertion was added to mirror this assignment; the final fresh-build repeated-contact browser regression and release gate are owned by the release owner. Native Chrome interaction stopped once the human began actively using its test tab.

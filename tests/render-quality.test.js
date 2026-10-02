@@ -3,7 +3,9 @@ import assert from 'node:assert/strict';
 import {QUALITY_PRESETS,normalizeQuality,qualitySettings} from '../src/render-quality.js';
 
 test('automatic quality caps mobile rendering while explicit choices remain respected',()=>{
- assert.equal(qualitySettings('auto',{mobile:true,dpr:3}).pixelRatio,1.35);
+ assert.equal(qualitySettings('auto',{mobile:true,dpr:3}).pixelRatio,1);
+ assert.equal(qualitySettings('auto',{mobile:true,dpr:3}).bloom,false);
+ assert.equal(qualitySettings('auto',{mobile:true,dpr:3}).shadows,false);
  assert.equal(qualitySettings('auto',{mobile:true,dpr:3}).reflection,false);
  assert.equal(qualitySettings('auto',{mobile:false,dpr:3}).pixelRatio,1.75);
  assert.equal(qualitySettings('auto',{mobile:false,dpr:3}).reflection,true);

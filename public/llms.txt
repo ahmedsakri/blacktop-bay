@@ -1,6 +1,6 @@
 # Camber Reign
 
-> Camber Reign is a free, single-player 3D browser racing game by AppsOverFlow. Race seven computer-controlled rivals across thirty-eight asphalt circuits in one of 33 cars, earn race credits, and upgrade your car. No account, no install, no purchases.
+> Camber Reign is a free, single-player 3D browser racing game by AppsOverFlow. Race seven computer-controlled rivals across thirty-eight asphalt circuits in one of 33 cars, earn race credits, and upgrade your car. No account, no installation required, no purchases.
 
 ## About the game
 
@@ -63,8 +63,10 @@ After a valid lap, a short notice shows the last lap time and the next lap numbe
 ## Key Facts
 
 - Publisher: AppsOverFlow (https://appsoverflow.web.app/).
-- Free to play; no account, no install and no real-money purchases.
+- Free to play; no account, no installation required and no real-money purchases.
 - Runs in a modern web browser; WebGL 2 and an internet connection are required to load.
+- Optional Progressive Web App installation is available on supported browsers. On iPhone, use Safari Share → Add to Home Screen with Open as Web App enabled, then launch the icon and race in landscape.
+- No offline racing: only seven small reconnect-screen resources are cached after an online visit. Race pages, car models, saved progress and analytics are excluded from this cache. Installation does not add cross-device save syncing.
 - Single-player only: one human racer versus seven computer-controlled opponents (Mira, Jax, Nova, Ren, Kai, Aria and Leo) in an eight-car field over three laps.
 - 33 cars: individually sourced manufacturer representations across 16 brands; 38 asphalt circuits, all available from the start.
 - Each car has five upgrade levels for Engine, Tyres, Nitro and Handling, bought with earned race credits.

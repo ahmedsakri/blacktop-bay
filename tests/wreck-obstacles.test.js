@@ -15,9 +15,11 @@ test('severe impact creates an explicit loss-of-drive phase and safe delayed rec
  const before=race._lapDistance,gate=race._nextCheckpoint,charge=race.nitro.charge,elapsed=race.elapsed;
  for(let i=0;i<60;i++)stepRace(race,{throttle:1,nitro:true},1/120);
  assert.equal(race.wreck.phase,'impact');assert.equal(race.recoveries,0);assert.equal(race.car.nitroActive,false);
- for(let i=0;i<30&&race.recoveries===0;i++)stepRace(race,{throttle:1},1/120);
+ for(let i=0;i<300&&race.recoveries===0;i++)stepRace(race,{throttle:1},1/120);
  assert.equal(race.recoveries,1);assert.equal(race.wreck.phase,'recovered');assert.equal(race.recovery.reason,'wreck');
- assert.ok(race._lapDistance<=before-7.99);assert.ok(race._nextCheckpoint<=gate);assert.equal(race.nitro.charge,charge);assert.equal(race.driftPoints,0);assert.equal(race.score,0);assert.equal(race.completedLaps,0);assert.ok(race.elapsed>elapsed+.65);
+ assert.ok(race._lapDistance<=before-7.99);assert.ok(race._nextCheckpoint<=gate);assert.equal(race.nitro.charge,charge);assert.equal(race.driftPoints,0);assert.equal(race.score,0);assert.equal(race.completedLaps,0);
+ assert.ok(race.elapsed>=elapsed+1.6,'the integrated wreck has time to tumble and settle before recovery');
+ assert.ok(race.elapsed<=elapsed+3.001,'an unobstructed wreck must recover within three seconds');
 });
 
 test('pause freezes the real wreck timer and reset does not duplicate the impact event',()=>{
@@ -64,7 +66,7 @@ test('a severe second wall hit escalates during heavy-contact cooldown, once, wi
  assert.equal(race.impact.id,firstId+1);assert.equal(race.impact.severity,'wreck');assert.equal(race.impact.source,'barrier');
  assert.equal(race.wreck.phase,'impact');assert.equal(race.wreck.id,1);assert.equal(race.recoveries,0);assert.ok(race.car.speed<speedBefore);
  const eventId=race.impact.id,progress=race._lapDistance,charge=race.nitro.charge;
- for(let i=0;i<90;i++)stepRace(race,{throttle:1},1/120);
+ for(let i=0;i<360&&race.recoveries===0;i++)stepRace(race,{throttle:1},1/120);
  assert.equal(race.impact.id,eventId,'the same collision cannot keep replaying the event');assert.equal(race.wreck.id,1);
  assert.equal(race.recoveries,1);assert.ok(race._lapDistance<progress-7);assert.equal(race.nitro.charge,charge);
  assert.equal(race.completedLaps,0);assert.equal(race.score,0);

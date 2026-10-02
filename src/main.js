@@ -1,3 +1,4 @@
+import { waitForPaint } from './paint-readiness.js';
 import { PAINT_COLORS, PAINT_FINISHES, loadPaint, savePaint, getPaint, applyPaint } from './paint.js';
 import "./style.css";
 import "./racing.css";
@@ -18,6 +19,11 @@ import "./mobile-race-controls.css";
 import "./race-upgrade.css";
 import "./driver-development.css";
 import "./logo-loader.css";
+import "./screen-mode.css";
+import { screenMode, toggleScreenMode, screenHelpMarkup } from './screen-mode.js';
+import { createFrameBudget } from './frame-budget.js';
+import { registerPWA, canInstallPWA, requestInstallPWA } from './pwa.js';
+import './mobile-viewport.css';
 import { logoLoaderMarkup, bindLogoLoader, mountLogoLoader } from "./logo-loader.js";
 import { loadCampaign, persistCampaign, getCampaignEvent, canStartCampaignEvent, recordCampaignResult } from "./driver-campaign.js";
 import { loadMastery, persistMastery, recordMasteryResult } from "./car-mastery.js";
@@ -227,7 +233,10 @@ sound.setVolume(preferences.volume);sound.setMusicVolume(preferences.musicVolume
 updateSound();
 let renderer, world, player, effects, camera, composer, carFill, garageStudio, renderPass, bloomPass;
 let garageFrame = null, lobbyFrame = null, pickupView=null, gamepadPauseHeld=false;
-function applyQuality(){if(!renderer)return;const q=qualitySettings(preferences.quality,{mobile,dpr:devicePixelRatio});renderer.setPixelRatio(q.pixelRatio);renderer.shadowMap.enabled=q.shadows;if(composer){composer.setPixelRatio(q.pixelRatio);composer.setSize(innerWidth,innerHeight);}if(bloomPass)bloomPass.enabled=q.bloom;if(world?.reflection)world.reflection.visible=q.reflection&&!TRACK.elevationProfile&&!["desert","parkland"].includes(world.scene.userData.venueEnvironment?.type);}
+const frameBudget = createFrameBudget();
+let directRender = false;
+function applyQuality(){if(!renderer)return;const q=qualitySettings(preferences.quality,{mobile,dpr:devicePixelRatio});directRender=!q.bloom;renderer.setPixelRatio(q.pixelRatio);renderer.shadowMap.enabled=q.shadows;if(composer){composer.setPixelRatio(q.pixelRatio);composer.setSize(innerWidth,innerHeight);}if(bloomPass)bloomPass.enabled=q.bloom;if(world?.reflection)world.reflection.visible=q.reflection&&!TRACK.elevationProfile&&!["desert","parkland"].includes(world.scene.userData.venueEnvironment?.type);}
+function renderScene(){if(directRender)renderer.render(renderPass.scene,camera);else composer.render();}
 let carSelectionPending = false, racePreparing = false, fleetGeneration = 0;
 updateMenu();
 let garageYaw = -.75,
@@ -240,10 +249,7 @@ let cameraHeading = TRACK.spawn.yaw,
   cameraKick = 0, cameraKickAge = Infinity, cameraKickX = 0, cameraKickZ = 0;
 const cameraImpactOffset = new THREE.Vector3();
 const startupLoader = bindLogoLoader(document.querySelector('#loading [data-logo-loader]'));
-const nextPaint = () =>
-  new Promise((resolve) =>
-    requestAnimationFrame(() => requestAnimationFrame(resolve)),
-  );
+const nextPaint = () => waitForPaint();
 function loadProgress(label, detail = 'Preparing your car and circuit. You will be driving as soon as they are ready.') {
   startupLoader.update({label, detail, progress:null});
 }
@@ -377,7 +383,8 @@ async function initGame() {
     await prepareManufacturerCar(selectedAsset, {low: mobile});
     player = createPlayerCar();
     world.scene.add(player.group);
-    await prepareOpponents("opening-"+Date.now(), state => startupLoader.update(state));
+    // Rival models are only needed when the player starts a race. Loading a
+    // second fleet here doubles startup work and retains unused mobile textures.
     race = newRace();
     carFill = new THREE.DirectionalLight("#c1d5e2", .55);
     world.scene.add(carFill, carFill.target);
@@ -417,7 +424,7 @@ async function initGame() {
     renderPass.scene = garageStudio.scene;
     bloomPass.strength = .04;
     renderer.toneMappingExposure = .95;
-    composer.render();
+    renderScene();
     loadProgress("Ready to drive.", "Your car and circuit are ready.");
     $("loading").classList.add("loaded");
     document.body.classList.add("is-ready");
@@ -465,7 +472,8 @@ function orientationGate(show) {
     $("orientation-message").textContent = pendingLandscapeStart
       ? "Races are played in landscape. Rotate your phone to give the track and driving controls room."
       : "Your race is paused. Rotate your phone, then choose Keep driving to continue from the same place.";
-    $("orientation-fullscreen").hidden = !document.documentElement.requestFullscreen;
+    $("orientation-fullscreen").hidden = false;
+    $("orientation-fullscreen").querySelector('span').textContent = screenMode().supported ? 'Fullscreen & rotate' : screenMode().label;
     if (wasHidden) { orientationFocus = document.activeElement; $("orientation-dialog").focus({preventScroll:true}); }
   } else if (!wasHidden) {
     $("orientation-status").textContent = "";
@@ -474,10 +482,16 @@ function orientationGate(show) {
   }
 }
 async function requestLandscape() {
-  try {
-    if (!document.fullscreenElement && document.documentElement.requestFullscreen) await document.documentElement.requestFullscreen();
-    if (screen.orientation?.lock) await screen.orientation.lock("landscape");
-  } catch { /* Safari and some browsers require physical device rotation. */ }
+  if (!screenMode().active) {
+    const result = await toggleScreenMode();
+    if (result.help) {
+      let help = $('orientation-screen-help');
+      if (!help) { help = document.createElement('div'); help.id = 'orientation-screen-help'; $('orientation-status').after(help); }
+      help.innerHTML = screenHelpMarkup(result);
+    }
+  }
+  try { if (screen.orientation?.lock && screenMode().active) await screen.orientation.lock("landscape"); }
+  catch { /* Orientation lock is independent of successful fullscreen. */ }
   if (needsLandscape()) $("orientation-status").textContent = "Rotate your phone sideways. If it stays upright, turn off your phone’s portrait orientation lock.";
   checkOrientation();
 }
@@ -561,9 +575,10 @@ async function enableTiltSteering() {
   }, 4000);
 }
 function mountSteeringSettings() {
-  const mixer = document.createElement('section'); mixer.className = 'steering-settings';
+  const mixer = document.createElement('details'); mixer.className = 'steering-settings';
   mixer.innerHTML = `<h3>Sound mix</h3><label class="steering-sensitivity" for="master-volume"><span>Game volume <output id="master-volume-value">${Math.round(preferences.volume*100)}%</output></span><input id="master-volume" aria-label="Game volume" type="range" min="0" max="100" step="5" value="${Math.round(preferences.volume*100)}"></label><label class="steering-sensitivity" for="music-volume"><span>Lobby music <output id="music-volume-value">${Math.round(preferences.musicVolume*100)}%</output></span><input id="music-volume" aria-label="Lobby music volume" type="range" min="0" max="100" step="5" value="${Math.round(preferences.musicVolume*100)}"></label><p><strong>Liquid Lines</strong> · 168 BPM liquid drum &amp; bass. Adjust Lobby music to set the soundtrack level.</p><p>Original game audio, with a distinct engine or electric voice for every car. Music fades out when the race begins.</p>`;
   $('dialog-content').append(mixer);
+  mixer.innerHTML = mixer.innerHTML.replace('<h3>Sound mix</h3>','<summary><h3>Sound mix</h3></summary>');
   $('master-volume').oninput=e=>{preferences.volume=Number(e.target.value)/100;sound.setVolume(preferences.volume);$('master-volume-value').value=e.target.value+'%';saveChoices();};
   $('music-volume').oninput=e=>{preferences.musicVolume=Number(e.target.value)/100;sound.setMusicVolume(preferences.musicVolume);$('music-volume-value').value=e.target.value+'%';saveChoices();};
   for(const [key,label,method] of [['engineVolume','Engines','setEngineVolume'],['sfxVolume','Effects & ambience','setSfxVolume']]) {
@@ -571,17 +586,31 @@ function mountSteeringSettings() {
     field.innerHTML=`<span>${label}<output id="${key}-value">${Math.round(preferences[key]*100)}%</output></span><input id="${key}" aria-label="${label} volume" type="range" min="0" max="100" step="5" value="${Math.round(preferences[key]*100)}">`;
     mixer.append(field);$(key).oninput=e=>{preferences[key]=Number(e.target.value)/100;sound[method](preferences[key]);$(key+'-value').value=e.target.value+'%';saveChoices();};
   }
-  const display=document.createElement('section');display.className='steering-settings';
-  display.innerHTML=`<h3>Display & controller</h3><div class="race-settings-grid"><label>Graphics<select id="graphics-quality"><option value="auto">Automatic</option><option value="performance">Performance</option><option value="balanced">Balanced</option><option value="ultra">High detail</option></select></label><label>Controller buttons<select id="controller-layout"><option value="standard">A / right trigger: Nitro</option><option value="swap">B / right trigger: Nitro</option></select></label></div><p>Standard gamepads: left stick or D-pad steers. Left trigger brakes. Menu pauses. Touch and keyboard remain available.</p>`;
+  const display=document.createElement('details');display.className='steering-settings';
+  display.innerHTML=`<summary><h3>Display &amp; controller</h3></summary><div class="race-settings-grid"><label>Graphics<select id="graphics-quality"><option value="auto">Automatic</option><option value="performance">Performance</option><option value="balanced">Balanced</option><option value="ultra">High detail</option></select></label><label>Controller buttons<select id="controller-layout"><option value="standard">A / right trigger: Nitro</option><option value="swap">B / right trigger: Nitro</option></select></label></div><p>Standard gamepads: left stick or D-pad steers. Left trigger brakes. Menu pauses. Touch and keyboard remain available.</p>`;
   $('dialog-content').append(display);$('graphics-quality').value=preferences.quality;
   $('graphics-quality').onchange=e=>{preferences.quality=normalizeQuality(e.target.value);saveChoices();applyQuality();};
   $('controller-layout').value=preferences.gamepadSwap?'swap':'standard';
   $('controller-layout').onchange=e=>{preferences.gamepadSwap=e.target.value==='swap';saveChoices();};
+  const install = document.createElement('section'); install.className = 'app-install-card';
+  install.innerHTML = `<button id="install-app" class="button secondary" type="button">${icon('phone')}<span>${screenMode().standalone ? 'APP INSTALLED' : 'INSTALL CAMBER REIGN'}</span></button><p>Launch from your Home Screen or desktop. Racing needs an internet connection.</p><div id="app-install-help" hidden></div>`;
+  $('dialog-content').append(install);
+  $('install-app').disabled = screenMode().standalone;
+  $('install-app').onclick = async () => {
+    const result = canInstallPWA() ? await requestInstallPWA() : {outcome:'unavailable'};
+    const help = $('app-install-help');
+    if (!help) return;
+    help.hidden = false;
+    help.innerHTML = result.outcome === 'accepted' ? '<p>Installation accepted. Look for Camber Reign in your apps.</p>'
+      : result.outcome === 'dismissed' ? '<p>Installation cancelled. You can keep racing in your browser.</p>'
+      : screenMode().ios ? screenHelpMarkup(screenMode())
+      : '<p>Open your browser’s menu and choose <strong>Install Camber Reign</strong>, <strong>Install this page as an app</strong>, or <strong>Add to Home Screen</strong>. On a Mac in Safari, choose <strong>File → Add to Dock</strong>.</p><p>If installation is unavailable, you can keep playing in this browser.</p>';
+  };
   if (!usesTouchControls()) return;
   const section = document.createElement('section'); section.className = 'steering-settings';
   section.setAttribute('aria-labelledby', 'steering-settings-heading');
   section.innerHTML = `<h3 id="steering-settings-heading">Steering</h3><div class="steering-options" role="group" aria-label="Steering mode"><button id="steering-touch" type="button">${icon('steering')}<span>Touch</span></button><button id="steering-tilt" type="button">${icon('phone')}<span>Enable tilt</span></button><button id="steering-recenter" type="button">${icon('restart')}<span>Recenter tilt</span></button></div><p id="steering-status" role="status" aria-live="polite"></p>`;
-  $('dialog-content').append(section);
+  $('dialog-content').prepend(section);
   const sensitivity=document.createElement('label');sensitivity.className='steering-sensitivity';sensitivity.innerHTML=`<span>Steering sensitivity <output id="steering-sensitivity-value">${Math.round(preferences.steeringSensitivity*100)}%</output></span><input id="steering-sensitivity" aria-label="Steering sensitivity" type="range" min="65" max="150" step="5" value="${Math.round(preferences.steeringSensitivity*100)}"><small>Lower for precision. Higher for quicker response. Full steering remains available.</small>`;section.append(sensitivity);
   $('steering-sensitivity').oninput=e=>{preferences.steeringSensitivity=normalizeSteeringSensitivity(Number(e.target.value)/100);$('steering-sensitivity-value').value=Math.round(preferences.steeringSensitivity*100)+'%';saveChoices();};
   $('steering-touch').onclick = () => useTouchSteering();
@@ -1003,7 +1032,7 @@ function pauseGame() {
     kind: "pause",
     eyebrow: "TAKE A BREATHER",
     title: "Race <em>paused.</em>",
-    html: pausePanel({race,track:TRACK,sound:records.sound,fullscreen:Boolean(document.fullscreenElement),countdown:was === "countdown"}),
+    html: pausePanel({race,track:TRACK,sound:records.sound,fullscreen:screenMode().active,screenLabel:screenMode().label,countdown:was === "countdown"}),
     actions: [
       {
         label: "KEEP DRIVING",
@@ -1035,10 +1064,12 @@ function pauseGame() {
     $("pause-sound").setAttribute('aria-pressed',String(records.sound));
   };
   $("pause-fullscreen").onclick = async () => {
-    const message = await $("fullscreen").onclick();
-    $("pause-fullscreen").innerHTML = `${icon('fullscreen')}<span>${document.fullscreenElement ? "Exit fullscreen" : "Fullscreen"}</span>`;
-    $("pause-screen-status").hidden = !message;
-    $("pause-screen-status").textContent = message || "";
+    const result = await toggleScreenMode();
+    syncScreenButton();
+    $('pause-screen-help').hidden = !result.help;
+    $('pause-screen-help').innerHTML = result.help ? screenHelpMarkup(result) : '';
+    $("pause-screen-status").hidden = !result.error;
+    $("pause-screen-status").textContent = result.error || "";
   };
   mountSteeringSettings();
 }
@@ -1247,24 +1278,23 @@ $("sound").onclick = () => {
   updateSound();
 };
 $("fullscreen").onclick = async () => {
-  let message = "";
-  try {
-    if (document.fullscreenElement) await document.exitFullscreen();
-    else if (document.documentElement.requestFullscreen)
-      await document.documentElement.requestFullscreen();
-    else message = "Use landscape for the widest view on this device.";
-  } catch {
-    message = "Fullscreen is not available in this browser.";
+  const result = await toggleScreenMode();
+  syncScreenButton();
+  if (result.help) {
+    dialog({kind:'screen-mode',eyebrow:'MORE ROOM TO RACE',title:'Full-screen <em>play.</em>',
+      html:screenHelpMarkup(result),actions:[{label:'GOT IT',primary:true,action:closeDialog}]});
   }
-  if (message) toast(message);
-  return message;
+  return result.error || '';
 };
-document.addEventListener("fullscreenchange", () =>
-  $("fullscreen").setAttribute(
-    "aria-label",
-    document.fullscreenElement ? "Exit fullscreen" : "Enter fullscreen",
-  ),
-);
+function syncScreenButton() {
+  const state = screenMode();
+  $('fullscreen').setAttribute('aria-label', state.label);
+  $('fullscreen').title = state.label;
+  if ($('pause-fullscreen')) $('pause-fullscreen').innerHTML = `${icon('fullscreen')}<span>${state.label}</span>`;
+}
+document.addEventListener('fullscreenchange', syncScreenButton);
+document.addEventListener('webkitfullscreenchange', syncScreenButton);
+syncScreenButton();
 $("home-link").onclick = (e) => {
   e.preventDefault();
   if (mode === "racing" || mode === "countdown") pauseGame();
@@ -1438,7 +1468,8 @@ function updateCamera(dt, instant = false) {
   const c = race.car;
   const f = new THREE.Vector3(Math.sin(c.yaw), 0, Math.cos(c.yaw));
   const side = new THREE.Vector3(f.z, 0, -f.x);
-  const roadY=["menu","garage"].includes(mode)?0:(c.y||0);
+  const crashing=race.wreck?.phase==='impact'||race.wreck?.phase==='recovering';
+  const roadY=["menu","garage"].includes(mode)?0:crashing?(race.wreck.groundY||0):(c.y||0);
   const pos = new THREE.Vector3(c.x, roadY, c.z);
   if (mode === "garage") {
     if (!garageFrame) {
@@ -1507,7 +1538,7 @@ function updateCamera(dt, instant = false) {
       Math.sin(velocityYaw - c.yaw),
       Math.cos(velocityYaw - c.yaw),
     );
-    const desiredHeading = c.yaw + slip * 0.4;
+    const desiredHeading = crashing ? race.wreck.heading : c.yaw + slip * 0.4;
     const delta = Math.atan2(
       Math.sin(desiredHeading - cameraHeading),
       Math.cos(desiredHeading - cameraHeading),
@@ -1566,7 +1597,7 @@ function updateRivals() {
         (mode === "racing" || mode === "finished") && r.state !== "finished"
           ? r.car.speed
           : 0,
-      actualSpeed:r.car.speed, raceId:race.raceId, paused:mode==="paused",
+      actualSpeed:r.car.speed, raceId:race.raceId, paused:mode==="paused", recovery:r.recovery,car:r.car,reducedMotion:reduced,
       steering: r.car.steering,
       brake: r.car.braking ? 1 : 0,
       drift: r.car.drifting,
@@ -1675,6 +1706,10 @@ function updateHud() {
   drawMap();
 }
 function tick(now) {
+  if (!frameBudget.ready(now,{mobile,hidden:document.hidden,mode})) {
+    if(document.hidden)last=now;
+    requestAnimationFrame(tick);return;
+  }
   const wasFinished = mode === "finished";
   const dt = Math.min((now - last) / 1000, 0.05);
   if (['racing', 'countdown'].includes(mode) && steeringMode === 'tilt' && now > tiltGraceUntil && !tiltSteering.fresh()) {
@@ -1752,7 +1787,7 @@ function tick(now) {
   placeCar();
   player.update({
     speed: mode === "racing" ? race.car.speed : 0,
-    actualSpeed:race.car.speed, raceId:race.raceId, paused:mode==="paused",
+    actualSpeed:race.car.speed, raceId:race.raceId, paused:mode==="paused", recovery:race.recovery,car:race.car,reducedMotion:reduced,
     steering: race.car.steering,
     brake: driveControls.brake ? 1 : 0,
     drift: race.car.drifting,
@@ -1799,6 +1834,10 @@ function tick(now) {
   const activeScene = showroom ? garageStudio.scene : world.scene;
   if (player.group.parent !== activeScene) activeScene.add(player.group);
   renderPass.scene = activeScene;
+  // Bloom produced a black composite during contact on tested WebGL drivers.
+  // Keep the verified clear race render (including SMAA and Output)
+  // and reserve the extra glow pass for the static showroom presentation.
+  bloomPass.enabled = showroom && !directRender;
   bloomPass.strength = showroom ? .04 : .18;
   renderer.toneMappingExposure = showroom ? .95 : 1.1;
   if (showroom) garageStudio.position(race.car);
@@ -1823,7 +1862,7 @@ function tick(now) {
     uiTimer = 0;
     if (["racing", "countdown", "finished"].includes(mode)) updateHud();
   }
-  composer.render();
+  renderScene();
   requestAnimationFrame(tick);
 }
 
@@ -1850,10 +1889,12 @@ if (import.meta.env.DEV) {
       leaderboard: race.leaderboard,
       score: race.score + race.driftPoints,
       effects: effects?.stats,
+      damage: player?.group.userData.damage ? {...player.group.userData.damage} : null,
       camera: camera
         ? { x: camera.position.x, z: camera.position.z, heading: cameraHeading }
         : null,
     }),
   });
 }
+if (import.meta.env.PROD) registerPWA();
 initGame();

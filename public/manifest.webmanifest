@@ -1,0 +1,26 @@
+{
+  "id": "/",
+  "name": "Camber Reign",
+  "short_name": "Camber Reign",
+  "description": "Own the corner. Race 33 cars on 38 circuits, upgrade your garage and chase your best time. Free online racing by AppsOverFlow.",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": ["games", "entertainment"],
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["fullscreen", "standalone"],
+  "orientation": "landscape",
+  "background_color": "#110017",
+  "theme_color": "#110017",
+  "prefer_related_applications": false,
+  "icons": [
+    { "src": "/assets/app-icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/assets/app-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ],
+  "shortcuts": [
+    { "name": "Car collection", "short_name": "Cars", "description": "Find your next car.", "url": "/cars/" },
+    { "name": "Circuit collection", "short_name": "Circuits", "description": "Choose your next circuit.", "url": "/circuits/" },
+    { "name": "Driver’s guide", "short_name": "Guide", "description": "Learn the controls and racing modes.", "url": "/guide/" }
+  ]
+}

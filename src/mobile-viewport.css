@@ -1,0 +1,145 @@
+/* Browser bars and the display cutout are part of the available phone space.
+   Keep screen chrome and driving actions inside that space, including Safari. */
+:root {
+  --mobile-safe-left: env(safe-area-inset-left, 0px);
+  --mobile-safe-right: env(safe-area-inset-right, 0px);
+  --mobile-safe-top: env(safe-area-inset-top, 0px);
+  --mobile-safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+.hq-medals > summary {
+  min-height:44px; display:flex; align-items:center; gap:10px; cursor:pointer;
+  color:#fff; font:800 12px/1.4 Manrope,sans-serif;
+}
+.hq-medals > summary::after { content:''; width:16px; height:16px; flex:none; margin-left:auto; background:url('/assets/ui/chevron.svg') center/contain no-repeat; }
+.hq-medals[open] > summary::after { transform:rotate(180deg); }
+.hq-medals > summary:focus-visible { outline:3px solid #FFF71E; outline-offset:2px; }
+.hq-medals > summary::-webkit-details-marker { display:none; }
+
+@media (max-height:520px) and (orientation:landscape) {
+  html,body { height:100dvh; min-height:0; }
+  body:not(.in-race):not(.in-garage) .topbar {
+    height:58px; padding:7px max(18px,var(--mobile-safe-right)) 7px max(18px,var(--mobile-safe-left));
+  }
+  body:not(.in-race):not(.in-garage) .wordmark .brand-logo { width:170px; }
+  #menu { height:100dvh; min-height:0; overflow:hidden; }
+  #menu::before { height:58px; }
+  #menu .hq-wallet { top:7px; right:calc(max(18px,var(--mobile-safe-right)) + 159px); }
+  #menu .lobby-settings { top:7px; right:calc(max(18px,var(--mobile-safe-right)) + 104px); }
+  #menu .car-spec { top:72px; left:max(18px,var(--mobile-safe-left)); width:calc(65% - max(18px,var(--mobile-safe-left)) - 20px); }
+  #menu .car-spec #selected-car-name,#menu .car-spec #selected-car-name[data-long-name=true] { font-size:30px!important; }
+  #lobby-showcase { left:var(--mobile-safe-left); right:calc(32% + var(--mobile-safe-right)); top:125px; bottom:calc(66px + var(--mobile-safe-bottom)); }
+  #menu .lobby-race-panel {
+    top:70px; right:max(18px,var(--mobile-safe-right)); bottom:calc(64px + var(--mobile-safe-bottom));
+    width:29%; gap:6px;
+  }
+  #menu .race-entry { padding:6px 10px; }
+  #menu .track-facts span { display:flex; align-items:baseline; gap:3px; font-size:8px; line-height:1.2; }
+  #menu .lobby-nav {
+    height:calc(54px + var(--mobile-safe-bottom)); box-sizing:border-box;
+    padding:0 max(12px,var(--mobile-safe-right)) var(--mobile-safe-bottom) max(12px,var(--mobile-safe-left));
+  }
+  #menu .lobby-nav :is(button,a) { min-width:0; padding:5px; font-size:15px; gap:6px; }
+
+  #garage {
+    --garage-gutter:12px; height:100dvh; min-height:0;
+    padding-inline:max(10px,var(--mobile-safe-left)) max(10px,var(--mobile-safe-right));
+    grid-template-columns:minmax(280px,36%) minmax(0,1fr);
+    grid-template-rows:54px minmax(0,1fr) auto; column-gap:12px;
+  }
+  body.in-garage .topbar { height:54px; padding:5px max(22px,var(--mobile-safe-right)) 5px max(22px,var(--mobile-safe-left)); }
+  #garage .garage-intro { height:54px; padding-left:0; padding-right:110px; }
+  #garage .garage-spec { padding:6px 0; }
+  #garage #garage-name,#garage #garage-name[data-long-name=true] { font-size:24px; margin:3px 0 0; line-height:1; }
+  #garage .garage-build { margin-top:7px; }
+  #garage #garage-specs { margin:7px 0; gap:6px 16px; }
+  #garage .performance-row dd { font-size:20px; }
+  #garage .garage-workshop .button { min-height:44px; font-size:15px; }
+  #garage-showcase { margin:7px 0 11px; }
+  #garage .garage-orbit { right:max(22px,var(--mobile-safe-right)); top:64px; }
+  #garage .garage-bottom { padding:2px 0 max(5px,var(--mobile-safe-bottom)); gap:2px 10px; }
+
+  /* One scrolling content region; the heading and primary actions stay put. */
+  .modal-backdrop:has(.dialog[data-kind]) {
+    padding:max(8px,var(--mobile-safe-top)) max(12px,var(--mobile-safe-right)) max(8px,var(--mobile-safe-bottom)) max(12px,var(--mobile-safe-left));
+    overflow:hidden;
+  }
+  .modal-backdrop .dialog {
+    display:flex; flex-direction:column; min-height:0; min-width:0;
+    width:min(820px,100%); max-width:100%;
+    max-height:calc(100dvh - max(8px,var(--mobile-safe-top)) - max(8px,var(--mobile-safe-bottom)));
+    padding:8px 16px; overflow:hidden;
+  }
+  .modal-backdrop .dialog > .eyebrow { flex-shrink:0; margin:0; font-size:8px; line-height:1.25; }
+  .modal-backdrop .dialog > h2 { flex-shrink:0; font-size:26px; margin:3px 0 6px; }
+  .modal-backdrop .dialog > #dialog-content { min-height:0; min-width:0; overflow:auto; overscroll-behavior:contain; }
+  .modal-backdrop .dialog > .dialog-actions { flex-shrink:0; margin-top:6px; padding-top:4px; }
+  .dialog[data-kind="preparing"] .logo-loader { max-width:650px; display:grid; grid-template-columns:minmax(100px,.8fr) minmax(0,1fr); align-items:center; gap:18px; padding:10px 0; }
+  .dialog[data-kind="preparing"] .logo-loader__brand { margin:0; }
+  .dialog[data-kind="preparing"] .logo-loader__status { font-size:18px; }
+  .dialog[data-kind="preparing"] .logo-loader__detail { font-size:11px; }
+  .dialog .steering-settings[aria-labelledby="steering-settings-heading"] {
+    display:grid; grid-template-columns:minmax(0,1.2fr) minmax(0,1fr); gap:7px 16px;
+    margin:0 0 10px; padding:10px 12px;
+  }
+  .dialog .steering-settings[aria-labelledby="steering-settings-heading"] > h3 { grid-column:1; margin:0; font-size:15px; }
+  .dialog .steering-settings[aria-labelledby="steering-settings-heading"] > .steering-options { grid-column:1; gap:6px; }
+  .dialog .steering-settings[aria-labelledby="steering-settings-heading"] > p { grid-column:1; margin:0; font-size:11px; line-height:1.4; }
+  .dialog .steering-settings[aria-labelledby="steering-settings-heading"] > .steering-sensitivity { grid-column:2; grid-row:1/span 3; margin:0; gap:5px; align-self:center; }
+  .dialog .steering-settings[aria-labelledby="steering-settings-heading"] .steering-sensitivity small { font-size:10px; line-height:1.4; }
+  .dialog[data-kind="race-setup"] #dialog-content {
+    display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); gap:8px 16px; align-items:start; padding:2px;
+  }
+  .dialog[data-kind="race-setup"] .hq-mode-options { grid-column:1/-1; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; }
+  .dialog[data-kind="race-setup"] .hq-mode-options button {
+    display:grid; grid-template-columns:24px minmax(0,1fr); align-content:start;
+    min-height:76px; padding:8px; gap:3px 7px;
+  }
+  .dialog[data-kind="race-setup"] .hq-mode-options button[aria-pressed="true"] { padding:7px; }
+  .dialog[data-kind="race-setup"] .hq-mode-options strong { align-self:center; font-size:21px; }
+  .dialog[data-kind="race-setup"] .hq-option-icon .ui-icon { width:22px; height:22px; }
+  .dialog[data-kind="race-setup"] .hq-mode-options button > span:last-child { grid-column:1/-1; font-size:11px; line-height:1.3; }
+  .dialog[data-kind="race-setup"] .hq-difficulty { margin:0; }
+  .dialog[data-kind="race-setup"] .hq-difficulty label { font-size:11px; margin-bottom:4px; }
+  .dialog[data-kind="race-setup"] .hq-difficulty select { min-height:44px; padding-block:8px; }
+  .dialog[data-kind="race-setup"] .hq-difficulty p { margin:4px 0 0; line-height:1.35; font-size:10px; }
+  .dialog[data-kind="race-setup"] .hq-medals { margin:0; padding:0 0 0 12px; border-top:0; border-left:1px solid #ffffff30; }
+  .dialog[data-kind="race-setup"] .hq-medals > summary { font-size:11px; }
+  .dialog[data-kind="race-setup"] .hq-medals dl { gap:20px; margin:8px 0; }
+  .dialog[data-kind="race-setup"] .hq-tour { grid-column:1/-1; margin:0; }
+}
+
+@media (max-height:360px) and (orientation:landscape) {
+  #garage #garage-name,#garage #garage-name[data-long-name=true] { font-size:22px; }
+  #garage .garage-manufacturer { font-size:10px; }
+  #garage #garage-specs { margin:5px 0; gap:5px 14px; }
+  #garage .performance-row dd { font-size:18px; }
+  #garage .car-choice { height:48px; min-height:48px; max-height:48px; grid-template-rows:7px minmax(0,1fr) 15px; gap:1px; padding:3px 7px; }
+  #garage .car-choice img { max-height:18px; }
+  #garage .garage-actions { height:48px; }
+  body.in-race.touch-mode {
+    --race-top:max(10px,calc(var(--mobile-safe-top) + 4px));
+    --race-left:max(14px,calc(var(--mobile-safe-left) + 8px));
+    --race-right:max(14px,calc(var(--mobile-safe-right) + 8px));
+    --race-bottom:max(14px,calc(var(--mobile-safe-bottom) + 8px));
+    --race-nitro-size:88px; --race-steer-width:164px;
+  }
+  body.in-race.touch-mode .touch-steer-cue { height:76px; }
+  body.in-race.touch-mode .mini-map { top:calc(var(--race-top) + 82px); width:116px; padding:5px 5px 1px; }
+  body.in-race.touch-mode .map-heading span { font-size:9px; }
+  body.in-race.touch-mode .drift-score { top:calc(var(--race-top) + 100px)!important; }
+  body.in-race.touch-mode .drift-score strong { font-size:21px!important; }
+  body.in-race.touch-mode .drift-score b { font-size:21px!important; margin-top:3px; }
+  body.in-race.touch-mode .nitro-pedal .nitro-symbol { width:42px; height:42px; }
+}
+
+@media (max-width:700px) and (orientation:landscape) {
+  body:not(.in-race):not(.in-garage) .wordmark .brand-logo { width:130px; }
+  #menu .lobby-race-panel { width:32%; }
+  #menu .car-spec #selected-car-name,#menu .car-spec #selected-car-name[data-long-name=true] { font-size:27px!important; }
+  #menu .lobby-nav :is(button,a) { font-size:13px; gap:4px; }
+  #garage { grid-template-columns:minmax(280px,48%) minmax(0,1fr); gap:0 8px; }
+  #garage .garage-heading h2 { font-size:22px; }
+  #garage .garage-back { min-width:44px; width:44px; padding:10px; }
+  #garage .garage-back > span { display:none; }
+  .dialog[data-kind="race-setup"] .hq-mode-options strong { font-size:18px; }
+}

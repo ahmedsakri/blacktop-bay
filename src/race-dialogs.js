@@ -19,15 +19,16 @@ export function formatRaceTime(seconds) {
   return `${String(Math.floor(centiseconds / 6000)).padStart(2, '0')}:${String(Math.floor(centiseconds / 100) % 60).padStart(2, '0')}.${String(centiseconds % 100).padStart(2, '0')}`;
 }
 
-export function pausePanel({ race, track, sound = false, fullscreen = false, countdown = false } = {}) {
+export function pausePanel({ race, track, sound = false, fullscreen = false, screenLabel = null, countdown = false } = {}) {
   const car = getVehicle(race?.vehicle), venue = circuit(race, track), laps = lapCount(race), solo = isSolo(race);
   const currentLap = Math.min(laps, count(race?.completedLaps) + 1);
   return `<div class="rd-pause-panel">
     <div class="rd-session"><span class="rd-race-number" aria-hidden="true">${escape(car.number)}</span><div class="rd-session-car"><span class="rd-label">YOUR RACE BUILD</span><strong>${escape(car.name)}</strong><small>${escape(car.specs.body)}</small></div><div class="rd-session-track"><span class="rd-label">CIRCUIT</span><strong>${escape(venue.name)}</strong></div></div>
     <dl class="rd-pause-stats"><div><dt>${solo ? 'TIME ATTACK' : 'POSITION'}</dt><dd>${solo ? 'SOLO' : `${count(race?.position) || 1}<small> / ${fieldSize(race)}</small>`}</dd></div><div><dt>${countdown ? 'STARTING LAP' : 'CURRENT LAP'}</dt><dd>${currentLap}<small> / ${laps}</small></dd></div><div><dt>${solo ? 'RUN TIME' : 'RACE TIME'}</dt><dd>${formatRaceTime(race?.elapsed ?? 0)}</dd></div></dl>
     <p class="rd-pause-note"><span class="rd-live-dot" aria-hidden="true"></span>${countdown ? 'The starting countdown is paused.' : solo ? 'Your lap progress and run time are held.' : 'Your position and race time are held.'} Resume when you’re ready.</p>
-    <div class="rd-settings"><span class="rd-label">QUICK SETTINGS</span><div class="pause-settings"><button id="pause-sound" type="button" aria-pressed="${Boolean(sound)}">${icon(sound ? 'volume' : 'volume-off')}<span>Sound ${sound ? 'on' : 'off'}</span></button><button id="pause-fullscreen" type="button">${icon('fullscreen')}<span>${fullscreen ? 'Exit fullscreen' : 'Fullscreen'}</span></button></div></div>
+    <div class="rd-settings"><span class="rd-label">QUICK SETTINGS</span><div class="pause-settings"><button id="pause-sound" type="button" aria-pressed="${Boolean(sound)}">${icon(sound ? 'volume' : 'volume-off')}<span>Sound ${sound ? 'on' : 'off'}</span></button><button id="pause-fullscreen" type="button">${icon('fullscreen')}<span>${escape(screenLabel || (fullscreen ? 'Exit fullscreen' : 'Fullscreen'))}</span></button></div></div>
     <p id="pause-screen-status" class="rd-setting-status" role="status" hidden></p>
+    <div id="pause-screen-help" hidden></div>
   </div>`;
 }
 

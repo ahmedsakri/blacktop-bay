@@ -57,7 +57,10 @@ export function spectatorPose(person, time = 0, excitement = 0) {
   let hand = [side * .14 + sway, hip + .07, person.seated ? .30 : .12];
   const active = excitement > .001;
   const restElbow=[...elbow],restHand=[...hand];
-  if (person.gesture === 0 && active) { // An asymmetric wave, wrist above head.
+  if (person.role === 'marshal') {
+   // Staff watch the driving line; only the radio operator raises one hand.
+   if(person.gesture===3&&side<0){elbow=[-.26+sway,hip+.38,.10];hand=[-.16+sway,hip+.69,.095];}
+  } else if (person.gesture === 0 && active) { // An asymmetric wave, wrist above head.
    if (side > 0) {
     elbow = [.33 + sway, hip + .77, .08];
     hand = [.25 + Math.sin(t * 3.3) * .13, hip + 1.02, .12];
@@ -75,7 +78,7 @@ export function spectatorPose(person, time = 0, excitement = 0) {
    elbow = [side * .32, hip + .66 + Math.sin(t + side) * .025, .025];
    hand = [side * .36, hip + .98 + Math.sin(t * 2.1 + side) * .045, .10];
   }
-  const blend=person.gesture===3?1:Math.min(1,Math.max(0,excitement*1.45));
+  const blend=person.role==='marshal'||person.gesture===3?1:Math.min(1,Math.max(0,excitement*1.45));
   const eased=blend*blend*(3-2*blend);
   elbow=mixPoint(restElbow,elbow,eased);hand=mixPoint(restHand,hand,eased);
   shoulder[0]*=person.width;elbow[0]*=person.width;hand[0]*=person.width;
@@ -86,7 +89,7 @@ export function spectatorPose(person, time = 0, excitement = 0) {
   headYaw:(person.lookYaw||0)+Math.sin(t*.37)*.035, headPitch:-excitement*.035+Math.sin(t*.53)*.025,
   headRoll:Math.sin(t*.42)*.026, torsoTilt:.025+excitement*.045,
   blink:((time+(person.blinkPhase||0))%5.7)<.115?.12:1,
-  mouth:Math.max(0,excitement-.24)*(person.gesture===0||person.gesture===2||person.gesture===4?1:.36),
+  mouth:(person.role==='marshal'?0:Math.max(0,excitement-.24))*(person.gesture===0||person.gesture===2||person.gesture===4?1:.36),
  };
 }
 
@@ -322,7 +325,10 @@ export function createCrowd({low = false, reducedMotion = false} = {}) {
    part('details',[ankle[0],.026,ankle[2]+.063],[.112,.021,.185],'#d3cdc1');
    for(let lace=0;lace<3;lace++)part('details',[ankle[0],.084-lace*.004,ankle[2]+.033+lace*.016],[.050,.004,.005],'#d4d0c8',[0,0,side*.04]).nearDetail=true;
   }
-  if(person.gesture===3)part('details',[0,hip+.60+pose.breathe,.337],[.083,.133,.014],'#1f252b',[-.08,0,0]);
+  if(person.gesture===3){
+   if(person.role==='marshal'){const hand=pose.arms[0].hand;part('details',[hand[0],hand[1]+.015,hand[2]+.018],[.05,.125,.035],'#1f252b');part('details',[hand[0]-.016,hand[1]+.115,hand[2]+.018],[.007,.08,.007],'#1f252b');}
+   else part('details',[0,hip+.60+pose.breathe,.337],[.083,.133,.014],'#1f252b',[-.08,0,0]);
+  }
   // Restrained plackets, seams and emblems complement the shared fabric maps.
   // Microgeometry is omitted from distant draws rather than merely hidden.
   if(person.garment===1){
@@ -339,9 +345,11 @@ export function createCrowd({low = false, reducedMotion = false} = {}) {
 
  }
  return {
-  add(x,floor,z,yaw,seated,rng){
+  add(x,floor,z,yaw,seated,rng=Math.random,{role='spectator'}={}){
    if(scene)throw new Error('Add spectators before rendering the crowd');
-   const person=spectatorProfile(x,floor,z,yaw,seated,rng);person.parts=[];people.push(person);
+   const person=spectatorProfile(x,floor,z,yaw,seated,rng);
+   if(role==='marshal'){person.role='marshal';person.shirt='#e97938';person.garment=2;person.pants='#233844';person.shorts=false;person.scarf=false;person.cap=true;person.gesture=rng()>.55?3:1;person.shirtLight='#e3e6cf';}
+   person.parts=[];people.push(person);
    compose(person,person.phase,Math.sin(person.phase)>.45?.3:0,true);return person;
   },
   render(target){
@@ -362,30 +370,35 @@ export function createCrowd({low = false, reducedMotion = false} = {}) {
   update(time,car,{paused=false,reducedMotion:reduce=reducedMotion}={}){
    if(!scene||disposed)return;
    const dt=Math.max(0,Math.min(.1,time-lastTime));lastTime=time;
-   if(paused||reduce)return;
-   motionTime+=dt;
+   if(paused)return;
+   motionTime+=reduce?0:dt;
    const fullTick=motionTime-previousTick>=1/(low?15:24);
    const foregroundTick=motionTime-previousForegroundTick>=1/(low?30:60)-1e-6;
-   if(!fullTick&&!foregroundTick)return;
+   if(!fullTick&&!foregroundTick&&!reduce)return;
    if(fullTick)previousTick=motionTime;
    if(foregroundTick)previousForegroundTick=motionTime;
-   let changed=false,faceLodChanged=false;
+   let changed=false,faceLodChanged=false,visiblePeople=0;
    const foreground=[];
    for(const person of people){
     person.viewDistance=car?Math.hypot(person.x-car.x,person.z-car.z):0;
     const near=person.viewDistance<(low?18:26);
     if(person.viewDistance<(low?14:22))foreground.push(person);
-    if(person.nearFace!==near){person.nearFace=near;faceLodChanged=true;}
+    const inRange=person.viewDistance<(low?76:130);
+    if(inRange)visiblePeople++;
+    if(person.nearFace!==near||person.inRange!==inRange){person.nearFace=near;person.inRange=inRange;faceLodChanged=true;}
    }
    const foregroundSet=new Set(foreground.sort((left,right)=>left.viewDistance-right.viewDistance).slice(0,low?10:20));
-   scene.userData.crowd.foregroundAnimated=foregroundSet.size;
+   scene.userData.crowd.foregroundAnimated=reduce?0:foregroundSet.size;
+   scene.userData.crowd.visiblePeople=visiblePeople;
    if(faceLodChanged){
-    // Face, finger and garment microgeometry leave each instance draw at LOD.
-    // They keep their stable source index so returning viewers can see them.
-    for(const name of ['skin','limbs','details']){
-     const batch=batches.get(name);let visible=0;
+    // Distant spectators leave every draw, not just the facial detail batch.
+    // Otherwise a global stand batch still rasterizes the entire venue's
+    // bodies on a phone even when their CPU animation has stopped. Source
+    // indices remain stable, so approaching spectators restore without rebuild.
+    for(const batch of batches.values()){
+     if(!batch.mesh)continue;let visible=0;
      for(const entry of batch.entries){
-      entry.drawIndex=(entry.faceDetail||entry.nearDetail)&&!entry.person.nearFace?-1:visible++;
+      entry.drawIndex=!entry.person.inRange||((entry.faceDetail||entry.nearDetail)&&!entry.person.nearFace)?-1:visible++;
       if(entry.drawIndex>=0){write(entry);batch.mesh.setColorAt(entry.drawIndex,color.set(entry.tint));}
      }
      if(batch.mesh){batch.mesh.count=visible;batch.mesh.instanceColor.needsUpdate=true;}
@@ -393,6 +406,7 @@ export function createCrowd({low = false, reducedMotion = false} = {}) {
     changed=true;
    }
    for(const person of people){
+    if(reduce||!person.inRange)continue;
     const distance=person.viewDistance;
     if(distance>(low?76:110))continue;
     if(foregroundSet.has(person)?!foregroundTick:!fullTick)continue;

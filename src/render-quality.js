@@ -5,6 +5,6 @@ export const QUALITY_PRESETS=Object.freeze({
 });
 export const normalizeQuality=value=>Object.hasOwn(QUALITY_PRESETS,value)?value:'auto';
 export function qualitySettings(value,{mobile=false,dpr=1}={}) {
-  const id=normalizeQuality(value),preset=QUALITY_PRESETS[id==='auto'?(mobile?'balanced':'ultra'):id];
+  const id=normalizeQuality(value),preset=QUALITY_PRESETS[id==='auto'?(mobile?'performance':'ultra'):id];
   return {...preset,pixelRatio:Math.min(Math.max(1,Number.isFinite(dpr)?dpr:1),preset.pixelRatio)};
 }

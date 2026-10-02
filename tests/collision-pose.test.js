@@ -1,9 +1,20 @@
-import test from 'node:test';import assert from 'node:assert/strict';import {collisionPose} from '../src/collision-pose.js';
-test('real engine wreck produces bounded directional accident motion and settles before reset',()=>{
- const race={car:{yaw:0},impact:{nx:1,nz:0},wreck:{phase:'impact',remaining:.35,strength:1}},before=structuredClone(race);
- const pose=collisionPose(race);assert.ok(pose.roll<-.5);assert.ok(pose.yaw>.5);assert.ok(pose.lift>0&&pose.lift<=.24);assert.deepEqual(race,before);
- for(const remaining of [.7,0]){race.wreck.remaining=remaining;for(const n of Object.values(collisionPose(race)))assert.ok(Math.abs(n)<1e-10);}
- race.wreck.remaining=.35;race.impact.nx=-1;assert.ok(collisionPose(race).roll>0);
- for(const phase of ['none','recovered','recovering']){race.wreck.phase=phase;assert.ok(Object.values(collisionPose(race)).every(n=>n===0));}
- race.wreck.phase='impact';assert.ok(Object.values(collisionPose(race,{reducedMotion:true})).every(n=>n===0));
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {collisionPose} from '../src/collision-pose.js';
+
+test('rendering consumes integrated wreck orientation without a second cosmetic tumble', () => {
+  const race = {car: {yaw: .4, pitch: .8, roll: 3.1, y: 1.7},
+    wreck: {phase: 'impact', heading: .1, groundY: .2, roadPitch: .05}};
+  const before = structuredClone(race);
+  assert.deepEqual(collisionPose(race), {yaw: 0, pitch: 0, roll: 0, lift: 0});
+  const pose = collisionPose(race, {reducedMotion: true});
+  assert.ok(Math.abs(race.car.yaw + pose.yaw - .1) < 1e-10);
+  assert.ok(Math.abs(-race.car.pitch + pose.pitch + .05) < 1e-10);
+  assert.equal(race.car.roll + pose.roll, 0);
+  assert.ok(Math.abs(race.car.y + pose.lift - .2) < 1e-10);
+  assert.deepEqual(race, before, 'reduced motion cannot change physical collision/recovery state');
+  for (const phase of ['none', 'recovered']) {
+    race.wreck.phase = phase;
+    assert.deepEqual(collisionPose(race, {reducedMotion: true}), {yaw: 0, pitch: 0, roll: 0, lift: 0});
+  }
 });
