@@ -2,7 +2,7 @@
 
 ## Release status
 
-Implemented in the local checkout, including the subsequent iPad touch-control and mobile graphics corrections described below. Final integration verification, the complete current test run and deployment confirmation remain pending. This report does not claim that these changes are live.
+Released to **https://camber-reign.web.app/** on 2 October 2026 from application/test commit **fd0489a** (mobile source changes in **6ba2909**). Firebase’s normal predeploy gate completed **887/887 tests**, with zero failures, cancellations or skips, in **321.12 seconds**, followed by a successful production build. Firebase reported **release complete** and **Deploy complete**. Code is pushed to GitHub `main`.
 
 The optional analytics application changes are implemented. The corresponding Google Tag Manager draft is saved and reviewed, but **publication is pending explicit user approval** after automatic approval review rejected the final Publish action. No new live GTM version or live GA4 receipt is claimed. See [analytics configuration and consent boundaries](../docs/analytics-events.md).
 
@@ -71,7 +71,7 @@ The driving task's earlier 281-test run included all **192 physics tests**, incl
 
 Five focused modal/navigation regressions cover countdown → pause → backup → back/resume; school-result Escape; share-result Escape without reward duplication; import navigation to the restored circuit; and stock trial isolation from the actual garage build. The associated targeted lifecycle/navigation group passed **18/18**. These tests exercise extracted integration functions with inert UI/rendering endpoints, not full browser flows.
 
-The rendering task reported a production build passing. The final corrective rendering group passed **31 focused tests**, and the integration browser recheck of the roof and clock passed without new rendering errors. The final complete integrated test result and build confirmation for the current mobile follow-up must be appended before publication. Earlier successful subsets do not establish that the current entire checkout passes.
+The rendering task reported a production build passing. The final corrective rendering group passed **31 focused tests**, and the integration browser recheck of the roof and clock passed without new rendering errors. The final full integrated result is recorded in Release status above. The first predeploy attempt passed 881/886 checks but found five outdated tour test-harness dependencies; the harness now executes the actual finalization/persistence functions, and an additional finished-round transaction regression passed before the clean full rerun. Production code was not weakened to satisfy the tests.
 
 ### Latest mobile follow-up verification
 
@@ -79,14 +79,21 @@ The latest focused run passed **80/80 tests**: **65** across driving contact, st
 
 The input checks include touch/pen `button: -1`, a non-primary second finger, TouchEvent fallback on a hybrid device, simultaneous Nitro and steering through both event paths, duplicate pointer/touch delivery, multiple Nitro contacts, failed capture, long-touch synthetic mouse suppression and contact cancellation. One regression executes the actual main `syncInput`/`clearInput` functions against real adapters, ownership stores and Nitro latch: pause empties captures and maps, stale movement stays inactive, and the same IDs can begin fresh contacts after resume.
 
-Quality checks cover phone and tablet dimensions in both orientations, optional/malformed capability hints, bounded resolution, pressure/recovery transitions, manual quality and genuine high-detail geometry selection. Settings regressions execute the actual integration with imported geometry helpers; they verify the reload explanation, no automatic reload, failure-safe save handling and a successful later retry. They do not establish appearance or performance on physical hardware. The latest mobile browser checks and deployment confirmation remain the integration task's release responsibility.
+Quality checks cover phone and tablet dimensions in both orientations, optional/malformed capability hints, bounded resolution, pressure/recovery transitions, manual quality and genuine high-detail geometry selection. Settings regressions execute the actual integration with imported geometry helpers; they verify the reload explanation, no automatic reload, failure-safe save handling and a successful later retry. They do not establish appearance or performance on physical hardware. The final browser and deployment checks are recorded below.
 
-Remaining release gates:
+### Final browser and live verification
 
-- Confirm the current complete automated test run and final production build; record any warning or failure accurately.
-- Complete any remaining final affected interaction/layout checks. The roof/clock corrective recheck is complete. Publish only once no known critical defect, blocked primary action or action overlap remains in representative checks, as required by the repository UI standard.
-- Obtain explicit approval before publishing the prepared GTM draft, then independently verify the public container and, if claimed, live GA4 ingestion.
-- Record actual game deployment and post-deployment checks before changing this report from pending to released.
+- At **1366×1024**, simulated tablet touch capability displayed the full HUD, steering pad and Nitro button without horizontal overflow. Pointer events using `button: -1` and a non-primary second finger produced steering and Nitro simultaneously; releasing steering kept Nitro active until its own release. TouchEvent-only fallback also steered and boosted simultaneously. Pause cleared both inputs.
+- Holding controls produced no selected page text; the control context menu was prevented. Driving surfaces computed `user-select: none` and `-webkit-touch-callout: none`. Selectable settings/input content remains available outside those driving surfaces.
+- Manual High detail was checked against the renderer’s actual loaded geometry flags, with both world and car low-detail flags false. The representative tablet screenshot is retained in the task’s `outputs/camber-reign-tablet-complete.jpg`; this is desktop-browser simulation, not an iPad photograph.
+- After release, `/`, `/guide/`, `/privacy/`, `/circuits/`, `/circuits/harbor/` and `/cars/` returned HTTP 200 with Camber Reign HTML. The live JavaScript, CSS and a representative newly generated distance model matched the tested build byte-for-byte (SHA-256).
+- A fresh production browser tab completed loading with **Race Now enabled**. Controls and sound opened, **Display & controller → Graphics** was visible with the updated quality explanation, and returning to the lobby worked. No browser error entries were observed during that smoke check. No production race reward or saved preference was changed.
+- Build retains Vite’s existing warning for a JavaScript chunk above 500 KB; it is not a failed build. The main game entry is approximately 1.09 MB before compression.
+
+Outstanding external validation:
+
+- GTM publication still needs the explicit approval requested after automatic approval review rejected the final production Publish action. No public container change or GA4 delivery is claimed.
+- Physical iPad control behavior and sustained phone frame rate, heat and battery usage remain unverified in this task. Responsive/event-path tests are not physical hardware evidence.
 
 ## Practical limits
 
