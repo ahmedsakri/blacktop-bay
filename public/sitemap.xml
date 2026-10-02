@@ -9,6 +9,20 @@
     <image:image><image:loc>https://camber-reign.web.app/assets/camber-reign-gameplay.png</image:loc></image:image>
   </url>
   <url>
+    <loc>https://camber-reign.web.app/cars/</loc>
+    <lastmod>2026-10-02</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image><image:loc>https://camber-reign.web.app/assets/camber-reign-gameplay.png</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://camber-reign.web.app/circuits/</loc>
+    <lastmod>2026-10-02</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image><image:loc>https://camber-reign.web.app/assets/camber-reign-gameplay.png</image:loc></image:image>
+  </url>
+  <url>
     <loc>https://camber-reign.web.app/guide/</loc>
     <lastmod>2026-10-02</lastmod>
     <changefreq>monthly</changefreq>
