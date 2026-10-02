@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { KTX2Loader } from 'three/addons/loaders/KTX2Loader.js';
+import { BoundedKTX2Loader } from './bounded-ktx2-loader.js';
+import { BASIS_TRANSCODER } from './basis-transcoder-manifest.js';
 import { MANUFACTURER_COMPRESSED_ASSETS } from './manufacturer-compressed-manifest.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { MANUFACTURER_DISTANCE_ASSETS } from './manufacturer-distance-manifest.js';
@@ -25,8 +26,8 @@ let activeLoads = 0, useCounter = 0;
 let graphicsPreparation=null,ktxLoader=null,compressedEnabled=false;
 export function configureManufacturerRenderer(renderer,{camera,scene}={}){
  graphicsPreparation={renderer,camera,scene};
- compressedEnabled=['WEBGL_compressed_texture_astc','WEBGL_compressed_texture_etc','EXT_texture_compression_bptc','WEBGL_compressed_texture_s3tc'].some(name=>renderer.extensions?.has(name));
- if(compressedEnabled){ktxLoader ||= new KTX2Loader().setTranscoderPath('/assets/basis/').setWorkerLimit(2);ktxLoader.detectSupport(renderer);}
+ compressedEnabled=BASIS_TRANSCODER.available&&!ktxLoader?.failure&&['WEBGL_compressed_texture_astc','WEBGL_compressed_texture_etc','EXT_texture_compression_bptc','WEBGL_compressed_texture_s3tc'].some(name=>renderer.extensions?.has(name));
+ if(compressedEnabled){ktxLoader ||= new BoundedKTX2Loader(undefined,{onFailure:()=>{compressedEnabled=false;}}).setTranscoderPath(BASIS_TRANSCODER.path).setWorkerLimit(2);ktxLoader.detectSupport(renderer);}
  return {gpuCompressed:compressedEnabled,compressedCars:Object.keys(MANUFACTURER_COMPRESSED_ASSETS).length};
 }
 const WHEELS = ['wheel_front_left', 'wheel_front_right', 'wheel_rear_left', 'wheel_rear_right'];
@@ -112,6 +113,7 @@ export function prepareManufacturerCar(assetId, {low = false, distant=false, bas
   }
   if (pending.has(key)) return pending.get(key);
   const compressed=low&&!distant&&compressedEnabled?MANUFACTURER_COMPRESSED_ASSETS[assetId]:null;
+  const decoder=ktxLoader;
   const path = distant?MANUFACTURER_DISTANCE_ASSETS[assetId]?.path:compressed?.path||(low ? manifest.low : manifest.high);
   if (!path) return Promise.reject(new Error(`No ${low ? 'mobile' : 'desktop'} asset is available for ${assetId}.`));
   const failedResources = new Set();
@@ -120,14 +122,28 @@ export function prepareManufacturerCar(assetId, {low = false, distant=false, bas
   // A failed finish must reject the selection so the current car stays intact.
   manager.onError = resource => failedResources.add(resource);
   const loader = new GLTFLoader(manager);
-  loader.setMeshoptDecoder(MeshoptDecoder);if(ktxLoader)loader.setKTX2Loader(ktxLoader);
+  loader.setMeshoptDecoder(MeshoptDecoder);
+  if(decoder)loader.setKTX2Loader({load(resource,onLoad,onProgress,onError){
+    // The shared transcoder has its own manager; forward failures to this car
+    // before GLTFLoader converts rejected texture dependencies into null maps.
+    const failed=error=>{failedResources.add(resource);if(onError)onError(error);else throw error;};
+    try{return decoder.load(resource,onLoad,onProgress,failed);}catch(error){failed(error);}
+  }});
   let url = baseURL ? new URL(path, baseURL).href : path;
   const hash = distant?MANUFACTURER_DISTANCE_ASSETS[assetId]?.sha256:compressed?.sha256||manifest.variants?.[low ? 'low' : 'high']?.sha256;
   if (typeof hash === 'string' && /^[a-f0-9]{64}$/i.test(hash)) url += `${url.includes('?') ? '&' : '?'}v=${hash.slice(0, 16)}`;
   const request = scheduleLoad(async() => {
     if(!compressed)return loader.loadAsync(url,onProgress);
     let partial;
-    try{partial=await loader.loadAsync(url,onProgress);if(failedResources.size)throw new Error('Compressed maps unavailable');return partial;}
+    try{
+      // Queued work may outlive another car's fatal decoder failure. Never reuse it.
+      if(decoder?.failure)throw decoder.failure;
+      partial=await loader.loadAsync(url,onProgress);
+      // GLTFLoader may swallow map rejection; decoder failure must also reject the partial car.
+      const textures=partial.parser?await partial.parser.getDependencies('texture'):[];
+      if(decoder?.failure||failedResources.size||textures.some(texture=>!texture?.isTexture))throw new Error('Compressed maps unavailable');
+      return partial;
+    }
     catch{if(partial)releaseSource(partial.scene);failedResources.clear();
       const fallback=baseURL?new URL(manifest.low,baseURL).href:manifest.low;
       return loader.loadAsync(fallback+'?v='+manifest.variants.low.sha256.slice(0,16),onProgress);

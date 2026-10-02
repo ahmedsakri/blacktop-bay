@@ -35,7 +35,7 @@ Reproduce with `scripts/prepare-distance-assets.mjs`. Its header pins glTF Trans
 
 ## Optional heavy-texture KTX2 path
 
-Three texture-heavy low sources retain original geometry/UV/materials and receive optional mipmapped UASTC KTX2 derivatives. Khronos KTX-Software **4.4.2** encodes UASTC quality 2, RDO lambda 1 and Zstandard level 18. The renderer selects a supported GPU block format through Three.js KTX2Loader, with at most two transcoder workers. Transcoder JS/Wasm are self-hosted under `/assets/basis/`; Apache and Three.js license files are included. Production CSP explicitly permits the loader's local blob workers.
+Three texture-heavy low sources retain original geometry/UV/materials and receive optional mipmapped UASTC KTX2 derivatives. Khronos KTX-Software **4.4.2** encodes UASTC quality 2, RDO lambda 1 and Zstandard level 18. The renderer selects a supported GPU block format through a bounded Three.js KTX2Loader, with at most two transcoder workers and a 15-second per-operation deadline. Transcoder JS/Wasm are self-hosted under the fingerprinted `/assets/basis/csp-d9c47f3ce0aee215/` path. The JavaScript wrapper is a hash-pinned, synchronous no-eval adaptation of the official Emscripten 3.1.51 closure paths; Wasm is unchanged. Apache, Three.js MIT and Emscripten MIT/NCSA notices are included. Production CSP permits local blob workers and Wasm compilation, without allowing JavaScript string execution. See `public/assets/basis/README.md` for precise provenance, scope and reproduction.
 
 | Car | Original GLB bytes | KTX2 GLB bytes | RGBA+mip texture estimate | Conservative 8bpp+mip estimate |
 | --- | ---: | ---: | ---: | ---: |
@@ -43,7 +43,7 @@ Three texture-heavy low sources retain original geometry/UV/materials and receiv
 | Porsche 930 Turbo | 2,346,336 | 4,843,888 | 30 MiB | 7.50 MiB |
 | Lamborghini Gallardo | 894,272 | 1,754,232 | 24.33 MiB | 6.08 MiB |
 
-The trial deliberately trades a larger transfer for approximately **75% smaller texture block storage** at an 8bpp target. Some supported opaque formats use fewer bits; actual allocation includes driver overhead and mip block rounding. It is not a claim that compressed textures download faster. The original WebP variants remain the failure/capability fallback. No catalogue-wide KTX2 expansion or higher source texture resolution is introduced.
+The trial deliberately trades a larger transfer for approximately **75% smaller texture block storage** at an 8bpp target. Some supported opaque formats use fewer bits; actual allocation includes driver overhead and mip block rounding. It is not a claim that compressed textures download faster. The original WebP variants remain the failure/capability fallback. Any worker startup/decode failure or deadline terminates the shared pool and disables compression for the page session. Partial compressed models are disposed before WebP retry, including errors GLTFLoader otherwise swallows as missing maps. The versioned decoder path prevents the earlier incompatible wrapper remaining active through HTTP cache. No catalogue-wide KTX2 expansion or higher source texture resolution is introduced.
 
 Reproduce with `node scripts/prepare-compressed-cars.mjs --toktx /path/to/toktx`; the same isolated asset tools are used. Generated manifests record original/derivative SHA-256 values and embedded source, author and license credits are retained.
 
@@ -58,5 +58,7 @@ San Francisco grounding was corrected after actual fixture review exposed a 0.35
 Six original finish profiles distinguish the Aventador, 458, P1, GT3, GT-R and i8 with restrained clearcoat/roughness differences. They apply only to identified physical body-paint materials. Source maps, metal/roughness response, glass, carbon, badges and livery remain; saved satin/metallic/custom paint still overrides the factory presentation and factory gloss restores it. Distance cars retain their cheaper standard materials.
 
 ## Verification scope
+
+The corrective decoder regression executes the actual JS/Wasm under disabled JavaScript string generation. All 94 shipping images in six supported GPU block formats match the stock decoder across 5,640 mip payloads; worker-style initialization and error reporting are also exercised. This comparison does not measure physical-device decode latency.
 
 Targeted automated tests cover severe-frame adaptation, bounded GPU batches, cancellation/context restoration, byte-limited idle caching, compressed failure fallback, all generated asset contracts, finish restoration, environment ownership and batched showcase geometry. The local `reports/rendering-upgrade-review.html` fixture uses production shaders and supports three circuits, six flagship selections, near/distant geometry and KTX2 capability diagnostics. It remains excluded from the production build. Browser gameplay/recovery checks are recorded separately by the release coordinator; a fixture and desktop touch simulation are not physical-phone FPS, temperature or battery measurements.
