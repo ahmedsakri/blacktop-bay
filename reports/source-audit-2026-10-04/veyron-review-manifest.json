@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "scope": "LOCAL AUDIO-ONLY REVIEW; NOT APPLIED TO GAME",
+  "recordings": [
+    {
+      "id": "veyron-pur-sang-review",
+      "sourceFile": "veyron-pur-sang.ogg",
+      "sourceSha256": "94d0cfed03e96eae7e9510e48d7772aaf5ff1f4ae11e8c11c2c064db32eadbd2",
+      "sourceVehicle": "Bugatti Veyron Pur Sang",
+      "title": "Bugatti Veyron Pur Sang.ogg",
+      "author": "Edvvc (Ed Pond)",
+      "license": "CC-BY-SA-3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Bugatti_Veyron_Pur_Sang.ogg",
+      "kind": "combustion",
+      "movingOnly": true,
+      "layers": [
+        {
+          "start": 0,
+          "end": 1.25,
+          "rev": 0.15,
+          "sourceStart": 1,
+          "sourceDuration": 1.35
+        }
+      ],
+      "use": "Single exterior departure band, faded by the existing one-band runtime rule at higher authored revs and gated at rest. Not an idle recording, measured RPM sample or full range engine session. Source and target trim/year differ in specificity; no exact specification claim. Numerical review only; aural approval pending.",
+      "file": "veyron-pur-sang-review-v1.wav",
+      "bytes": 60044,
+      "sha256": "67861924111a003bd7f02f0042e3e5c6ca6668320ebd067ebeafe63b363e37a8",
+      "duration": 1.25,
+      "sampleRate": 24000,
+      "url": "/local-review/veyron-pur-sang-review-v1.wav"
+    }
+  ]
+}

@@ -28,4 +28,8 @@ Audio remains a separate incomplete requirement: the accepted source inventory h
 
 ## Publication
 
-Pending final commit, push and Firebase/live verification below.
+Published in commit `8411b41`, pushed to `origin/main`, and deployed successfully to Firebase Hosting site `camber-reign` in project `echo-heist` using the requested account. The full tests and production build passed before deployment.
+
+Post-deployment checks compared 56 live responses byte-for-byte against the built files: homepage, guide, current main JS/CSS, all 38 circuit previews and their manifest, four new ground maps and six rebaked crowd palettes. Every hash matched. Local verification receipt: `reports/polish-grounded-live-hashes.json` (ignored).
+
+The published game also ran an actual McLaren P1 GTR race through 14.05 seconds, reaching 3% progress and 53 km/h; pause and resume worked. The recorded screenshot is `reports/polish-grounded-live-race.png` (local, ignored). Temporary focus emulation used for the hidden browser test was reset afterward.

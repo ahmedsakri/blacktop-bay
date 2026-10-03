@@ -1,0 +1,42 @@
+# Free engine source continuation — 4 October 2026
+
+The shipping inventory remains **5 identified base-model matches out of 33**, **28 without an accepted base-model match**, and **0 fully verified year/trim/build matches**. This pass adds source evidence, not another runtime substitute. No audio bank, car mapping, mixer, game license, purchase or external message was changed.
+
+## Best conditional source: Bugatti Veyron
+
+Edvvc (file metadata: Ed Pond) published two own-work Goodwood departure recordings under **CC BY-SA 3.0**:
+
+| Source | Primary publication and uploader's first revision | Original file evidence |
+| --- | --- | --- |
+| Veyron Pur Sang | [File page](https://commons.wikimedia.org/wiki/File:Bugatti_Veyron_Pur_Sang.ogg), [author's initial grant, revision 26854616](https://commons.wikimedia.org/w/index.php?title=File:Bugatti_Veyron_Pur_Sang.ogg&oldid=26854616) | 7.557483 s; 188,298 bytes; SHA-1 `0633430ffda55428ce130a76135d229d4826597d`; SHA-256 `94d0cfed03e96eae7e9510e48d7772aaf5ff1f4ae11e8c11c2c064db32eadbd2` |
+| Veyron Grand Sport | [File page](https://commons.wikimedia.org/wiki/File:Bugatti_Veyron_Grand_Sport.ogg), [author's initial grant, revision 26778980](https://commons.wikimedia.org/w/index.php?title=File:Bugatti_Veyron_Grand_Sport.ogg&oldid=26778980) | 9.189524 s; 106,954 bytes; SHA-1 `22e4bd1c3574a119a455af861983d923bb40dbf7`; SHA-256 `cc365acc11cfb9c3d8e3066f81cff5eba7733b7155f23f51059e6c8750db6b0a` |
+
+Both originals were downloaded and their SHA-1 values matched the Commons API. The same author expressly applied the commercial-compatible ShareAlike grant in each initial Commons revision. Both containers retain an older NC-SA 2.0 UK comment; the recorded initial Commons grant is affirmative evidence of an additional license, rather than an anonymous later metadata change. Evidence is retained in [veyron-primary-metadata.json](source-audit-2026-10-04/veyron-primary-metadata.json).
+
+These are actual named Veyron recordings and would replace the current wrong-layout Murciélago V12 source with the correct model family. They do **not** identify the unspecified trim/year of the game asset: Pur Sang and Grand Sport remain named source variants. Each is a short exterior departure with changing distance/load, not a steady idle plus measured RPM library. A local single-band audition is prepared from source seconds 1.000–2.350 using the unchanged preparation pipeline: 1.25 seconds, 60,044 bytes, mono 24 kHz PCM16. Loop peak is 0.65997, clipped samples zero, endpoint jump zero and DC mean 0.00000141. The existing mixer renders the band with motion gating and the existing single-band reduction at high revs. No extra RPM bands are invented. Numerical checks pass; listening approval remains outstanding. No game/runtime integration was made.
+
+## ShareAlike boundary
+
+The primary [CC BY-SA 3.0 legal code](https://creativecommons.org/licenses/by-sa/3.0/legalcode) defines timed synchronization of a phonogram with a moving image as an adaptation in section 1(a). Sections 3(b), 4(b) and 4(c) cover modification disclosure, ShareAlike licensing of publicly distributed/performed adaptations, and attribution. Section 4(b) also distinguishes an adaptation from a collection containing it; it does not automatically apply ShareAlike to every independent work in a collection. The [CC FAQ on collections](https://creativecommons.org/faq/#if-i-create-a-collection-that-includes-a-work-offered-under-a-cc-license-which-licenses-may-i-choose-for-the-collection) confirms that distinction.
+
+Applied to this game, the conservative project-specific conclusion is that a ShareAlike WAV credit alone does not resolve the rights of the Veyron audiovisual adaptation. It also does **not** establish that every line of game code must be relicensed. The scope of a copyrightable game adaptation is not exhaustively resolved by these general CC documents. No project-wide or code license change has been made.
+
+[The subsequent layer audit](veyron-layer-compatibility-audit-2026-10-04.md) checked the actual code paths and asset licenses. Veyron playback would contain only its selected recorded bank, with synthesized opponents/ambience, CC BY car geometry and CC0 world/crowd assets. No incompatible simultaneous third-party layer was identified; existing Sonniss sources for other cars are **not a demonstrated Veyron overlap conflict**.
+
+The unresolved boundary is whether that presentation inside the full interactive game is a separate audiovisual adaptation, rather than part of a broader one. The primary CC documents do not settle this project-specific classification. User approval could change the user's own licensing choice but would not itself settle that boundary. The [unapplied Veyron reference option](veyron-audio-license-option.md) now records this decision and the playable local auditions. Do not ask for broad licensing approval or integrate this limited candidate into the main game. No purchase or outreach is needed for the source grant, and further main-game acquisition remains CC0/CC BY only. A separate Veyron audiovisual demo would be a different deliverable and has not been requested.
+
+## New permissive lead assessed and kept unadopted
+
+[Porsche 991 GT3 development mules in L'Ametlla del Vallès](https://commons.wikimedia.org/wiki/File:Porsche_991_GT3_development_mules_in_L%27Ametlla_del_Vall%C3%A9s.ogv) is a 55.52-second video by Dani Dominguez Mas, filmed 21 September 2012. The Commons page records CC BY 3.0 and a review of the original YouTube license on 24 January 2013. Original media SHA-1 `21eeb1a16def3dea48593edf3c56f1bfc3884e54` matched Commons metadata. The original YouTube page could not be independently reread this run because its fetch was throttled.
+
+It depicts three development prototypes in a forecourt and road scene with other traffic. Frame and spectral inspection did not establish an isolated sustained bank, and no aural review was performed. A production GT3 configuration and the game target's generation remain unverified. It is **not adopted**, and it does not increase the model-match count. [Evidence and assessment](source-audit-2026-10-04/gt3-mules/assessment.json).
+
+Additional newly documented exclusions: [650S-containing British GT field](https://freesound.org/people/konakaboom/sounds/275191/) is CC BY-NC 4.0 and mixed-car; the [BMW M3 E46 mod author's description](https://www.beamng.com/threads/bmw-m3-e46-sound-mod.87028/) credits Assetto Corsa audio; [the Countach LP500S recording](https://www.youtube.com/watch?v=foDcLUhUKqI) names a Kreissieg exhaust and has no verified permissive reuse grant; [the Enzo ringtone](https://phoneky.com/ringtones/?id=m734257) is personal-use only. None was acquired for the game.
+
+Focused Commons searches for remaining named models are retained in [remaining-models-commons-search.json](source-audit-2026-10-04/remaining-models-commons-search.json). Three requests returned HTTP 429 and are explicitly recorded as incomplete, not as zero results. Other exact-term results were empty or unrelated/pronunciation files, apart from a different Koenigsegg Agera recording. These are bounded searches, not proof that a free recording cannot exist elsewhere.
+
+## Durable local review media
+
+Long source media stays outside the repository at `/Users/ahmedsakri/Documents/Personal/Games/camber-reign-audio-source-review-2026-10-04/`. The two Veyron originals are `veyron-pur-sang.ogg` and `veyron-grand-sport.ogg`; the GT3 video, decoded audio, contact sheet and spectrum are under `gt3-mules/`. Prepared loop repetitions, actual mixer audition, current-shipping comparison and synthesis-only comparison are under `prepared/`; the optional proposal links the playable WAV files. The existing graph was rendered in OfflineAudioContext with one voice, one selected-bank request and one cached bank. Output was finite, below the peak budget and silent after the pause. This is not a browser-driving or physical-device listening test. Their licenses and provenance are documented above and in the local `LICENSES.txt`. Nothing from that directory is included in the production build.
+
+The actual blocker remains source availability plus source/target identity evidence: no new acceptable production-model recording with compatible terms and usable isolated material was established in this pass. There is no evidence-backed route to claim all 33 exact recordings under the current constraints.

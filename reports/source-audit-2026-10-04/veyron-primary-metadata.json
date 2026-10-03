@@ -1,0 +1,314 @@
+{
+  "batchcomplete": "",
+  "query": {
+    "pages": {
+      "7578779": {
+        "pageid": 7578779,
+        "ns": 6,
+        "title": "File:Bugatti Veyron Grand Sport.ogg",
+        "imagerepository": "local",
+        "imageinfo": [
+          {
+            "size": 106954,
+            "width": 0,
+            "height": 0,
+            "duration": 9.18952380952381,
+            "url": "https://upload.wikimedia.org/wikipedia/commons/d/d4/Bugatti_Veyron_Grand_Sport.ogg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+            "descriptionurl": "https://commons.wikimedia.org/wiki/File:Bugatti_Veyron_Grand_Sport.ogg",
+            "descriptionshorturl": "https://commons.wikimedia.org/w/index.php?curid=7578779",
+            "sha1": "22e4bd1c3574a119a455af861983d923bb40dbf7",
+            "extmetadata": {
+              "DateTime": {
+                "value": "2009-08-16 19:01:55",
+                "source": "mediawiki-metadata",
+                "hidden": ""
+              },
+              "ObjectName": {
+                "value": "Bugatti Veyron Grand Sport",
+                "source": "mediawiki-metadata"
+              },
+              "CommonsMetadataExtension": {
+                "value": 1.2,
+                "source": "extension",
+                "hidden": ""
+              },
+              "Categories": {
+                "value": "Self-published work|Sounds of automobiles|Files with coordinates missing SDC location of creation (50\u00b0 N, 1\u00b0 W)|Bugatti Veyron Grand Sport|Automobiles at the Goodwood Festival of Speed 2009",
+                "source": "commons-categories",
+                "hidden": ""
+              },
+              "Assessments": {
+                "value": "",
+                "source": "commons-categories",
+                "hidden": ""
+              },
+              "GPSLatitude": {
+                "value": "50.868892",
+                "source": "commons-desc-page"
+              },
+              "GPSLongitude": {
+                "value": "-0.736239",
+                "source": "commons-desc-page"
+              },
+              "GPSMapDatum": {
+                "value": "WGS-84",
+                "source": "commons-desc-page",
+                "hidden": ""
+              },
+              "ImageDescription": {
+                "value": "Bugatti Veyron Grand Sport pulling away from the start on the Friday of the Goodwood Festival of Speed hillclimb 2009",
+                "source": "commons-desc-page"
+              },
+              "DateTimeOriginal": {
+                "value": "2009-07-03",
+                "source": "commons-desc-page"
+              },
+              "Credit": {
+                "value": "<span class=\"int-own-work\" lang=\"en\">Own work</span>",
+                "source": "commons-desc-page"
+              },
+              "Artist": {
+                "value": "<a href=\"//commons.wikimedia.org/wiki/User:Edvvc\" title=\"User:Edvvc\">Edvvc</a>",
+                "source": "commons-desc-page"
+              },
+              "LicenseShortName": {
+                "value": "CC BY-SA 3.0",
+                "source": "commons-desc-page",
+                "hidden": ""
+              },
+              "UsageTerms": {
+                "value": "Creative Commons Attribution-Share Alike 3.0",
+                "source": "commons-desc-page"
+              },
+              "AttributionRequired": {
+                "value": "true",
+                "source": "commons-desc-page",
+                "hidden": ""
+              },
+              "LicenseUrl": {
+                "value": "https://creativecommons.org/licenses/by-sa/3.0",
+                "source": "commons-desc-page"
+              },
+              "Copyrighted": {
+                "value": "True",
+                "source": "commons-desc-page",
+                "hidden": ""
+              },
+              "Restrictions": {
+                "value": "",
+                "source": "commons-desc-page",
+                "hidden": ""
+              },
+              "License": {
+                "value": "cc-by-sa-3.0",
+                "source": "commons-templates",
+                "hidden": ""
+              }
+            }
+          }
+        ],
+        "revisions": [
+          {
+            "revid": 1270342796,
+            "parentid": 1094922321,
+            "user": "PMG",
+            "timestamp": "2026-08-31T14:03:24Z",
+            "slots": {
+              "main": {
+                "contentmodel": "wikitext",
+                "contentformat": "text/x-wiki",
+                "*": "== {{int:filedesc}} ==\n{{Information\n|Description={{en|1=Bugatti Veyron Grand Sport pulling away from the start on the Friday of the Goodwood Festival of Speed hillclimb 2009}}\n|Source={{Own}}\n|Author=[[User:Edvvc|Edvvc]]\n|Date=2009-07-03\n|Permission=\n|other_versions=\n}}\n{{location|50|52|8.01|N|0|44|10.46|W|region:GB_heading:S}}\n== {{int:license-header}} ==\n{{self|cc-by-sa-3.0}}\n\n[[Category:Bugatti Veyron Grand Sport]]\n[[Category:Automobiles at the Goodwood Festival of Speed 2009]]\n[[Category:Sounds of automobiles]]"
+              }
+            }
+          }
+        ],
+        "firstRevisionEvidence": {
+          "continue": {
+            "rvcontinue": "20090816193104|26779820",
+            "continue": "||"
+          },
+          "query": {
+            "pages": {
+              "7578779": {
+                "pageid": 7578779,
+                "ns": 6,
+                "title": "File:Bugatti Veyron Grand Sport.ogg",
+                "revisions": [
+                  {
+                    "revid": 26778980,
+                    "parentid": 0,
+                    "user": "Edvvc",
+                    "timestamp": "2009-08-16T19:01:56Z",
+                    "slots": {
+                      "main": {
+                        "contentmodel": "wikitext",
+                        "contentformat": "text/x-wiki",
+                        "*": "== Summary ==\n{{Information\n|Description={{en|1=Bugatti Veyron Grand Sport pulling away from the start on the Friday of the Goodwood Festival of Speed hillclimb 2009}}\n|Source=Own work by uploader\n|Author=[[User:Edvvc|Edvvc]]\n|Date=2009-07-03\n|Permission=\n|other_versions=\n}}\n{{location|50|52|8.01|N|0|44|10.46|W|region:GB_heading:S}}\n[[Category:Bugatti Veyron]]\n[[Category:Goodwood Festival of Speed 2009]]\n== [[Commons:Copyright tags|Licensing]] ==\n{{self|cc-by-sa-3.0}}"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "downloadedFile": "veyron-grand-sport.ogg",
+        "downloadSha256": "cc365acc11cfb9c3d8e3066f81cff5eba7733b7155f23f51059e6c8750db6b0a"
+      },
+      "7600516": {
+        "pageid": 7600516,
+        "ns": 6,
+        "title": "File:Bugatti Veyron Pur Sang.ogg",
+        "imagerepository": "local",
+        "imageinfo": [
+          {
+            "size": 188298,
+            "width": 0,
+            "height": 0,
+            "duration": 7.557482993197279,
+            "url": "https://upload.wikimedia.org/wikipedia/commons/c/c9/Bugatti_Veyron_Pur_Sang.ogg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+            "descriptionurl": "https://commons.wikimedia.org/wiki/File:Bugatti_Veyron_Pur_Sang.ogg",
+            "descriptionshorturl": "https://commons.wikimedia.org/w/index.php?curid=7600516",
+            "sha1": "0633430ffda55428ce130a76135d229d4826597d",
+            "extmetadata": {
+              "DateTime": {
+                "value": "2009-08-19 13:43:03",
+                "source": "mediawiki-metadata",
+                "hidden": ""
+              },
+              "ObjectName": {
+                "value": "Bugatti Veyron Pur Sang",
+                "source": "mediawiki-metadata"
+              },
+              "CommonsMetadataExtension": {
+                "value": 1.2,
+                "source": "extension",
+                "hidden": ""
+              },
+              "Categories": {
+                "value": "Self-published work|Sounds of automobiles|Files with coordinates missing SDC location of creation (50\u00b0 N, 1\u00b0 W)|Bugatti Veyron Pur Sang|Automobiles at the Goodwood Festival of Speed 2009",
+                "source": "commons-categories",
+                "hidden": ""
+              },
+              "Assessments": {
+                "value": "",
+                "source": "commons-categories",
+                "hidden": ""
+              },
+              "GPSLatitude": {
+                "value": "50.868892",
+                "source": "commons-desc-page"
+              },
+              "GPSLongitude": {
+                "value": "-0.736239",
+                "source": "commons-desc-page"
+              },
+              "GPSMapDatum": {
+                "value": "WGS-84",
+                "source": "commons-desc-page",
+                "hidden": ""
+              },
+              "ImageDescription": {
+                "value": "Bugatti Veyron Pur Sang pulling away from the start on the Friday of the Goodwood Festival of Speed hillclimb 2009",
+                "source": "commons-desc-page"
+              },
+              "DateTimeOriginal": {
+                "value": "2009-07-03",
+                "source": "commons-desc-page"
+              },
+              "Credit": {
+                "value": "<span class=\"int-own-work\" lang=\"en\">Own work</span>",
+                "source": "commons-desc-page"
+              },
+              "Artist": {
+                "value": "<a href=\"//commons.wikimedia.org/wiki/User:Edvvc\" title=\"User:Edvvc\">Edvvc</a>",
+                "source": "commons-desc-page"
+              },
+              "LicenseShortName": {
+                "value": "CC BY-SA 3.0",
+                "source": "commons-desc-page",
+                "hidden": ""
+              },
+              "UsageTerms": {
+                "value": "Creative Commons Attribution-Share Alike 3.0",
+                "source": "commons-desc-page"
+              },
+              "AttributionRequired": {
+                "value": "true",
+                "source": "commons-desc-page",
+                "hidden": ""
+              },
+              "LicenseUrl": {
+                "value": "https://creativecommons.org/licenses/by-sa/3.0",
+                "source": "commons-desc-page"
+              },
+              "Copyrighted": {
+                "value": "True",
+                "source": "commons-desc-page",
+                "hidden": ""
+              },
+              "Restrictions": {
+                "value": "",
+                "source": "commons-desc-page",
+                "hidden": ""
+              },
+              "License": {
+                "value": "cc-by-sa-3.0",
+                "source": "commons-templates",
+                "hidden": ""
+              }
+            }
+          }
+        ],
+        "revisions": [
+          {
+            "revid": 1094922325,
+            "parentid": 836859744,
+            "user": "Bahnfrend",
+            "timestamp": "2025-10-04T08:47:24Z",
+            "slots": {
+              "main": {
+                "contentmodel": "wikitext",
+                "contentformat": "text/x-wiki",
+                "*": "== {{int:filedesc}} ==\n{{Information\n|Description={{en|1=Bugatti Veyron Pur Sang pulling away from the start on the Friday of the Goodwood Festival of Speed hillclimb 2009}}\n|Source={{Own}}\n|Author=[[User:Edvvc|Edvvc]]\n|Date=2009-07-03\n|Permission=\n|other_versions=\n}}\n{{location|50|52|8.01|N|0|44|10.46|W|region:GB_heading:S}}\n== {{int:license-header}} ==\n{{self|cc-by-sa-3.0}}\n\n[[Category:Bugatti Veyron Pur Sang]]\n[[Category:Automobiles at the Goodwood Festival of Speed 2009]]\n[[Category:Sounds of automobiles]]"
+              }
+            }
+          }
+        ],
+        "firstRevisionEvidence": {
+          "continue": {
+            "rvcontinue": "20091030193932|31288165",
+            "continue": "||"
+          },
+          "query": {
+            "pages": {
+              "7600516": {
+                "pageid": 7600516,
+                "ns": 6,
+                "title": "File:Bugatti Veyron Pur Sang.ogg",
+                "revisions": [
+                  {
+                    "revid": 26854616,
+                    "parentid": 0,
+                    "user": "Edvvc",
+                    "timestamp": "2009-08-19T13:43:04Z",
+                    "slots": {
+                      "main": {
+                        "contentmodel": "wikitext",
+                        "contentformat": "text/x-wiki",
+                        "*": "== Summary ==\n{{Information\n|Description={{en|1=Bugatti Veyron Pur Sang pulling away from the start on the Friday of the Goodwood Festival of Speed hillclimb 2009}}\n|Source=Own work by uploader\n|Author=[[User:Edvvc|Edvvc]]\n|Date=2009-07-03\n|Permission=\n|other_versions=\n}}\n{{location|50|52|8.01|N|0|44|10.46|W|region:GB_heading:S}}\n[[Category:Bugatti Veyron]]\n[[Category:Goodwood Festival of Speed 2009]]\n[[Category:Car sounds]]\n== [[Commons:Copyright tags|Licensing]] ==\n{{self|cc-by-sa-3.0}}"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "downloadedFile": "veyron-pur-sang.ogg",
+        "downloadSha256": "94d0cfed03e96eae7e9510e48d7772aaf5ff1f4ae11e8c11c2c064db32eadbd2"
+      }
+    }
+  },
+  "localSourceDirectory": "/Users/ahmedsakri/Documents/Personal/Games/camber-reign-audio-source-review-2026-10-04"
+}

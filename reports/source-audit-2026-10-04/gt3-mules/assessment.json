@@ -1,0 +1,30 @@
+{
+  "checked": "2026-10-04",
+  "decision": "reviewed-not-adopted-prototype-identity-and-isolation",
+  "sourcePage": "https://commons.wikimedia.org/w/index.php?title=File:Porsche_991_GT3_development_mules_in_L%27Ametlla_del_Vall%C3%A9s.ogv&oldid=1190801631",
+  "sourceOriginal": "https://www.youtube.com/watch?v=6yz22aSbdwg",
+  "originalCreator": "Dani Dominguez Mas",
+  "recordedDate": "2012-09-21",
+  "commonsUploader": "FAEP",
+  "commonsUploadDate": "2013-01-17",
+  "license": "CC-BY-3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
+  "licenseEvidence": "Commons source page expressly states YouTube CC BY 3.0 and Morning Sunshine license review of original on 2013-01-24. Metadata agrees. Current original YouTube page fetch throttled; original publication not independently re-read this run.",
+  "sourceFilename": "Porsche_991_GT3_development_mules_in_L'Ametlla_del_Vall\u00e9s.ogv",
+  "downloadUrl": "https://upload.wikimedia.org/wikipedia/commons/5/5f/Porsche_991_GT3_development_mules_in_L%27Ametlla_del_Vall%C3%A9s.ogv",
+  "downloadFilename": "porsche-991-gt3-development-mules.ogv",
+  "sha1": "21eeb1a16def3dea48593edf3c56f1bfc3884e54",
+  "sha1MatchesCommonsMetadata": true,
+  "bytes": 51398509,
+  "durationSeconds": 55.518912,
+  "audio": "Vorbis, 44.1 kHz, stereo, declared 224 kbps",
+  "vehicle": "Three Porsche 991 GT3 development mules; production configuration not verified",
+  "qualityAssessment": "Contact sheet shows several prototypes and unrelated road traffic together in gas-station forecourt and on road. Spectrogram shows changing overlapping low-frequency bands; no sustained three-band isolated production GT3 bank established. Audio was not aurally reviewed.",
+  "candidateIntervals": [],
+  "scope": "Evidence only, no public audio or game metadata changed.",
+  "localSourceDirectory": "/Users/ahmedsakri/Documents/Personal/Games/camber-reign-audio-source-review-2026-10-04/gt3-mules",
+  "localEvidenceImages": [
+    "contact.png",
+    "spectrum.png"
+  ]
+}

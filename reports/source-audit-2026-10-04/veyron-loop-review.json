@@ -1,0 +1,25 @@
+{
+  "loopFile": "/Users/ahmedsakri/Documents/Personal/Games/camber-reign-audio-source-review-2026-10-04/prepared/veyron-pur-sang-review-v1.wav",
+  "sha256": "67861924111a003bd7f02f0042e3e5c6ca6668320ebd067ebeafe63b363e37a8",
+  "bytes": 60044,
+  "durationSeconds": 1.25,
+  "sampleRateHz": 24000,
+  "channels": 1,
+  "pcmBits": 16,
+  "peak": 0.65997314453125,
+  "rms": 0.17556974274949438,
+  "dcMean": 1.4088948567708334e-06,
+  "clippedSamples": 0,
+  "endpointJump": 0.0,
+  "maximumAdjacentStep": 0.119903564453125,
+  "tailAdjacentStep": 0.001922607421875,
+  "headAdjacentStep": 0.00482177734375,
+  "above5800HighpassRmsRatio": 0.02028000554345027,
+  "above5800HighpassRmsRatioDb": -33.858638612524,
+  "sourceIntervalSeconds": [
+    1,
+    2.35
+  ],
+  "preparation": "Unchanged scripts/prepare-engine-recordings.py. 65Hz highpass,5.8kHz lowpass,mono24kHz,0.1s cosine overlap,DC/seam correction,peak/RMS normalization. Filters are gradual, not brick-wall.",
+  "limitations": "One exterior departure band; no steady idle or measured RPM separation. Strongest lower-frequency periodicity near107\u2013120Hz across most selected interval; autocorrelation has harmonics/background and is not proof of engine fundamental or measured RPM. Numerically validated; not aurally approved."
+}

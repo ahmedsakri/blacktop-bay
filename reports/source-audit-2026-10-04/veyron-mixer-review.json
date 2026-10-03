@@ -1,0 +1,268 @@
+{
+  "recorded": {
+    "report": {
+      "vehicle": "bugatti-veyron",
+      "shifts": [
+        {
+          "time": 1.317,
+          "from": 1,
+          "to": 2
+        },
+        {
+          "time": 2.283,
+          "from": 2,
+          "to": 3
+        },
+        {
+          "time": 3.267,
+          "from": 3,
+          "to": 4
+        },
+        {
+          "time": 4.233,
+          "from": 4,
+          "to": 5
+        },
+        {
+          "time": 5.217,
+          "from": 5,
+          "to": 6
+        },
+        {
+          "time": 6.967,
+          "from": 6,
+          "to": 5
+        },
+        {
+          "time": 7.867,
+          "from": 5,
+          "to": 4
+        },
+        {
+          "time": 9.633,
+          "from": 4,
+          "to": 5
+        }
+      ],
+      "sections": {
+        "acceleration": {
+          "rms": 0.060730198435589876,
+          "peak": 0.2836412489414215
+        },
+        "liftBrake": {
+          "rms": 0.03401150112379742,
+          "peak": 0.1468224972486496
+        },
+        "nitro": {
+          "rms": 0.05574974239386438,
+          "peak": 0.19907641410827637
+        },
+        "impact": {
+          "rms": 0.05645709397917244,
+          "peak": 0.20385438203811646
+        }
+      },
+      "available": true,
+      "selected": "veyron-pur-sang-review",
+      "active": "veyron-pur-sang-review",
+      "cacheBanks": 1,
+      "decodedBytes": 240000,
+      "voices": 1,
+      "pending": false,
+      "fetches": 1,
+      "failed": [],
+      "blend": 0,
+      "peak": 0.2836412489414215,
+      "rms": 0.055469875070811324,
+      "tailPeak": 0,
+      "finite": true,
+      "withinPeakBudget": true,
+      "pauseTailSilent": true
+    }
+  },
+  "synthesisOnly": {
+    "report": {
+      "vehicle": "bugatti-veyron",
+      "shifts": [
+        {
+          "time": 1.317,
+          "from": 1,
+          "to": 2
+        },
+        {
+          "time": 2.283,
+          "from": 2,
+          "to": 3
+        },
+        {
+          "time": 3.267,
+          "from": 3,
+          "to": 4
+        },
+        {
+          "time": 4.233,
+          "from": 4,
+          "to": 5
+        },
+        {
+          "time": 5.217,
+          "from": 5,
+          "to": 6
+        },
+        {
+          "time": 6.967,
+          "from": 6,
+          "to": 5
+        },
+        {
+          "time": 7.867,
+          "from": 5,
+          "to": 4
+        },
+        {
+          "time": 9.633,
+          "from": 4,
+          "to": 5
+        }
+      ],
+      "sections": {
+        "acceleration": {
+          "rms": 0.1739202482579076,
+          "peak": 0.3474999666213989
+        },
+        "liftBrake": {
+          "rms": 0.11840525517119528,
+          "peak": 0.2950984239578247
+        },
+        "nitro": {
+          "rms": 0.1740654678650645,
+          "peak": 0.36546680331230164
+        },
+        "impact": {
+          "rms": 0.17568523742921788,
+          "peak": 0.4164722263813019
+        }
+      },
+      "available": true,
+      "selected": "veyron-pur-sang-review",
+      "active": null,
+      "cacheBanks": 0,
+      "decodedBytes": 0,
+      "voices": 0,
+      "pending": false,
+      "fetches": 1,
+      "failed": [
+        "veyron-pur-sang-review"
+      ],
+      "blend": 0,
+      "peak": 0.4164722263813019,
+      "rms": 0.165417379070925,
+      "tailPeak": 0,
+      "finite": true,
+      "withinPeakBudget": true,
+      "pauseTailSilent": true
+    }
+  },
+  "currentShipping": {
+    "report": {
+      "vehicle": "bugatti-veyron",
+      "shifts": [
+        {
+          "time": 1.317,
+          "from": 1,
+          "to": 2
+        },
+        {
+          "time": 2.283,
+          "from": 2,
+          "to": 3
+        },
+        {
+          "time": 3.267,
+          "from": 3,
+          "to": 4
+        },
+        {
+          "time": 4.233,
+          "from": 4,
+          "to": 5
+        },
+        {
+          "time": 5.217,
+          "from": 5,
+          "to": 6
+        },
+        {
+          "time": 6.967,
+          "from": 6,
+          "to": 5
+        },
+        {
+          "time": 7.867,
+          "from": 5,
+          "to": 4
+        },
+        {
+          "time": 9.633,
+          "from": 4,
+          "to": 5
+        }
+      ],
+      "sections": {
+        "acceleration": {
+          "rms": 0.09182147019259172,
+          "peak": 0.393668532371521
+        },
+        "liftBrake": {
+          "rms": 0.0524069582766882,
+          "peak": 0.259519100189209
+        },
+        "nitro": {
+          "rms": 0.09639563441625401,
+          "peak": 0.3749605119228363
+        },
+        "impact": {
+          "rms": 0.09031140688631242,
+          "peak": 0.35951748490333557
+        }
+      },
+      "available": true,
+      "selected": "murcielago-v12",
+      "active": "murcielago-v12",
+      "cacheBanks": 1,
+      "decodedBytes": 710400,
+      "voices": 3,
+      "pending": false,
+      "fetches": 1,
+      "failed": [],
+      "blend": 0,
+      "peak": 0.393668532371521,
+      "rms": 0.08677057511539708,
+      "tailPeak": 0,
+      "finite": true,
+      "withinPeakBudget": true,
+      "pauseTailSilent": true
+    }
+  },
+  "relativeToCurrentShippingRms": 0.6392705706634002,
+  "relativeRms": 0.33533281316848723,
+  "withinMixBudget": true,
+  "conditions": {
+    "kind": "OfflineAudioContext rendering using actual createAudio and unchanged mixer",
+    "sourceStartSeconds": 1,
+    "sourceDurationSeconds": 1.35,
+    "loopDurationSeconds": 1.25,
+    "singleBand": true,
+    "movingOnly": true,
+    "perCarMixUnchanged": [
+      0.88,
+      0.8,
+      0.76
+    ],
+    "heardByAgent": false,
+    "shippingFilesChanged": false,
+    "bankPath": "/Users/ahmedsakri/Documents/Personal/Games/camber-reign-audio-source-review-2026-10-04/prepared/veyron-pur-sang-review-v1.wav",
+    "recordedMixerPath": "/Users/ahmedsakri/Documents/Personal/Games/camber-reign-audio-source-review-2026-10-04/prepared/veyron-recorded-mixer-review.wav",
+    "baselineMixerPath": "/Users/ahmedsakri/Documents/Personal/Games/camber-reign-audio-source-review-2026-10-04/prepared/veyron-synthesisOnly-mixer-review.wav"
+  }
+}

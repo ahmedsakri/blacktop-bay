@@ -313,10 +313,13 @@
       "vehicle": "Bugatti Veyron PurSang",
       "primaryUrls": [
         "https://commons.wikimedia.org/wiki/File:Bugatti_Veyron_Pur_Sang.ogg",
-        "https://creativecommons.org/licenses/by-sa/3.0/legalcode"
+        "https://commons.wikimedia.org/w/index.php?title=File:Bugatti_Veyron_Pur_Sang.ogg&oldid=26854616",
+        "https://creativecommons.org/licenses/by-sa/3.0/legalcode",
+        "https://creativecommons.org/faq/#if-i-create-a-collection-that-includes-a-work-offered-under-a-cc-license-which-licenses-may-i-choose-for-the-collection"
       ],
-      "reason": "Own-work author first revision26854616 expressly grants CCBYSA3; older NC embedded tag does not erase this later grant. PurSang trim and short exterior pass remain limits. CCBYSA3 synchronization/adaptation obligations require a project-specific compatibility decision; not treated as permissiveCCBY/CC0 or silently included.",
-      "license": "CC-BY-SA-3.0"
+      "reason": "Original uploader Edvvc expressly grants CC BY-SA3 in initial revision26854616; old NC tag is not the only grant. Downloaded 188298-byte original SHA-1 matches Commons. Actual Veyron Pur Sang family; unspecified target trim/year and short exterior departure remain limits. CC BY-SA3 section1(a) treats phonogram synchronization with moving images as adaptation; section4(b) ShareAlike covers that adaptation while separate collection works can retain separate licenses. A WAV-only credit does not settle the game audiovisual scope; no broad code relicense inferred. Optional project-specific audiovisual notice prepared outside shipping artifacts, NOT APPLIED. No bank or runtime mapping change. Local audio-only audition prepared from 1.000\u20132.350 s with unchanged pipeline, single 1.25 s / 60,044-byte band, moving-only and actual mixer checks passed. No aural approval or production integration. Subsequent actual-layer audit found no incompatible simultaneous layer: other car recordings do not play with Veyron, and visual inputs are CC BY/CC0. Main-game adaptation versus separate-work scope is still unresolved by primary guidance; user approval alone does not settle it. Do not treat Sonniss as an automatic overlap blocker. Keep local, no broad licensing approval requested.",
+      "license": "CC-BY-SA-3.0",
+      "lastChecked": "2026-10-04"
     },
     {
       "id": "commons-aventador",
@@ -675,7 +678,77 @@
         "https://www.gordonmurray.com/terms-and-conditions"
       ],
       "reason": "Official terms section8 includes audio/video; personal noncommercial access is not permission to distribute modified game loops. Read-only partner research verified no recording-specific open grant."
+    },
+    {
+      "id": "commons-veyron-grand-sport",
+      "decision": "conditional-sharealike-review",
+      "vehicle": "Bugatti Veyron Grand Sport",
+      "checked": "2026-10-04",
+      "license": "CC-BY-SA-3.0",
+      "costUSD": 0,
+      "primaryUrls": [
+        "https://commons.wikimedia.org/wiki/File:Bugatti_Veyron_Grand_Sport.ogg",
+        "https://commons.wikimedia.org/w/index.php?title=File:Bugatti_Veyron_Grand_Sport.ogg&oldid=26778980",
+        "https://creativecommons.org/licenses/by-sa/3.0/legalcode"
+      ],
+      "reason": "Additional actual Veyron source by Edvvc, affirmative own-work CC BY-SA3 grant in initial revision26778980. 106954-byte original SHA-1 verified, duration9.189524s. GrandSport variant differs from unspecified target; exterior departure is not a measured sustained engine bank. Same synchronization/adaptation scope decision as PurSang. No game integration or project license change."
+    },
+    {
+      "id": "commons-gt3-development-mules",
+      "decision": "reviewed-not-adopted-prototype-identity-and-isolation",
+      "vehicle": "2012 Porsche 991 GT3 development mules",
+      "checked": "2026-10-04",
+      "license": "CC-BY-3.0",
+      "costUSD": 0,
+      "primaryUrls": [
+        "https://commons.wikimedia.org/wiki/File:Porsche_991_GT3_development_mules_in_L%27Ametlla_del_Vall%C3%A9s.ogv",
+        "https://commons.wikimedia.org/w/index.php?title=File:Porsche_991_GT3_development_mules_in_L%27Ametlla_del_Vall%C3%A9s.ogv&oldid=1190801631",
+        "https://www.youtube.com/watch?v=6yz22aSbdwg"
+      ],
+      "reason": "Commons records Dani Dominguez Mas, filmed21Sep2012, CC BY3 and original-license review24Jan2013. 51398509-byte original SHA-1 matched metadata. Multiple development prototypes and traffic; production configuration/target generation and isolated sustained bank not established. Frames and spectrum inspected, no aural review. Original YouTube reread throttled. Kept unadopted; not counted as production GT3 match."
+    },
+    {
+      "id": "freesound-650s-british-gt",
+      "decision": "rejected-noncommercial-and-mixed-field",
+      "vehicle": "McLaren 650S among 2015 British GT field",
+      "checked": "2026-10-04",
+      "license": "CC-BY-NC-4.0",
+      "primaryUrls": [
+        "https://freesound.org/people/konakaboom/sounds/275191/"
+      ],
+      "reason": "Description names 650S among multiple cars. Noncommercial license and mixed-field recording do not meet the commercially reusable isolated exact-model source requirement. No recording copied."
+    },
+    {
+      "id": "beamng-m3-e46-rip",
+      "decision": "rejected-origin",
+      "vehicle": "BMW M3 E46 mod",
+      "checked": "2026-10-04",
+      "primaryUrls": [
+        "https://www.beamng.com/threads/bmw-m3-e46-sound-mod.87028/"
+      ],
+      "reason": "Mod author expressly identifies Assetto Corsa as audio source. Mod availability is not original field-recording provenance or reuse permission. No recording copied."
+    },
+    {
+      "id": "youtube-countach-lp500s-kreissieg",
+      "decision": "no-permissive-reuse-grant-verified",
+      "vehicle": "1982 Lamborghini Countach LP500S with Kreissieg exhaust",
+      "checked": "2026-10-04",
+      "primaryUrls": [
+        "https://www.youtube.com/watch?v=foDcLUhUKqI"
+      ],
+      "reason": "Identified LP500S but modified exhaust, and no CC0/CC BY commercial game reuse grant verified. Not acquired and not treated as exact stock target recording."
+    },
+    {
+      "id": "phoneky-enzo",
+      "decision": "rejected-personal-use-only",
+      "vehicle": "Ferrari Enzo startup ringtone",
+      "checked": "2026-10-04",
+      "primaryUrls": [
+        "https://phoneky.com/ringtones/?id=m734257"
+      ],
+      "reason": "Personal-use-only ringtone availability does not grant commercial game audio extraction or derivative redistribution. Original recording provenance not established. No media copied."
     }
   ],
-  "acquisitionScope": "Freely licensed recordings only, per user instruction. Paid candidates below are historical research and are not approved acquisition steps; no enquiry sent and no purchase made."
+  "acquisitionScope": "Freely licensed recordings only, per user instruction. Paid candidates below are historical research and are not approved acquisition steps; no enquiry sent and no purchase made.",
+  "lastContinuedResearch": "2026-10-04"
 }
