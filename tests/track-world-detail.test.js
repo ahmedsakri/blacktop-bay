@@ -105,3 +105,22 @@ test('facade programs separate physical glass and stone, and UV projection keeps
   assert.match(shader.vertexShader,/faceWidth\/2\.45/);assert.match(shader.fragmentShader,/roughnessFactor=mix\(\.83,\.24,pane\)/);assert.match(shader.fragmentShader,/metalnessFactor=mix/);
   const geo=setWorldSurfaceUV(new THREE.BoxGeometry(12,9,6));assert.ok([...geo.attributes.uv.array].every(Number.isFinite));const values=[...geo.attributes.uv.array];assert.ok(Math.max(...values)>=2&&Math.min(...values)<=-2);
 });
+
+test('Singapore wide pavement retains the actual map with restrained variation and no extra texture or lighting work',async()=>{
+ const {restrainedPavementMaterial}=await import('../src/track-world-detail.js'),map=new THREE.Texture(),material=restrainedPavementMaterial(map);
+ assert.equal(material.map,map);assert.equal(material.roughness,1);assert.equal(material.userData.surfaceVariation,.15);
+ const shader={fragmentShader:'#include <map_fragment>'};material.onBeforeCompile(shader);
+ assert.match(shader.fragmentShader,/mix\(diffuse,diffuseColor\.rgb,0\.15\)/);assert.doesNotMatch(shader.fragmentShader,/uniform|texture\(/);assert.equal(material.customProgramCacheKey(),'singapore-muted-pavement-v1');
+});
+
+test('access rail openings remove actual triangles at each landmark walkway without disturbing rail elsewhere or the lap seam',async()=>{
+ const {createAccessRailGeometry}=await import('../src/track-world-detail.js');
+ for(const id of ['fuji-skyline','san-francisco-hills','singapore-afterdark']){
+  const track=getTrack(id),gaps=[{s:0,halfLength:1.4},{s:track.length*.13,halfLength:1.4}],geometry=createAccessRailGeometry(track,track.width/2+5.1,.055,.93,gaps),uv=geometry.attributes.uv,index=geometry.index;
+  assert.ok(index.count>1000);assert.ok([...geometry.attributes.position.array].every(Number.isFinite));
+  for(let i=0;i<index.count;i+=3){const distances=[0,1,2].map(n=>uv.getY(index.getX(i+n))*3),mid=(Math.min(...distances)+Math.max(...distances))/2;
+   for(const [a,b] of geometry.userData.accessOpenings)assert.ok(mid<a||mid>b,'no rail triangles cross the access opening');
+  }
+  assert.equal(geometry.userData.accessOpenings.length,3,'opening at finish splits safely across the lap seam');
+ }
+});

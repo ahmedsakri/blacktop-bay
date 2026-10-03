@@ -59,8 +59,8 @@ export function createGarageSet({ low = false } = {}) {
     name: 'original-violet-led-mural', side: THREE.BackSide, toneMapped: false,
     uniforms: {
       violet: {value: new THREE.Color('#9246FF')},
-      deepViolet: {value: new THREE.Color('#29104f')},
-      highlight: {value: new THREE.Color('#ceafff')},
+      deepViolet: {value: new THREE.Color('#1d1429')},
+      highlight: {value: new THREE.Color('#b79cd6')},
     },
     vertexShader: `varying vec2 vUv;
       void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
@@ -93,14 +93,14 @@ export function createGarageSet({ low = false } = {}) {
         colour*=.56+.44*vertical;
         // A steel-lined studio, with luminous inset bands rather than an
         // unbroken purple wall. Soft upper washes reveal the vertical fins.
-        float display=smoothstep(.19,.215,uv.y)*(1.-smoothstep(.53,.55,uv.y));
-        float wallLight=.03+.08*pow(1.-abs(uv.y-.65),3.);
-        vec3 steel=vec3(wallLight*.80,wallLight*.84,wallLight);
+        float display=smoothstep(.325,.34,uv.y)*(1.-smoothstep(.405,.42,uv.y));
+        float wallLight=.022+.054*pow(1.-abs(uv.y-.65),3.);
+        vec3 steel=vec3(wallLight*.91,wallLight*.94,wallLight);
         float flute=abs(fract(uv.x*180.)-.5);
         steel*=.85+.15*smoothstep(.05,.40,flute);
-        colour=mix(steel,colour*.85,display);
-        float trim=(1.-smoothstep(.001,.004+fwidth(uv.y),abs(uv.y-.55)));
-        colour=mix(colour,vec3(.70,.76,.85),trim*.8);
+        colour=mix(steel,colour*.42,display);
+        float trim=(1.-smoothstep(.001,.004+fwidth(uv.y),abs(uv.y-.42)));
+        colour=mix(colour,vec3(.30,.33,.37),trim*.5);
         colour=mix(colour,vec3(.020,.021,.025),rib*.95);
         gl_FragColor=vec4(colour,1.);
         #include <colorspace_fragment>
@@ -109,15 +109,15 @@ export function createGarageSet({ low = false } = {}) {
   const screen = new THREE.Mesh(new THREE.CylinderGeometry(radius, radius, height, low ? 64 : 112, 1, true, start, length), material);
   screen.name = 'garage-led-mural'; screen.position.y = bottom + height / 2;
   mural.add(screen);
-  const surround = new THREE.MeshBasicMaterial({color: '#18131f', side: THREE.BackSide});
+  const surround = new THREE.MeshBasicMaterial({color: '#17181c', side: THREE.BackSide});
   const edge = new THREE.Mesh(new THREE.CylinderGeometry(radius + .015, radius + .015, height + .20, low ? 64 : 112, 1, true, start, length), surround);
   edge.name = 'garage-mural-surround'; edge.position.y = screen.position.y; mural.add(edge);
   // A shallow floor wash belongs to the display set; it is not a purple light
   // or environment map, so the vehicle's approved paint stays neutral.
-  const wash = new THREE.MeshBasicMaterial({color: '#542980', transparent: true, opacity: .14, depthWrite: false, side: THREE.DoubleSide});
+  const wash = new THREE.MeshBasicMaterial({color: '#542980', transparent: true, opacity: .045, depthWrite: false, side: THREE.DoubleSide});
   // RingGeometry angles run along X, unlike CylinderGeometry's Z-based angles.
   ring('garage-mural-floor-wash', radius - 1.1, radius, wash, .010, start - Math.PI / 2, length, mural);
-  const coveMaterial = new THREE.MeshStandardMaterial({color:'#323139',roughness:.36,metalness:.63,side:THREE.BackSide});
+  const coveMaterial = new THREE.MeshStandardMaterial({color:'#303238',roughness:.48,metalness:.42,side:THREE.BackSide});
   const cove = (name, points) => {
     const geometry = new THREE.LatheGeometry(points.map(([r,y])=>new THREE.Vector2(r,y)),low?64:112);
     const mesh=new THREE.Mesh(geometry,coveMaterial);mesh.name=name;mural.add(mesh);return mesh;
@@ -139,26 +139,81 @@ export function createGarageSet({ low = false } = {}) {
   return set;
 }
 
+// One transparent quad provides stable local occlusion even on the adaptive
+// mobile tier without shadow maps. Four measured tyre patches and one broad
+// underbody falloff share the draw; no render target or texture is allocated.
+export function createGarageContactShadow() {
+  const uniforms = {
+    contacts: {value: Array.from({length: 4}, () => new THREE.Vector4())},
+    bodyHalfSize: {value: new THREE.Vector2(1, 2)},
+    planeSize: {value: new THREE.Vector2(3, 6)},
+  };
+  const material = new THREE.ShaderMaterial({
+    name: 'garage-contact-occlusion', transparent: true, depthWrite: false, toneMapped: false,
+    uniforms,
+    vertexShader: `varying vec2 groundPosition; uniform vec2 planeSize;
+      void main(){groundPosition=vec2(uv.x-.5,.5-uv.y)*planeSize;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
+    fragmentShader: `varying vec2 groundPosition; uniform vec4 contacts[4]; uniform vec2 bodyHalfSize;
+      void main(){
+        vec2 body=groundPosition/bodyHalfSize;
+        float opacity=.23*exp(-1.8*dot(body,body));
+        for(int i=0;i<4;i++){
+          vec2 footprintUV=(groundPosition-contacts[i].xy)/contacts[i].zw;
+          float radius=dot(footprintUV,footprintUV);
+          opacity=max(opacity,.46*exp(-1.8*radius)+.24*exp(-10.*radius));
+        }
+        gl_FragColor=vec4(vec3(.012,.014,.017),opacity);
+        #include <colorspace_fragment>
+      }`,
+  });
+  const root = new THREE.Group(); root.name = 'garage-contact-shadow'; root.visible = false;
+  const plane = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), material);
+  plane.rotation.x = -Math.PI / 2; plane.position.y = .0368; root.add(plane);
+  let fittedGroup = null;
+  return {
+    group: root,
+    fit(carGroup) {
+      if (carGroup === fittedGroup) return root.visible;
+      fittedGroup = carGroup;
+      const patches = carGroup?.userData.tyreContacts, dimensions = carGroup?.userData.dimensions;
+      if (patches?.length !== 4 || !Number.isFinite(dimensions?.width) || dimensions.width <= 0 || !Number.isFinite(dimensions?.length) || dimensions.length <= 0 ||
+        !patches.every(patch => ['x','z','width','radius'].every(key => Number.isFinite(patch[key])) && patch.width > 0 && patch.radius > 0)) {
+        root.visible = false; return false;
+      }
+      uniforms.planeSize.value.set(dimensions.width + 1.2, dimensions.length + 1.2);
+      uniforms.bodyHalfSize.value.set(dimensions.width * .42, dimensions.length * .39);
+      patches.forEach((patch, i) => uniforms.contacts.value[i].set(patch.x, patch.z, Math.max(.12, patch.width * .72), patch.radius * .66));
+      plane.scale.set(uniforms.planeSize.value.x, uniforms.planeSize.value.y, 1);
+      root.visible = true; return true;
+    },
+  };
+}
+
 // A separate inspection studio: neutral paint reflections and uncluttered silhouettes.
 export function createGarage(renderer, { low = false } = {}) {
   const scene = new THREE.Scene();
   scene.background = new THREE.Color('#110017');
   scene.fog = new THREE.Fog('#110017', 16, 48);
   const environment=createStudioEnvironment(renderer,scene,{low});
-  scene.environmentIntensity=.78;
+  scene.environmentIntensity=.95;
   scene.environmentRotation.y=.6;
   const anchor = createGarageSet({ low }); scene.add(anchor);
+  const contact = createGarageContactShadow(); anchor.add(contact.group);
   const gallery = anchor.getObjectByName('garage-led-gallery');
-  scene.add(new THREE.HemisphereLight('#e3efff', '#404047', .55));
-  const key = new THREE.DirectionalLight('#fff4e4', 1.5);
+  scene.add(new THREE.HemisphereLight('#eef2f7', '#383b40', .42));
+  const key = new THREE.DirectionalLight('#fff9f1', 1.65);
   key.position.set(-4, 7, 4); key.castShadow = true;
   key.shadow.mapSize.set(low ? 1024 : 2048, low ? 1024 : 2048);
   Object.assign(key.shadow.camera, { left: -5, right: 5, top: 5, bottom: -5, near: .1, far: 24 });
-  key.shadow.bias = -.0002; key.shadow.normalBias = .018; key.shadow.radius = 3;
+  key.shadow.bias = -.00015; key.shadow.normalBias = .012; key.shadow.radius = 3;
   anchor.add(key, key.target);
-  const rim = new THREE.DirectionalLight('#c3e3ff', .9);
+  const rim = new THREE.DirectionalLight('#e1e8f1', .65);
   rim.position.set(4, 3, -5); anchor.add(rim, rim.target);
-  const fill = new THREE.DirectionalLight('#ffffff', .4);
+  const fill = new THREE.DirectionalLight('#ffffff', .32);
   fill.position.set(0, 2, 6); anchor.add(fill, fill.target);
-  return { scene, rebuildEnvironment:environment.rebuild,disposeEnvironment:environment.dispose, position(car) { anchor.position.set(car.x, 0, car.z); gallery.rotation.y = Number.isFinite(car.yaw) ? car.yaw : 0; } };
+  return { scene, rebuildEnvironment:environment.rebuild,disposeEnvironment:environment.dispose, position(car, carGroup) {
+    anchor.position.set(car.x, 0, car.z);
+    gallery.rotation.y = Number.isFinite(car.yaw) ? car.yaw : 0;
+    contact.group.rotation.y = gallery.rotation.y; contact.fit(carGroup);
+  } };
 }

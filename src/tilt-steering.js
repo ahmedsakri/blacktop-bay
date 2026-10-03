@@ -42,7 +42,7 @@ export function createTiltSteering({now = () => performance.now(), staleAfter = 
   };
 }
 
-// Call directly from the Enable tilt click. iOS requires transient activation;
+// Call directly from the Enable Gyroscope click. iOS requires transient activation;
 // availability of the interface alone does not prove that a sensor is reporting.
 export async function requestTiltPermission(environment = globalThis) {
   if (environment.isSecureContext === false) return {ok: false, reason: 'secure'};

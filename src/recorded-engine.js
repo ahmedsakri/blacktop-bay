@@ -28,9 +28,9 @@ export function recordedEngineFrame(bank, motion = {}, mix = [1, 1, 1]) {
   const presence = bank.movingOnly ? rolling * rolling * (3 - 2 * rolling) : 1;
   const pitch = clamp(mix[0], .88, 1.1), tone = clamp(mix[1], .8, 1.1), level = clamp(mix[2], 0, 1);
   return { gain: (electric ? .09 + .22 * load : .13 + .29 * load) * torque * clamp(motion.focus ?? 1, .75, 1) * level * presence,
-    cutoff: (electric ? 1600 + 2200 * rev + 700 * load : 900 + 2300 * rev + 1400 * load) * tone,
+    cutoff: (electric ? 1200 + 1400 * rev + 400 * load : 700 + 1400 * rev + 750 * load) * tone,
     exhaust: electric ? 0 : .4 + .6 * load, presence,
-    layers: bank.layers.map((layer, i) => ({ gain: weights[i], rate: clamp((1 + (rev - layer.rev) * .42) * pitch, .82, 1.3) })) };
+    layers: bank.layers.map((layer, i) => ({ gain: weights[i], rate: clamp((1 + (rev - layer.rev) * .24) * pitch, .90, 1.20) })) };
 }
 
 async function boundedBytes(response, limit) {
@@ -151,10 +151,10 @@ export function createRecordedEngine({ context, destination, fetchImpl = globalT
     blend += (1 - blend) * (1 - Math.exp(-clamp(dt, 0, .1) / .18));
     target(output.gain, frame.gain * blend);
     target(filter.frequency, frame.cutoff, .11);
-    target(exhaust.gain, frame.exhaust * 2.5, .12);
+    target(exhaust.gain, frame.exhaust * 1.25, .16);
     for (let i = 0; i < voices.length; i++) {
-      target(voices[i].gain.gain, frame.layers[i].gain, .08);
-      target(voices[i].source.playbackRate, frame.layers[i].rate, .07);
+      target(voices[i].gain.gain, frame.layers[i].gain, .11);
+      target(voices[i].source.playbackRate, frame.layers[i].rate, .12);
     }
     return blend * frame.presence;
   }

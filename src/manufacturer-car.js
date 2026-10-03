@@ -10,6 +10,7 @@ import { configureManufacturerPaint } from './manufacturer-paint.js';
 import { createChassisMotion } from './chassis-motion.js';
 import { createCarDamage } from './car-damage.js';
 import {applyFlagshipFinish} from './manufacturer-finish.js';
+import {applyManufacturerTyreFinish} from './manufacturer-tyre-finish.js';
 import {prepareManufacturerInstances} from './gpu-preparation.js';
 export {prepareManufacturerInstances} from './gpu-preparation.js';
 
@@ -227,6 +228,7 @@ export function createManufacturerCar({assetId, vehicle, color, low = false, gho
       if (materialCopies.has(source)) return materialCopies.get(source);
       const material = cloneMaterial(source, paintable && paintNames.has(source.name), ghost, color,distant);
       if(!ghost&&!distant)applyFlagshipFinish(material,assetId);
+      if(!ghost&&!distant)applyManufacturerTyreFinish(material,assetId);
       configureManufacturerPaint(material, assetId, {customColor: color !== undefined && color !== null});
       materialCopies.set(source, material);
       if (!ghost && material.emissive && (brakeNames.has(source.name) || source.userData.brakeLight === true)) {
@@ -274,6 +276,7 @@ export function createManufacturerCar({assetId, vehicle, color, low = false, gho
     kind: 'manufacturer-car', vehicle: typeof vehicle === 'object' ? vehicle.id : vehicle || assetId,
     assetId, brand: manifest.brand, model: manifest.model, paintable,
     dimensions: {...template.dimensions}, source: manifest.source, author: manifest.author, license: manifest.license,
+    tyreContacts: wheels.map(wheel => ({x:wheel.pivot.position.x, z:wheel.pivot.position.z, width:wheel.width, radius:wheel.radius})),
     effects: {
       rearAxle: rear.reduce((sum, wheel) => sum + wheel.pivot.position.z, 0) / rear.length,
       tyreOffset: rear.reduce((sum, wheel) => sum + Math.abs(wheel.pivot.position.x), 0) / rear.length,

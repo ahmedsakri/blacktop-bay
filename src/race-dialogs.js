@@ -51,7 +51,7 @@ export function howToPlayPanel({ touch = false, controls } = {}) {
   };
   const keyRow = action => activeKeys(action).map(keyMarkup).join('<span>or</span>');
   const cards = [
-    { title: 'Find your line', icon: icons.steer, cue: touch ? 'HOLD / DRAG TO STEER' : defaultSteering ? 'ARROWS / A + D' : `${keyLabel(bindings.left)} / ${keyLabel(bindings.right)}`.toUpperCase(), text: touch ? 'Hold either side of the thumbpad or drag on the road. Lift to straighten. Optional tilt controls are below and in Pause.' : `Steer left with ${escape(keyText('left'))} and right with ${escape(keyText('right'))}. You can also drag on the road.` },
+    { title: 'Find your line', icon: icons.steer, cue: touch ? 'HOLD / DRAG TO STEER' : defaultSteering ? 'ARROWS / A + D' : `${keyLabel(bindings.left)} / ${keyLabel(bindings.right)}`.toUpperCase(), text: touch ? 'Hold either side of the thumbpad or drag on the road. Lift to straighten. Optional Gyroscope controls are below and in Pause.' : `Steer left with ${escape(keyText('left'))} and right with ${escape(keyText('right'))}. You can also drag on the road.` },
     { title: 'Let it slide', icon: icons.drift, cue: 'TURN AT SPEED', text: 'Turn sharply at speed to drift. Ease back into line to bank your points.' },
     { title: 'Make your move', icon: icons.nitro, cue: escape(boostCue), text: boostText },
   ];

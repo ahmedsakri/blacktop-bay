@@ -2,6 +2,7 @@ import { getTrack } from './track.js';
 import { circuitMapMarkup } from './collection-ui.js';
 import { circuitPath } from './circuit-routes.js';
 import { icon } from './icons.js';
+import { circuitPreviewImage } from './lobby-presentation.js';
 
 const escape = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -22,7 +23,7 @@ export function circuitCharacter(track) {
 
 export function circuitPreviewMarkup(track) {
   const route = getTrack(track.id);
-  return `<div class="route-hero-art" aria-hidden="true" style="--venue-image:url('/assets/environments/${circuitScene(track)}.webp')"><span class="route-horizon"></span></div>
+  return `<div class="route-hero-art" aria-hidden="true" style="--venue-image:url('${escape(circuitPreviewImage(track) || `/assets/environments/${circuitScene(track)}.webp`)}')"><span class="route-horizon"></span></div>
     <div class="route-hero-copy"><div class="route-hero-tags"><span>${escape(circuitSeriesLabel(track))}</span><span>${escape(track.country || track.region)}</span></div>
       <h2 id="selected-circuit-name">${escape(track.name)}</h2><p class="route-hero-description">${escape(track.description)}</p>
       <dl class="route-hero-stats"><div><dt>LAP DISTANCE</dt><dd>${(route.length / 1000).toFixed(2)} <small>KM</small></dd></div><div><dt>ROAD WIDTH</dt><dd>${route.width} <small>M</small></dd></div><div><dt>RACE LENGTH</dt><dd>03 <small>LAPS</small></dd></div></dl>
@@ -33,7 +34,7 @@ export function circuitPreviewMarkup(track) {
 export function circuitRouteCards(tracks, selected) {
   return tracks.map((track, index) => {
     const current = track.id === selected;
-    return `<article class="route-card${current ? ' is-selected' : ''}" style="--venue-image:url('/assets/environments/${circuitScene(track)}.webp')" data-route-card="${escape(track.id)}">
+    return `<article class="route-card${current ? ' is-selected' : ''}" style="--venue-image:url('${escape(circuitPreviewImage(track) || `/assets/environments/${circuitScene(track)}.webp`)}')" data-route-card="${escape(track.id)}">
       <button type="button" class="route-card-preview" data-circuit="${escape(track.id)}" aria-label="Preview ${escape(track.name)}" aria-pressed="${current}">
         <span class="route-card-number" aria-hidden="true">${String(index + 1).padStart(2, '0')}</span><span class="route-card-series">${escape(circuitSeriesLabel(track))}</span>
         <span class="route-card-map" aria-hidden="true">${circuitMapMarkup(getTrack(track.id))}</span>

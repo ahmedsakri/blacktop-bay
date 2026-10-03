@@ -9,13 +9,13 @@ import { broadleafCrownGeometry, coniferBoughGeometry } from './vegetation-geome
 import { createMountainVenue, DESTINATION_PROFILES } from './mountain-venue.js';
 import { ORIGINAL_VENUE_PROFILES, originalLandmarkLayout, createOriginalLandmarks } from './original-venues.js';
 import {createSpatialInstances,createDistanceDetail} from './spatial-detail.js';
-import {applyShowcaseSurface,createShowcaseVenue,showcaseLayout} from './showcase-venues.js';
+import {applyShowcaseSurface,createShowcaseVenue,showcaseLayout,showcaseApproachLayout} from './showcase-venues.js';
 import { createCinematicBackdrop, CINEMATIC_BACKDROP_GLSL } from './cinematic-backdrop.js';
 import {venueLighting} from './showcase-lighting.js';
 import {createCoastalGrounding} from './coastal-foundations.js';
 import {createEnvironmentResource} from './environment-resource.js';
 import {createTrackSurfaceLibrary,roadSurfaceMaterial,concreteSurfaceMaterial,barrierProfileGeometry,architecturalFacadeMaterial} from './track-surface-materials.js';
-import {createArchitecturalDetails,createTerrainRelief,createRoadEdgeDetails,streetscapeLayout,createWaterfrontGrounding} from './track-world-detail.js';
+import {createArchitecturalDetails,createTerrainRelief,createRoadEdgeDetails,streetscapeLayout,createWaterfrontGrounding,restrainedPavementMaterial,createAccessRailGeometry} from './track-world-detail.js';
 
 const TAU = Math.PI * 2;
 const ORIGINAL_VENUES = new Set(['harbor', 'dockyard', 'coast', 'summit', 'grandprix']);
@@ -243,6 +243,7 @@ export function createWorld(renderer, { low = false, reducedMotion = false } = {
  const sidewalk=concreteSurfaceMaterial(surfaces.maps,{color:venue.environment==='desert'?'#b4a384':venue.environment==='parkland'?'#929887':'#a1aaab'});
  for (const side of [-1, 1]) { scene.add(ribbon(side * (TRACK.width / 2 + 3.1), 4.6, -.02, sidewalk)); scene.add(ribbon(side * (TRACK.width / 2 - .5), .10, .049, white)); scene.add(ribbon(side * (TRACK.width / 2 + .62), .038, 1.06, cyan)); }
  const barriers = [], rails = [], dashes = [], posts = [], bulbs = [], arms = [], chevrons = [], leftChevrons = [], straightMarkers = [], joints = [], railingUprights = [];
+ const accessGaps=showcaseLayout(TRACK,{stands:grandstandLayout()}).filter(site=>showcaseApproachLayout(TRACK,site)).map(site=>({side:site.side,s:site.s,halfLength:1.4}));
  const panelTexture = canvasTexture(256, 128, c => { c.fillStyle = '#091b25'; c.fillRect(0, 0, 256, 128); c.strokeStyle = '#35e1f2'; c.lineWidth = 17; for (let x = 60; x < 200; x += 70) { c.beginPath(); c.moveTo(x, 30); c.lineTo(x + 34, 64); c.lineTo(x, 98); c.stroke(); } });
  for (let s = 0; s < TRACK.length; s += 5) {
   const v = sampleTrack(s), angle = Math.atan2(v.tx, v.tz), step = Math.floor(s / 5),gradePose={rx:-Math.atan(v.grade||0),order:'YXZ'};
@@ -251,7 +252,7 @@ export function createWorld(renderer, { low = false, reducedMotion = false } = {
    barriers.push({ x, z, y: v.y+.49, sx: .66, sy: .98, sz: 4.97, ry: angle,...gradePose, color: step % 7 === 0 ? '#b0b6b1' : '#d3d3c9' });
    rails.push({ x, z, y: v.y+1.085, sx: .14, sy: .09, sz: 5.05, ry: angle,...gradePose });
    joints.push({ x, z, y: v.y+.43, sx: .68, sy: .8, sz: .028, ry: angle,...gradePose });
-   if (step % 2 === 0) { const edge = side * (TRACK.width / 2 + 5.1); railingUprights.push({ x: v.x + v.nx * edge, z: v.z + v.nz * edge, y: v.y+.46, sx: .07, sy: .96, sz: .07 }); }
+   if (step % 2 === 0&&!accessGaps.some(gap=>gap.side===side&&Math.min(Math.abs(s-gap.s),TRACK.length-Math.abs(s-gap.s))<gap.halfLength+.08)) { const edge = side * (TRACK.width / 2 + 5.1); railingUprights.push({ x: v.x + v.nx * edge, z: v.z + v.nz * edge, y: v.y+.46, sx: .07, sy: .96, sz: .07 }); }
   }
   if (step % 2 === 0) dashes.push({ x: v.x, z: v.z, y: v.y+.052, sx: .085, sy: .004, sz: 2.3, ry: angle,...gradePose });
   if (step % 7 === 0) { const o = TRACK.width / 2 + 2.4, x = v.x + v.nx * o, z = v.z + v.nz * o; posts.push({ x, y: v.y+3.75, z, sx: .105, sy: 7.5, sz: .105 }); segment(arms, [x, v.y+7.3, z], [x - v.nx * 1.65, v.y+7.65, z - v.nz * 1.65], .08); bulbs.push({ x: x - v.nx * 1.65, y: v.y+7.59, z: z - v.nz * 1.65, sx: .75, sy: .065, sz: .32, ry: angle }); }
@@ -269,7 +270,11 @@ export function createWorld(renderer, { low = false, reducedMotion = false } = {
   }
  }
  instances(scene,barrierProfileGeometry(),concreteSurfaceMaterial(surfaces.maps,{color:'#b8bdba'}),barriers); instances(scene, box, metal, rails); instances(scene, box, new THREE.MeshStandardMaterial({ color: '#24313d', roughness: .9 }), joints); instances(scene, box, white, dashes); instances(scene, box, metal, posts); instances(scene, new THREE.CylinderGeometry(1, 1, 1, 6), metal, arms); instances(scene, box, warm, bulbs); instances(scene, box, metal, railingUprights);
- for (const side of [-1, 1]) { scene.add(ribbon(side * (TRACK.width / 2 + 5.1), .055, .93, metal)); scene.add(ribbon(side * (TRACK.width / 2 + 5.1), .035, .49, metal)); }
+ scene.userData.showcaseAccessGaps=accessGaps;
+ for(const side of [-1,1])for(const [width,height]of [[.055,.93],[.035,.49]]){
+  const gaps=accessGaps.filter(gap=>gap.side===side),offset=side*(TRACK.width/2+5.1);
+  scene.add(gaps.length?new THREE.Mesh(createAccessRailGeometry(TRACK,offset,width,height,gaps),metal):ribbon(offset,width,height,metal));
+ }
  const leftPanelTexture = panelTexture.clone(); leftPanelTexture.wrapS = THREE.RepeatWrapping; leftPanelTexture.repeat.x = -1; leftPanelTexture.needsUpdate = true;
  instances(scene, new THREE.PlaneGeometry(1.75, .65), new THREE.MeshBasicMaterial({ map: panelTexture, side: THREE.FrontSide, toneMapped: false }), chevrons);
  instances(scene, new THREE.PlaneGeometry(1.75, .65), new THREE.MeshBasicMaterial({ map: leftPanelTexture, side: THREE.FrontSide, toneMapped: false }), leftChevrons);
@@ -417,11 +422,11 @@ export function createWorld(renderer, { low = false, reducedMotion = false } = {
  instances(scene, box, architecturalFacadeMaterial({night:venue.night}), towers); instances(scene, box, new THREE.MeshStandardMaterial({ color: '#202e3b', roughness: .72 }), podiums); instances(scene, box, metal, roofEquipment); instances(scene, box, new THREE.MeshBasicMaterial({ color: '#527f94' }), caps); instances(scene, box, warm, shoreLights);
  frontageBuildings.push(...towers.filter(b=>projectOnTrack(b.x,b.z).distance<180&&b.y-b.sy/2<.5).slice(0,low?16:28));
  terrainOccupied.push(...towers.map(b=>({x:b.x,z:b.z,radius:Math.hypot(b.sx,b.sz)/2+4})));
- const land = new THREE.Mesh(terrainUV(new THREE.RingGeometry(venue.original?216:venue.radius+30,venue.groundRadius,100),venue.original?0:venue.centerX,venue.original?0:venue.centerZ,venue.environment==='urban'?3:90), new THREE.MeshStandardMaterial({ color:venue.environment==='urban'?'#929a9b':'#c6c9b5',map:venue.environment==='urban'?surfaces.maps.concreteColor:surfaces.maps.terrainColor, roughness: 1 })); land.rotation.x = -Math.PI / 2; land.position.set(venue.original?0:venue.centerX,-.28,venue.original?0:venue.centerZ); scene.add(land);
+ const land = new THREE.Mesh(terrainUV(new THREE.RingGeometry(venue.original?216:venue.radius+30,venue.groundRadius,100),venue.original?0:venue.centerX,venue.original?0:venue.centerZ,venue.environment==='urban'?3:90), TRACK.id==='singapore-afterdark'?restrainedPavementMaterial(surfaces.maps.concreteColor):new THREE.MeshStandardMaterial({ color:venue.environment==='urban'?'#929a9b':'#c6c9b5',map:venue.environment==='urban'?surfaces.maps.concreteColor:surfaces.maps.terrainColor, roughness: 1 })); land.rotation.x = -Math.PI / 2; land.position.set(venue.original?0:venue.centerX,-.28,venue.original?0:venue.centerZ); scene.add(land);
  if(!venue.original&&!venue.water){
   // Inland venues have continuous terrain under the whole route: no hidden
   // waterfront infield or yachts appearing beside a desert/permanent circuit.
-  const terrain=new THREE.Mesh(terrainUV(new THREE.CircleGeometry(venue.groundRadius,96),venue.centerX,venue.centerZ,venue.environment==='urban'?3:90),new THREE.MeshStandardMaterial({color:venue.environment==='urban'?'#929a9b':'#c6c9b5',map:venue.environment==='urban'?surfaces.maps.concreteColor:surfaces.maps.terrainColor,roughness:1}));
+  const terrain=new THREE.Mesh(terrainUV(new THREE.CircleGeometry(venue.groundRadius,96),venue.centerX,venue.centerZ,venue.environment==='urban'?3:90),TRACK.id==='singapore-afterdark'?restrainedPavementMaterial(surfaces.maps.concreteColor):new THREE.MeshStandardMaterial({color:venue.environment==='urban'?'#929a9b':'#c6c9b5',map:venue.environment==='urban'?surfaces.maps.concreteColor:surfaces.maps.terrainColor,roughness:1}));
   terrain.name='venue-terrain';terrain.rotation.x=-Math.PI/2;terrain.position.set(venue.centerX,-.16,venue.centerZ);terrain.receiveShadow=true;scene.add(terrain);
  }
  if(!venue.original&&(!venue.water||TRACK.scenery==='breakwater'||venue.vegetation==='street-trees')){

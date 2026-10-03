@@ -211,3 +211,30 @@ export function createRoadEdgeDetails(scene,track,{low=false}={}) {
   if(parts.length){const geometry=mergeGeometries(parts);parts.forEach(g=>g.dispose());const mesh=new THREE.Mesh(geometry,new THREE.MeshStandardMaterial({vertexColors:true,metalness:.5,roughness:.6}));mesh.receiveShadow=true;group.add(mesh);}
   group.userData={sites,drawCalls:group.children.length,triangles:sites.length*6*12,animated:false};return group;
 }
+
+// Broad Singapore plazas keep subtle real surface variation without repeating
+// a high-contrast weathered wall across the entire city. No additional maps.
+export function restrainedPavementMaterial(map){
+ const material=new THREE.MeshStandardMaterial({color:'#657579',map,roughness:1});
+ material.onBeforeCompile=shader=>{shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>','#include <map_fragment>\ndiffuseColor.rgb=mix(diffuse,diffuseColor.rgb,0.15);');};
+ material.customProgramCacheKey=()=> 'singapore-muted-pavement-v1';
+ material.userData.surfaceVariation=.15;return material;
+}
+
+// Exact openings in the decorative outer rails allow the supported landmark
+// access walks to meet the sidewalk. Driving barriers remain continuous.
+export function createAccessRailGeometry(track,offset,width,height,gaps){
+ const intervals=[];
+ for(const {s,halfLength=1.4} of gaps){const a=s-halfLength,b=s+halfLength;
+  if(a<0){intervals.push([0,b],[track.length+a,track.length]);}
+  else if(b>track.length){intervals.push([a,track.length],[0,b-track.length]);}
+  else intervals.push([a,b]);
+ }
+ const distances=[...new Set([0,track.length,...track.samples.map(p=>p.s),...intervals.flat()])].sort((a,b)=>a-b),positions=[],uv=[],indices=[];
+ for(const [i,distance]of distances.entries()){
+  const p=sampleTrack(distance,track);
+  for(const w of [-width/2,width/2]){positions.push(p.x+p.nx*(offset+w),p.y+height,p.z+p.nz*(offset+w));uv.push((w+width/2)/3,distance/3);}
+  if(i+1<distances.length){const mid=(distance+distances[i+1])/2;if(!intervals.some(([a,b])=>mid>a&&mid<b)){const j=i*2;indices.push(j,j+2,j+1,j+1,j+2,j+3);}}
+ }
+ const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));geometry.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));geometry.setIndex(indices);geometry.computeVertexNormals();geometry.userData.accessOpenings=intervals;return geometry;
+}

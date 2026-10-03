@@ -80,7 +80,7 @@ test('controls explain the usable thumbpad and optional tilt separately from key
   assert.match(phone, /HOLD \/ DRAG TO STEER/);
   assert.match(phone, /Hold either side of the thumbpad/);
   assert.match(phone, /Lift to straighten/);
-  assert.match(phone, /Optional tilt controls/);
+  assert.match(phone, /Optional Gyroscope controls/);
   assert.match(desktop, /ARROWS \/ A \+ D/);
   assert.match(desktop, /HOLD SHIFT/);
   for (const html of [phone, desktop]) {

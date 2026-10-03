@@ -1,0 +1,3397 @@
+{
+  "version": 1,
+  "source": "Camber Reign actual createWorld WebGL renderer",
+  "fixture": "reports/track-world-review.html",
+  "captureMethod": "CUA-controlled local browser canvas WebP export",
+  "license": "Original project-generated scene imagery; licensed source surfaces retain public/assets/environments/surfaces/provenance.json",
+  "dimensions": [
+    960,
+    540
+  ],
+  "quality": 0.78,
+  "totalBytes": 1776194,
+  "entries": [
+    {
+      "id": "harbor",
+      "path": "/assets/circuits/previews/harbor.webp",
+      "bytes": 43538,
+      "sha256": "246c0f8b5dffda52576164da0833578c05e2c765384993fd639c95b5b2815af3",
+      "sector": 0.13,
+      "camera": {
+        "position": [
+          -6.718102161111423,
+          28,
+          -173.65758305925078
+        ],
+        "quaternion": [
+          0.1104788655637533,
+          0.876238200841415,
+          0.24033949722838313,
+          -0.4027877377998916
+        ],
+        "fov": 52,
+        "near": 0.1,
+        "far": 1900
+      },
+      "width": 960,
+      "height": 540,
+      "draws": 162,
+      "triangles": 768150,
+      "surfaces": {
+        "loaded": 6,
+        "failed": 0,
+        "files": 6,
+        "estimatedBytes": 20971520
+      },
+      "textureProof": [
+        {
+          "name": "asphaltColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 5,
+          "gpuRedMax": 65,
+          "gpuRedMean": 28.66046142578125,
+          "gpuRedStdDev": 4.9838003373641735
+        },
+        {
+          "name": "asphaltNormal",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 107,
+          "gpuRedMax": 151,
+          "gpuRedMean": 126.8389892578125,
+          "gpuRedStdDev": 2.5962578903274864
+        },
+        {
+          "name": "asphaltRoughness",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 154,
+          "gpuRedMax": 237,
+          "gpuRedMean": 196.30560302734375,
+          "gpuRedStdDev": 6.698775020117266
+        },
+        {
+          "name": "concreteColor",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 25,
+          "gpuRedMax": 212,
+          "gpuRedMean": 161.9420166015625,
+          "gpuRedStdDev": 39.31971946870146
+        },
+        {
+          "name": "concreteNormal",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 75,
+          "gpuRedMax": 178,
+          "gpuRedMean": 127.71759033203125,
+          "gpuRedStdDev": 7.8612241956107916
+        },
+        {
+          "name": "terrainColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 11,
+          "gpuRedMax": 81,
+          "gpuRedMean": 21.03521728515625,
+          "gpuRedStdDev": 5.015361410193434
+        }
+      ]
+    },
+    {
+      "id": "dockyard",
+      "path": "/assets/circuits/previews/dockyard.webp",
+      "bytes": 49454,
+      "sha256": "d983732e2d88713de3f6c08bd74e52851e838ba6c4685ef25ab91761561535c5",
+      "sector": 0.13,
+      "camera": {
+        "position": [
+          22.226957605718443,
+          28,
+          -170.91786626835443
+        ],
+        "quaternion": [
+          0.10753397578312507,
+          0.8810943412794867,
+          0.2416714664922612,
+          -0.3920511549543267
+        ],
+        "fov": 52,
+        "near": 0.1,
+        "far": 1900
+      },
+      "width": 960,
+      "height": 540,
+      "draws": 172,
+      "triangles": 443546,
+      "surfaces": {
+        "loaded": 6,
+        "failed": 0,
+        "files": 6,
+        "estimatedBytes": 20971520
+      },
+      "textureProof": [
+        {
+          "name": "asphaltColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 5,
+          "gpuRedMax": 65,
+          "gpuRedMean": 28.66046142578125,
+          "gpuRedStdDev": 4.9838003373641735
+        },
+        {
+          "name": "asphaltNormal",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 107,
+          "gpuRedMax": 151,
+          "gpuRedMean": 126.8389892578125,
+          "gpuRedStdDev": 2.5962578903274864
+        },
+        {
+          "name": "asphaltRoughness",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 154,
+          "gpuRedMax": 237,
+          "gpuRedMean": 196.30560302734375,
+          "gpuRedStdDev": 6.698775020117266
+        },
+        {
+          "name": "concreteColor",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 25,
+          "gpuRedMax": 212,
+          "gpuRedMean": 161.9420166015625,
+          "gpuRedStdDev": 39.31971946870146
+        },
+        {
+          "name": "concreteNormal",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 75,
+          "gpuRedMax": 178,
+          "gpuRedMean": 127.71759033203125,
+          "gpuRedStdDev": 7.8612241956107916
+        },
+        {
+          "name": "terrainColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 11,
+          "gpuRedMax": 81,
+          "gpuRedMean": 21.03521728515625,
+          "gpuRedStdDev": 5.015361410193434
+        }
+      ]
+    },
+    {
+      "id": "coast",
+      "path": "/assets/circuits/previews/coast.webp",
+      "bytes": 44526,
+      "sha256": "845d78e4c5e44b6de6c034a829348c9d27996f045c647b33e43fec5dad6c14a4",
+      "sector": 0.13,
+      "camera": {
+        "position": [
+          -52.83299308484028,
+          28,
+          -185.56218312620095
+        ],
+        "quaternion": [
+          0.125611355912182,
+          0.8487081584556406,
+          0.23278840377078286,
+          -0.4579583038952229
+        ],
+        "fov": 52,
+        "near": 0.1,
+        "far": 1900
+      },
+      "width": 960,
+      "height": 540,
+      "draws": 153,
+      "triangles": 930856,
+      "surfaces": {
+        "loaded": 6,
+        "failed": 0,
+        "files": 6,
+        "estimatedBytes": 20971520
+      },
+      "textureProof": [
+        {
+          "name": "asphaltColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 5,
+          "gpuRedMax": 65,
+          "gpuRedMean": 28.66046142578125,
+          "gpuRedStdDev": 4.9838003373641735
+        },
+        {
+          "name": "asphaltNormal",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 107,
+          "gpuRedMax": 151,
+          "gpuRedMean": 126.8389892578125,
+          "gpuRedStdDev": 2.5962578903274864
+        },
+        {
+          "name": "asphaltRoughness",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 154,
+          "gpuRedMax": 237,
+          "gpuRedMean": 196.30560302734375,
+          "gpuRedStdDev": 6.698775020117266
+        },
+        {
+          "name": "concreteColor",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 25,
+          "gpuRedMax": 212,
+          "gpuRedMean": 161.9420166015625,
+          "gpuRedStdDev": 39.31971946870146
+        },
+        {
+          "name": "concreteNormal",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 75,
+          "gpuRedMax": 178,
+          "gpuRedMean": 127.71759033203125,
+          "gpuRedStdDev": 7.8612241956107916
+        },
+        {
+          "name": "terrainColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 11,
+          "gpuRedMax": 81,
+          "gpuRedMean": 21.03521728515625,
+          "gpuRedStdDev": 5.015361410193434
+        }
+      ]
+    },
+    {
+      "id": "summit",
+      "path": "/assets/circuits/previews/summit.webp",
+      "bytes": 41912,
+      "sha256": "b9cbc214d1251357257b7ca5833b05a198e816a1b66d2b234fe8ca23c908e9d9",
+      "sector": 0.13,
+      "camera": {
+        "position": [
+          75.54961339784506,
+          28,
+          -187.1385171402153
+        ],
+        "quaternion": [
+          0.08990576382160038,
+          0.9069677886262801,
+          0.24876817982993835,
+          -0.3277815991328819
+        ],
+        "fov": 52,
+        "near": 0.1,
+        "far": 1900
+      },
+      "width": 960,
+      "height": 540,
+      "draws": 170,
+      "triangles": 273354,
+      "surfaces": {
+        "loaded": 6,
+        "failed": 0,
+        "files": 6,
+        "estimatedBytes": 20971520
+      },
+      "textureProof": [
+        {
+          "name": "asphaltColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 5,
+          "gpuRedMax": 65,
+          "gpuRedMean": 28.66046142578125,
+          "gpuRedStdDev": 4.9838003373641735
+        },
+        {
+          "name": "asphaltNormal",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 107,
+          "gpuRedMax": 151,
+          "gpuRedMean": 126.8389892578125,
+          "gpuRedStdDev": 2.5962578903274864
+        },
+        {
+          "name": "asphaltRoughness",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 154,
+          "gpuRedMax": 237,
+          "gpuRedMean": 196.30560302734375,
+          "gpuRedStdDev": 6.698775020117266
+        },
+        {
+          "name": "concreteColor",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 25,
+          "gpuRedMax": 212,
+          "gpuRedMean": 161.9420166015625,
+          "gpuRedStdDev": 39.31971946870146
+        },
+        {
+          "name": "concreteNormal",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 75,
+          "gpuRedMax": 178,
+          "gpuRedMean": 127.71759033203125,
+          "gpuRedStdDev": 7.8612241956107916
+        },
+        {
+          "name": "terrainColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 11,
+          "gpuRedMax": 81,
+          "gpuRedMean": 21.03521728515625,
+          "gpuRedStdDev": 5.015361410193434
+        }
+      ]
+    },
+    {
+      "id": "grandprix",
+      "path": "/assets/circuits/previews/grandprix.webp",
+      "bytes": 37224,
+      "sha256": "49e0260b75b2a8765c374f3a857f0caa60287838258fceaa7f19890b3796146f",
+      "sector": 0.13,
+      "camera": {
+        "position": [
+          42.293523700969246,
+          28,
+          -189.16012716211196
+        ],
+        "quaternion": [
+          0.11615911257782724,
+          0.8664188665266926,
+          0.23764619548685717,
+          -0.42349698235330474
+        ],
+        "fov": 52,
+        "near": 0.1,
+        "far": 1900
+      },
+      "width": 960,
+      "height": 540,
+      "draws": 145,
+      "triangles": 869160,
+      "surfaces": {
+        "loaded": 6,
+        "failed": 0,
+        "files": 6,
+        "estimatedBytes": 20971520
+      },
+      "textureProof": [
+        {
+          "name": "asphaltColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 5,
+          "gpuRedMax": 65,
+          "gpuRedMean": 28.66046142578125,
+          "gpuRedStdDev": 4.9838003373641735
+        },
+        {
+          "name": "asphaltNormal",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 107,
+          "gpuRedMax": 151,
+          "gpuRedMean": 126.8389892578125,
+          "gpuRedStdDev": 2.5962578903274864
+        },
+        {
+          "name": "asphaltRoughness",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 154,
+          "gpuRedMax": 237,
+          "gpuRedMean": 196.30560302734375,
+          "gpuRedStdDev": 6.698775020117266
+        },
+        {
+          "name": "concreteColor",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 25,
+          "gpuRedMax": 212,
+          "gpuRedMean": 161.9420166015625,
+          "gpuRedStdDev": 39.31971946870146
+        },
+        {
+          "name": "concreteNormal",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 75,
+          "gpuRedMax": 178,
+          "gpuRedMean": 127.71759033203125,
+          "gpuRedStdDev": 7.8612241956107916
+        },
+        {
+          "name": "terrainColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 11,
+          "gpuRedMax": 81,
+          "gpuRedMean": 21.03521728515625,
+          "gpuRedStdDev": 5.015361410193434
+        }
+      ]
+    },
+    {
+      "id": "melbourne",
+      "path": "/assets/circuits/previews/melbourne.webp",
+      "bytes": 43970,
+      "sha256": "b32e4100a5c63918bc2e37ade83168ebda0e784f726d808ed12ccc78775f5cd0",
+      "sector": 0.13,
+      "camera": {
+        "position": [
+          -212.57524662384265,
+          28,
+          81.95138530407073
+        ],
+        "quaternion": [
+          -0.26168945025328877,
+          -0.14060286686344844,
+          -0.03856533793936518,
+          0.954076611266377
+        ],
+        "fov": 52,
+        "near": 0.1,
+        "far": 1900
+      },
+      "width": 960,
+      "height": 540,
+      "draws": 231,
+      "triangles": 267566,
+      "surfaces": {
+        "loaded": 6,
+        "failed": 0,
+        "files": 6,
+        "estimatedBytes": 20971520
+      },
+      "textureProof": [
+        {
+          "name": "asphaltColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 5,
+          "gpuRedMax": 65,
+          "gpuRedMean": 28.66046142578125,
+          "gpuRedStdDev": 4.9838003373641735
+        },
+        {
+          "name": "asphaltNormal",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 107,
+          "gpuRedMax": 151,
+          "gpuRedMean": 126.8389892578125,
+          "gpuRedStdDev": 2.5962578903274864
+        },
+        {
+          "name": "asphaltRoughness",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 154,
+          "gpuRedMax": 237,
+          "gpuRedMean": 196.30560302734375,
+          "gpuRedStdDev": 6.698775020117266
+        },
+        {
+          "name": "concreteColor",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 25,
+          "gpuRedMax": 212,
+          "gpuRedMean": 161.9420166015625,
+          "gpuRedStdDev": 39.31971946870146
+        },
+        {
+          "name": "concreteNormal",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 75,
+          "gpuRedMax": 178,
+          "gpuRedMean": 127.71759033203125,
+          "gpuRedStdDev": 7.8612241956107916
+        },
+        {
+          "name": "terrainColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 11,
+          "gpuRedMax": 81,
+          "gpuRedMean": 21.03521728515625,
+          "gpuRedStdDev": 5.015361410193434
+        }
+      ]
+    },
+    {
+      "id": "shanghai",
+      "path": "/assets/circuits/previews/shanghai.webp",
+      "bytes": 46276,
+      "sha256": "3076f5be5ccc0e615d437aaff3d282adae05196cd56f071bcf3e70041a60548e",
+      "sector": 0.13,
+      "camera": {
+        "position": [
+          285.4071361072201,
+          28,
+          149.6152945052469
+        ],
+        "quaternion": [
+          0.00033393316935015447,
+          0.9643805597967968,
+          0.2645156746827762,
+          -0.0012174653058985236
+        ],
+        "fov": 52,
+        "near": 0.1,
+        "far": 1900
+      },
+      "width": 960,
+      "height": 540,
+      "draws": 83,
+      "triangles": 133808,
+      "surfaces": {
+        "loaded": 6,
+        "failed": 0,
+        "files": 6,
+        "estimatedBytes": 20971520
+      },
+      "textureProof": [
+        {
+          "name": "asphaltColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 5,
+          "gpuRedMax": 65,
+          "gpuRedMean": 28.66046142578125,
+          "gpuRedStdDev": 4.9838003373641735
+        },
+        {
+          "name": "asphaltNormal",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 107,
+          "gpuRedMax": 151,
+          "gpuRedMean": 126.8389892578125,
+          "gpuRedStdDev": 2.5962578903274864
+        },
+        {
+          "name": "asphaltRoughness",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 154,
+          "gpuRedMax": 237,
+          "gpuRedMean": 196.30560302734375,
+          "gpuRedStdDev": 6.698775020117266
+        },
+        {
+          "name": "concreteColor",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 25,
+          "gpuRedMax": 212,
+          "gpuRedMean": 161.9420166015625,
+          "gpuRedStdDev": 39.31971946870146
+        },
+        {
+          "name": "concreteNormal",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 75,
+          "gpuRedMax": 178,
+          "gpuRedMean": 127.71759033203125,
+          "gpuRedStdDev": 7.8612241956107916
+        },
+        {
+          "name": "terrainColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 11,
+          "gpuRedMax": 81,
+          "gpuRedMean": 21.03521728515625,
+          "gpuRedStdDev": 5.015361410193434
+        }
+      ]
+    },
+    {
+      "id": "suzuka",
+      "path": "/assets/circuits/previews/suzuka.webp",
+      "bytes": 42836,
+      "sha256": "720f3a44091a61ff3bed9416cc1e6d9578443dae50e9c1383e6818a30e5d6c7d",
+      "sector": 0.13,
+      "camera": {
+        "position": [
+          60.74676338853624,
+          28,
+          -342.4002452560018
+        ],
+        "quaternion": [
+          0.11653133154084418,
+          0.8657542367082303,
+          0.2374638971160959,
+          -0.4248540313537154
+        ],
+        "fov": 52,
+        "near": 0.1,
+        "far": 1900
+      },
+      "width": 960,
+      "height": 540,
+      "draws": 149,
+      "triangles": 203630,
+      "surfaces": {
+        "loaded": 6,
+        "failed": 0,
+        "files": 6,
+        "estimatedBytes": 20971520
+      },
+      "textureProof": [
+        {
+          "name": "asphaltColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 5,
+          "gpuRedMax": 65,
+          "gpuRedMean": 28.66046142578125,
+          "gpuRedStdDev": 4.9838003373641735
+        },
+        {
+          "name": "asphaltNormal",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 107,
+          "gpuRedMax": 151,
+          "gpuRedMean": 126.8389892578125,
+          "gpuRedStdDev": 2.5962578903274864
+        },
+        {
+          "name": "asphaltRoughness",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 154,
+          "gpuRedMax": 237,
+          "gpuRedMean": 196.30560302734375,
+          "gpuRedStdDev": 6.698775020117266
+        },
+        {
+          "name": "concreteColor",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 25,
+          "gpuRedMax": 212,
+          "gpuRedMean": 161.9420166015625,
+          "gpuRedStdDev": 39.31971946870146
+        },
+        {
+          "name": "concreteNormal",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 75,
+          "gpuRedMax": 178,
+          "gpuRedMean": 127.71759033203125,
+          "gpuRedStdDev": 7.8612241956107916
+        },
+        {
+          "name": "terrainColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 11,
+          "gpuRedMax": 81,
+          "gpuRedMean": 21.03521728515625,
+          "gpuRedStdDev": 5.015361410193434
+        }
+      ]
+    },
+    {
+      "id": "miami",
+      "path": "/assets/circuits/previews/miami.webp",
+      "bytes": 38572,
+      "sha256": "b5b2ce1c1f7b53d04c3e3b02e2085c4ddcf0072dc8816a01ba5c7248c88f47a6",
+      "sector": 0.13,
+      "camera": {
+        "position": [
+          -65.32605932242843,
+          28,
+          -113.98050527061052
+        ],
+        "quaternion": [
+          -0.24410998640204293,
+          0.37142755999731814,
+          0.10187722121770029,
+          0.8899847830217058
+        ],
+        "fov": 52,
+        "near": 0.1,
+        "far": 1900
+      },
+      "width": 960,
+      "height": 540,
+      "draws": 132,
+      "triangles": 198946,
+      "surfaces": {
+        "loaded": 6,
+        "failed": 0,
+        "files": 6,
+        "estimatedBytes": 20971520
+      },
+      "textureProof": [
+        {
+          "name": "asphaltColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 5,
+          "gpuRedMax": 65,
+          "gpuRedMean": 28.66046142578125,
+          "gpuRedStdDev": 4.9838003373641735
+        },
+        {
+          "name": "asphaltNormal",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 107,
+          "gpuRedMax": 151,
+          "gpuRedMean": 126.8389892578125,
+          "gpuRedStdDev": 2.5962578903274864
+        },
+        {
+          "name": "asphaltRoughness",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 154,
+          "gpuRedMax": 237,
+          "gpuRedMean": 196.30560302734375,
+          "gpuRedStdDev": 6.698775020117266
+        },
+        {
+          "name": "concreteColor",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 25,
+          "gpuRedMax": 212,
+          "gpuRedMean": 161.9420166015625,
+          "gpuRedStdDev": 39.31971946870146
+        },
+        {
+          "name": "concreteNormal",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 75,
+          "gpuRedMax": 178,
+          "gpuRedMean": 127.71759033203125,
+          "gpuRedStdDev": 7.8612241956107916
+        },
+        {
+          "name": "terrainColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 11,
+          "gpuRedMax": 81,
+          "gpuRedMean": 21.03521728515625,
+          "gpuRedStdDev": 5.015361410193434
+        }
+      ]
+    },
+    {
+      "id": "montreal",
+      "path": "/assets/circuits/previews/montreal.webp",
+      "bytes": 52800,
+      "sha256": "c2ccb1af9c6015bfdc7e852329cad4cccc497a340d1892e9b64db71267ee0215",
+      "sector": 0.13,
+      "camera": {
+        "position": [
+          148.60935316054244,
+          28,
+          81.09626180621649
+        ],
+        "quaternion": [
+          -0.08736661000237766,
+          0.9102602047663981,
+          0.2496712420783346,
+          0.31852426274051565
+        ],
+        "fov": 52,
+        "near": 0.1,
+        "far": 1900
+      },
+      "width": 960,
+      "height": 540,
+      "draws": 223,
+      "triangles": 253340,
+      "surfaces": {
+        "loaded": 6,
+        "failed": 0,
+        "files": 6,
+        "estimatedBytes": 20971520
+      },
+      "textureProof": [
+        {
+          "name": "asphaltColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 5,
+          "gpuRedMax": 65,
+          "gpuRedMean": 28.66046142578125,
+          "gpuRedStdDev": 4.9838003373641735
+        },
+        {
+          "name": "asphaltNormal",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 107,
+          "gpuRedMax": 151,
+          "gpuRedMean": 126.8389892578125,
+          "gpuRedStdDev": 2.5962578903274864
+        },
+        {
+          "name": "asphaltRoughness",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 154,
+          "gpuRedMax": 237,
+          "gpuRedMean": 196.30560302734375,
+          "gpuRedStdDev": 6.698775020117266
+        },
+        {
+          "name": "concreteColor",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 25,
+          "gpuRedMax": 212,
+          "gpuRedMean": 161.9420166015625,
+          "gpuRedStdDev": 39.31971946870146
+        },
+        {
+          "name": "concreteNormal",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 75,
+          "gpuRedMax": 178,
+          "gpuRedMean": 127.71759033203125,
+          "gpuRedStdDev": 7.8612241956107916
+        },
+        {
+          "name": "terrainColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 11,
+          "gpuRedMax": 81,
+          "gpuRedMean": 21.03521728515625,
+          "gpuRedStdDev": 5.015361410193434
+        }
+      ]
+    },
+    {
+      "id": "monaco",
+      "path": "/assets/circuits/previews/monaco.webp",
+      "bytes": 50704,
+      "sha256": "01e24773d4f8a0ca6c22afe39e62419f313864414d5fc7bdc4a66477b41c0dd0",
+      "sector": 0.13,
+      "camera": {
+        "position": [
+          -263.3862692912309,
+          28,
+          -34.120599350495894
+        ],
+        "quaternion": [
+          -0.17222959650941846,
+          -0.7319473390877936,
+          -0.20076259549639416,
+          0.6279207267944359
+        ],
+        "fov": 52,
+        "near": 0.1,
+        "far": 1900
+      },
+      "width": 960,
+      "height": 540,
+      "draws": 230,
+      "triangles": 311146,
+      "surfaces": {
+        "loaded": 6,
+        "failed": 0,
+        "files": 6,
+        "estimatedBytes": 20971520
+      },
+      "textureProof": [
+        {
+          "name": "asphaltColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 5,
+          "gpuRedMax": 65,
+          "gpuRedMean": 28.66046142578125,
+          "gpuRedStdDev": 4.9838003373641735
+        },
+        {
+          "name": "asphaltNormal",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 107,
+          "gpuRedMax": 151,
+          "gpuRedMean": 126.8389892578125,
+          "gpuRedStdDev": 2.5962578903274864
+        },
+        {
+          "name": "asphaltRoughness",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 154,
+          "gpuRedMax": 237,
+          "gpuRedMean": 196.30560302734375,
+          "gpuRedStdDev": 6.698775020117266
+        },
+        {
+          "name": "concreteColor",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 25,
+          "gpuRedMax": 212,
+          "gpuRedMean": 161.9420166015625,
+          "gpuRedStdDev": 39.31971946870146
+        },
+        {
+          "name": "concreteNormal",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 75,
+          "gpuRedMax": 178,
+          "gpuRedMean": 127.71759033203125,
+          "gpuRedStdDev": 7.8612241956107916
+        },
+        {
+          "name": "terrainColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 11,
+          "gpuRedMax": 81,
+          "gpuRedMean": 21.03521728515625,
+          "gpuRedStdDev": 5.015361410193434
+        }
+      ]
+    },
+    {
+      "id": "barcelona",
+      "path": "/assets/circuits/previews/barcelona.webp",
+      "bytes": 51654,
+      "sha256": "895a62cd4699d7c5c0bc7b16b50fa327f323af56d5d0c418b58a40176ee42bbd",
+      "sector": 0.13,
+      "camera": {
+        "position": [
+          62.496182310705194,
+          28,
+          174.0749116655279
+        ],
+        "quaternion": [
+          -0.14932364919866953,
+          0.7960211883760595,
+          0.21833712797927565,
+          0.5444094176188727
+        ],
+        "fov": 52,
+        "near": 0.1,
+        "far": 1900
+      },
+      "width": 960,
+      "height": 540,
+      "draws": 158,
+      "triangles": 244418,
+      "surfaces": {
+        "loaded": 6,
+        "failed": 0,
+        "files": 6,
+        "estimatedBytes": 20971520
+      },
+      "textureProof": [
+        {
+          "name": "asphaltColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 5,
+          "gpuRedMax": 65,
+          "gpuRedMean": 28.66046142578125,
+          "gpuRedStdDev": 4.9838003373641735
+        },
+        {
+          "name": "asphaltNormal",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 107,
+          "gpuRedMax": 151,
+          "gpuRedMean": 126.8389892578125,
+          "gpuRedStdDev": 2.5962578903274864
+        },
+        {
+          "name": "asphaltRoughness",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 154,
+          "gpuRedMax": 237,
+          "gpuRedMean": 196.30560302734375,
+          "gpuRedStdDev": 6.698775020117266
+        },
+        {
+          "name": "concreteColor",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 25,
+          "gpuRedMax": 212,
+          "gpuRedMean": 161.9420166015625,
+          "gpuRedStdDev": 39.31971946870146
+        },
+        {
+          "name": "concreteNormal",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 75,
+          "gpuRedMax": 178,
+          "gpuRedMean": 127.71759033203125,
+          "gpuRedStdDev": 7.8612241956107916
+        },
+        {
+          "name": "terrainColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 11,
+          "gpuRedMax": 81,
+          "gpuRedMean": 21.03521728515625,
+          "gpuRedStdDev": 5.015361410193434
+        }
+      ]
+    },
+    {
+      "id": "spielberg",
+      "path": "/assets/circuits/previews/spielberg.webp",
+      "bytes": 49372,
+      "sha256": "33a8f61c2babbfb5e54971e1cb8256e12444c59ed3792df0937250ec8f701ef0",
+      "sector": 0.13,
+      "camera": {
+        "position": [
+          -96.91557842161603,
+          28,
+          255.69757826758976
+        ],
+        "quaternion": [
+          -0.2642892439706445,
+          0.039913018956985624,
+          0.010947565285075914,
+          0.96355503073436
+        ],
+        "fov": 52,
+        "near": 0.1,
+        "far": 1900
+      },
+      "width": 960,
+      "height": 540,
+      "draws": 250,
+      "triangles": 297920,
+      "surfaces": {
+        "loaded": 6,
+        "failed": 0,
+        "files": 6,
+        "estimatedBytes": 20971520
+      },
+      "textureProof": [
+        {
+          "name": "asphaltColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 5,
+          "gpuRedMax": 65,
+          "gpuRedMean": 28.66046142578125,
+          "gpuRedStdDev": 4.9838003373641735
+        },
+        {
+          "name": "asphaltNormal",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 107,
+          "gpuRedMax": 151,
+          "gpuRedMean": 126.8389892578125,
+          "gpuRedStdDev": 2.5962578903274864
+        },
+        {
+          "name": "asphaltRoughness",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 154,
+          "gpuRedMax": 237,
+          "gpuRedMean": 196.30560302734375,
+          "gpuRedStdDev": 6.698775020117266
+        },
+        {
+          "name": "concreteColor",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 25,
+          "gpuRedMax": 212,
+          "gpuRedMean": 161.9420166015625,
+          "gpuRedStdDev": 39.31971946870146
+        },
+        {
+          "name": "concreteNormal",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 75,
+          "gpuRedMax": 178,
+          "gpuRedMean": 127.71759033203125,
+          "gpuRedStdDev": 7.8612241956107916
+        },
+        {
+          "name": "terrainColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 11,
+          "gpuRedMax": 81,
+          "gpuRedMean": 21.03521728515625,
+          "gpuRedStdDev": 5.015361410193434
+        }
+      ]
+    },
+    {
+      "id": "silverstone",
+      "path": "/assets/circuits/previews/silverstone.webp",
+      "bytes": 45600,
+      "sha256": "b951e575229a51b1c4b15f730028337943f62965a30ec7181241b5eea6a3c8f2",
+      "sector": 0.13,
+      "camera": {
+        "position": [
+          -22.7950762793185,
+          28,
+          419.8958849242082
+        ],
+        "quaternion": [
+          -0.25563701109089937,
+          0.24776588098997052,
+          0.06795860670111792,
+          0.9320104154745364
+        ],
+        "fov": 52,
+        "near": 0.1,
+        "far": 1900
+      },
+      "width": 960,
+      "height": 540,
+      "draws": 170,
+      "triangles": 228580,
+      "surfaces": {
+        "loaded": 6,
+        "failed": 0,
+        "files": 6,
+        "estimatedBytes": 20971520
+      },
+      "textureProof": [
+        {
+          "name": "asphaltColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 5,
+          "gpuRedMax": 65,
+          "gpuRedMean": 28.66046142578125,
+          "gpuRedStdDev": 4.9838003373641735
+        },
+        {
+          "name": "asphaltNormal",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 107,
+          "gpuRedMax": 151,
+          "gpuRedMean": 126.8389892578125,
+          "gpuRedStdDev": 2.5962578903274864
+        },
+        {
+          "name": "asphaltRoughness",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 154,
+          "gpuRedMax": 237,
+          "gpuRedMean": 196.30560302734375,
+          "gpuRedStdDev": 6.698775020117266
+        },
+        {
+          "name": "concreteColor",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 25,
+          "gpuRedMax": 212,
+          "gpuRedMean": 161.9420166015625,
+          "gpuRedStdDev": 39.31971946870146
+        },
+        {
+          "name": "concreteNormal",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 75,
+          "gpuRedMax": 178,
+          "gpuRedMean": 127.71759033203125,
+          "gpuRedStdDev": 7.8612241956107916
+        },
+        {
+          "name": "terrainColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 11,
+          "gpuRedMax": 81,
+          "gpuRedMean": 21.03521728515625,
+          "gpuRedStdDev": 5.015361410193434
+        }
+      ]
+    },
+    {
+      "id": "spa",
+      "path": "/assets/circuits/previews/spa.webp",
+      "bytes": 43552,
+      "sha256": "58df3b7b5d02b2493637ad6f3409206ec450693b6f5f3f0b7fd09d210927f269",
+      "sector": 0.13,
+      "camera": {
+        "position": [
+          297.1561082908124,
+          28,
+          349.6003225357679
+        ],
+        "quaternion": [
+          -0.13526830864807274,
+          0.828745244379834,
+          0.22731286443959908,
+          0.493165962180647
+        ],
+        "fov": 52,
+        "near": 0.1,
+        "far": 1900
+      },
+      "width": 960,
+      "height": 540,
+      "draws": 158,
+      "triangles": 202116,
+      "surfaces": {
+        "loaded": 6,
+        "failed": 0,
+        "files": 6,
+        "estimatedBytes": 20971520
+      },
+      "textureProof": [
+        {
+          "name": "asphaltColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 5,
+          "gpuRedMax": 65,
+          "gpuRedMean": 28.66046142578125,
+          "gpuRedStdDev": 4.9838003373641735
+        },
+        {
+          "name": "asphaltNormal",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 107,
+          "gpuRedMax": 151,
+          "gpuRedMean": 126.8389892578125,
+          "gpuRedStdDev": 2.5962578903274864
+        },
+        {
+          "name": "asphaltRoughness",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 154,
+          "gpuRedMax": 237,
+          "gpuRedMean": 196.30560302734375,
+          "gpuRedStdDev": 6.698775020117266
+        },
+        {
+          "name": "concreteColor",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 25,
+          "gpuRedMax": 212,
+          "gpuRedMean": 161.9420166015625,
+          "gpuRedStdDev": 39.31971946870146
+        },
+        {
+          "name": "concreteNormal",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 75,
+          "gpuRedMax": 178,
+          "gpuRedMean": 127.71759033203125,
+          "gpuRedStdDev": 7.8612241956107916
+        },
+        {
+          "name": "terrainColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 11,
+          "gpuRedMax": 81,
+          "gpuRedMean": 21.03521728515625,
+          "gpuRedStdDev": 5.015361410193434
+        }
+      ]
+    },
+    {
+      "id": "hungaroring",
+      "path": "/assets/circuits/previews/hungaroring.webp",
+      "bytes": 49300,
+      "sha256": "4c6b6e2fafb5f39ec85cefb454f66c23b822daedcaa2e5b53746f728ff0abe0c",
+      "sector": 0.13,
+      "camera": {
+        "position": [
+          -352.57826632059187,
+          28,
+          56.10036339771525
+        ],
+        "quaternion": [
+          -0.20186873732251634,
+          -0.6231890285342104,
+          -0.1709317599396284,
+          0.7359801499023878
+        ],
+        "fov": 52,
+        "near": 0.1,
+        "far": 1900
+      },
+      "width": 960,
+      "height": 540,
+      "draws": 226,
+      "triangles": 318286,
+      "surfaces": {
+        "loaded": 6,
+        "failed": 0,
+        "files": 6,
+        "estimatedBytes": 20971520
+      },
+      "textureProof": [
+        {
+          "name": "asphaltColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 5,
+          "gpuRedMax": 65,
+          "gpuRedMean": 28.66046142578125,
+          "gpuRedStdDev": 4.9838003373641735
+        },
+        {
+          "name": "asphaltNormal",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 107,
+          "gpuRedMax": 151,
+          "gpuRedMean": 126.8389892578125,
+          "gpuRedStdDev": 2.5962578903274864
+        },
+        {
+          "name": "asphaltRoughness",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 154,
+          "gpuRedMax": 237,
+          "gpuRedMean": 196.30560302734375,
+          "gpuRedStdDev": 6.698775020117266
+        },
+        {
+          "name": "concreteColor",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 25,
+          "gpuRedMax": 212,
+          "gpuRedMean": 161.9420166015625,
+          "gpuRedStdDev": 39.31971946870146
+        },
+        {
+          "name": "concreteNormal",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 75,
+          "gpuRedMax": 178,
+          "gpuRedMean": 127.71759033203125,
+          "gpuRedStdDev": 7.8612241956107916
+        },
+        {
+          "name": "terrainColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 11,
+          "gpuRedMax": 81,
+          "gpuRedMean": 21.03521728515625,
+          "gpuRedStdDev": 5.015361410193434
+        }
+      ]
+    },
+    {
+      "id": "zandvoort",
+      "path": "/assets/circuits/previews/zandvoort.webp",
+      "bytes": 42474,
+      "sha256": "d7241227d348377243376f2d63d110606e0027db98ccde959c7a6ac8f23aa9bb",
+      "sector": 0.13,
+      "camera": {
+        "position": [
+          -200.62519790003049,
+          28,
+          -178.67851449647839
+        ],
+        "quaternion": [
+          -0.22904341399912242,
+          -0.4824056972400078,
+          -0.13231692321042118,
+          0.8350545428929393
+        ],
+        "fov": 52,
+        "near": 0.1,
+        "far": 1900
+      },
+      "width": 960,
+      "height": 540,
+      "draws": 136,
+      "triangles": 192664,
+      "surfaces": {
+        "loaded": 6,
+        "failed": 0,
+        "files": 6,
+        "estimatedBytes": 20971520
+      },
+      "textureProof": [
+        {
+          "name": "asphaltColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 5,
+          "gpuRedMax": 65,
+          "gpuRedMean": 28.66046142578125,
+          "gpuRedStdDev": 4.9838003373641735
+        },
+        {
+          "name": "asphaltNormal",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 107,
+          "gpuRedMax": 151,
+          "gpuRedMean": 126.8389892578125,
+          "gpuRedStdDev": 2.5962578903274864
+        },
+        {
+          "name": "asphaltRoughness",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 154,
+          "gpuRedMax": 237,
+          "gpuRedMean": 196.30560302734375,
+          "gpuRedStdDev": 6.698775020117266
+        },
+        {
+          "name": "concreteColor",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 25,
+          "gpuRedMax": 212,
+          "gpuRedMean": 161.9420166015625,
+          "gpuRedStdDev": 39.31971946870146
+        },
+        {
+          "name": "concreteNormal",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 75,
+          "gpuRedMax": 178,
+          "gpuRedMean": 127.71759033203125,
+          "gpuRedStdDev": 7.8612241956107916
+        },
+        {
+          "name": "terrainColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 11,
+          "gpuRedMax": 81,
+          "gpuRedMean": 21.03521728515625,
+          "gpuRedStdDev": 5.015361410193434
+        }
+      ]
+    },
+    {
+      "id": "monza",
+      "path": "/assets/circuits/previews/monza.webp",
+      "bytes": 48606,
+      "sha256": "47ece9c444f9f8f6a84c432aa766a97478722b4316dd30cd202795d1d2581916",
+      "sector": 0.13,
+      "camera": {
+        "position": [
+          -205.32627319585177,
+          28,
+          526.1396726903428
+        ],
+        "quaternion": [
+          -0.250097425952709,
+          0.31404868097860156,
+          0.08613902249314771,
+          0.9118140009406276
+        ],
+        "fov": 52,
+        "near": 0.1,
+        "far": 1900
+      },
+      "width": 960,
+      "height": 540,
+      "draws": 159,
+      "triangles": 224364,
+      "surfaces": {
+        "loaded": 6,
+        "failed": 0,
+        "files": 6,
+        "estimatedBytes": 20971520
+      },
+      "textureProof": [
+        {
+          "name": "asphaltColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 5,
+          "gpuRedMax": 65,
+          "gpuRedMean": 28.66046142578125,
+          "gpuRedStdDev": 4.9838003373641735
+        },
+        {
+          "name": "asphaltNormal",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 107,
+          "gpuRedMax": 151,
+          "gpuRedMean": 126.8389892578125,
+          "gpuRedStdDev": 2.5962578903274864
+        },
+        {
+          "name": "asphaltRoughness",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 154,
+          "gpuRedMax": 237,
+          "gpuRedMean": 196.30560302734375,
+          "gpuRedStdDev": 6.698775020117266
+        },
+        {
+          "name": "concreteColor",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 25,
+          "gpuRedMax": 212,
+          "gpuRedMean": 161.9420166015625,
+          "gpuRedStdDev": 39.31971946870146
+        },
+        {
+          "name": "concreteNormal",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 75,
+          "gpuRedMax": 178,
+          "gpuRedMean": 127.71759033203125,
+          "gpuRedStdDev": 7.8612241956107916
+        },
+        {
+          "name": "terrainColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 11,
+          "gpuRedMax": 81,
+          "gpuRedMean": 21.03521728515625,
+          "gpuRedStdDev": 5.015361410193434
+        }
+      ]
+    },
+    {
+      "id": "madring",
+      "path": "/assets/circuits/previews/madring.webp",
+      "bytes": 58966,
+      "sha256": "91763ac6b8e656f8afcc63481c59cc67fe4890713eda979c93fd4d2275b7ba7f",
+      "sector": 0.13,
+      "camera": {
+        "position": [
+          -98.58803368561234,
+          28,
+          487.4259988796587
+        ],
+        "quaternion": [
+          -0.2632853077094626,
+          0.09291519633356123,
+          0.025485297890734403,
+          0.959894844566867
+        ],
+        "fov": 52,
+        "near": 0.1,
+        "far": 1900
+      },
+      "width": 960,
+      "height": 540,
+      "draws": 229,
+      "triangles": 266370,
+      "surfaces": {
+        "loaded": 6,
+        "failed": 0,
+        "files": 6,
+        "estimatedBytes": 20971520
+      },
+      "textureProof": [
+        {
+          "name": "asphaltColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 5,
+          "gpuRedMax": 65,
+          "gpuRedMean": 28.66046142578125,
+          "gpuRedStdDev": 4.9838003373641735
+        },
+        {
+          "name": "asphaltNormal",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 107,
+          "gpuRedMax": 151,
+          "gpuRedMean": 126.8389892578125,
+          "gpuRedStdDev": 2.5962578903274864
+        },
+        {
+          "name": "asphaltRoughness",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 154,
+          "gpuRedMax": 237,
+          "gpuRedMean": 196.30560302734375,
+          "gpuRedStdDev": 6.698775020117266
+        },
+        {
+          "name": "concreteColor",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 25,
+          "gpuRedMax": 212,
+          "gpuRedMean": 161.9420166015625,
+          "gpuRedStdDev": 39.31971946870146
+        },
+        {
+          "name": "concreteNormal",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 75,
+          "gpuRedMax": 178,
+          "gpuRedMean": 127.71759033203125,
+          "gpuRedStdDev": 7.8612241956107916
+        },
+        {
+          "name": "terrainColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 11,
+          "gpuRedMax": 81,
+          "gpuRedMean": 21.03521728515625,
+          "gpuRedStdDev": 5.015361410193434
+        }
+      ]
+    },
+    {
+      "id": "baku",
+      "path": "/assets/circuits/previews/baku.webp",
+      "bytes": 54098,
+      "sha256": "79a6f3c327bd604ad8a07f570a67f39ac02b87ee1efbbbe18d8a0bb7f50476a6",
+      "sector": 0.13,
+      "camera": {
+        "position": [
+          430.17178400849775,
+          28,
+          -191.8582803121336
+        ],
+        "quaternion": [
+          -0.25382171924458014,
+          -0.27144188241847705,
+          -0.07445259232539406,
+          0.9253921605486336
+        ],
+        "fov": 52,
+        "near": 0.1,
+        "far": 1900
+      },
+      "width": 960,
+      "height": 540,
+      "draws": 108,
+      "triangles": 238286,
+      "surfaces": {
+        "loaded": 6,
+        "failed": 0,
+        "files": 6,
+        "estimatedBytes": 20971520
+      },
+      "textureProof": [
+        {
+          "name": "asphaltColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 5,
+          "gpuRedMax": 65,
+          "gpuRedMean": 28.66046142578125,
+          "gpuRedStdDev": 4.9838003373641735
+        },
+        {
+          "name": "asphaltNormal",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 107,
+          "gpuRedMax": 151,
+          "gpuRedMean": 126.8389892578125,
+          "gpuRedStdDev": 2.5962578903274864
+        },
+        {
+          "name": "asphaltRoughness",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 154,
+          "gpuRedMax": 237,
+          "gpuRedMean": 196.30560302734375,
+          "gpuRedStdDev": 6.698775020117266
+        },
+        {
+          "name": "concreteColor",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 25,
+          "gpuRedMax": 212,
+          "gpuRedMean": 161.9420166015625,
+          "gpuRedStdDev": 39.31971946870146
+        },
+        {
+          "name": "concreteNormal",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 75,
+          "gpuRedMax": 178,
+          "gpuRedMean": 127.71759033203125,
+          "gpuRedStdDev": 7.8612241956107916
+        },
+        {
+          "name": "terrainColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 11,
+          "gpuRedMax": 81,
+          "gpuRedMean": 21.03521728515625,
+          "gpuRedStdDev": 5.015361410193434
+        }
+      ]
+    },
+    {
+      "id": "sepang",
+      "path": "/assets/circuits/previews/sepang.webp",
+      "bytes": 46340,
+      "sha256": "f53b8cbdf366fb28e87a85f529502f15f53b1566a8f269ae78b7b06866c6abb1",
+      "sector": 0.13,
+      "camera": {
+        "position": [
+          -294.4460416791759,
+          28,
+          0.07786609401063527
+        ],
+        "quaternion": [
+          -0.25253409476665883,
+          -0.2869618490266737,
+          -0.078709495263469,
+          0.9206976938924886
+        ],
+        "fov": 52,
+        "near": 0.1,
+        "far": 1900
+      },
+      "width": 960,
+      "height": 540,
+      "draws": 184,
+      "triangles": 231496,
+      "surfaces": {
+        "loaded": 6,
+        "failed": 0,
+        "files": 6,
+        "estimatedBytes": 20971520
+      },
+      "textureProof": [
+        {
+          "name": "asphaltColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 5,
+          "gpuRedMax": 65,
+          "gpuRedMean": 28.66046142578125,
+          "gpuRedStdDev": 4.9838003373641735
+        },
+        {
+          "name": "asphaltNormal",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 107,
+          "gpuRedMax": 151,
+          "gpuRedMean": 126.8389892578125,
+          "gpuRedStdDev": 2.5962578903274864
+        },
+        {
+          "name": "asphaltRoughness",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 154,
+          "gpuRedMax": 237,
+          "gpuRedMean": 196.30560302734375,
+          "gpuRedStdDev": 6.698775020117266
+        },
+        {
+          "name": "concreteColor",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 25,
+          "gpuRedMax": 212,
+          "gpuRedMean": 161.9420166015625,
+          "gpuRedStdDev": 39.31971946870146
+        },
+        {
+          "name": "concreteNormal",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 75,
+          "gpuRedMax": 178,
+          "gpuRedMean": 127.71759033203125,
+          "gpuRedStdDev": 7.8612241956107916
+        },
+        {
+          "name": "terrainColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 11,
+          "gpuRedMax": 81,
+          "gpuRedMean": 21.03521728515625,
+          "gpuRedStdDev": 5.015361410193434
+        }
+      ]
+    },
+    {
+      "id": "singapore",
+      "path": "/assets/circuits/previews/singapore.webp",
+      "bytes": 59598,
+      "sha256": "83858ef9d375f073b8fe11237321e9eeb9ac0beda37e137648f1ffcba794c3e2",
+      "sector": 0.13,
+      "camera": {
+        "position": [
+          338.9135806547284,
+          28,
+          147.45272832957787
+        ],
+        "quaternion": [
+          -0.2358068007666345,
+          0.4369500624154797,
+          0.11984909835476729,
+          0.8597127364945006
+        ],
+        "fov": 52,
+        "near": 0.1,
+        "far": 1900
+      },
+      "width": 960,
+      "height": 540,
+      "draws": 270,
+      "triangles": 293996,
+      "surfaces": {
+        "loaded": 6,
+        "failed": 0,
+        "files": 6,
+        "estimatedBytes": 20971520
+      },
+      "textureProof": [
+        {
+          "name": "asphaltColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 5,
+          "gpuRedMax": 65,
+          "gpuRedMean": 28.66046142578125,
+          "gpuRedStdDev": 4.9838003373641735
+        },
+        {
+          "name": "asphaltNormal",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 107,
+          "gpuRedMax": 151,
+          "gpuRedMean": 126.8389892578125,
+          "gpuRedStdDev": 2.5962578903274864
+        },
+        {
+          "name": "asphaltRoughness",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 154,
+          "gpuRedMax": 237,
+          "gpuRedMean": 196.30560302734375,
+          "gpuRedStdDev": 6.698775020117266
+        },
+        {
+          "name": "concreteColor",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 25,
+          "gpuRedMax": 212,
+          "gpuRedMean": 161.9420166015625,
+          "gpuRedStdDev": 39.31971946870146
+        },
+        {
+          "name": "concreteNormal",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 75,
+          "gpuRedMax": 178,
+          "gpuRedMean": 127.71759033203125,
+          "gpuRedStdDev": 7.8612241956107916
+        },
+        {
+          "name": "terrainColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 11,
+          "gpuRedMax": 81,
+          "gpuRedMean": 21.03521728515625,
+          "gpuRedStdDev": 5.015361410193434
+        }
+      ]
+    },
+    {
+      "id": "austin",
+      "path": "/assets/circuits/previews/austin.webp",
+      "bytes": 47728,
+      "sha256": "15ad9be0e3d95906006d6d199eba7917d9223d875763204351a787427723f312",
+      "sector": 0.13,
+      "camera": {
+        "position": [
+          -181.93513871374182,
+          28,
+          192.07719320525746
+        ],
+        "quaternion": [
+          -0.24304360730621377,
+          -0.38060945633247356,
+          -0.10439568291758436,
+          0.8860969405691755
+        ],
+        "fov": 52,
+        "near": 0.1,
+        "far": 1900
+      },
+      "width": 960,
+      "height": 540,
+      "draws": 206,
+      "triangles": 443524,
+      "surfaces": {
+        "loaded": 6,
+        "failed": 0,
+        "files": 6,
+        "estimatedBytes": 20971520
+      },
+      "textureProof": [
+        {
+          "name": "asphaltColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 5,
+          "gpuRedMax": 65,
+          "gpuRedMean": 28.66046142578125,
+          "gpuRedStdDev": 4.9838003373641735
+        },
+        {
+          "name": "asphaltNormal",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 107,
+          "gpuRedMax": 151,
+          "gpuRedMean": 126.8389892578125,
+          "gpuRedStdDev": 2.5962578903274864
+        },
+        {
+          "name": "asphaltRoughness",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 154,
+          "gpuRedMax": 237,
+          "gpuRedMean": 196.30560302734375,
+          "gpuRedStdDev": 6.698775020117266
+        },
+        {
+          "name": "concreteColor",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 25,
+          "gpuRedMax": 212,
+          "gpuRedMean": 161.9420166015625,
+          "gpuRedStdDev": 39.31971946870146
+        },
+        {
+          "name": "concreteNormal",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 75,
+          "gpuRedMax": 178,
+          "gpuRedMean": 127.71759033203125,
+          "gpuRedStdDev": 7.8612241956107916
+        },
+        {
+          "name": "terrainColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 11,
+          "gpuRedMax": 81,
+          "gpuRedMean": 21.03521728515625,
+          "gpuRedStdDev": 5.015361410193434
+        }
+      ]
+    },
+    {
+      "id": "mexico",
+      "path": "/assets/circuits/previews/mexico.webp",
+      "bytes": 58174,
+      "sha256": "d977ed98945d128dae50cbb0ead4b60bb8acbfce8d1988f31b4bd892311a5bfe",
+      "sector": 0.13,
+      "camera": {
+        "position": [
+          27.89220214684357,
+          28,
+          -291.2823880673651
+        ],
+        "quaternion": [
+          0.1066877436157736,
+          0.8824606790887746,
+          0.2420462332415459,
+          -0.388965931924549
+        ],
+        "fov": 52,
+        "near": 0.1,
+        "far": 1900
+      },
+      "width": 960,
+      "height": 540,
+      "draws": 237,
+      "triangles": 273928,
+      "surfaces": {
+        "loaded": 6,
+        "failed": 0,
+        "files": 6,
+        "estimatedBytes": 20971520
+      },
+      "textureProof": [
+        {
+          "name": "asphaltColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 5,
+          "gpuRedMax": 65,
+          "gpuRedMean": 28.66046142578125,
+          "gpuRedStdDev": 4.9838003373641735
+        },
+        {
+          "name": "asphaltNormal",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 107,
+          "gpuRedMax": 151,
+          "gpuRedMean": 126.8389892578125,
+          "gpuRedStdDev": 2.5962578903274864
+        },
+        {
+          "name": "asphaltRoughness",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 154,
+          "gpuRedMax": 237,
+          "gpuRedMean": 196.30560302734375,
+          "gpuRedStdDev": 6.698775020117266
+        },
+        {
+          "name": "concreteColor",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 25,
+          "gpuRedMax": 212,
+          "gpuRedMean": 161.9420166015625,
+          "gpuRedStdDev": 39.31971946870146
+        },
+        {
+          "name": "concreteNormal",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 75,
+          "gpuRedMax": 178,
+          "gpuRedMean": 127.71759033203125,
+          "gpuRedStdDev": 7.8612241956107916
+        },
+        {
+          "name": "terrainColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 11,
+          "gpuRedMax": 81,
+          "gpuRedMean": 21.03521728515625,
+          "gpuRedStdDev": 5.015361410193434
+        }
+      ]
+    },
+    {
+      "id": "interlagos",
+      "path": "/assets/circuits/previews/interlagos.webp",
+      "bytes": 50956,
+      "sha256": "d4fa43f6836124f8fdd43608bd8af04368cf5ceccef9add02a8697675be3354d",
+      "sector": 0.13,
+      "camera": {
+        "position": [
+          186.50061345076733,
+          28,
+          -116.10600804928225
+        ],
+        "quaternion": [
+          -0.24620108347863354,
+          0.3526048586992999,
+          0.09671442580190853,
+          0.8976085783666513
+        ],
+        "fov": 52,
+        "near": 0.1,
+        "far": 1900
+      },
+      "width": 960,
+      "height": 540,
+      "draws": 146,
+      "triangles": 206464,
+      "surfaces": {
+        "loaded": 6,
+        "failed": 0,
+        "files": 6,
+        "estimatedBytes": 20971520
+      },
+      "textureProof": [
+        {
+          "name": "asphaltColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 5,
+          "gpuRedMax": 65,
+          "gpuRedMean": 28.66046142578125,
+          "gpuRedStdDev": 4.9838003373641735
+        },
+        {
+          "name": "asphaltNormal",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 107,
+          "gpuRedMax": 151,
+          "gpuRedMean": 126.8389892578125,
+          "gpuRedStdDev": 2.5962578903274864
+        },
+        {
+          "name": "asphaltRoughness",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 154,
+          "gpuRedMax": 237,
+          "gpuRedMean": 196.30560302734375,
+          "gpuRedStdDev": 6.698775020117266
+        },
+        {
+          "name": "concreteColor",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 25,
+          "gpuRedMax": 212,
+          "gpuRedMean": 161.9420166015625,
+          "gpuRedStdDev": 39.31971946870146
+        },
+        {
+          "name": "concreteNormal",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 75,
+          "gpuRedMax": 178,
+          "gpuRedMean": 127.71759033203125,
+          "gpuRedStdDev": 7.8612241956107916
+        },
+        {
+          "name": "terrainColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 11,
+          "gpuRedMax": 81,
+          "gpuRedMean": 21.03521728515625,
+          "gpuRedStdDev": 5.015361410193434
+        }
+      ]
+    },
+    {
+      "id": "lasvegas",
+      "path": "/assets/circuits/previews/lasvegas.webp",
+      "bytes": 52564,
+      "sha256": "6d4f78f44da6f9e16d2d849829c08c070437d96d9ff034063550db30236f2c50",
+      "sector": 0.13,
+      "camera": {
+        "position": [
+          144.17743945181167,
+          28,
+          -149.3013533638888
+        ],
+        "quaternion": [
+          -0.14400184406841393,
+          -0.8089493207402495,
+          -0.2218831281759433,
+          0.5250069931054663
+        ],
+        "fov": 52,
+        "near": 0.1,
+        "far": 1900
+      },
+      "width": 960,
+      "height": 540,
+      "draws": 110,
+      "triangles": 242756,
+      "surfaces": {
+        "loaded": 6,
+        "failed": 0,
+        "files": 6,
+        "estimatedBytes": 20971520
+      },
+      "textureProof": [
+        {
+          "name": "asphaltColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 5,
+          "gpuRedMax": 65,
+          "gpuRedMean": 28.66046142578125,
+          "gpuRedStdDev": 4.9838003373641735
+        },
+        {
+          "name": "asphaltNormal",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 107,
+          "gpuRedMax": 151,
+          "gpuRedMean": 126.8389892578125,
+          "gpuRedStdDev": 2.5962578903274864
+        },
+        {
+          "name": "asphaltRoughness",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 154,
+          "gpuRedMax": 237,
+          "gpuRedMean": 196.30560302734375,
+          "gpuRedStdDev": 6.698775020117266
+        },
+        {
+          "name": "concreteColor",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 25,
+          "gpuRedMax": 212,
+          "gpuRedMean": 161.9420166015625,
+          "gpuRedStdDev": 39.31971946870146
+        },
+        {
+          "name": "concreteNormal",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 75,
+          "gpuRedMax": 178,
+          "gpuRedMean": 127.71759033203125,
+          "gpuRedStdDev": 7.8612241956107916
+        },
+        {
+          "name": "terrainColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 11,
+          "gpuRedMax": 81,
+          "gpuRedMean": 21.03521728515625,
+          "gpuRedStdDev": 5.015361410193434
+        }
+      ]
+    },
+    {
+      "id": "lusail",
+      "path": "/assets/circuits/previews/lusail.webp",
+      "bytes": 49362,
+      "sha256": "f7dbf5d96793867e5230dca6049f4be038a05598f742ce84ec91c17cfce4904a",
+      "sector": 0.13,
+      "camera": {
+        "position": [
+          -290.0257938913167,
+          28,
+          -20.304676723840956
+        ],
+        "quaternion": [
+          -0.26335925094424434,
+          -0.09008670723660088,
+          -0.024709484137320516,
+          0.960164429415619
+        ],
+        "fov": 52,
+        "near": 0.1,
+        "far": 1900
+      },
+      "width": 960,
+      "height": 540,
+      "draws": 124,
+      "triangles": 129666,
+      "surfaces": {
+        "loaded": 6,
+        "failed": 0,
+        "files": 6,
+        "estimatedBytes": 20971520
+      },
+      "textureProof": [
+        {
+          "name": "asphaltColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 5,
+          "gpuRedMax": 65,
+          "gpuRedMean": 28.66046142578125,
+          "gpuRedStdDev": 4.9838003373641735
+        },
+        {
+          "name": "asphaltNormal",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 107,
+          "gpuRedMax": 151,
+          "gpuRedMean": 126.8389892578125,
+          "gpuRedStdDev": 2.5962578903274864
+        },
+        {
+          "name": "asphaltRoughness",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 154,
+          "gpuRedMax": 237,
+          "gpuRedMean": 196.30560302734375,
+          "gpuRedStdDev": 6.698775020117266
+        },
+        {
+          "name": "concreteColor",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 25,
+          "gpuRedMax": 212,
+          "gpuRedMean": 161.9420166015625,
+          "gpuRedStdDev": 39.31971946870146
+        },
+        {
+          "name": "concreteNormal",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 75,
+          "gpuRedMax": 178,
+          "gpuRedMean": 127.71759033203125,
+          "gpuRedStdDev": 7.8612241956107916
+        },
+        {
+          "name": "terrainColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 11,
+          "gpuRedMax": 81,
+          "gpuRedMean": 21.03521728515625,
+          "gpuRedStdDev": 5.015361410193434
+        }
+      ]
+    },
+    {
+      "id": "yasmarina",
+      "path": "/assets/circuits/previews/yasmarina.webp",
+      "bytes": 54306,
+      "sha256": "498d24c207e048482b8aeb0ecb800b3275e4379225de8c1454afe0bff0ab0987",
+      "sector": 0.13,
+      "camera": {
+        "position": [
+          -127.735596918444,
+          28,
+          -22.77333661149041
+        ],
+        "quaternion": [
+          -0.11851197098537081,
+          0.8621730917545158,
+          0.23648164071954614,
+          0.43207511637470314
+        ],
+        "fov": 52,
+        "near": 0.1,
+        "far": 1900
+      },
+      "width": 960,
+      "height": 540,
+      "draws": 111,
+      "triangles": 239836,
+      "surfaces": {
+        "loaded": 6,
+        "failed": 0,
+        "files": 6,
+        "estimatedBytes": 20971520
+      },
+      "textureProof": [
+        {
+          "name": "asphaltColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 5,
+          "gpuRedMax": 65,
+          "gpuRedMean": 28.66046142578125,
+          "gpuRedStdDev": 4.9838003373641735
+        },
+        {
+          "name": "asphaltNormal",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 107,
+          "gpuRedMax": 151,
+          "gpuRedMean": 126.8389892578125,
+          "gpuRedStdDev": 2.5962578903274864
+        },
+        {
+          "name": "asphaltRoughness",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 154,
+          "gpuRedMax": 237,
+          "gpuRedMean": 196.30560302734375,
+          "gpuRedStdDev": 6.698775020117266
+        },
+        {
+          "name": "concreteColor",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 25,
+          "gpuRedMax": 212,
+          "gpuRedMean": 161.9420166015625,
+          "gpuRedStdDev": 39.31971946870146
+        },
+        {
+          "name": "concreteNormal",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 75,
+          "gpuRedMax": 178,
+          "gpuRedMean": 127.71759033203125,
+          "gpuRedStdDev": 7.8612241956107916
+        },
+        {
+          "name": "terrainColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 11,
+          "gpuRedMax": 81,
+          "gpuRedMean": 21.03521728515625,
+          "gpuRedStdDev": 5.015361410193434
+        }
+      ]
+    },
+    {
+      "id": "sakhir",
+      "path": "/assets/circuits/previews/sakhir.webp",
+      "bytes": 51450,
+      "sha256": "9290209adc2d53bfd91e864fe3ebe9aa35ba4cc96d07c54f31fc0d8ac44e5f5a",
+      "sector": 0.13,
+      "camera": {
+        "position": [
+          -207.74191660020992,
+          28,
+          276.5158283188796
+        ],
+        "quaternion": [
+          -0.2564410327870068,
+          -0.23646411518175225,
+          -0.0648586953875827,
+          0.9349417460821102
+        ],
+        "fov": 52,
+        "near": 0.1,
+        "far": 1900
+      },
+      "width": 960,
+      "height": 540,
+      "draws": 263,
+      "triangles": 190956,
+      "surfaces": {
+        "loaded": 6,
+        "failed": 0,
+        "files": 6,
+        "estimatedBytes": 20971520
+      },
+      "textureProof": [
+        {
+          "name": "asphaltColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 5,
+          "gpuRedMax": 65,
+          "gpuRedMean": 28.66046142578125,
+          "gpuRedStdDev": 4.9838003373641735
+        },
+        {
+          "name": "asphaltNormal",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 107,
+          "gpuRedMax": 151,
+          "gpuRedMean": 126.8389892578125,
+          "gpuRedStdDev": 2.5962578903274864
+        },
+        {
+          "name": "asphaltRoughness",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 154,
+          "gpuRedMax": 237,
+          "gpuRedMean": 196.30560302734375,
+          "gpuRedStdDev": 6.698775020117266
+        },
+        {
+          "name": "concreteColor",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 25,
+          "gpuRedMax": 212,
+          "gpuRedMean": 161.9420166015625,
+          "gpuRedStdDev": 39.31971946870146
+        },
+        {
+          "name": "concreteNormal",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 75,
+          "gpuRedMax": 178,
+          "gpuRedMean": 127.71759033203125,
+          "gpuRedStdDev": 7.8612241956107916
+        },
+        {
+          "name": "terrainColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 11,
+          "gpuRedMax": 81,
+          "gpuRedMean": 21.03521728515625,
+          "gpuRedStdDev": 5.015361410193434
+        }
+      ]
+    },
+    {
+      "id": "jeddah",
+      "path": "/assets/circuits/previews/jeddah.webp",
+      "bytes": 39470,
+      "sha256": "e3f4fc2a77824e25a1c574972e1b9d3a968855c7b09af79f967c3717aa3a3f82",
+      "sector": 0.13,
+      "camera": {
+        "position": [
+          -33.2449548317478,
+          28,
+          120.0305053987783
+        ],
+        "quaternion": [
+          -0.2532347226377876,
+          -0.27863410758701046,
+          -0.07642531592874621,
+          0.9232520676526775
+        ],
+        "fov": 52,
+        "near": 0.1,
+        "far": 1900
+      },
+      "width": 960,
+      "height": 540,
+      "draws": 155,
+      "triangles": 216156,
+      "surfaces": {
+        "loaded": 6,
+        "failed": 0,
+        "files": 6,
+        "estimatedBytes": 20971520
+      },
+      "textureProof": [
+        {
+          "name": "asphaltColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 5,
+          "gpuRedMax": 65,
+          "gpuRedMean": 28.66046142578125,
+          "gpuRedStdDev": 4.9838003373641735
+        },
+        {
+          "name": "asphaltNormal",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 107,
+          "gpuRedMax": 151,
+          "gpuRedMean": 126.8389892578125,
+          "gpuRedStdDev": 2.5962578903274864
+        },
+        {
+          "name": "asphaltRoughness",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 154,
+          "gpuRedMax": 237,
+          "gpuRedMean": 196.30560302734375,
+          "gpuRedStdDev": 6.698775020117266
+        },
+        {
+          "name": "concreteColor",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 25,
+          "gpuRedMax": 212,
+          "gpuRedMean": 161.9420166015625,
+          "gpuRedStdDev": 39.31971946870146
+        },
+        {
+          "name": "concreteNormal",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 75,
+          "gpuRedMax": 178,
+          "gpuRedMean": 127.71759033203125,
+          "gpuRedStdDev": 7.8612241956107916
+        },
+        {
+          "name": "terrainColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 11,
+          "gpuRedMax": 81,
+          "gpuRedMean": 21.03521728515625,
+          "gpuRedStdDev": 5.015361410193434
+        }
+      ]
+    },
+    {
+      "id": "breakwater",
+      "path": "/assets/circuits/previews/breakwater.webp",
+      "bytes": 34004,
+      "sha256": "da501c7776ddb27f3ba2e4544513bbe28f50a85191240dfd1506986351aaa054",
+      "sector": 0.13,
+      "camera": {
+        "position": [
+          169.8494689094458,
+          28,
+          -265.89461354246083
+        ],
+        "quaternion": [
+          0.09467840240511598,
+          0.9004892196766104,
+          0.2469912018316863,
+          -0.3451818529151894
+        ],
+        "fov": 52,
+        "near": 0.1,
+        "far": 1900
+      },
+      "width": 960,
+      "height": 540,
+      "draws": 150,
+      "triangles": 134628,
+      "surfaces": {
+        "loaded": 6,
+        "failed": 0,
+        "files": 6,
+        "estimatedBytes": 20971520
+      },
+      "textureProof": [
+        {
+          "name": "asphaltColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 5,
+          "gpuRedMax": 65,
+          "gpuRedMean": 28.66046142578125,
+          "gpuRedStdDev": 4.9838003373641735
+        },
+        {
+          "name": "asphaltNormal",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 107,
+          "gpuRedMax": 151,
+          "gpuRedMean": 126.8389892578125,
+          "gpuRedStdDev": 2.5962578903274864
+        },
+        {
+          "name": "asphaltRoughness",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 154,
+          "gpuRedMax": 237,
+          "gpuRedMean": 196.30560302734375,
+          "gpuRedStdDev": 6.698775020117266
+        },
+        {
+          "name": "concreteColor",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 25,
+          "gpuRedMax": 212,
+          "gpuRedMean": 161.9420166015625,
+          "gpuRedStdDev": 39.31971946870146
+        },
+        {
+          "name": "concreteNormal",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 75,
+          "gpuRedMax": 178,
+          "gpuRedMean": 127.71759033203125,
+          "gpuRedStdDev": 7.8612241956107916
+        },
+        {
+          "name": "terrainColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 11,
+          "gpuRedMax": 81,
+          "gpuRedMean": 21.03521728515625,
+          "gpuRedStdDev": 5.015361410193434
+        }
+      ]
+    },
+    {
+      "id": "copper-canyon",
+      "path": "/assets/circuits/previews/copper-canyon.webp",
+      "bytes": 38406,
+      "sha256": "948e96455e61f61f1d4a27edab4a13198525073afd05ff6410d52b2b314bebee",
+      "sector": 0.13,
+      "camera": {
+        "position": [
+          174.65124162355576,
+          28,
+          -252.4707278756774
+        ],
+        "quaternion": [
+          0.09510668396051238,
+          0.8998891222803392,
+          0.24682660377333948,
+          -0.3467432968887426
+        ],
+        "fov": 52,
+        "near": 0.1,
+        "far": 1900
+      },
+      "width": 960,
+      "height": 540,
+      "draws": 127,
+      "triangles": 156422,
+      "surfaces": {
+        "loaded": 6,
+        "failed": 0,
+        "files": 6,
+        "estimatedBytes": 20971520
+      },
+      "textureProof": [
+        {
+          "name": "asphaltColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 5,
+          "gpuRedMax": 65,
+          "gpuRedMean": 28.66046142578125,
+          "gpuRedStdDev": 4.9838003373641735
+        },
+        {
+          "name": "asphaltNormal",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 107,
+          "gpuRedMax": 151,
+          "gpuRedMean": 126.8389892578125,
+          "gpuRedStdDev": 2.5962578903274864
+        },
+        {
+          "name": "asphaltRoughness",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 154,
+          "gpuRedMax": 237,
+          "gpuRedMean": 196.30560302734375,
+          "gpuRedStdDev": 6.698775020117266
+        },
+        {
+          "name": "concreteColor",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 25,
+          "gpuRedMax": 212,
+          "gpuRedMean": 161.9420166015625,
+          "gpuRedStdDev": 39.31971946870146
+        },
+        {
+          "name": "concreteNormal",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 75,
+          "gpuRedMax": 178,
+          "gpuRedMean": 127.71759033203125,
+          "gpuRedStdDev": 7.8612241956107916
+        },
+        {
+          "name": "terrainColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 11,
+          "gpuRedMax": 81,
+          "gpuRedMean": 21.03521728515625,
+          "gpuRedStdDev": 5.015361410193434
+        }
+      ]
+    },
+    {
+      "id": "cedar-ridge",
+      "path": "/assets/circuits/previews/cedar-ridge.webp",
+      "bytes": 41788,
+      "sha256": "405b30db4cce0242230e66a543be77f2c7d6ddb5aac5cec30a9ba11b601fa2f2",
+      "sector": 0.13,
+      "camera": {
+        "position": [
+          249.65507232210027,
+          28,
+          -251.5471030912501
+        ],
+        "quaternion": [
+          0.010523510226041198,
+          0.9636178292598091,
+          0.26430646870019714,
+          -0.0383669840926737
+        ],
+        "fov": 52,
+        "near": 0.1,
+        "far": 1900
+      },
+      "width": 960,
+      "height": 540,
+      "draws": 198,
+      "triangles": 180002,
+      "surfaces": {
+        "loaded": 6,
+        "failed": 0,
+        "files": 6,
+        "estimatedBytes": 20971520
+      },
+      "textureProof": [
+        {
+          "name": "asphaltColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 5,
+          "gpuRedMax": 65,
+          "gpuRedMean": 28.66046142578125,
+          "gpuRedStdDev": 4.9838003373641735
+        },
+        {
+          "name": "asphaltNormal",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 107,
+          "gpuRedMax": 151,
+          "gpuRedMean": 126.8389892578125,
+          "gpuRedStdDev": 2.5962578903274864
+        },
+        {
+          "name": "asphaltRoughness",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 154,
+          "gpuRedMax": 237,
+          "gpuRedMean": 196.30560302734375,
+          "gpuRedStdDev": 6.698775020117266
+        },
+        {
+          "name": "concreteColor",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 25,
+          "gpuRedMax": 212,
+          "gpuRedMean": 161.9420166015625,
+          "gpuRedStdDev": 39.31971946870146
+        },
+        {
+          "name": "concreteNormal",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 75,
+          "gpuRedMax": 178,
+          "gpuRedMean": 127.71759033203125,
+          "gpuRedStdDev": 7.8612241956107916
+        },
+        {
+          "name": "terrainColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 11,
+          "gpuRedMax": 81,
+          "gpuRedMean": 21.03521728515625,
+          "gpuRedStdDev": 5.015361410193434
+        }
+      ]
+    },
+    {
+      "id": "neon-freight",
+      "path": "/assets/circuits/previews/neon-freight.webp",
+      "bytes": 60120,
+      "sha256": "ce7e856646ab7b4081972bcc794023b4e79d152cb9702254b62b0a545f7dc800",
+      "sector": 0.13,
+      "camera": {
+        "position": [
+          168.2347104340941,
+          28,
+          -253.52087456603326
+        ],
+        "quaternion": [
+          0.10792955291201019,
+          0.8804512018509791,
+          0.2414950626254283,
+          -0.3934933639782512
+        ],
+        "fov": 52,
+        "near": 0.1,
+        "far": 1900
+      },
+      "width": 960,
+      "height": 540,
+      "draws": 125,
+      "triangles": 267978,
+      "surfaces": {
+        "loaded": 6,
+        "failed": 0,
+        "files": 6,
+        "estimatedBytes": 20971520
+      },
+      "textureProof": [
+        {
+          "name": "asphaltColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 5,
+          "gpuRedMax": 65,
+          "gpuRedMean": 28.66046142578125,
+          "gpuRedStdDev": 4.9838003373641735
+        },
+        {
+          "name": "asphaltNormal",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 107,
+          "gpuRedMax": 151,
+          "gpuRedMean": 126.8389892578125,
+          "gpuRedStdDev": 2.5962578903274864
+        },
+        {
+          "name": "asphaltRoughness",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 154,
+          "gpuRedMax": 237,
+          "gpuRedMean": 196.30560302734375,
+          "gpuRedStdDev": 6.698775020117266
+        },
+        {
+          "name": "concreteColor",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 25,
+          "gpuRedMax": 212,
+          "gpuRedMean": 161.9420166015625,
+          "gpuRedStdDev": 39.31971946870146
+        },
+        {
+          "name": "concreteNormal",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 75,
+          "gpuRedMax": 178,
+          "gpuRedMean": 127.71759033203125,
+          "gpuRedStdDev": 7.8612241956107916
+        },
+        {
+          "name": "terrainColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 11,
+          "gpuRedMax": 81,
+          "gpuRedMean": 21.03521728515625,
+          "gpuRedStdDev": 5.015361410193434
+        }
+      ]
+    },
+    {
+      "id": "fuji-skyline",
+      "path": "/assets/circuits/previews/fuji-skyline.webp",
+      "bytes": 33914,
+      "sha256": "84503547e471ac1ad73fd84a7640a08c124625ead40288bb5f414bad9ebf8a6e",
+      "sector": 0.13,
+      "camera": {
+        "position": [
+          76.08489251330627,
+          12.00040445867608,
+          -213.87882269762898
+        ],
+        "quaternion": [
+          -0.12138298743127585,
+          -0.49107226309121693,
+          -0.0693250920871656,
+          0.8598303520996659
+        ],
+        "fov": 52,
+        "near": 0.1,
+        "far": 1900
+      },
+      "width": 960,
+      "height": 540,
+      "draws": 69,
+      "triangles": 140268,
+      "surfaces": {
+        "loaded": 6,
+        "failed": 0,
+        "files": 6,
+        "estimatedBytes": 20971520
+      },
+      "textureProof": [
+        {
+          "name": "asphaltColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 5,
+          "gpuRedMax": 65,
+          "gpuRedMean": 28.66046142578125,
+          "gpuRedStdDev": 4.9838003373641735
+        },
+        {
+          "name": "asphaltNormal",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 107,
+          "gpuRedMax": 151,
+          "gpuRedMean": 126.8389892578125,
+          "gpuRedStdDev": 2.5962578903274864
+        },
+        {
+          "name": "asphaltRoughness",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 154,
+          "gpuRedMax": 237,
+          "gpuRedMean": 196.30560302734375,
+          "gpuRedStdDev": 6.698775020117266
+        },
+        {
+          "name": "concreteColor",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 25,
+          "gpuRedMax": 212,
+          "gpuRedMean": 161.9420166015625,
+          "gpuRedStdDev": 39.31971946870146
+        },
+        {
+          "name": "concreteNormal",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 75,
+          "gpuRedMax": 178,
+          "gpuRedMean": 127.71759033203125,
+          "gpuRedStdDev": 7.8612241956107916
+        },
+        {
+          "name": "terrainColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 11,
+          "gpuRedMax": 81,
+          "gpuRedMean": 21.03521728515625,
+          "gpuRedStdDev": 5.015361410193434
+        }
+      ]
+    },
+    {
+      "id": "singapore-afterdark",
+      "path": "/assets/circuits/previews/singapore-afterdark.webp",
+      "bytes": 36562,
+      "sha256": "05101cf231595d91048c4dd92bf66cd945559b004c40ab4ccbba1a839cab0f0e",
+      "sector": 0.13,
+      "camera": {
+        "position": [
+          32.839132071666185,
+          12,
+          -196.63179103827989
+        ],
+        "quaternion": [
+          -0.12530662058428632,
+          -0.43884403521519355,
+          -0.0619519884134559,
+          0.8876238588081162
+        ],
+        "fov": 52,
+        "near": 0.1,
+        "far": 1900
+      },
+      "width": 960,
+      "height": 540,
+      "draws": 99,
+      "triangles": 221224,
+      "surfaces": {
+        "loaded": 6,
+        "failed": 0,
+        "files": 6,
+        "estimatedBytes": 20971520
+      },
+      "textureProof": [
+        {
+          "name": "asphaltColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 5,
+          "gpuRedMax": 65,
+          "gpuRedMean": 28.66046142578125,
+          "gpuRedStdDev": 4.9838003373641735
+        },
+        {
+          "name": "asphaltNormal",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 107,
+          "gpuRedMax": 151,
+          "gpuRedMean": 126.8389892578125,
+          "gpuRedStdDev": 2.5962578903274864
+        },
+        {
+          "name": "asphaltRoughness",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 154,
+          "gpuRedMax": 237,
+          "gpuRedMean": 196.30560302734375,
+          "gpuRedStdDev": 6.698775020117266
+        },
+        {
+          "name": "concreteColor",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 25,
+          "gpuRedMax": 212,
+          "gpuRedMean": 161.9420166015625,
+          "gpuRedStdDev": 39.31971946870146
+        },
+        {
+          "name": "concreteNormal",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 75,
+          "gpuRedMax": 178,
+          "gpuRedMean": 127.71759033203125,
+          "gpuRedStdDev": 7.8612241956107916
+        },
+        {
+          "name": "terrainColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 11,
+          "gpuRedMax": 81,
+          "gpuRedMean": 21.03521728515625,
+          "gpuRedStdDev": 5.015361410193434
+        }
+      ]
+    },
+    {
+      "id": "norway-fjord",
+      "path": "/assets/circuits/previews/norway-fjord.webp",
+      "bytes": 44986,
+      "sha256": "49618e24f8f6c4b15d5ec83b7b164eafea773d5417ba740b0b992173d6aaae36",
+      "sector": 0.13,
+      "camera": {
+        "position": [
+          -71.37338119370655,
+          33.336856018076986,
+          -227.08412704217778
+        ],
+        "quaternion": [
+          0.11243690688224606,
+          0.8729213396557194,
+          0.23942973005664722,
+          -0.40992643377735255
+        ],
+        "fov": 52,
+        "near": 0.1,
+        "far": 1900
+      },
+      "width": 960,
+      "height": 540,
+      "draws": 149,
+      "triangles": 161332,
+      "surfaces": {
+        "loaded": 6,
+        "failed": 0,
+        "files": 6,
+        "estimatedBytes": 20971520
+      },
+      "textureProof": [
+        {
+          "name": "asphaltColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 5,
+          "gpuRedMax": 65,
+          "gpuRedMean": 28.66046142578125,
+          "gpuRedStdDev": 4.9838003373641735
+        },
+        {
+          "name": "asphaltNormal",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 107,
+          "gpuRedMax": 151,
+          "gpuRedMean": 126.8389892578125,
+          "gpuRedStdDev": 2.5962578903274864
+        },
+        {
+          "name": "asphaltRoughness",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 154,
+          "gpuRedMax": 237,
+          "gpuRedMean": 196.30560302734375,
+          "gpuRedStdDev": 6.698775020117266
+        },
+        {
+          "name": "concreteColor",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 25,
+          "gpuRedMax": 212,
+          "gpuRedMean": 161.9420166015625,
+          "gpuRedStdDev": 39.31971946870146
+        },
+        {
+          "name": "concreteNormal",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 75,
+          "gpuRedMax": 178,
+          "gpuRedMean": 127.71759033203125,
+          "gpuRedStdDev": 7.8612241956107916
+        },
+        {
+          "name": "terrainColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 11,
+          "gpuRedMax": 81,
+          "gpuRedMean": 21.03521728515625,
+          "gpuRedStdDev": 5.015361410193434
+        }
+      ]
+    },
+    {
+      "id": "san-francisco-hills",
+      "path": "/assets/circuits/previews/san-francisco-hills.webp",
+      "bytes": 41032,
+      "sha256": "cf176bd51bd5ebf736c66b865922fa6d88535fd1e8739d9d5900f5b570c14a06",
+      "sector": 0.13,
+      "camera": {
+        "position": [
+          -24.854963716887134,
+          13.970708172341132,
+          -214.05347640998812
+        ],
+        "quaternion": [
+          0.05732180164208738,
+          0.9030986619663945,
+          0.12749121180356093,
+          -0.4060455746882022
+        ],
+        "fov": 52,
+        "near": 0.1,
+        "far": 1900
+      },
+      "width": 960,
+      "height": 540,
+      "draws": 262,
+      "triangles": 268642,
+      "surfaces": {
+        "loaded": 6,
+        "failed": 0,
+        "files": 6,
+        "estimatedBytes": 20971520
+      },
+      "textureProof": [
+        {
+          "name": "asphaltColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 5,
+          "gpuRedMax": 65,
+          "gpuRedMean": 28.66046142578125,
+          "gpuRedStdDev": 4.9838003373641735
+        },
+        {
+          "name": "asphaltNormal",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 107,
+          "gpuRedMax": 151,
+          "gpuRedMean": 126.8389892578125,
+          "gpuRedStdDev": 2.5962578903274864
+        },
+        {
+          "name": "asphaltRoughness",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 154,
+          "gpuRedMax": 237,
+          "gpuRedMean": 196.30560302734375,
+          "gpuRedStdDev": 6.698775020117266
+        },
+        {
+          "name": "concreteColor",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 25,
+          "gpuRedMax": 212,
+          "gpuRedMean": 161.9420166015625,
+          "gpuRedStdDev": 39.31971946870146
+        },
+        {
+          "name": "concreteNormal",
+          "width": 512,
+          "height": 512,
+          "gpuRedMin": 75,
+          "gpuRedMax": 178,
+          "gpuRedMean": 127.71759033203125,
+          "gpuRedStdDev": 7.8612241956107916
+        },
+        {
+          "name": "terrainColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 11,
+          "gpuRedMax": 81,
+          "gpuRedMean": 21.03521728515625,
+          "gpuRedStdDev": 5.015361410193434
+        }
+      ]
+    }
+  ]
+}

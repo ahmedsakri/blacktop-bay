@@ -76,6 +76,9 @@ test('manufacturer assets load on demand, deduplicate concurrent requests and pr
   assert.ok(a.group.userData.dimensions.length > 4);
   assert.equal(a.group.userData.effects.rearAxle, -1.3);
   assert.equal(a.group.userData.effects.tyreOffset, .88);
+  assert.equal(a.group.userData.tyreContacts.length,4);
+  assert.deepEqual(a.group.userData.tyreContacts.map(patch=>[patch.x,patch.z]),[[.88,1.3],[-.88,1.3],[.88,-1.3],[-.88,-1.3]]);
+  assert.ok(a.group.userData.tyreContacts.every(patch=>patch.width>0&&patch.radius>0));
 
   const positions = wheelNames.map(name => a.group.getObjectByName(name).position.toArray());
   a.update({time: 1}); a.update({time: 1.04, speed: 26, steering: 1, brake: 1, nitro: true});

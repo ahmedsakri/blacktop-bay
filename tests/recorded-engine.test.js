@@ -48,7 +48,7 @@ test('shipping recordings preserve explicit provenance, exact asset hashes and b
    assert.ok(Math.abs(bytes.readInt16LE(44+start*2)-bytes.readInt16LE(44+(end-1)*2))<=1,'loop endpoint is continuous');
   }
  }
- assert.equal(total,2240104);assert.equal(total,data.totalBytes);
+ assert.equal(total,2553584);assert.equal(total,data.totalBytes);
  assert.deepEqual(Object.keys(RECORDING_CARS).sort(),MANUFACTURER_VEHICLES.map(vehicle=>vehicle.id).sort());
  assert.deepEqual(Object.keys(RECORDING_MIXES).sort(),Object.keys(RECORDING_CARS).sort());
  for(const [id,recording] of Object.entries(RECORDING_CARS)){
@@ -57,14 +57,34 @@ test('shipping recordings preserve explicit provenance, exact asset hashes and b
   const source=data.recordings.find(entry=>entry.id===recording);assert.ok(source.cars.includes(id));
   assert.ok(RECORDING_MIXES[id][2]>0&&RECORDING_MIXES[id][2]<=1);
  }
- assert.equal(Object.keys(ENGINE_RECORDINGS).length,14);
- assert.equal(new Set(data.recordings.map(entry=>entry.sha256)).size,14,'families use genuinely different recordings');
- assert.equal(new Set(data.recordings.map(entry=>entry.sourceSha256)).size,14);
+ assert.equal(Object.keys(ENGINE_RECORDINGS).length,16);
+ assert.equal(new Set(data.recordings.map(entry=>entry.sha256)).size,16,'families use genuinely different recordings');
+ assert.equal(new Set(data.recordings.map(entry=>entry.sourceSha256)).size,16);
+ assert.equal(new Set(Object.values(RECORDING_CARS)).size,15);
+ assert.equal(data.activeBanks,15);
  assert.equal(recordingForVehicle({id:'unsupported-car'}),null);
  assert.equal(recordingForVehicle({id:'mclaren-p1-gtr',powertrain:'electric'}),null,'never play combustion loops on an electric vehicle');
  const diesel=data.recordings.find(entry=>entry.id==='bmw-diesel');assert.equal(diesel.additionalSources.length,2);
  for(const extra of diesel.additionalSources){assert.equal(extra.license,'CC0-1.0');assert.match(extra.sourceSha256,/^[a-f0-9]{64}$/);assert.ok(diesel.layers.some(layer=>layer.sourceFile===extra.sourceFile));}
  assert.equal(data.recordings.find(entry=>entry.id==='tesla-electric').sourceFamily,'electric');
+});
+
+test('GranTurismo and AMG use documented family recordings with three real source bands, not the unrelated idle proxy',async()=>{
+ const data=JSON.parse(await readFile(new URL('../public/assets/audio/ENGINE-SOURCES.json',import.meta.url)));
+ for(const [id,bankId,model] of [['maserati-mc-stradale','maserati-granturismo-v8','GranTurismo S'],['mercedes-amg-gt','mercedes-amg-v8','S63 AMG']]){
+  const selected=recordingForVehicle(car(id)),source=data.recordings.find(entry=>entry.id===bankId);
+  assert.equal(selected.id,bankId);assert.equal(selected.layers.length,3);
+  assert.ok(source.sourceVehicle.includes(model));assert.match(source.use,/not an? /);
+  assert.deepEqual(source.cars,[id]);assert.match(source.sourceSha256,/^[a-f0-9]{64}$/);
+  assert.ok(new Set(selected.layers.map(layer=>layer.sourceStart)).size===3);
+  assert.ok(selected.layers.every(layer=>layer.sourceDuration>=.8));
+  const high=recordedEngineFrame(selected,{rev:.95,load:1},RECORDING_MIXES[id]);
+  assert.equal(high.layers[2].gain,1);assert.ok(high.gain<=.35);
+ }
+ assert.deepEqual(data.recordings.find(entry=>entry.id==='mustang-idle').cars,[],'legacy bank is retained but not selected');
+ assert.equal(RECORDING_CARS['bugatti-veyron'],'murcielago-v12','unverified alternatives must not silently become W16 claims');
+ assert.equal(RECORDING_CARS['ferrari-testarossa'],'ferrari-classic-v12');
+ assert.equal(RECORDING_CARS['rimac-nevera'],'tesla-electric');
 });
 
 test('adjacent rev bands crossfade at constant power, bounded pitch, and load/impact focus remain smooth',()=>{
@@ -198,4 +218,36 @@ test('an electric request also obeys actual createAudio mute, pause and page lif
  assert.equal(audio.recordingStatus().active,'tesla-electric');assert.equal(fetches,1);
  const output=context.nodes.find(node=>node.connections.includes(context.destination));
  audio.update({...state,running:false});assert.equal(output.gain.value,0);audio.dispose();
+});
+
+test('actual recording mix suppresses procedural buzz and unducked turbine tones while failure keeps a full fallback',async()=>{
+ for(const id of ['maserati-mc-stradale','mercedes-amg-gt','bmw-i8','rimac-nevera']){
+  const values=[];
+  for(const loaded of [false,true]){
+   const context=new Context(),audio=createAudio({contextFactory:()=>context,recordedEngineOptions:{fetchImpl:loaded?diskFetch:async()=>{throw new Error('offline');}}});
+   const state={running:true,vehicle:id,speed:32,throttle:1,raceId:'mix-review'};
+   await audio.unlock();audio.update(state);
+   for(let i=0;i<100&&audio.recordingStatus().pending;i++)await new Promise(resolve=>setTimeout(resolve,2));
+   for(let i=0;i<180;i++)audio.update(state);
+   const body=context.sources[0],filter=body.connections[0].connections[0];
+   const engineSources=context.sources.filter(source=>source.connections[0]?.connections.includes(filter));
+   assert.equal(engineSources.length,5,'body, harmonic, sub, exhaust and turbine share the filtered procedural bed');
+   values.push({gains:engineSources.map(source=>source.connections[0].gain.value),cutoff:filter.frequency.value});
+   const count=context.sources.length;for(let i=0;i<180;i++)audio.update({...state,nitro:i<120});
+   assert.equal(context.sources.length,count,'new mix reuses all engine and Nitro sources');
+   audio.update({...state,running:false});assert.equal(context.nodes[0].gain.value,0);audio.dispose();
+  }
+  const [fallback,recorded]=values;
+  assert.ok(fallback.gains[0]>.015,'network failure must retain an audible procedural engine');
+  assert.ok(recorded.gains[0]<fallback.gains[0]*.20,'recording dominates the procedural body');
+  assert.ok(recorded.gains[1]<fallback.gains[1]*.08,'higher oscillator tone is strongly reduced');
+  assert.ok(recorded.gains[4]<fallback.gains[4]*.08,'turbine tone cannot bypass recording attenuation');
+  assert.ok(recorded.cutoff<fallback.cutoff*.65,'procedural high harmonics roll off further under a recording');
+ }
+ for(const car of MANUFACTURER_VEHICLES)for(const rev of [0,.25,.5,.75,1]){
+  const frame=recordedEngineFrame(recordingForVehicle(car),{rev,load:1},RECORDING_MIXES[car.id]);
+  assert.ok(frame.layers.every(layer=>layer.rate>=.90&&layer.rate<=1.20),'recordings avoid extreme tape-speed pitch shifts');
+  assert.ok(frame.cutoff<=3300,'recorded highs stay below the former bright 4–5 kHz band');
+  assert.ok(frame.gain<=.420001,'the source gain ceiling was not raised to overpower synthesis');
+ }
 });

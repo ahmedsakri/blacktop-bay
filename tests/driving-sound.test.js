@@ -5,12 +5,14 @@ import {VEHICLES} from '../src/vehicles.js';
 
 test('boost opens gently into low turbine thrust with restrained air and a short release',()=>{
  const silent=nitroSoundFrame({active:true,age:0,speed:35});
- const onset=nitroSoundFrame({active:true,age:.08,speed:35});
+ const onset=nitroSoundFrame({active:true,age:.16,speed:35});
  const sustain=nitroSoundFrame({active:true,age:1,speed:35});
  const off=nitroSoundFrame({active:false,speed:35});
- assert.ok(onset.impact>sustain.impact*1000&&onset.lowGain>sustain.lowGain);
+ assert.ok(onset.impact>sustain.impact*100&&onset.lowGain>sustain.lowGain);
  assert.equal(silent.impact,0);assert.equal(silent.lowGain,0);assert.ok(onset.air>sustain.air,'initial whoosh recedes so it cannot mask the engine');
- assert.ok(sustain.air<.025&&sustain.coreFrequency<150&&sustain.coreGain>0&&sustain.coreGain<.015);
+ assert.ok(sustain.air<.020&&sustain.coreFrequency<150&&sustain.coreGain>0&&sustain.coreGain<.0032);
+ assert.ok(sustain.coreGain<sustain.air*.2,'the pitched core stays below the broad air envelope');
+ assert.ok(sustain.lowGain<.035&&onset.lowGain<.04,'pressure weight must not become a loud sustained sine tone');
  assert.equal(off.air,0);assert.equal(off.lowGain,0);assert.equal(off.impact,0);assert.ok(off.release>0);
  for(const value of Object.values(nitroSoundFrame({active:true,age:Infinity,speed:NaN})))assert.ok(Number.isFinite(value));
 });
@@ -51,11 +53,28 @@ test('Nitro envelopes remain finite and bounded at extreme speeds and ages witho
   assert.ok(sound.air>=0&&sound.air<=.3);
   assert.ok(sound.impact>=0&&sound.impact<=.16);
   assert.ok(sound.lowGain>=0&&sound.lowGain<=.145);
-  assert.ok(sound.airCutoff>=340&&sound.airCutoff<=560);
+  assert.ok(sound.airCutoff>=250&&sound.airCutoff<=400);
   assert.ok(sound.coreFrequency>=105&&sound.coreFrequency<=138);
   assert.ok(sound.lowFrequency>=48&&sound.lowFrequency<=64);
   if(active)assert.equal(sound.release,0);
   else {assert.equal(sound.air,0);assert.equal(sound.impact,0);assert.equal(sound.lowGain,0);}
+ }
+});
+
+test('softened engine pulses limit upper harmonic power and shift torque changes stay gradual at 60 Hz',()=>{
+ for(const overtone of [false,true]){
+  const wave=engineSpectrum(overtone).imag;
+  const upperPower=Array.from(wave).slice(3).reduce((sum,value)=>sum+value*value,0);
+  assert.ok(upperPower<.005,'third and higher partials cannot recreate the sharp procedural buzz');
+ }
+ for(const car of VEHICLES.filter(car=>car.powertrain!=='electric')){
+  const motion=createEngineSoundMotion(),voice=drivingVoice(car),state={running:true,voice,vehicleId:car.id,raceId:'soft-shift',topSpeed:car.handling.topSpeed,throttle:1};
+  let previous=motion.update({...state,speed:0});
+  for(let frame=1;frame<=600;frame++){
+   const next=motion.update({...state,speed:car.handling.topSpeed*frame/600});
+   assert.ok(Math.abs(next.torque-previous.torque)<.04,car.id);
+   assert.ok(next.torque>=.88&&next.torque<=1);previous=next;
+  }
  }
 });
 

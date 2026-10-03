@@ -49,7 +49,7 @@ const number=(v,f=0)=>Number.isFinite(Number(v))?Number(v):f;
 // A rounded exhaust pulse has finite harmonics instead of the full sawtooth
 // spectrum. The overtone is quieter and rolls off faster than the main body.
 export function engineSpectrum(overtone=false) {
- const coefficients=overtone?[0,1,.23,.07,.018,.006]:[0,1,.48,.22,.105,.049,.021,.009,.003];
+ const coefficients=overtone?[0,1,.10,.015,.002]:[0,1,.28,.065,.014,.003];
  return {real:new Float32Array(coefficients.length),imag:Float32Array.from(coefficients)};
 }
 
@@ -70,19 +70,19 @@ export function createEngineSoundMotion() {
    if(gear<voice.gears-1&&speed>threshold(gear)+.5)gear++;
    else if(gear>0&&speed<threshold(gear-1)-1.5)gear--;
   }
-  if(gear!==previous)shift=.16;else shift=Math.max(0,shift-step);
+  if(gear!==previous)shift=.22;else shift=Math.max(0,shift-step);
   const lower=gear?threshold(gear-1)*.66:0,upper=threshold(gear);
   const rawRev=clamp((speed-lower)/(upper-lower),0,1.08);
   const rawPitch=voice.idle+rawRev*voice.range+clamp(number(state.drift),0,1)*voice.range*.025;
   if(reseed){rev=rawRev;pitch=rawPitch;}
   else {
-   rev+=(rawRev-rev)*(1-Math.exp(-step/ .10));
-   pitch+=(rawPitch-pitch)*(1-Math.exp(-step/(shift>0?.082:.10)));
+   rev+=(rawRev-rev)*(1-Math.exp(-step/ .125));
+   pitch+=(rawPitch-pitch)*(1-Math.exp(-step/(shift>0?.14:.12)));
    load+=(throttle*(1-brake)-load)*(1-Math.exp(-step/(throttle>load?.09:.065)));
   }
   wasRunning=running;
   // Torque opens and closes smoothly around a shift; avoid an amplitude step.
-  const torque=1-.18*Math.sin(Math.PI*shift/.16);
+  const torque=1-.12*Math.sin(Math.PI*shift/.22);
   return {gear,pitch,rev,load,torque,shifting:shift>0};
  }};
 }
@@ -90,18 +90,18 @@ export function createEngineSoundMotion() {
 export function nitroSoundFrame({active=false,age=0,speed=0,electric=false,mode='normal'}={}) {
   const elapsed=Number.isFinite(age)?Math.max(0,age):0;
   const velocity=Number.isFinite(speed)?Math.max(0,Math.min(100,speed)):0;
-  // Breath-like pressure onset decays into a soft, low thrust bed. A quieter
-  // sine core supplies weight without a sustained triangle-wave siren.
-  const attack=Math.exp(-elapsed*8),open=1-Math.exp(-elapsed*30);
+  // Pressure air carries boost; the tonal pair supplies only low weight.
+  // Slower air opening and a much quieter core avoid a pitched sci-fi cue.
+  const attack=Math.exp(-elapsed*6),open=1-Math.exp(-elapsed*18);
   // Perfect timing is a cleaner, higher turbine interval. Full-charge burst
   // has a deeper pressure body. Modes change timbre, not just overall loudness.
   const perfect=mode==='perfect',burst=mode==='burst';
-  return {air:active?(.022+attack*.038)*open*(perfect?.78:burst?1.10:1):0,airCutoff:340+velocity*2.2+(perfect?55:0),
-    coreFrequency:105+velocity*.24+(electric?9:0)+(perfect?12:burst?-6:0),coreGain:active?.012*open*(perfect?1.08:1):0,
+  return {air:active?(.018+attack*.026)*open*(perfect?.85:burst?1.06:1):0,airCutoff:250+velocity*1.5+(perfect?30:0),
+    coreFrequency:105+velocity*.24+(electric?9:0)+(perfect?12:burst?-6:0),coreGain:active?.003*open*(perfect?1.04:1):0,
     lowFrequency:48+velocity*.08+attack*8-(burst?4:0),
-    lowGain:active?(electric?.061:.068)*open*(1+attack*.40)*(burst?1.14:perfect?.94:1):0,
-    impact:active?attack*open*.066*(burst?1.10:perfect?.85:1):0,
-    release:active?0:.021*(burst?1.10:1),
+    lowGain:active?(electric?.029:.034)*open*(1+attack*.32)*(burst?1.10:perfect?.95:1):0,
+    impact:active?attack*open*.035*(burst?1.08:perfect?.90:1):0,
+    release:active?0:.013*(burst?1.06:1),
   };
 }
 

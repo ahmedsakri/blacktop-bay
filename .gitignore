@@ -5,3 +5,5 @@ firebase-debug.log
 .DS_Store
 reports/*.png
 reports/*.json
+# Reproducible local listening renders (source engine banks are committed).
+reports/polish-*.wav

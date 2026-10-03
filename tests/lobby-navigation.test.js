@@ -10,6 +10,7 @@ import {normalizePlayerControls} from '../src/player-controls.js';
 import {normalizeSetups,getCarSetup} from '../src/car-setups.js';
 import {normalizeMastery} from '../src/car-mastery.js';
 import {nextGoalSuggestion} from '../src/driver-development-ui.js';
+import {lobbyGoal,lobbyGoalMarkup,lobbyRaceLabels} from '../src/lobby-presentation.js';
 
 // Exercise the real lobby orchestration and record adapter with an inert DOM.
 // Renderer/audio/network behavior belongs to their own tests and browser QA.
@@ -37,7 +38,7 @@ function harness({savedSound,blocked=false,campaignEventId=null}={}){
   const selected=getCampaignEvent(campaignEventId,preferences.vehicle);
   if(selected)Object.assign(preferences,{track:selected.track,mode:selected.mode,difficulty:selected.difficulty});
   const $=id=>{if(!nodes.has(id))nodes.set(id,{textContent:'',attributes:{},setAttribute(name,value){this.attributes[name]=value;}});return nodes.get(id);};
-  const context=vm.createContext({preferences,preferenceKey:'blacktop-bay-choices-v1',loadRecords,saveResult,RACE_MODES,normalizeRaceOptions,getDifficulty,raceFieldSize,getCampaignEvent,canStartCampaignEvent,normalizeCampaign,campaignEventId,recordScope,getCarSetup,nextGoalSuggestion,mastery:normalizeMastery(),carSetups:normalizeSetups(),showCampaign(){},
+  const context=vm.createContext({preferences,preferenceKey:'blacktop-bay-choices-v1',loadRecords,saveResult,RACE_MODES,normalizeRaceOptions,getDifficulty,raceFieldSize,getCampaignEvent,canStartCampaignEvent,normalizeCampaign,campaignEventId,recordScope,getCarSetup,nextGoalSuggestion,lobbyGoal,lobbyGoalMarkup,lobbyRaceLabels,mastery:normalizeMastery(),carSetups:normalizeSetups(),showCampaign(){},
     progression:{credits:1200,cars:{}},$,document:{querySelectorAll:selector=>{assert.equal(selector,'[data-lobby-mode]');return buttons;}},
     localStorage:{getItem(k){if(blocked)throw Error('Unavailable');return values.get(k)??null;},setItem(k,v){if(blocked)throw Error('Unavailable');values.set(k,v);writes.push(k);}},
     updateGarageCopy(){},format:t=>`${t} SEC`});
@@ -52,9 +53,9 @@ test('lobby mode navigation refreshes the real field, selected state and mode-sp
     h.click(mode);
     assert.equal(h.preferences.mode,mode);
     assert.equal(h.$('hq-field-size').textContent,field);
-    assert.equal(h.$('lobby-mode-title').textContent,RACE_MODES.find(item=>item.id===mode).label.toUpperCase());
+    assert.equal(h.$('lobby-mode-title').textContent,lobbyRaceLabels({mode,difficulty:'street'}).title);
     assert.match(h.$('menu-best').textContent,new RegExp(`${best} SEC`));
-    assert.equal(h.$('race-setup-label').textContent,`${RACE_MODES.find(item=>item.id===mode).label} · ${mode==='time-attack'?'Solo':'Sport'}`);
+    assert.equal(h.$('race-setup-label').textContent,lobbyRaceLabels({mode,difficulty:'street'}).settings);
     assert.equal(h.buttons.filter(button=>button.attributes['aria-pressed']==='true').length,1);
     assert.equal(h.buttons.find(button=>button.dataset.lobbyMode===mode).attributes['aria-pressed'],'true');
     assert.equal(JSON.parse(h.values.get('blacktop-bay-choices-v1')).mode,mode);
@@ -100,9 +101,9 @@ test('a valid campaign selection displays its actual objective and free mode nav
   const original=JSON.stringify(vm.runInContext('campaign',h.context));
   assert.equal(h.$('open-campaign').attributes['aria-pressed'],'true');
   assert.ok(h.buttons.every(button=>button.attributes['aria-pressed']==='false'));
-  assert.equal(h.$('lobby-mode-title').textContent,event.name.toUpperCase());
+  assert.equal(h.$('lobby-mode-title').textContent,event.name);
   assert.equal(h.$('lobby-mode-description').textContent,event.objectives[0].label);
-  assert.equal(h.$('race-setup-label').textContent,`Campaign · ${event.name}`);
+  assert.equal(h.$('race-setup-label').textContent,'Event rules · Club');
   h.click('time-attack');
   assert.equal(h.$('open-campaign').attributes['aria-pressed'],'false');
   assert.equal(vm.runInContext('selectedCampaignId',h.context),null);
@@ -113,11 +114,11 @@ test('a valid campaign selection displays its actual objective and free mode nav
 test('locked or mismatched campaign intent never labels the free-race lobby as an active campaign',()=>{
   const locked=harness({campaignEventId:'coast-clock'});
   assert.equal(locked.$('open-campaign').attributes['aria-pressed'],'false');
-  assert.equal(locked.$('lobby-mode-title').textContent,'TIME ATTACK');
+  assert.equal(locked.$('lobby-mode-title').textContent,'Chase your best.');
   const changed=harness({campaignEventId:'harbor-first'});
   changed.preferences.track='coast';vm.runInContext('updateMenu()',changed.context);
   assert.equal(changed.$('open-campaign').attributes['aria-pressed'],'false');
-  assert.equal(changed.$('lobby-mode-title').textContent,'CIRCUIT RACE');
+  assert.equal(changed.$('lobby-mode-title').textContent,'Own the next corner.');
 });
 
 test('blocked storage keeps navigation usable with empty records and the current in-memory selection',()=>{

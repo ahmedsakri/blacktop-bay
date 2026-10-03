@@ -3,7 +3,8 @@
 <header><b>Local world renderer fixture — not a gameplay test</b><div><select id="track"></select><button id="previous">Earlier sector</button><button id="next">Next sector</button><button id="view">Chase / overview</button><button id="quality">Mobile / desktop</button></div><output id="status">Loading</output></header>
 <script type="module">
 import * as T from 'three';import {createWorld} from '/src/world.js';import {TRACKS,setTrack,sampleTrack} from '/src/track.js';
-const params=new URLSearchParams(location.search),id=params.get('track')||'harbor',low=params.get('low')!=='0',sector=Number(params.get('sector')||.13),over=params.has('overview');
+const params=new URLSearchParams(location.search);if(params.has('photo'))document.querySelector('header').hidden=true;
+const id=params.get('track')||'harbor',low=params.get('low')!=='0',sector=Number(params.get('sector')||.13),over=params.has('overview');
 setTrack(id);const errors=[];window.trackReview={errors,ready:false};addEventListener('error',e=>errors.push(e.message));addEventListener('unhandledrejection',e=>errors.push(String(e.reason)));
 const renderer=new T.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(1);renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;renderer.outputColorSpace=T.SRGBColorSpace;renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFShadowMap;document.body.append(renderer.domElement);
 const world=createWorld(renderer,{low,reducedMotion:true}),track=setTrack(id),p=sampleTrack(track.length*sector),ahead=sampleTrack(track.length*sector+38),camera=new T.PerspectiveCamera(52,innerWidth/innerHeight,.1,1900);
@@ -22,6 +23,6 @@ for(const [name,map]of Object.entries(world.surfaces.maps)){
  let min=255,max=0,sum=0,sum2=0;for(let i=0;i<pixels.length;i+=4){const v=pixels[i];min=Math.min(min,v);max=Math.max(max,v);sum+=v;sum2+=v*v;}const n=pixels.length/4;
  proof.push({name,width:map.image.width,height:map.image.height,gpuRedMin:min,gpuRedMax:max,gpuRedMean:sum/n,gpuRedStdDev:Math.sqrt(sum2/n-(sum/n)**2)});proofScene.remove(mesh);material.dispose();
 }
-renderer.setRenderTarget(null);target.dispose();proofGeometry.dispose();window.trackReview.textureProof=proof;window.trackReview.ready=true;
+renderer.setRenderTarget(null);target.dispose();proofGeometry.dispose();window.trackReview.textureProof=proof;window.trackReview.ready=true;window.trackReview.world=world;window.trackReview.camera=camera;window.trackReview.renderer=renderer;
 addEventListener('pagehide',()=>{world.disposeSurfaceTextures();world.disposeCrowd?.();world.backdrop.dispose();world.disposeEnvironment();renderer.dispose()});
 </script></html>

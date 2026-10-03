@@ -4,8 +4,9 @@ import * as THREE from 'three';
 import {getTrack,projectOnTrack,sampleTrack} from '../src/track.js';
 import {grandstandLayout,venueSceneryLayout} from '../src/world.js';
 import {originalLandmarkLayout} from '../src/original-venues.js';
+import {createDistanceDetail} from '../src/spatial-detail.js';
 import {tracksideServiceLayout} from '../src/trackside-services.js';
-import {SHOWCASE_VENUES,SHOWCASE_CROWD_PALETTES,showcaseLayout,showcaseSurfaceAt,applyShowcaseSurface,createShowcaseVenue} from '../src/showcase-venues.js';
+import {SHOWCASE_VENUES,SHOWCASE_CROWD_PALETTES,showcaseLayout,showcaseApproachLayout,showcaseSurfaceAt,applyShowcaseSurface,createShowcaseVenue} from '../src/showcase-venues.js';
 
 test('all 38 circuits have three distinct safe sector landmarks',()=>{
  for(const id of Object.keys(SHOWCASE_VENUES)){
@@ -40,41 +41,29 @@ test('constructing each actual showcase preserves every triangle without attribu
 });
 
 
-test('rotated pavilion roofs keep a level raised ridge and clock faces follow their tower',t=>{
- const originalDocument=globalThis.document;
- globalThis.document={createElement:()=>({getContext:()=>({fillRect(){},fillText(){}})})};
- t.after(()=>{if(originalDocument===undefined)delete globalThis.document;else globalThis.document=originalDocument;});
- const localVertices=(group,site,color)=>{
-  const inverse=new THREE.Matrix4().compose(new THREE.Vector3(site.x,site.y,site.z),new THREE.Quaternion().setFromEuler(new THREE.Euler(0,site.yaw,0)),new THREE.Vector3(1,1,1)).invert();
-  return group.children.filter(mesh=>mesh.material.color.getHexString()===color).flatMap(mesh=>{
-   const positions=mesh.geometry.attributes.position;
-   return Array.from({length:positions.count},(_,i)=>new THREE.Vector3().fromBufferAttribute(positions,i).applyMatrix4(inverse));
-  });
- };
- const fuji=getTrack('fuji-skyline'),fujiStands=grandstandLayout(fuji),pavilions=createShowcaseVenue(new THREE.Scene(),fuji,{stands:fujiStands});
- for(const site of showcaseLayout(fuji,{stands:fujiStands})){
-  const vertices=localVertices(pavilions,site,'34474d').filter(v=>Math.abs(v.x)<6&&Math.abs(v.z)<5);
-  assert.equal(vertices.length,72,site.label+' includes both roof slabs');
-  const means=[];
-  for(const side of [-1,1]){
-   const half=vertices.slice(side===-1?0:36,side===-1?36:72);
-   const ridge=half.filter(v=>v.z*side<0),eave=half.filter(v=>v.z*side>4);
-   assert.equal(ridge.length,18);assert.equal(eave.length,18);
-   const mean=points=>(Math.min(...points.map(v=>v.y))+Math.max(...points.map(v=>v.y)))/2;
-   assert.ok(mean(ridge)>mean(eave)+1,site.label+' slopes down from ridge to eaves');means.push(mean(ridge));
-   const left=ridge.filter(v=>v.x<0),right=ridge.filter(v=>v.x>0);
-   assert.ok(Math.abs(mean(left)-mean(right))<.025,site.label+' ridge stays level along the rotated building');
+test('flagship architecture has nine distinct modeled silhouettes whose full footprints clear the whole lap',t=>{
+ const original=globalThis.document;globalThis.document={createElement:()=>({getContext:()=>({fillRect(){},fillText(){}})})};
+ t.after(()=>{if(original===undefined)delete globalThis.document;else globalThis.document=original;});
+ const ids=new Set();
+ for(const id of ['fuji-skyline','san-francisco-hills','singapore-afterdark'])for(const low of [true,false]){
+  const track=getTrack(id),scene=new THREE.Scene(),group=createShowcaseVenue(scene,track,{low,stands:grandstandLayout(track)});
+  assert.equal(group.userData.flagshipArt.length,3);
+  for(const art of group.userData.flagshipArt){
+   ids.add(art.id);assert.ok(art.footprint<=art.radius,art.id+' actual vertices stay inside the reserved circle');
+   assert.ok(projectOnTrack(art.x,art.z,undefined,track).distance-art.footprint>track.width/2+7,art.id+' complete footprint clears every route segment');
+   assert.ok(art.height>=5.5&&art.height<13,art.id+' has readable architectural height');
+   assert.ok(art.triangles>400&&art.triangles<(low?4500:6000),art.id+' actual curved/depth geometry stays bounded');
   }
-  assert.ok(Math.abs(means[0]-means[1])<.025,site.label+' roof halves meet at the same height');
+  for(const mesh of group.children){
+   if(!mesh.isMesh)continue;const p=mesh.geometry.attributes.position;
+   for(let i=0;i<p.count;i++)assert.ok(projectOnTrack(p.getX(i),p.getZ(i),undefined,track).distance>track.width/2+2.1,id+' merged geometry and signs clear the road');
+   assert.ok(mesh.userData.distanceDetail?.distance<=460,id+' near architecture is distance culled');
+  }
+  assert.ok(group.userData.geometryStats.sourceTriangles<(low?10000:14000),id+' entire three-sector art has bounded triangles');
+  const detail=createDistanceDetail(scene,{low});detail.update(0,{x:10000,z:10000});assert.equal(detail.stats.visibleBatches,0,id+' distant architecture actually culls');
+  detail.update(1,group.userData.flagshipArt[0]);assert.ok(detail.stats.visibleBatches>0,id+' architecture restores on approach');
  }
- const sf=getTrack('san-francisco-hills'),sfStands=grandstandLayout(sf),shelters=createShowcaseVenue(new THREE.Scene(),sf,{stands:sfStands});
- for(const site of showcaseLayout(sf,{stands:sfStands})){
-  const center=new THREE.Vector3(5.6,7,2.24),vertices=localVertices(shelters,site,'405264').filter(v=>v.distanceTo(center)<1.2);
-  assert.ok(vertices.length>30,site.label+' includes a clock face');
-  const bounds=new THREE.Box3().setFromPoints(vertices),size=bounds.getSize(new THREE.Vector3());
-  assert.ok(size.z<.101,site.label+' clock face stays flush with the rotated tower');
-  assert.ok(size.x>1&&size.y>1,site.label+' clock remains a full size upright disc');
- }
+ assert.equal(ids.size,9,'each flagship sector has its own silhouette and construction');
 });
 
 test('showcase terraces keep bounded populations with coordinated clothing and one filming observer per sector',t=>{
@@ -103,4 +92,15 @@ test('all catalogue terraces have grounded support, road-safe corners, and no or
    }
   }
  }
+});
+
+
+test('flagship viewing terraces connect to outer sidewalks by supported piers outside the full road',()=>{
+ for(const id of ['fuji-skyline','san-francisco-hills','singapore-afterdark']){const track=getTrack(id);
+ for(const site of showcaseLayout(track,{stands:grandstandLayout(track)})){
+  const approach=showcaseApproachLayout(track,site);assert.ok(approach);assert.ok(approach.length>12&&approach.length<20);
+  assert.ok(Math.abs(approach.start)<=7.5,'pier enters the existing deck');
+  for(const p of approach.footprint)assert.ok(projectOnTrack(p.x,p.z,undefined,track).distance>=track.width/2+2.5,'whole access strip stays beyond the road');
+  const last=approach.footprint.slice(-2);for(const p of last)assert.ok(projectOnTrack(p.x,p.z,undefined,track).distance<track.width/2+4,'access reaches the outside sidewalk');
+ }}
 });

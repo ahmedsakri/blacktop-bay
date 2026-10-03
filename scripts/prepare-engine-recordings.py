@@ -5,6 +5,7 @@ import argparse, array, hashlib, json, math, pathlib, struct, subprocess, wave
 parser = argparse.ArgumentParser()
 parser.add_argument('--sources', type=pathlib.Path, required=True)
 parser.add_argument('--output', type=pathlib.Path, required=True)
+parser.add_argument('--only', action='append', default=[], help='Prepare only this bank ID (repeatable); validates names before writing.')
 args = parser.parse_args()
 RATE = 24000
 specs = [
@@ -22,7 +23,12 @@ specs = [
  ('chevrolet-v6', 'chevy-v6-351962.mp3', [(11.0,1.35,.10),(1.0,1.35,.50),(4.0,1.35,.95)]),
  ('bmw-diesel', 'diesel-401550.mp3', [(.3,1.3,.10),(.3,1.3,.55,'diesel-401547.mp3'),(.25,1.3,.95,'diesel-401549.mp3')]),
  ('tesla-electric', 'tesla-761685.mp3', [(.25,1.1,.10),(1.9,1.1,.55),(3.65,1.1,.95)]),
+ ('maserati-granturismo-v8', 'maserati-465453.mp3', [(3.5,1.35,.10),(26.0,1.35,.55),(44.0,1.35,.95)]),
+ ('mercedes-amg-v8', 'amg-505321.mp3', [(4.85,1.15,.10),(1.05,.80,.55),(2.35,1.10,.95)]),
 ]
+unknown=set(args.only)-{spec[0] for spec in specs}
+if unknown: parser.error('Unknown bank(s): '+', '.join(sorted(unknown)))
+if args.only: specs=[spec for spec in specs if spec[0] in args.only]
 args.output.mkdir(parents=True,exist_ok=True)
 results=[]
 for ident,filename,ranges in specs:

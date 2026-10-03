@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as THREE from 'three';
-import { createGarageSet } from '../src/garage.js';
+import { createGarageSet, createGarageContactShadow } from '../src/garage.js';
 
 function dispose(set) {
   const geometry = new Set(), materials = new Set();
@@ -52,4 +52,26 @@ test('mobile mural stays sharp with fewer polygons and no coloured paint lightin
     assert.equal(mural.material.toneMapped, false);
   }
   assert.ok(low.getObjectByName('garage-led-mural').geometry.attributes.position.count < full.getObjectByName('garage-led-mural').geometry.attributes.position.count);
+});
+
+test('garage contact patches follow the selected car dimensions with one texture-free draw and finite wheel data',t=>{
+  const contact=createGarageContactShadow();t.after(()=>dispose(contact.group));
+  assert.equal(contact.group.visible,false);
+  const tyreContacts=[{x:.9,z:1.2,width:.28,radius:.35},{x:-.9,z:1.2,width:.28,radius:.35},{x:1,z:-1.3,width:.32,radius:.38},{x:-1,z:-1.3,width:.32,radius:.38}];
+  const car={userData:{dimensions:{width:2.1,length:4.5},tyreContacts}};
+  assert.equal(contact.fit(car),true);assert.equal(contact.group.visible,true);
+  const [plane]=contact.group.children,uniforms=plane.material.uniforms;
+  assert.equal(contact.group.children.length,1);assert.equal(plane.geometry.index.count,6);
+  assert.equal(plane.material.depthWrite,false);assert.equal(plane.material.map,undefined);
+  assert.ok(plane.position.y>.0355&&plane.position.y<.038,'occlusion lies between the platform and tyre contact');
+  for(const [index,patch] of tyreContacts.entries()){
+    assert.equal(uniforms.contacts.value[index].x,patch.x);assert.equal(uniforms.contacts.value[index].y,patch.z);
+    assert.ok(uniforms.contacts.value[index].z>0&&uniforms.contacts.value[index].w>0);
+  }
+  assert.deepEqual(uniforms.planeSize.value.toArray(),[3.3,5.7]);
+  const compact={userData:{dimensions:{width:1.6,length:3.3},tyreContacts}};
+  assert.equal(contact.fit(compact),true);assert.deepEqual(uniforms.planeSize.value.toArray(),[2.8,4.5]);
+  assert.equal(contact.fit({userData:{dimensions:{width:2,length:4},tyreContacts:[...tyreContacts.slice(0,3),{...tyreContacts[3],radius:NaN}]}}),false);
+  assert.equal(contact.group.visible,false,'invalid or absent contact metadata cannot leave a stale shadow under a different car');
+  assert.equal(contact.fit(undefined),false);
 });

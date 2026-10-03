@@ -104,9 +104,12 @@ export function createAudio({contextFactory, lifecycleOptions, recordedEngineOpt
     tyreFilter.frequency.value=850;tyreFilter.Q.value=.56;
     tyreGain=node(context.createGain());tyreGain.gain.value=0;
     noise.connect(tyreFilter);tyreFilter.connect(tyreGain);tyreGain.connect(sfxRaceGate);
-    boostFilter=node(context.createBiquadFilter());boostFilter.type='lowpass';boostFilter.frequency.value=430;boostFilter.Q.value=.35;
+    boostFilter=node(context.createBiquadFilter());boostFilter.type='lowpass';boostFilter.frequency.value=320;boostFilter.Q.value=.35;
     boostGain=node(context.createGain());boostGain.gain.value=0;boostGain.connect(sfxRaceGate);
-    noise.connect(boostFilter);boostFilter.connect(boostGain);
+    // Broad pressure air, with subsonic noise removed. Keep this branch local:
+    // the source also feeds tyres and music, whose noise colour is unchanged.
+    const boostAirFloor=node(context.createBiquadFilter());boostAirFloor.type='highpass';boostAirFloor.frequency.value=75;boostAirFloor.Q.value=.35;
+    noise.connect(boostAirFloor);boostAirFloor.connect(boostFilter);boostFilter.connect(boostGain);
     // Warm turbine harmonics have their own gain; they do not need a loud
     // noise bus or a piercing electrical whine to remain audible.
     ({oscillator:boostOsc,amplitude:boostToneGain}=makeOscillator('sine',105,0,sfxRaceGate));
@@ -116,7 +119,7 @@ export function createAudio({contextFactory, lifecycleOptions, recordedEngineOpt
     const impactFilter=node(context.createBiquadFilter());impactFilter.type='lowpass';impactFilter.frequency.value=210;
     boostImpactGain=node(context.createGain());boostImpactGain.gain.value=0;
     noise.connect(impactFilter);impactFilter.connect(boostImpactGain);boostImpactGain.connect(sfxRaceGate);
-    const releaseFilter=node(context.createBiquadFilter());releaseFilter.type='lowpass';releaseFilter.frequency.value=360;releaseFilter.Q.value=.4;
+    const releaseFilter=node(context.createBiquadFilter());releaseFilter.type='lowpass';releaseFilter.frequency.value=260;releaseFilter.Q.value=.4;
     boostReleaseGain=node(context.createGain());boostReleaseGain.gain.value=0;
     noise.connect(releaseFilter);releaseFilter.connect(boostReleaseGain);boostReleaseGain.connect(sfxRaceGate);
     noise.start();sources.add(noise);
@@ -157,7 +160,7 @@ export function createAudio({contextFactory, lifecycleOptions, recordedEngineOpt
     }
     // Original load-linked exhaust texture and induction/motor layer. These
     // bounded voices are reused; no decoded samples or per-frame nodes.
-    ({oscillator:exhaustOsc,amplitude:exhaustGain}=makeOscillator('triangle',70,0,engineFilter));
+    ({oscillator:exhaustOsc,amplitude:exhaustGain}=makeOscillator('sine',70,0,engineFilter));
     ({oscillator:turbineOsc,amplitude:turbineGain}=makeOscillator('sine',180,0,engineFilter));
     soundscape=createRaceSoundscape({context,noise,engineDestination:engineGate,sfxDestination:sfxRaceGate,node,makeOscillator,target});
     recordedEngine=createRecordedEngine({...recordedEngineOptions,context,destination:engineGate});
@@ -225,7 +228,11 @@ export function createAudio({contextFactory, lifecycleOptions, recordedEngineOpt
     if(lobby)updateLobby(clamp(finite(dt,1/60),0,.1));
     if(!running)return;
     const recordingBlend=recordedEngine?.update(vehicle,{...motion,focus:engineFocus},step)||0;
-    const synthesisMix=(1-.42*recordingBlend)*engineFocus;
+    // The recording carries the engine character. Synthesis supplies a quiet
+    // low bed when it is audible, and returns smoothly if loading fails.
+    const synthesisMix=(1-.82*recordingBlend)*engineFocus;
+    const harmonicMix=(1-.94*recordingBlend)*engineFocus;
+    const subMix=(1-.65*recordingBlend)*engineFocus;
     if(waveApplied!==electric){
       if(!electric&&engineWaves){bodyOsc.setPeriodicWave(engineWaves[0]);harmonicOsc.setPeriodicWave(engineWaves[1]);}
       else {bodyOsc.type=electric?'sine':'triangle';harmonicOsc.type=electric?'sine':'triangle';}
@@ -235,20 +242,20 @@ export function createAudio({contextFactory, lifecycleOptions, recordedEngineOpt
     // frequency jumps or a continuously bright sawtooth at every gear change.
     const boost=Boolean(state.nitro)&&throttle>.1&&brake<.1;
     const {pitch,rev,load,torque}=motion;
-    target(bodyOsc.frequency,pitch,.028);
-    target(harmonicOsc.frequency,pitch*(vehicle.family==='formula'?3.002:2.003),.035);
-    target(subOsc.frequency,Math.max(32,pitch*.5),.045);
-    target(bodyGain.gain,voice.body*(.48+load*.52)*torque*synthesisMix,.045);
-    target(harmonicGain.gain,voice.harmonic*(.16+load*.44)*torque*synthesisMix,.055);
-    target(subGain.gain,voice.sub*(.68+load*.32)*synthesisMix,.08);
-    target(engineFilter.frequency,280+voice.cutoff*(.22+rev*.65)*(.52+load*.48)+(boost?80:0),.10);
-    target(intakeGain.gain,electric?0:(.002+rev*.010)*load*torque*synthesisMix,.075);
+    target(bodyOsc.frequency,pitch,.055);
+    target(harmonicOsc.frequency,pitch*(vehicle.family==='formula'?3.002:2.003),.065);
+    target(subOsc.frequency,Math.max(32,pitch*.5),.08);
+    target(bodyGain.gain,voice.body*(.48+load*.52)*torque*synthesisMix,.080);
+    target(harmonicGain.gain,voice.harmonic*(.10+load*.30)*torque*harmonicMix,.090);
+    target(subGain.gain,voice.sub*(.68+load*.32)*subMix,.10);
+    target(engineFilter.frequency,(240+voice.cutoff*(.16+rev*.43)*(.58+load*.42))*(1-.38*recordingBlend),.16);
+    target(intakeGain.gain,electric?0:(.0015+rev*.007)*load*torque*synthesisMix,.11);
     target(intakeFilter.frequency,300+rev*370,.12);
     const detail=engineDetailFrame({voice,motion,vehicle,speed,throttle,brake});
-    target(exhaustOsc.frequency,detail.exhaustFrequency,.045);
-    target(exhaustGain.gain,detail.exhaustGain*synthesisMix,.060);
-    target(turbineOsc.frequency,detail.turbineFrequency,.14);
-    target(turbineGain.gain,detail.turbineGain,.12);
+    target(exhaustOsc.frequency,detail.exhaustFrequency,.080);
+    target(exhaustGain.gain,detail.exhaustGain*synthesisMix,.10);
+    target(turbineOsc.frequency,detail.turbineFrequency,.20);
+    target(turbineGain.gain,detail.turbineGain*harmonicMix,.16);
     const nextBoostMode=['perfect','burst'].includes(state.nitroMode)?state.nitroMode:'normal';
     if(boost&&(!boostWasActive||nextBoostMode!==boostMode)){boostAge=0;boostRelease=0;}
     if(boost)boostMode=nextBoostMode;
@@ -256,14 +263,14 @@ export function createAudio({contextFactory, lifecycleOptions, recordedEngineOpt
     if(boost)boostAge+=step;
     else boostRelease*=Math.exp(-step*13);
     const thrust=nitroSoundFrame({active:boost,age:boostAge,speed,electric,mode:boostMode});
-    target(boostGain.gain,thrust.air,boost?.055:.065);
-    target(boostFilter.frequency,thrust.airCutoff,.10);
+    target(boostGain.gain,thrust.air,boost?.10:.12);
+    target(boostFilter.frequency,thrust.airCutoff,.20);
     target(boostOsc.frequency,thrust.coreFrequency,.22);
     target(boostToneGain.gain,thrust.coreGain,boost?.080:.080);
-    target(boostLowOsc.frequency,thrust.lowFrequency,.055);
-    target(boostLowGain.gain,thrust.lowGain,boost?.038:.09);
-    target(boostImpactGain.gain,thrust.impact,.029);
-    target(boostReleaseGain.gain,thrust.release*boostRelease,.024);
+    target(boostLowOsc.frequency,thrust.lowFrequency,.12);
+    target(boostLowGain.gain,thrust.lowGain,boost?.075:.12);
+    target(boostImpactGain.gain,thrust.impact,.055);
+    target(boostReleaseGain.gain,thrust.release*boostRelease,.06);
     boostWasActive=boost;
     target(tyreGain.gain,tyres.gain,.040);
     target(tyreFilter.frequency,tyres.cutoff,.10);

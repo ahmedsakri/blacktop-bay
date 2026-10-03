@@ -52,13 +52,20 @@ export function createMountainVenue(scene, track, {low=false,landmarks=[],surfac
   const mountainPosition=mountain.geometry.attributes.position;
   for(let i=0;i<mountainPosition.count;i++){const x=mountainPosition.getX(i),y=mountainPosition.getY(i),z=mountainPosition.getZ(i),a=Math.atan2(z,x),wave=1+.065*Math.sin(a*7+y*.025)+.03*Math.cos(a*13-y*.017);mountainPosition.setXYZ(i,x*wave,y,z*wave);}
   mountain.geometry.computeVertexNormals();mountain.rotation.y=.12;
-  mesh(new THREE.ConeGeometry(122,118,low?28:48,3),snow,80,301,-790);
+  const cap=mesh(new THREE.ConeGeometry(122,118,low?28:48,3),snow,80,301,-790);
+  const capPosition=cap.geometry.attributes.position;
+  for(let i=0;i<capPosition.count;i++){const x=capPosition.getX(i),y=capPosition.getY(i),z=capPosition.getZ(i),a=Math.atan2(z,x),edge=Math.max(0,(59-y)/118),wave=1+.055*Math.sin(a*7+y*.025)+.024*Math.cos(a*13);capPosition.setXYZ(i,x*wave,y-edge*(4+4*Math.sin(a*5+.4)),z*wave);}
+  cap.geometry.computeVertexNormals();
   for(let i=0;i<(low?42:70);i++){
     const p=sampleTrack(track.length*i/(low?42:70),track),side=i%2?1:-1;
     const x=p.x+p.nx*side*(track.width/2+13),z=p.z+p.nz*side*(track.width/2+13);
     if(p.y>8||projectOnTrack(x,z,0,track).distance<track.width/2+7||landmarks.some(site=>Math.hypot(x-site.x,z-site.z)<site.radius+4))continue;
-    mesh(new THREE.CylinderGeometry(.16,.24,3.8,7),trunk,x,1.9,z);
-    const crown=mesh(broadleafCrownGeometry({low}),cherry,x,4.2,z);crown.scale.set(3.0,1.56,2.4);
+    const height=3.5+(i%4)*.22,angle=i*2.399;
+    mesh(new THREE.CylinderGeometry(.16,.29,height,7),trunk,x,height/2,z);
+    // Visible branching replaces a ball on a straight stick, using the same
+    // trunk draw. Different crown spans and lean break the repeated skyline.
+    for(const direction of [-1,1]){const end=new THREE.Vector3(x+Math.cos(angle)*direction*1.12,height+.58,z+Math.sin(angle)*direction*1.12),start=new THREE.Vector3(x,height*.62,z),delta=end.clone().sub(start),branch=mesh(new THREE.CylinderGeometry(.07,.14,delta.length(),6),trunk,...start.clone().add(end).multiplyScalar(.5).toArray());branch.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),delta.normalize());}
+    const crown=mesh(broadleafCrownGeometry({low}),cherry,x+Math.cos(angle)*.28,height+.65,z+Math.sin(angle)*.28);crown.scale.set(2.6+(i%3)*.22,1.43+(i%4)*.10,2.15+(i%2)*.23);crown.rotation.y=angle;
   }
   }
   const steel=new THREE.MeshStandardMaterial({color:'#34455b',metalness:.72,roughness:.33});
@@ -66,11 +73,20 @@ export function createMountainVenue(scene, track, {low=false,landmarks=[],surfac
   const windowMat=new THREE.MeshStandardMaterial({color:'#19334b',metalness:.65,roughness:.2,emissive:'#265a86',emissiveIntensity:.3});
   const red=new THREE.MeshStandardMaterial({color:'#a54837',metalness:.45,roughness:.48});
   if(track.id==='singapore-afterdark'){
-    // Three glass towers and a connecting observation deck create a clear marina silhouette.
-    for(const x of [-70,0,70]) {mesh(new THREE.BoxGeometry(28,125,34),windowMat,x,62.5,-360);
-      for(let y=10;y<125;y+=12)mesh(new THREE.BoxGeometry(29,.6,35),steel,x,y,-360);}
-    mesh(new THREE.BoxGeometry(210,8,44),steel,0,127,-360);
-    for(let i=0;i<7;i++)mesh(new THREE.BoxGeometry(7,.4,45),gold,-90+i*30,132,-360);
+    // Original staggered glass towers and a curved lantern-crown establish a
+    // marina silhouette, with setbacks, angled fins and a supported sky lens.
+    for(const [i,x] of [-70,0,70].entries()) {
+      const height=[112,129,118][i],base=new THREE.CylinderGeometry(15,21,height,6,1,false);base.scale(1,1,1.14);base.rotateY(Math.PI/6);
+      const tower=mesh(base,windowMat,x,height/2,-360);tower.rotation.z=(i-1)*-.025;
+      for(let y=12;y<height;y+=12){const ratio=1-y/height*.28;const ledge=mesh(new THREE.CylinderGeometry(21*ratio,21*ratio,.55,6),steel,x,y,-360);ledge.scale.z=1.14;ledge.rotation.y=Math.PI/6;}
+      for(const side of [-1,1]){const fin=mesh(new THREE.BoxGeometry(.8,height,2),steel,x+side*14,height/2,-378);fin.rotation.z=(i-1)*-.025;}
+      mesh(new THREE.BoxGeometry(4,133-height,6),steel,x,(133+height)/2,-360);
+    }
+    const lens=new THREE.Shape();lens.moveTo(-108,0);lens.bezierCurveTo(-50,-34,55,-34,108,0);lens.bezierCurveTo(56,22,-57,22,-108,0);
+    const lensGeo=new THREE.ExtrudeGeometry(lens,{depth:3.2,bevelEnabled:true,bevelThickness:.65,bevelSize:.8,bevelSegments:1,curveSegments:low?10:18});lensGeo.rotateX(-Math.PI/2);mesh(lensGeo,steel,0,131,-360);
+    const crown=[];for(let i=0;i<=48;i++){const a=i/48*Math.PI*2;crown.push(new THREE.Vector3(Math.cos(a)*100,135+Math.sin(a)*.5,-360+Math.sin(a)*24));}
+    mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(crown),low?48:72,.55,5,false),gold,0,0,0);
+    for(let i=0;i<9;i++)mesh(new THREE.BoxGeometry(3.5,2.2,3.5),windowMat,-80+i*20,135,-360);
   }
   if(track.id==='norway-fjord'){
     for(let i=0;i<10;i++){const a=i/10*Math.PI*2,x=Math.cos(a)*610,z=Math.sin(a)*530;
@@ -88,7 +104,7 @@ export function createMountainVenue(scene, track, {low=false,landmarks=[],surfac
       const support=coastalGroundingLayout(track,[{x,z,radius:6.6}],{padding:3,margin:1.5})[0];
       const shore=mesh(new THREE.CylinderGeometry(1,1.12,1,10),stone,x,-1.5,z);shore.scale.set(support.radius,3,support.radius);
       group.userData.houseFoundations.push({...support,width:12,depth:14});
-      const house=new THREE.Group();house.position.set(x,0,z);house.rotation.y=Math.atan2(p.tx,p.tz);group.add(house);
+      const house=new THREE.Group();house.position.set(x,0,z);house.rotation.y=Math.atan2(-p.nx*side,-p.nz*side);group.add(house);
       const footing=new THREE.Mesh(new THREE.BoxGeometry(12,2.8,14),concrete);footing.position.y=-1.6;house.add(footing);
       const coping=new THREE.Mesh(new THREE.BoxGeometry(12,.2,14),concrete);coping.position.y=-.1;house.add(coping);
       const wall=new THREE.Mesh(new THREE.BoxGeometry(8,10+(i%3)*2,10),houseMaterials[i%4]);wall.position.y=(10+(i%3)*2)/2;house.add(wall);
@@ -125,12 +141,13 @@ export function createMountainVenue(scene, track, {low=false,landmarks=[],surfac
       const cable=new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(curve),48,.11,6,false),cableMat);group.add(cable);
     }
   }
+  const galleryLight=new THREE.MeshBasicMaterial({color:'#b5d8da'});
   // Open-sided galleries remain safely outside the full driveable width.
   if(['singapore-afterdark','norway-fjord'].includes(track.id))for(let i=0;i<7;i++){
     const p=sampleTrack(track.length*.79+i*5,track),frame=new THREE.Group();frame.position.set(p.x,p.y,p.z);frame.rotation.y=Math.atan2(p.tx,p.tz);group.add(frame);
     for(const side of [-1,1]){const wall=new THREE.Mesh(new THREE.BoxGeometry(.8,7,4.7),track.id==='norway-fjord'?stone:concrete);wall.position.set(side*(track.width/2+1.5),3.5,0);frame.add(wall);}
     const roof=new THREE.Mesh(new THREE.BoxGeometry(track.width+4,1,4.9),concrete);roof.position.y=7;frame.add(roof);
-    const light=new THREE.Mesh(new THREE.BoxGeometry(track.width*.7,.05,.15),new THREE.MeshBasicMaterial({color:'#a6dfff'}));light.position.y=6.45;frame.add(light);
+    const light=new THREE.Mesh(new THREE.BoxGeometry(track.width*.7,.05,.15),galleryLight);light.position.y=6.45;frame.add(light);
   }
   for(const obstacle of getTrackObstacles(track)){
     const o=mesh(obstacle.type==='rock'?new THREE.IcosahedronGeometry(obstacle.radius,1):new THREE.CylinderGeometry(obstacle.radius*.86,obstacle.radius,obstacle.height,6),obstacle.type==='rock'?stone:gold,obstacle.x,obstacle.y+obstacle.height/2,obstacle.z);

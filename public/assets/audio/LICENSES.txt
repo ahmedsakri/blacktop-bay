@@ -1,7 +1,7 @@
 Camber Reign — recorded engine texture sources
 Provenance and exact source intervals: ENGINE-SOURCES.json
 Derivative loop banks: engines/*.wav
-Checked 2 October 2026.
+Original sources checked 2 October 2026. GranTurismo and AMG sources checked 3 October 2026.
 
 All sources below permit redistribution and adaptation under CC0 or CC BY.
 Each bank was modified by AppsOverFlow: selected source intervals, mono
@@ -33,7 +33,7 @@ Adapted from “Ford Mustang Engine (1985).wav” by lmbubec.
 https://freesound.org/people/lmbubec/sounds/119449/
 CC0-1.0: https://creativecommons.org/publicdomain/zero/1.0/
 Ford Mustang idling before engine shutdown. Public HQ MP3 preview; cylinder count is not asserted by the source description.
-Adapted proxy texture blended with original synthesis; not a recording of the represented game model.
+Legacy idle-only proxy retained byte-for-byte for reproducibility. No current catalogue car selects this bank; GranTurismo and AMG V8 sources replace its previous assignments.
 
 aston-acceleration-v1.wav
 Adapted from “Acceleration Aston Martin” by Joseph SARDIN / BigSoundBank.
@@ -132,3 +132,20 @@ source RPM and microphone placement are stated only where documented.
 The original synthesis remains a fallback for blocked/failed decoding.
 Nitro, impact, tyre layers and the Liquid Lines lobby soundtrack remain
 original synthesis; Liquid Lines remains the only lobby music.
+
+maserati-granturismo-v8-v1.wav
+Adapted from “Maserati GranTurismo S” by lmartins.
+https://freesound.org/people/lmartins/sounds/465453/
+CC-BY-4.0: https://creativecommons.org/licenses/by/4.0/
+https://creativecommons.org/licenses/by/4.0/legalcode
+Author identifies a Maserati GranTurismo S V8 starting, revving and idling. Public HQ MP3 preview; original source is a 64 kbps M4A, so the preview does not restore lost recording detail. Selected intervals exclude the initial start and isolated wideband transients.
+GranTurismo family proxy: the source is a GranTurismo S, not an MC Stradale recording. Three authored rev bands replace the unrelated 1985 Mustang idle-only texture. No measured source RPM is asserted.
+Modified by AppsOverFlow as described above. No author or manufacturer endorsement.
+
+mercedes-amg-v8-v1.wav
+Adapted from “S63 AMG V8 Engine Revs” by marcelweiss.
+https://freesound.org/people/marcelweiss/sounds/505321/
+CC0-1.0: https://creativecommons.org/publicdomain/zero/1.0/
+Author identifies a stationary Mercedes-Benz S63 AMG Coupe revving its V8 BiTurbo in a Munich car park. Public HQ MP3 preview. Selected intervals avoid the wideband rev transients; source year and engine code are unspecified.
+AMG bi-turbo V8 family proxy: the source is an S63 AMG Coupe, not an AMG GT recording or a verified identical engine code. Three authored rev bands replace the unrelated 1985 Mustang idle-only texture. No measured source RPM is asserted.
+Modified by AppsOverFlow as described above. No author or manufacturer endorsement.

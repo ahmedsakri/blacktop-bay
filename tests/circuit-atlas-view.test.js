@@ -29,7 +29,10 @@ test('all 38 circuits retain their own real route shape, measured distances and 
     assert.ok(preview.includes(circuitArtGeometry(route).path));
     assert.ok(cards.includes(circuitArtGeometry(route).path));
     assert.ok(preview.includes('Next: choose your car and race mode at Race HQ.'));
-    assert.ok(existsSync(new URL(`../public/assets/environments/${circuitScene(track)}.webp`, import.meta.url)));
+    const image=`/assets/circuits/previews/${track.id}.webp`;
+    assert.ok(preview.includes(image));assert.ok(cards.includes(image));
+    assert.ok(existsSync(new URL(`../public${image}`, import.meta.url)));
+    assert.doesNotMatch(preview,/assets\/environments\//);
   }
 });
 
@@ -44,7 +47,7 @@ test('circuit cards distinguish original/current/bonus layouts without inventing
   assert.match(circuitViewToolsMarkup(), /aria-label="Next circuits"/);
 });
 
-test('track content is escaped and environment art is restricted to existing scene names', () => {
+test('track content is escaped and preview art stays restricted to catalogue identifiers', () => {
   const data = {...TRACKS[0], name:'<script>x</script>', country:'" onmouseover="evil', description:'<img src=x>', region:'A & B', environment:'../../evil'};
   const markup = circuitRouteCards([data], data.id) + circuitPreviewMarkup(data);
   assert.ok(markup.includes('&lt;script&gt;x&lt;/script&gt;'));

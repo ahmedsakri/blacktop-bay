@@ -35,11 +35,13 @@ import { registerPWA, canInstallPWA, requestInstallPWA } from './pwa.js';
 import './mobile-viewport.css';
 import './player-tools.css';
 import './header-strip.css';
+import './lobby-polish.css';
+import { lobbyGoal, lobbyGoalMarkup, lobbyRaceLabels, circuitPreviewImage } from './lobby-presentation.js';
 import { logoLoaderMarkup, bindLogoLoader, mountLogoLoader } from "./logo-loader.js";
 import { loadCampaign, persistCampaign, getCampaignEvent, canStartCampaignEvent, recordCampaignResult } from "./driver-campaign.js";
 import { loadMastery, persistMastery, recordMasteryResult } from "./car-mastery.js";
 import { CAR_SETUPS, loadSetups, persistSetups, getCarSetup, selectCarSetup, clearCircuitSetup } from "./car-setups.js";
-import { mountCampaignPanel, mountCarDevelopment, developmentResultMarkup, nextGoalSuggestion } from "./driver-development-ui.js";
+import { mountCampaignPanel, mountCarDevelopment, developmentResultMarkup } from "./driver-development-ui.js";
 import { saveCampaignIntent, consumeCampaignIntent } from "./campaign-intent.js";
 import { createPickupView } from "./race-pickup-view.js";
 import { readGamepad } from "./gamepad-controls.js";
@@ -266,7 +268,7 @@ const loadedGeometry = qualityGeometry(preferences.quality, {mobile});
 const graphicsViewport = () => ({mobile, dpr:devicePixelRatio, width:innerWidth, height:innerHeight, deviceMemory:navigator.deviceMemory, hardwareConcurrency:navigator.hardwareConcurrency});
 let steeringMode = 'touch', tiltPending = false, tiltRequest = 0, tiltTimer = null;
 let tiltGraceUntil = 0, analogSteering = 0;
-let tiltStatus = 'Hold either side of the thumbpad, or drag. Tilt is optional and uses motion sensors only after you enable it.';
+let tiltStatus = 'Hold either side of the thumbpad, or drag. Gyroscope is optional and uses motion sensors only after you enable it.';
 document.body.classList.toggle("touch-mode", mobile);
 $("track-km").textContent = (TRACK.length / 1000).toFixed(2);
 if (typeof preferences.sound === "boolean") records.sound = preferences.sound;
@@ -396,16 +398,26 @@ function updateWallet(){
 }
 function updateRaceOptions(){
   const option=normalizeRaceOptions(preferences), campaignEvent=selectedCampaignEvent();
-  $('race-setup-label').textContent=campaignEvent ? `Campaign · ${campaignEvent.name}` : `${RACE_MODES.find(m=>m.id===option.mode).label} · ${option.mode==='time-attack'?'Solo':getDifficulty(option.difficulty).label}`;
+  const labels=lobbyRaceLabels(option,campaignEvent);
+  $('race-setup-label').textContent=labels.settings;
   $('hq-field-size').textContent=String(raceFieldSize(option.mode)).padStart(2,'0');
   const selectedMode=RACE_MODES.find(item=>item.id===option.mode);
-  $('lobby-mode-title').textContent=campaignEvent ? campaignEvent.name.toUpperCase() : selectedMode.label.toUpperCase();
+  $('lobby-mode-title').textContent=labels.title;
   $('lobby-mode-description').textContent=campaignEvent ? campaignEvent.objectives[0].label : selectedMode.description;
   for(const button of document.querySelectorAll('[data-lobby-mode]'))button.setAttribute('aria-pressed',String(!campaignEvent && button.dataset.lobbyMode===option.mode));
   $('open-campaign').setAttribute('aria-pressed',String(Boolean(campaignEvent)));
   records=loadRecords(recordStore,{scope:currentRecordScope()});if(typeof preferences.sound==='boolean')records.sound=preferences.sound;
   updateWallet();
-  const goalButton=$("next-driver-goal");if(goalButton){const goal=nextGoalSuggestion({campaign,mastery,vehicle:preferences.vehicle});goalButton.textContent="NEXT GOAL · "+goal.label;goalButton.title=goal.description;goalButton.onclick=showCampaign;}
+  const goalButton=$("next-driver-goal");if(goalButton){
+    const goal=lobbyGoal({campaign,mastery,vehicle:preferences.vehicle});
+    goalButton.innerHTML=lobbyGoalMarkup(goal);
+    goalButton.setAttribute('aria-label',`${goal.action}: ${goal.label}. ${goal.description} ${goal.progress}. ${goal.reward}.`);
+    goalButton.onclick=()=>{
+      if(goal.kind==='campaign')showCampaign(goal.eventId);
+      else if(goal.kind==='mastery'){openGarage();showCarDevelopment();}
+      else location.assign('/circuits/');
+    };
+  }
 }
 function finalizeTour(){if(mode!=="finished")return;const result=finalizeChampionshipRound(career,race);career=result.state;if(result.changed&&!persistCareer())toast("Tour standings saved for this session only.");}
 async function continueTour(){const stagedCareer=mode==='finished'?finalizeChampionshipRound(career,race).state:career;const next=nextChampionshipRace(stagedCareer);if(!next)return;
@@ -513,7 +525,7 @@ async function initGame() {
     ]);
     garageFrame = null; lobbyFrame = null;
     updateCamera(1, true);
-    garageStudio.position(race.car);
+    garageStudio.position(race.car, player?.group);
     garageStudio.scene.add(player.group);
     await renderer.compileAsync(garageStudio.scene, camera);
     renderPass.scene = garageStudio.scene;
@@ -625,7 +637,7 @@ function updateSteeringSettings() {
   touch.setAttribute('aria-pressed', String(steeringMode === 'touch'));
   tilt.setAttribute('aria-pressed', String(steeringMode === 'tilt'));
   tilt.disabled = tiltPending;
-  tilt.querySelector('span').textContent = tiltPending ? 'Checking sensor…' : steeringMode === 'tilt' ? 'Tilt enabled' : 'Enable tilt';
+  tilt.querySelector('span').textContent = tiltPending ? 'Checking sensor…' : steeringMode === 'tilt' ? 'Gyroscope enabled' : 'Enable Gyroscope';
   recenter.disabled = steeringMode !== 'tilt';
   $('steering-status').textContent = tiltStatus;
 }
@@ -642,7 +654,7 @@ function receiveOrientation(event) {
   if (tiltPending) {
     clearTimeout(tiltTimer); tiltPending = false; steeringMode = 'tilt';
     tiltSteering.calibrate();
-    tiltStatus = 'Tilt ready. Hold your phone comfortably, then tilt left or right. The thumbpad always works as an override.';
+    tiltStatus = 'Gyroscope ready. Hold your phone comfortably, then rotate it left or right. The thumbpad always works as an override.';
     updateSteeringSettings();
   }
 }
@@ -656,7 +668,7 @@ async function enableTiltSteering() {
   const permission = await requestTiltPermission(window);
   if (attempt !== tiltRequest) return;
   if (!permission.ok) {
-    const message = permission.reason === 'secure' ? 'Tilt needs the secure HTTPS website. Touch steering is ready.'
+    const message = permission.reason === 'secure' ? 'Gyroscope needs the secure HTTPS website. Touch steering is ready.'
       : permission.reason === 'unsupported' ? 'This browser has no motion sensor support. Touch steering is ready.'
         : 'Motion access was not allowed. Touch steering is ready; you can try again from these settings.';
     useTouchSteering(message); return;
@@ -714,7 +726,7 @@ function mountSteeringSettings() {
   if (!usesTouchControls()) return;
   const section = document.createElement('section'); section.className = 'steering-settings';
   section.setAttribute('aria-labelledby', 'steering-settings-heading');
-  section.innerHTML = `<h3 id="steering-settings-heading">Steering</h3><div class="steering-options" role="group" aria-label="Steering mode"><button id="steering-touch" type="button">${icon('steering')}<span>Touch</span></button><button id="steering-tilt" type="button">${icon('phone')}<span>Enable tilt</span></button><button id="steering-recenter" type="button">${icon('restart')}<span>Recenter tilt</span></button></div><p id="steering-status" role="status" aria-live="polite"></p>`;
+  section.innerHTML = `<h3 id="steering-settings-heading">Steering</h3><div class="steering-options" role="group" aria-label="Steering mode"><button id="steering-touch" type="button">${icon('steering')}<span>Touch</span></button><button id="steering-tilt" type="button">${icon('phone')}<span>Enable Gyroscope</span></button><button id="steering-recenter" type="button">${icon('restart')}<span>Recenter Gyroscope</span></button></div><p id="steering-status" role="status" aria-live="polite"></p>`;
   $('dialog-content').prepend(section);
   const sensitivity=document.createElement('label');sensitivity.className='steering-sensitivity';sensitivity.innerHTML=`<span>Steering sensitivity <output id="steering-sensitivity-value">${Math.round(preferences.steeringSensitivity*100)}%</output></span><input id="steering-sensitivity" aria-label="Steering sensitivity" type="range" min="65" max="150" step="5" value="${Math.round(preferences.steeringSensitivity*100)}"><small>Lower for precision. Higher for quicker response. Full steering remains available.</small>`;section.append(sensitivity);
   $('steering-sensitivity').oninput=e=>{preferences.steeringSensitivity=normalizeSteeringSensitivity(Number(e.target.value)/100);$('steering-sensitivity-value').value=Math.round(preferences.steeringSensitivity*100)+'%';saveChoices();};
@@ -845,7 +857,9 @@ function updateGarageCopy() {
   $("selected-car-name").textContent = v.name;
   $("lobby-speed").textContent = speedLabel(stats);
   $("lobby-boost").textContent = `${stats.nitroCapacity.toFixed(1)} SEC`;
-  $("lobby-upgrades").textContent = `${Object.values(progression.cars[v.id] || {}).reduce((sum,n)=>sum+(Number.isFinite(n)?n:0),0)} / 20`;
+  const installedUpgrades=Object.values(progression.cars[v.id] || {}).reduce((sum,n)=>sum+(Number.isFinite(n)?n:0),0);
+  $("lobby-upgrades").textContent = `${installedUpgrades} / 20`;
+  $('lobby-open-upgrades').setAttribute('aria-label',`Open ${v.name} upgrades. ${installedUpgrades} of 20 levels installed.`);
   $("selected-car-tagline").textContent = v.tagline.toUpperCase();
   $("garage-class").textContent = v.specs.body.toUpperCase();
   $("garage-brand").textContent = v.brand;
@@ -884,11 +898,12 @@ function showUpgrades(focusComponent) {
   }
   if (focusComponent) document.querySelector(`[data-upgrade="${focusComponent}"]:not(:disabled)`)?.focus();
 }
-function showCampaign() {
+function showCampaign(previewEventId = selectedCampaignId) {
+  const returnTarget = document.activeElement?.id === "next-driver-goal" ? $("next-driver-goal") : $("open-campaign");
   if (!["menu","garage","finished"].includes(mode)) return;
   dialog({kind:"campaign",eyebrow:"SIX CHAPTERS · EIGHTEEN EVENTS",title:"Driver <em>career.</em>",html:'<div id="campaign-view"></div>',actions:[{label:"BACK",primary:true,action:closeDialog}]});
-  dialogNavigation.setReturnTarget($("open-campaign"));
-  developmentView=mountCampaignPanel($("campaign-view"),{state:campaign,vehicle:preferences.vehicle,selectedEventId:selectedCampaignId,onStart:selectCampaignEvent});
+  dialogNavigation.setReturnTarget(returnTarget);
+  developmentView=mountCampaignPanel($("campaign-view"),{state:campaign,vehicle:preferences.vehicle,selectedEventId:typeof previewEventId==='string'?previewEventId:selectedCampaignId,onStart:selectCampaignEvent});
 }
 async function selectCampaignEvent(selected) {
   if (carSelectionPending || racePreparing) return;
@@ -1362,13 +1377,19 @@ $("consent-decline").onclick = () => {
 $("circuit-name").textContent = TRACK.name;
 $("circuit-description").textContent = TRACK.description;
 $("circuit-art").innerHTML = circuitMapMarkup(TRACK);
+const circuitSceneImage=$('circuit-scene-image');
+circuitSceneImage.src=circuitPreviewImage(TRACK);
+circuitSceneImage.alt=`${TRACK.name}: actual in-game scenery`;
+$('browse-circuits').setAttribute('aria-label',`Change circuit. Selected: ${TRACK.name}`);
+circuitSceneImage.onerror=()=>{circuitSceneImage.hidden=true;$('browse-circuits').classList.add('scene-unavailable');};
 $("browse-circuits").onclick = () => { saveChoices(); location.assign('/circuits/'); };
 $('race-setup').onclick=showRaceSetup;
-$('open-campaign').onclick=showCampaign;
+$('open-campaign').onclick=()=>showCampaign();
 for(const button of document.querySelectorAll('[data-lobby-mode]'))button.onclick=()=>{
   selectedCampaignId=null;preferences.mode=button.dataset.lobbyMode;saveChoices();updateMenu();
 };
 $('hq-wallet').onclick=()=>{openGarage();showUpgrades();};
+$('lobby-open-upgrades').onclick=()=>{openGarage();showUpgrades();};
 // Browser audio starts only after a deliberate interaction, including lobby controls.
 for(const eventName of ['pointerdown','keydown'])document.addEventListener(eventName,()=>{if(records.sound)sound.unlock();},{once:true,capture:true});
 $("garage-cars").replaceChildren(
@@ -1778,7 +1799,7 @@ function updateHud() {
   $('nitro-timing').classList.toggle('is-perfect',race.nitro.perfectWindow);
   const steer = clamp(analogSteering + Number(input.right) - Number(input.left), -1, 1);
   $("touch-steer-dot").style.transform = `translateX(${steer * range}px)`;
-  $("touch-steer-label").textContent = steeringMode === 'tilt' ? 'TILT + TOUCH' : 'HOLD / DRAG';
+  $("touch-steer-label").textContent = steeringMode === 'tilt' ? 'GYROSCOPE + TOUCH' : 'HOLD / DRAG';
   pad.setAttribute('aria-valuenow', String(Math.round(steer * 100)));
   pad.setAttribute('aria-valuetext', Math.abs(steer) < .02 ? 'Straight' : `${Math.round(Math.abs(steer) * 100)} percent ${steer > 0 ? 'right' : 'left'}`);
   $("touch-steer-cue").classList.toggle("engaged", dragSteering.active());
@@ -1859,8 +1880,8 @@ function tick(now) {
     const notice=document.createElement('p');notice.className='backup-details';notice.setAttribute('role','status');notice.textContent='The game paused after a long interruption. Your car and race clock are held in place. Resume when your device is ready.';$('dialog-content').prepend(notice);
   }
   if (['racing', 'countdown'].includes(mode) && steeringMode === 'tilt' && now > tiltGraceUntil && !tiltSteering.fresh()) {
-    useTouchSteering('Motion data stopped. Touch steering is ready; enable tilt again in Pause when available.');
-    toast('Tilt signal stopped. Use the thumbpad to steer.');
+    useTouchSteering('Motion data stopped. Touch steering is ready; enable Gyroscope again in Pause when available.');
+    toast('Gyroscope signal stopped. Use the thumbpad to steer.');
   }
   analogSteering = ['racing', 'countdown'].includes(mode)
     ? dragSteering.active() ? dragSteering.read() : steeringMode === 'tilt' ? tiltSteering.read(dt) : 0
@@ -1993,7 +2014,7 @@ function tick(now) {
   bloomPass.enabled = showroom && !directRender;
   bloomPass.strength = showroom ? .04 : .18;
   renderer.toneMappingExposure = showroom ? .95 : 1.1;
-  if (showroom) garageStudio.position(race.car);
+  if (showroom) garageStudio.position(race.car, player?.group);
   updateCamera(dt);
   sound.update(
     {
@@ -2105,8 +2126,7 @@ function showTourRecovery(){
 }
 
 const ghostBadge=document.createElement('div');ghostBadge.id='ghost-split';ghostBadge.className='ghost-split';ghostBadge.hidden=true;document.body.append(ghostBadge);
-const practiceButton=document.createElement('button');practiceButton.className='lobby-practice';practiceButton.type='button';practiceButton.textContent='Driving school · learn by doing';practiceButton.onclick=()=>start({practice:true,introAccepted:true});$('start').after(practiceButton);
-const nextGoalButton=document.createElement('button');nextGoalButton.id='next-driver-goal';nextGoalButton.className='next-driver-goal';nextGoalButton.type='button';$('lobby-mode-description').after(nextGoalButton);
+const practiceButton=document.createElement('button');practiceButton.className='lobby-practice';practiceButton.type='button';practiceButton.textContent='Driving school · learn by doing';practiceButton.onclick=()=>start({practice:true,introAccepted:true});$('next-driver-goal').after(practiceButton);
 updateRaceOptions();
 
 if (import.meta.env.DEV) {

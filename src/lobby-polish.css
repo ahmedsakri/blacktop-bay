@@ -1,0 +1,145 @@
+/* Scene previews, actionable progression and a single clear racing action. */
+#menu .lobby-race-panel{top:103px;bottom:146px;width:30%;max-width:430px;gap:7px;justify-content:flex-start;scroll-padding:8px}
+#menu .lobby-race-panel>:first-child{margin-top:0}
+#menu .lobby-mode-heading{display:block;padding:0 0 3px}
+#menu .lobby-mode-heading h2{font:800 italic 28px/1.05 'Barlow Condensed';margin:0}
+#menu .lobby-mode-heading :is(.lobby-kicker,p){display:none}
+#menu .race-entry{display:block;padding:0 0 9px;overflow:hidden;background:#120c1eee;border:1px solid #ffffff40;border-left:3px solid #9246FF;flex:none}
+#menu #browse-circuits{display:flex;flex-direction:column;align-items:stretch;gap:0;padding:0;background:transparent;border:0;color:white;min-height:44px}
+#menu #browse-circuits:hover{background:#241337}
+#menu .circuit-scene{display:block;position:relative;height:96px;isolation:isolate;overflow:hidden;background:#021439}
+#menu .circuit-scene>img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .45s ease}
+#menu #browse-circuits:hover .circuit-scene>img{transform:scale(1.035)}
+#menu .circuit-scene:after{content:'';position:absolute;inset:0;background:linear-gradient(transparent 55%,#110017b8);pointer-events:none;z-index:0}
+#menu .circuit-scene-caption{position:absolute;bottom:7px;left:12px;font:800 8px/1.3 Manrope;letter-spacing:1px;color:#fff;z-index:1;text-shadow:0 1px 4px #000}
+#menu .circuit-art{position:absolute;inset:8px 8px auto auto;width:80px;height:80px;min-height:0;opacity:1;z-index:1;box-sizing:border-box;padding:3px;background:#110017e8;border:1px solid #ffffff75;pointer-events:none}
+#menu .circuit-art svg{width:100%;height:100%;filter:drop-shadow(0 1px 2px #000)}
+#menu .circuit-picker{display:flex;align-items:center;justify-content:space-between;padding:9px 12px 4px;gap:10px;min-width:0}
+#menu .circuit-name-wrap{display:grid;gap:3px;min-width:0}
+#menu .circuit-name-wrap>small{font:700 8px/1.3 Manrope;letter-spacing:.9px;color:#c6bbd5}
+#menu #browse-circuits strong{font:800 italic 26px/1.08 'Barlow Condensed';min-width:0;color:#fff;overflow-wrap:anywhere}
+#menu .change-circuit-label{display:flex;align-items:center;gap:3px;flex:none;max-width:75px;font:700 11px/1.25 Manrope;color:#FFF71E;text-align:left}
+#menu .change-circuit-label .ui-icon{width:16px;height:20px}
+#menu .track-facts{margin:5px 12px 0;gap:17px;display:flex;justify-content:flex-start}
+#menu .track-facts span{font:700 8px/1.25 Manrope;color:#c6bbd5}
+#menu .track-facts b{font:800 italic 17px/1.1 'Barlow Condensed';color:#fff}
+#menu .scene-unavailable .circuit-scene-caption{display:none}
+#menu .hq-setup-button{font:700 12px/1.35 Manrope;justify-content:flex-start;padding:8px 12px}
+#menu .hq-setup-button>.ui-icon:last-child{margin-left:auto}
+#menu #start{min-height:52px;font-size:28px;padding:10px 18px}
+#menu .lobby-practice{min-height:44px;padding:5px 2px;font-size:11px}
+#menu .best-time{font-size:9px;line-height:1.45;min-height:0}
+#menu .lobby-performance{pointer-events:auto;gap:30px;align-items:start}
+#menu .lobby-performance>:is(span,button){display:grid;gap:5px;border-left:2px solid #9246FF;padding:6px 12px;min-width:0}
+#menu .lobby-upgrade-shortcut{min-height:60px;min-width:116px;background:#110017a8;border:1px solid #ffffff3d;color:#fff;text-align:left;cursor:pointer;box-shadow:0 3px 15px #0002}
+#menu .lobby-upgrade-shortcut small{display:flex;gap:10px;align-items:center;color:#fff}
+#menu .lobby-upgrade-shortcut .ui-icon{width:15px;height:15px;color:#FFF71E}
+#menu .lobby-upgrade-hint{font:700 10px/1.3 Manrope;color:#FFF71E}
+#menu .lobby-upgrade-shortcut:hover{background:#241337;border-color:#FFF71E}
+#menu .next-driver-goal{display:grid;gap:6px;width:100%;min-height:44px;padding:10px 12px;border:1px solid #ffffff35;border-left:3px solid #9246FF;background:#140d21f5;color:#fff;text-align:left;cursor:pointer}
+#menu .next-driver-goal:hover{background:#241337;border-color:#9246FF}
+#menu .lobby-goal-heading{display:flex;justify-content:space-between;gap:10px;align-items:center}
+#menu .lobby-goal-heading>span{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+#menu .lobby-goal-heading small{font:800 8px/1.3 Manrope;letter-spacing:.8px;color:#c6bbd5}
+#menu .lobby-goal-heading strong{font:800 italic 20px/1.15 'Barlow Condensed';color:white}
+#menu .lobby-goal-heading>.ui-icon{width:18px;height:18px;flex:none;color:#fff71e}
+#menu .lobby-goal-objective{font:500 11px/1.45 Manrope;color:#f4f0f8}
+#menu .lobby-goal-progress{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font:600 9px/1.4 Manrope;color:#c6bbd5}
+#menu .lobby-goal-progress>span{color:#FFF71E}
+#menu .lobby-goal-meter{height:3px;display:block;width:100%;background:#ffffff24}
+#menu .lobby-goal-meter>i{height:100%;display:block;background:#FFF71E;min-width:0}
+#menu .lobby-goal-reward{display:flex;gap:6px;align-items:center;font:700 10px/1.35 Manrope;color:#fff}
+#menu .lobby-goal-reward .ui-icon{width:12px;height:12px;flex:none;color:#FFF71E}
+@media(max-width:1000px) and (min-height:521px) and (orientation:landscape){#menu .lobby-race-panel{width:34%}#lobby-showcase{right:37%}#menu .lobby-performance{gap:10px;left:3%}}
+@media(max-width:750px) and (orientation:portrait){
+ #menu .lobby-race-panel{position:static;inset:auto;width:calc(100% + 8px);max-width:none;gap:10px;overflow:visible}
+ #menu .lobby-mode-heading{display:none}
+ #menu .circuit-scene{height:110px}
+ #menu .circuit-art{width:90px;height:90px;inset:10px 10px auto auto;opacity:1}
+ #menu .circuit-picker{padding:10px 12px 5px}
+ #menu #browse-circuits strong{font-size:27px}
+ #menu .lobby-performance{gap:0;justify-content:space-between;padding-bottom:16px;align-items:start}
+ #menu .lobby-performance>:is(span,button){padding:7px 9px}
+ #menu .lobby-upgrade-shortcut{min-width:100px;min-height:74px}
+ #menu .lobby-upgrade-hint{font-size:9px}
+ #menu .lobby-performance strong{font-size:22px}
+ #menu .lobby-performance small{font-size:7px;letter-spacing:.4px}
+ #menu .lobby-performance .lobby-upgrade-shortcut small{gap:7px}
+ #menu .next-driver-goal{padding:12px;gap:7px}
+ #menu .lobby-goal-objective{font-size:12px}
+ #menu #start{min-height:56px;font-size:29px}
+}
+@media(max-width:360px) and (orientation:portrait){
+ #menu .lobby-performance>:is(span,button){padding:6px 7px}
+ #menu .lobby-upgrade-shortcut{min-width:94px}
+ #menu .lobby-performance{gap:2px}
+ #menu .lobby-performance strong{font-size:20px}
+ #menu .circuit-scene{height:92px}
+ #menu .circuit-art{width:74px;height:74px;inset:9px 9px auto auto}
+ #menu #browse-circuits strong{font-size:24px}
+ #menu .change-circuit-label{font-size:10px;max-width:67px}
+}
+@media(max-height:520px) and (orientation:landscape){
+ #menu .lobby-race-panel{top:74px;bottom:67px;width:34%;max-width:none;gap:6px}
+ #menu .lobby-mode-heading{display:none}
+ #menu .race-entry{padding:0 0 5px;border-left-width:2px}
+ #menu #browse-circuits{display:grid;grid-template-columns:62px minmax(0,1fr);align-items:stretch}
+ #menu .circuit-scene{height:64px;min-height:64px}
+ #menu .circuit-scene-caption{display:none}
+ #menu .circuit-art{width:52px;height:52px;inset:6px 5px;opacity:1;padding:0}
+ #menu .circuit-picker{padding:5px 7px;display:grid;gap:3px;align-content:center;justify-content:stretch}
+ #menu .circuit-name-wrap>small{display:none}
+ #menu #browse-circuits strong{font-size:21px}
+ #menu .change-circuit-label{max-width:none;font-size:10px;gap:5px}
+ #menu .track-facts{display:none}
+ #menu .hq-setup-button{min-height:44px;font-size:11px;padding:6px 8px}
+ #menu #start{min-height:46px;font-size:23px;padding:8px 12px}
+ #menu .next-driver-goal{display:grid;padding:9px;gap:5px}
+ #menu .lobby-goal-heading>span{gap:3px 8px}
+ #menu .lobby-goal-heading strong{font-size:18px}
+ #menu .lobby-goal-objective{font-size:10px}
+ #menu .lobby-goal-progress{font-size:9px}
+ #menu .lobby-goal-reward{font-size:9px}
+ #menu .lobby-performance{display:block;left:3%;bottom:74px;max-width:57%;gap:0}
+ #menu .lobby-performance>span{display:none}
+ #menu .lobby-upgrade-shortcut{display:grid;grid-template-columns:auto auto;align-items:center;min-height:44px;min-width:136px;gap:3px 12px;padding:5px 10px}
+ #menu .lobby-upgrade-shortcut strong{font-size:20px}
+ #menu .lobby-upgrade-shortcut small{font-size:7px}
+ #menu .lobby-upgrade-hint{grid-column:1/-1;font-size:9px}
+ #lobby-showcase{right:37%;bottom:111px}
+}
+@media(max-width:650px) and (orientation:landscape){
+ #menu .lobby-race-panel{width:36%;top:72px;bottom:61px;gap:5px}
+ #menu #browse-circuits{grid-template-columns:48px minmax(0,1fr)}
+ #menu .circuit-scene{height:61px;min-height:61px}
+ #menu .circuit-art{width:44px;height:50px;inset:5px 2px}
+ #menu #browse-circuits strong{font-size:18px}
+ #menu .circuit-picker{padding:5px 6px}
+ #menu #start{min-height:44px}
+ #menu .lobby-performance{bottom:61px}
+ #lobby-showcase{right:38%;bottom:105px}
+}
+@media(prefers-reduced-motion:reduce){#menu .circuit-scene>img{transition:none}#menu #browse-circuits:hover .circuit-scene>img{transform:none}}
+/* Compact previews need a legible route, rather than miniature road markings. */
+#menu .circuit-art .illustrated-circuit use:nth-of-type(4){stroke:#9246FF}
+#menu .circuit-art .illustrated-circuit use:nth-of-type(5){stroke:#E9DCFF}
+#menu .circuit-art .illustrated-circuit use:nth-of-type(6){stroke:#FFFFFF;stroke-opacity:1}
+#menu .circuit-picker>.change-circuit-label{font:700 11px/1.25 Manrope;letter-spacing:0;color:#FFF71E}
+@media(max-height:520px) and (orientation:landscape){#menu .circuit-picker>.change-circuit-label{font-size:10px}}
+@media(max-width:750px) and (orientation:portrait){
+ #lobby-showcase{height:180px}
+ #menu .circuit-scene{height:82px}
+ #menu .circuit-art{width:68px;height:68px;inset:7px}
+ #menu .lobby-performance{padding-bottom:12px}
+ #menu .lobby-upgrade-shortcut{min-height:64px}
+ #menu .lobby-goal-heading strong{font-size:21px}
+}
+#menu .circuit-picker>.circuit-name-wrap{display:grid}
+#menu .circuit-picker>.change-circuit-label{display:flex}
+@media(max-height:520px) and (orientation:landscape){
+ #menu #browse-circuits{position:relative;isolation:isolate;min-height:64px}
+ #menu .circuit-scene{position:absolute;inset:0;width:100%;height:100%;min-height:0;z-index:-1}
+ #menu .circuit-scene>img{opacity:.35}
+ #menu .circuit-scene:after{background:linear-gradient(90deg,transparent,#110017e6 62%)}
+ #menu .circuit-picker{grid-column:2;position:relative}
+}

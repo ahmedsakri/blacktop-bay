@@ -4,6 +4,7 @@ import {sampleTrack,projectOnTrack,TRACKS} from './track.js';
 import {VENUE_REGIONS} from './showcase-lighting.js';
 import {originalLandmarkLayout} from './original-venues.js';
 import {setWorldSurfaceUV} from './track-surface-materials.js';
+import {addFlagshipSectorArt} from './flagship-sector-art.js';
 
 // These are authored sectors on the game's original arcade routes. Fractions
 // describe the driving line, never claim surveyed real-world road geometry.
@@ -17,6 +18,11 @@ const AUTHORED_SHOWCASES={
   {s:.12,label:'BLOSSOM RUN',kind:'mountain-pavilion',side:1,roughness:.91,wear:.16},
   {s:.42,label:'SKYLINE VIADUCT',kind:'mountain-pavilion',side:-1,roughness:.73,wear:.34},
   {s:.72,label:'SUMMIT RETURN',kind:'mountain-pavilion',side:1,roughness:.87,wear:.23},
+ ]},
+ 'singapore-afterdark':{name:'Singapore Afterdark',surface:'#aebbc5',sectors:[
+  {s:.13,label:'PETAL QUAY',kind:'petal-quay',side:1,roughness:.65,wear:.16},
+  {s:.43,label:'PRISM EXCHANGE',kind:'prism-exchange',side:-1,roughness:.79,wear:.30},
+  {s:.74,label:'LANTERN GARDEN',kind:'lantern-garden',side:1,roughness:.70,wear:.20},
  ]},
  'san-francisco-hills':{name:'San Francisco Hills',surface:'#c4bcb4',sectors:[
   {s:.12,label:'BAY VIADUCT',kind:'bay-shelter',side:-1,roughness:.78,wear:.30},
@@ -87,6 +93,18 @@ export function showcaseLayout(track,{stands=[]}={}){
  }
  return result;
 }
+// Narrow, supported access walks connect flagship viewing decks to the curb.
+// Validate the complete strip against every road segment before authoring it.
+export function showcaseApproachLayout(track,site){
+ if(!['fuji-skyline','san-francisco-hills','singapore-afterdark'].includes(track.id))return null;
+ const road=sampleTrack(site.s,track),offset=Math.hypot(site.x-road.x,site.z-road.z),start=-site.side*7.0,end=-site.side*(offset-track.width/2-3.5),width=2.3;
+ const length=Math.abs(end-start),center=(start+end)/2,c=Math.cos(site.yaw),s=Math.sin(site.yaw);
+ if(length<1)return null;
+ const footprint=[];
+ for(let i=0;i<=Math.ceil(length);i++)for(const z of [-width/2,width/2]){const x=start+(end-start)*i/Math.ceil(length);footprint.push({x:site.x+c*x+s*z,z:site.z-s*x+c*z});}
+ if(footprint.some(p=>projectOnTrack(p.x,p.z,undefined,track).distance<track.width/2+2.5))return null;
+ return {sector:site.index,x:site.x+c*center,z:site.z-s*center,y:site.y,start,end,center,length,width,yaw:site.yaw,footprint};
+}
 function signageTexture(site,track){
  const canvas=document.createElement('canvas');canvas.width=768;canvas.height=192;
  const c=canvas.getContext('2d');c.fillStyle='#021439';c.fillRect(0,0,768,192);
@@ -104,7 +122,7 @@ export function createShowcaseVenue(scene,track,{low=false,stands=[],crowd,rng=M
   concrete:new THREE.MeshStandardMaterial({color:'#a7aaa1',roughness:.91,map:surfaces?.concreteColor||null,normalMap:surfaces?.concreteNormal||null,normalScale:new THREE.Vector2(.18,.18)}),
   timber:new THREE.MeshStandardMaterial({color:'#705344',roughness:.87}),
   roof:new THREE.MeshStandardMaterial({color:'#34474d',roughness:.68}),
-  red:new THREE.MeshStandardMaterial({color:'#a95643',roughness:.72}),
+  red:new THREE.MeshStandardMaterial({color:track.id==='fuji-skyline'?'#c18f9b':'#a95643',roughness:.72}),
   cream:new THREE.MeshStandardMaterial({color:'#e4ddc9',roughness:.78,side:THREE.DoubleSide}),
   glass:new THREE.MeshStandardMaterial({color:'#233f50',metalness:.53,roughness:.25}),
   warm:new THREE.MeshBasicMaterial({color:'#ffd7a3',toneMapped:false}),
@@ -135,7 +153,15 @@ export function createShowcaseVenue(scene,track,{low=false,stands=[],crowd,rng=M
    piece(site,box,mats.concrete,0,-site.y/2-.55,0,13,site.y+1.1,13);
    (root.userData.foundations||=[]).push({sector:site.index,x:site.x,z:site.z,yaw:site.yaw,deckTop:site.y,deckBottom:site.y-.6,bottom:-1.1,width:15});
   }
-  if(site.kind==='sail-terminal'){
+  const artStart=parts.length,flagship=addFlagshipSectorArt(track,site,{low,piece,rod,box,cylinder,mats});
+  if(flagship){
+   // Measure the actual transformed footprint before material merging. The
+   // complete convex hull is inside this circle, so the circle clearance also
+   // protects triangle interiors, not just the geometry's corner samples.
+   let footprint=0,height=0,triangles=0;const vertex=new THREE.Vector3();
+   for(const part of parts.slice(artStart)){part.updateMatrix();const p=part.geometry.attributes.position;triangles+=(part.geometry.index?.count??p.count)/3;for(let i=0;i<p.count;i++){vertex.fromBufferAttribute(p,i).applyMatrix4(part.matrix);footprint=Math.max(footprint,Math.hypot(vertex.x-site.x,vertex.z-site.z));height=Math.max(height,vertex.y-site.y);}}
+   (root.userData.flagshipArt||=[]).push({id:flagship,sector:site.index,x:site.x,y:site.y,z:site.z,yaw:site.yaw,radius:site.radius,footprint,height,triangles});
+  }else if(site.kind==='sail-terminal'){
    for(const x of [-5,5]){piece(site,cylinder,mats.steel,x,4,0,.13,8,.13);piece(site,box,mats.warm,x,3.7,-.35,.85,.08,.25);}
    // Two stretched triangular sails: architectural fabric with a ridged edge.
    for(const flip of [-1,1]){const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute([-5,5,flip*5,5,7,0,5,4.7,flip*5],3));geo.setAttribute('uv',new THREE.Float32BufferAttribute([0,1,1,0,1,1],2));geo.computeVertexNormals();piece(site,geo,mats.cream,0,0,0,1,1,1);}
@@ -208,6 +234,17 @@ export function createShowcaseVenue(scene,track,{low=false,stands=[],crowd,rng=M
    piece(site,cylinder,mats.steel,0,9.7,0,.09,5.5,.09);piece(site,box,mats.warm,0,12.45,0,.32,.2,.32);
    for(const x of [-2,2])piece(site,box,mats.cream,x,2.3,-2.53,.8,2.6,.08);
   }
+  const approach=showcaseApproachLayout(track,site);
+  if(approach){
+   const railMaterial=track.id==='fuji-skyline'?mats.timber:track.id==='san-francisco-hills'?mats.red:mats.steel;
+   piece(site,box,mats.concrete,approach.center,-.21,0,approach.length,.34,approach.width);
+   for(const z of [-.99,.99]){
+    piece(site,box,railMaterial,approach.center,1.02,z,approach.length,.075,.075);
+    for(let j=0;j<=4;j++){const x=approach.start+(approach.end-approach.start)*j/4;piece(site,box,railMaterial,x,.51,z,.075,1.02,.075);}
+   }
+   for(const x of [approach.start,approach.center,approach.end])piece(site,box,mats.concrete,x,-site.y/2-1.65,0,.52,site.y+2.9,1.8);
+   (root.userData.approaches||=[]).push(approach);
+  }
   // Each sector's signed viewing terrace faces the racing line; the crowd uses
   // existing proximity animation/culling and has a strict population ceiling.
   for(let i=0;i<(low?8:14);i++){
@@ -241,6 +278,6 @@ export function createShowcaseVenue(scene,track,{low=false,stands=[],crowd,rng=M
  geometryStats.drawBatches=root.children.length;root.userData.geometryStats=geometryStats;
  const used=new Set();root.traverse(o=>{if(o.material)used.add(o.material);});for(const material of Object.values(mats))if(!used.has(material))material.dispose();
  new Set(parts.map(p=>p.geometry)).forEach(g=>g.dispose());box.dispose();cylinder.dispose();
- root.userData.sectors=sites.map(({label,s,x,y,z})=>({label,s,x,y,z}));scene.userData.showcaseSectors=root.userData.sectors;
+ root.userData.sectors=sites.map(({label,s,x,y,z})=>({label,s,x,y,z}));scene.userData.flagshipArt=root.userData.flagshipArt||[];scene.userData.showcaseSectors=root.userData.sectors;
  return root;
 }
