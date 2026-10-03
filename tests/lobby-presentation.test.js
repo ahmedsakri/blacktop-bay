@@ -107,13 +107,13 @@ test('lobby goal markup escapes every text field and clamps the visual meter wit
 
 test('circuit artwork only resolves shipping track IDs and each approved path exists locally',()=>{
   for(const track of TRACKS){
-    const path=circuitPreviewImage(track);assert.equal(path,`/assets/circuits/previews/${track.id}.webp`);
+    const path=circuitPreviewImage(track);assert.equal(path,`/assets/circuits/previews/${track.id}.webp?v=20261003-photo4`);
     assert.equal(fs.existsSync(new URL(`../public${path}`,import.meta.url)),true,`${track.id}: shipping preview is present`);
   }
   for(const id of ['../harbor','harbor/../../secret','https://example.test/x','javascript:bad()','__proto__','constructor','harbor.webp','unknown','HARBOR'])
     assert.equal(circuitPreviewImage({id}),null,id);
   for(const input of [null,undefined,{},'harbor'])assert.equal(circuitPreviewImage(input),null);
-  assert.equal(circuitPreviewImage({id:'harbor',image:'https://example.test/untrusted.webp'}),'/assets/circuits/previews/harbor.webp');
+  assert.equal(circuitPreviewImage({id:'harbor',image:'https://example.test/untrusted.webp'}),'/assets/circuits/previews/harbor.webp?v=20261003-photo4');
 });
 
 test('lobby race labels reflect solo, tour and bound event rules while malformed options use safe defaults',()=>{

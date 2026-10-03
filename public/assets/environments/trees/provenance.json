@@ -1,0 +1,127 @@
+{
+  "asset": "https://polyhaven.com/a/tree_small_02",
+  "author": "Rico Cilliers",
+  "license": "CC0-1.0",
+  "sourceGltf": {
+    "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/tree_small_02/tree_small_02_1k.gltf",
+    "md5": "63f42b19687332f7b3a5c8b531734d8e"
+  },
+  "sourceGeometry": {
+    "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/tree_small_02/tree_small_02.bin",
+    "md5": "7a7019a87e6fe0d7475c0fa2e08d8962",
+    "size": 95102324
+  },
+  "sourceFiles": [
+    {
+      "file": "textures/tree_small_02_branch_diff_1k.jpg",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/tree_small_02/tree_small_02_branch_diff_1k.jpg",
+      "md5": "88b531469f5dba2fc44ca85df3776e7c",
+      "size": 449977
+    },
+    {
+      "file": "textures/tree_small_02_branch_nor_gl_1k.jpg",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/tree_small_02/tree_small_02_branch_nor_gl_1k.jpg",
+      "md5": "00a3eed0d4d28e7e890d9ec6ac0619af",
+      "size": 581596
+    },
+    {
+      "file": "textures/tree_small_02_diff_1k.jpg",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/tree_small_02/tree_small_02_diff_1k.jpg",
+      "md5": "a7287a3f4e7f0d4577cb949b245f5b14",
+      "size": 863246
+    },
+    {
+      "file": "textures/tree_small_02_nor_gl_1k.jpg",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/tree_small_02/tree_small_02_nor_gl_1k.jpg",
+      "md5": "115a20da8621cd3e034e9b1bbe574746",
+      "size": 1228646
+    }
+  ],
+  "changes": "Scanned trunk/branches simplified with attribute-weighted error cap; original canopy distribution sampled into textured leaf sprays. Original source geometry not redistributed.",
+  "variants": {
+    "mobile": {
+      "file": "tree-small-02-mobile.glb",
+      "triangles": 2481,
+      "primitives": 3,
+      "bytes": 390936,
+      "sha256": "77f97472edf73d6ba2e520e6cde65b5dff65594445555590b9706abb3a5e55f9",
+      "minY": -0.024031998589634895,
+      "height": 4.845494629815221,
+      "radius": 3.2645277900855576,
+      "leafSprays": 180,
+      "maxRelativeError": 0.005728180054575205
+    },
+    "desktop": {
+      "file": "tree-small-02.glb",
+      "triangles": 5161,
+      "primitives": 3,
+      "bytes": 1128112,
+      "sha256": "3dd82ec0810752ac2f03fe1e607e8958b27d89862637614372912e3bf8b108a2",
+      "minY": -0.024031998589634895,
+      "height": 4.757522942498326,
+      "radius": 3.139286814369621,
+      "leafSprays": 340,
+      "maxRelativeError": 0.0037161570508033037
+    },
+    "mobileFar": {
+      "file": "tree-small-02-far-mobile.glb",
+      "triangles": 586,
+      "primitives": 3,
+      "bytes": 55540,
+      "sha256": "1aa8ddad1c1622714f9fe3edfd15da49b4bdbd5ee6a43b86930ef8281f3387df",
+      "minY": -0.022265257313847542,
+      "height": 4.753713907673955,
+      "radius": 3.522453235574418,
+      "leafSprays": 48,
+      "maxRelativeError": 0.013514033518731594
+    },
+    "desktopFar": {
+      "file": "tree-small-02-far.glb",
+      "triangles": 917,
+      "primitives": 3,
+      "bytes": 137704,
+      "sha256": "fb0b2f8c15435ce62a87b207646b580a52f0aa7b11cde7a196f7c0cd5981bc2c",
+      "minY": -0.024031998589634895,
+      "height": 4.682838322594762,
+      "radius": 3.4311239887390492,
+      "leafSprays": 80,
+      "maxRelativeError": 0.01040109246969223
+    }
+  },
+  "canopyPhotograph": {
+    "asset": "https://polyhaven.com/a/potted_plant_02",
+    "author": "Rico Cilliers",
+    "license": "CC0-1.0",
+    "derivativeRecord": "../surfaces/provenance.json",
+    "inputFiles": [
+      {
+        "file": "foliage-leaf.webp",
+        "sha256": "25b6d1f6cf8a12cae96af5be6d72bb23b6242b7e6f2b0dd6aec327eafd3666f8",
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/potted_plant_02/potted_plant_02_leaves_diff_1k.jpg",
+        "sourceMD5": "e8a026bd7bfa6497729d855c59da03ce",
+        "alphaSource": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/potted_plant_02/potted_plant_02_leaves_alpha_1k.jpg",
+        "alphaSourceMD5": "f7a94b00b6094b55c59712c2145c6c97",
+        "crop": {
+          "left": 27,
+          "top": 0,
+          "width": 421,
+          "height": 642
+        }
+      },
+      {
+        "file": "foliage-leaf-mobile.webp",
+        "sha256": "44989e116a34d4d4346a4b853f4909c36f8893c5c5b46006c3bf69560d3d2762",
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/potted_plant_02/potted_plant_02_leaves_diff_1k.jpg",
+        "sourceMD5": "e8a026bd7bfa6497729d855c59da03ce",
+        "alphaSource": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/potted_plant_02/potted_plant_02_leaves_alpha_1k.jpg",
+        "alphaSourceMD5": "f7a94b00b6094b55c59712c2145c6c97",
+        "crop": {
+          "left": 27,
+          "top": 0,
+          "width": 421,
+          "height": 642
+        }
+      }
+    ]
+  }
+}

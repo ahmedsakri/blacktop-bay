@@ -1,6 +1,6 @@
 {
-  "version": 4,
-  "totalBytes": 3813892,
+  "version": 6,
+  "totalBytes": 4173980,
   "recordings": [
     {
       "id": "ferrari-355",
@@ -203,16 +203,16 @@
       ],
       "title": "Lamborghini Sounds",
       "author": "JaimeLopes",
-      "sourceVehicle": "Lamborghini Hurac\u00e1n EVO Spyder V10",
+      "sourceVehicle": "Lamborghini Huracán EVO Spyder V10",
       "sourceFamily": "V10",
       "license": "CC-BY-4.0",
       "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
       "sourceUrl": "https://freesound.org/people/JaimeLopes/sounds/564375/",
       "downloadUrl": "https://cdn.freesound.org/previews/564/564375_628040-hq.mp3",
-      "provenance": "Recorded on Tascam DR-07 internal microphones while entering, starting and driving a Hurac\u00e1n EVO Spyder. Door/start transients are omitted; public HQ MP3 preview.",
+      "provenance": "Recorded on Tascam DR-07 internal microphones while entering, starting and driving a Huracán EVO Spyder. Door/start transients are omitted; public HQ MP3 preview.",
       "checked": "2026-10-02",
       "adaptation": "Mono 24 kHz PCM, 65 Hz high-pass / 5.8 kHz low-pass, selected source intervals, cosine loop overlap, DC/seam correction and peak/RMS normalization. In-game pitch, RPM blend and load EQ are authored, not measured.",
-      "use": "Family proxy for the game Hurac\u00e1n (variant unspecified) and 2004 Gallardo. Source is an EVO Spyder; no same-year or same-variant claim.",
+      "use": "Family proxy for the game Huracán (variant unspecified) and 2004 Gallardo. Source is an EVO Spyder; no same-year or same-variant claim.",
       "cars": [
         "lamborghini-gallardo",
         "lamborghini-huracan"
@@ -252,13 +252,13 @@
       ],
       "title": "Lambo idle and rev.mp3",
       "author": "cheesepuff",
-      "sourceVehicle": "Lamborghini Murci\u00e9lago LP 670 SuperVeloce V12",
+      "sourceVehicle": "Lamborghini Murciélago LP 670 SuperVeloce V12",
       "sourceFamily": "V12",
       "license": "CC0-1.0",
       "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
       "sourceUrl": "https://freesound.org/people/cheesepuff/sounds/112075/",
       "downloadUrl": "https://cdn.freesound.org/previews/112/112075_682033-hq.mp3",
-      "provenance": "Author identifies their own Lamborghini-dealer video; tags identify Murci\u00e9lago LP-670 SuperVeloce and V12. Public HQ MP3 preview. Final loud rev around 60 seconds excluded.",
+      "provenance": "Author identifies their own Lamborghini-dealer video; tags identify Murciélago LP-670 SuperVeloce and V12. Public HQ MP3 preview. Final loud rev around 60 seconds excluded.",
       "checked": "2026-10-02",
       "adaptation": "Mono 24 kHz PCM, 65 Hz high-pass / 5.8 kHz low-pass, selected source intervals, cosine loop overlap, DC/seam correction and peak/RMS normalization. In-game pitch, RPM blend and load EQ are authored, not measured.",
       "use": "Modern V12 family proxy for Zonda C12, GMA T.50 and Enzo. Veyron uses a deliberately lower, darker multi-cylinder proxy; this is not a W16 recording.",
@@ -312,9 +312,8 @@
       "provenance": "Recorded around 1997 at RPM Motorsports in Vergennes, Vermont; Sony D8 DAT and Audio-Technica ATM10. Public HQ MP3 preview, not original master.",
       "checked": "2026-10-02",
       "adaptation": "Mono 24 kHz PCM, 65 Hz high-pass / 5.8 kHz low-pass, selected source intervals, cosine loop overlap, DC/seam correction and peak/RMS normalization. In-game pitch, RPM blend and load EQ are authored, not measured.",
-      "use": "Classic V12 family proxy for Ferrari 250 GTO and Countach LP500S. Neither represented model was recorded in this source session.",
+      "use": "Ferrari 340 America V12 proxy retained only for Lamborghini Countach LP500S. Not a Countach recording; recorded vehicle and current assignment remain distinct.",
       "cars": [
-        "ferrari-250-gto",
         "lamborghini-countach-lp500s"
       ]
     },
@@ -361,10 +360,8 @@
       "provenance": "Uploader-owned recording with an Audio-Technica Proformance P735 in the engine bay, M-Audio FastTrack at 48 kHz/24-bit and REAPER. Derived from original published Ogg Vorbis file.",
       "checked": "2026-10-02",
       "adaptation": "Mono 24 kHz PCM, 65 Hz high-pass / 5.8 kHz low-pass, selected source intervals, cosine loop overlap, DC/seam correction and peak/RMS normalization. In-game pitch, RPM blend and load EQ are authored, not measured.",
-      "use": "Naturally aspirated four-cylinder family proxy for Lotus Elise; not a Lotus or Toyota recording.",
-      "cars": [
-        "lotus-elise"
-      ]
+      "use": "Unassigned legacy Honda F20C proxy retained for reproduction of prior mixes. No current car assignment; not a Lotus or Toyota recording.",
+      "cars": []
     },
     {
       "id": "audi-turbo-i4",
@@ -753,14 +750,14 @@
       ],
       "title": "S63 AMG V8 Engine Revs",
       "author": "marcelweiss",
-      "sourceVehicle": "Mercedes-Benz S63 AMG Coup\u00e9 V8 BiTurbo",
+      "sourceVehicle": "Mercedes-Benz S63 AMG Coupé V8 BiTurbo",
       "license": "CC0-1.0",
       "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
       "sourceUrl": "https://freesound.org/people/marcelweiss/sounds/505321/",
       "downloadUrl": "https://cdn.freesound.org/previews/505/505321_7236652-hq.mp3",
       "provenance": "Author identifies a stationary Mercedes-Benz S63 AMG Coupe revving its V8 BiTurbo in a Munich car park. Public HQ MP3 preview. Selected intervals avoid the wideband rev transients; source year and engine code are unspecified.",
       "cars": [],
-      "use": "Unassigned legacy AMG bi-turbo V8 proxy retained for reproducing earlier mixes. Source is S63 AMG Coup\u00e9; the current AMG GT uses a documented GT R recording. This was the earlier replacement for Mustang idle.",
+      "use": "Unassigned legacy AMG bi-turbo V8 proxy retained for reproducing earlier mixes. Source is S63 AMG Coupé; the current AMG GT uses a documented GT R recording. This was the earlier replacement for Mustang idle.",
       "checked": "2026-10-03",
       "sourceFamily": "v8",
       "adaptation": "Mono 24 kHz PCM, 65 Hz high-pass / 5.8 kHz low-pass, selected source intervals, cosine loop overlap, DC/seam correction and peak/RMS normalization. In-game pitch, RPM blend and load EQ are authored, not measured."
@@ -795,7 +792,7 @@
       ],
       "title": "McLaren_570S_t10_Onbrd_Fast_Various_Exhaust_Right_DPA4062.wav",
       "author": "Pole Position Production",
-      "sourceVehicle": "2016 McLaren 570S Coup\u00e9 V8 biturbo",
+      "sourceVehicle": "2016 McLaren 570S Coupé V8 biturbo",
       "sourceYear": 2016,
       "sourceFamily": "turbo-V8",
       "license": "Sonniss-GDC-2026-v2",
@@ -805,7 +802,7 @@
       "productUrl": "https://pole.se/product/mclaren-570s-2016/",
       "bundle": "Sonniss GDC 2020",
       "bundleTracklistUrl": "https://docs.google.com/spreadsheets/d/1QqIcxJ7y0Acq3HAj9qQvFgvyeBjJ_7JvX8-GguUHIVk/edit",
-      "provenance": "Original 96 kHz/24-bit studio WAV from the individually extracted GDC bundle, matched by filename to Sonniss official 2020 tracklist and by embedded Pole Position copyright and vehicle metadata. Onboard exhaust-right DPA4062. The accompanying session photo depicts a 570S Coup\u00e9. Recorded source year is the vehicle model year from the product library, not the recording date.",
+      "provenance": "Original 96 kHz/24-bit studio WAV from the individually extracted GDC bundle, matched by filename to Sonniss official 2020 tracklist and by embedded Pole Position copyright and vehicle metadata. Onboard exhaust-right DPA4062. The accompanying session photo depicts a 570S Coupé. Recorded source year is the vehicle model year from the product library, not the recording date.",
       "checked": "2026-10-03",
       "adaptation": "Mono 24 kHz PCM, 65 Hz high-pass / 5.8 kHz low-pass, selected source intervals, cosine loop overlap, DC/seam correction and peak/RMS normalization. In-game pitch, RPM blend and load EQ are authored, not measured.",
       "cars": [
@@ -814,7 +811,7 @@
         "mclaren-p1-gtr",
         "mclaren-650s-gt3"
       ],
-      "use": "Model and Coup\u00e9 match for the 570S; visual source does not state model year. Related McLaren twin-turbo V8 proxy for Senna, P1 GTR and 650S GT3, not recordings of those models or the P1 hybrid system. Rev bands are authored, not measured RPM.",
+      "use": "Model and Coupé match for the 570S; visual source does not state model year. Related McLaren twin-turbo V8 proxy for Senna, P1 GTR and 650S GT3, not recordings of those models or the P1 hybrid system. Rev bands are authored, not measured RPM.",
       "rights": "Licensed for synchronization in this game, including commercial release; not licensed for redistribution as a sound-effect asset pack, template or SDK. Raw takes are not shipped; these modified loops retain the source license restrictions. No AI training. Attribution is optional.",
       "kind": "combustion",
       "file": "mclaren-570s-2016-v1.wav",
@@ -869,7 +866,7 @@
       "cars": [
         "lamborghini-aventador"
       ],
-      "use": "Aventador model recording replaces Murci\u00e9lago proxy. The game visual source does not specify year/trim; exact year/variant remains unverified. Rev bands are authored, not measured RPM.",
+      "use": "Aventador model recording replaces Murciélago proxy. The game visual source does not specify year/trim; exact year/variant remains unverified. Rev bands are authored, not measured RPM.",
       "rights": "Licensed for synchronization in this game, including commercial release; not licensed for redistribution as a sound-effect asset pack, template or SDK. Raw takes are not shipped; these modified loops retain the source license restrictions. No AI training. Attribution is optional.",
       "kind": "combustion",
       "file": "aventador-2014-v1.wav",
@@ -924,7 +921,7 @@
       "cars": [
         "ferrari-458-italia"
       ],
-      "use": "458 model-family recording replaces the 355 proxy. Game asset is a 458 Spider; the recording identifies 458 without certifying Spider, and embedded artwork depicts a coup\u00e9. Do not claim exact Spider or conflate this original take with the separately sold straight-pipes session.",
+      "use": "458 model-family recording replaces the 355 proxy. Game asset is a 458 Spider; the recording identifies 458 without certifying Spider, and embedded artwork depicts a coupé. Do not claim exact Spider or conflate this original take with the separately sold straight-pipes session.",
       "rights": "Licensed for synchronization in this game, including commercial release; not licensed for redistribution as a sound-effect asset pack, template or SDK. Raw takes are not shipped; these modified loops retain the source license restrictions. No AI training. Attribution is optional.",
       "kind": "combustion",
       "file": "ferrari-458-2013-v1.wav",
@@ -980,7 +977,7 @@
         "audi-r8",
         "audi-r8-lms-gt3"
       ],
-      "use": "R8 road-model recording replaces Hurac\u00e1n proxy for R8 Custom; custom build/generation remains undocumented. Related road R8 variant proxy for the 2019 R8 LMS GT3, not the race-car recording.",
+      "use": "R8 road-model recording replaces Huracán proxy for R8 Custom; custom build/generation remains undocumented. Related road R8 variant proxy for the 2019 R8 LMS GT3, not the race-car recording.",
       "rights": "Licensed for synchronization in this game, including commercial release; not licensed for redistribution as a sound-effect asset pack, template or SDK. Raw takes are not shipped; these modified loops retain the source license restrictions. No AI training. Attribution is optional.",
       "kind": "combustion",
       "file": "audi-r8-2017-v1.wav",
@@ -1153,7 +1150,105 @@
       "sha256": "e0e5aec8e7445bfb4622e155020392247f1141dacbb2f58472344055dbaf94c0",
       "duration": 3.75,
       "sampleRate": 24000
+    },
+    {
+      "id": "lotus-elise",
+      "sourceFile": "113205_137116-hq.mp3",
+      "sourceSha256": "5ac3fb5a84bab3437ac097e864f9fe3e27e1dec26a54de0744c4455157b3b009",
+      "sourceBytes": 1193280,
+      "title": "Lotus Elise start rev idle.aif",
+      "author": "victormalloy",
+      "sourceVehicle": "Lotus Elise (generation and engine unspecified)",
+      "sourceFamily": "I4",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "sourceUrl": "https://freesound.org/people/victormalloy/sounds/113205/",
+      "downloadUrl": "https://cdn.freesound.org/previews/113/113205_137116-hq.mp3",
+      "provenance": "Recorder publication in the Automobiles collection describes 96 kHz recordings of luxury sports cars and names Lotus Elise. Published 30 January 2011 as a 51-second stereo 96 kHz/24-bit AIFF under CC0. Derived from the publisher-hosted public HQ MP3 preview; no account-only master downloaded. Neither source nor visual asset establishes generation, model year, engine or exhaust build.",
+      "checked": "2026-10-03",
+      "adaptation": "Mono 24 kHz PCM, 65 Hz high-pass / 5.8 kHz low-pass, selected source intervals, cosine loop overlap, DC/seam correction and peak/RMS normalization. In-game pitch, RPM blend and load EQ are authored, not measured.",
+      "use": "Lotus Elise base-model recording replaces the unrelated Honda F20C proxy. Generation, engine and exhaust build remain unspecified. Short stationary rev sections retain source pitch movement; bands and transitions are authored, not measured RPM.",
+      "cars": [
+        "lotus-elise"
+      ],
+      "layers": [
+        {
+          "start": 0,
+          "end": 1.25,
+          "rev": 0.1,
+          "sourceStart": 44.1,
+          "sourceDuration": 1.35
+        },
+        {
+          "start": 1.25,
+          "end": 2.5,
+          "rev": 0.55,
+          "sourceStart": 16.7,
+          "sourceDuration": 1.35
+        },
+        {
+          "start": 2.5,
+          "end": 3.75,
+          "rev": 0.95,
+          "sourceStart": 20,
+          "sourceDuration": 1.35
+        }
+      ],
+      "file": "lotus-elise-v1.wav",
+      "bytes": 180044,
+      "sha256": "3506585008cd734b47a0a7e6c2e664108ca4e915417fea2dcc31759364cdae2f",
+      "duration": 3.75,
+      "sampleRate": 24000
+    },
+    {
+      "id": "ferrari-250-gto",
+      "sourceFile": "ferrari-250-gto-original.ogg",
+      "sourceSha256": "8cf1408366105aa2a563b3b7e871d1d0ebcd91415c9696bf0e0488aab0030683",
+      "sourceBytes": 564723,
+      "title": "Ferrari 250 GTO, Engine Sound.ogg",
+      "author": "Provo rossi",
+      "sourceVehicle": "Ferrari 250 GTO (year and build unspecified)",
+      "sourceFamily": "V12",
+      "license": "CC-BY-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Ferrari_250_GTO,_Engine_Sound.ogg",
+      "downloadUrl": "https://upload.wikimedia.org/wikipedia/commons/8/8a/Ferrari_250_GTO%2C_Engine_Sound.ogg",
+      "provenance": "Commons original upload dated 1 August 2025 expressly declares own work by Provo rossi and CC BY 4.0. Published original Ogg is 59.882812 seconds, stereo 44.1 kHz; downloaded SHA-1 a773b1c1dcdc031c1b9249f26603543bce87b998 matches file-page metadata. Source does not identify year, chassis, microphone or exhaust build; no 1964 specification inferred. Container retains M4A encoder lineage, not independently verified original capture hardware.",
+      "checked": "2026-10-03",
+      "adaptation": "Mono 24 kHz PCM, 65 Hz high-pass / 5.8 kHz low-pass, selected source intervals, cosine loop overlap, DC/seam correction and peak/RMS normalization. In-game pitch, RPM blend and load EQ are authored, not measured.",
+      "use": "Identified Ferrari 250 GTO source replaces Ferrari 340 America for the 1964 250 GTO. Source year/build is unspecified; not certified 1964. Three relatively steady running sections, not measured idle/load RPM bands. No other car is assigned this source.",
+      "cars": [
+        "ferrari-250-gto"
+      ],
+      "layers": [
+        {
+          "start": 0,
+          "end": 1.25,
+          "rev": 0.1,
+          "sourceStart": 18.3,
+          "sourceDuration": 1.35
+        },
+        {
+          "start": 1.25,
+          "end": 2.5,
+          "rev": 0.55,
+          "sourceStart": 30.5,
+          "sourceDuration": 1.35
+        },
+        {
+          "start": 2.5,
+          "end": 3.75,
+          "rev": 0.95,
+          "sourceStart": 43.5,
+          "sourceDuration": 1.35
+        }
+      ],
+      "file": "ferrari-250-gto-v1.wav",
+      "bytes": 180044,
+      "sha256": "c57d4798ac7b909015dacea8e7c756a168bed2b8e6acb785a95cb4ca43734f4f",
+      "duration": 3.75,
+      "sampleRate": 24000
     }
   ],
-  "activeBanks": 20
+  "activeBanks": 21
 }

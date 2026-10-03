@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {clone as cloneSkeleton} from 'three/addons/utils/SkeletonUtils.js';
 import {createSpectatorCharacter} from './spectator-character.js';
+import {SPECTATOR_ASSET_VERSION} from './spectator-motion-config.js';
 
 // Individually fitted CC0 MakeHuman meshes, not a palette swap of one person.
 // Geometry and atlases are shared by the bounded near pool; only bones are cloned.
@@ -9,8 +10,8 @@ export const SPECTATOR_ASSETS = Object.freeze([
  {id:'spectator-blue-shirt',shirt:'#537ba9',skin:'#d8a284',hair:'#352922',pants:'#35445b',longHair:false,garment:1,shorts:false},
  {id:'spectator-light-tee',shirt:'#c6c3b7',skin:'#794c32',hair:'#211b18',pants:'#344254',longHair:false,garment:0,shorts:false},
  {id:'spectator-striped-shirt',shirt:'#853d40',skin:'#be8a69',hair:'#231e1b',pants:'#3f4859',longHair:false,garment:2,shorts:false},
- {id:'spectator-denim',shirt:'#53748e',skin:'#754c36',hair:'#241b16',pants:'#40516c',longHair:true,garment:0,shorts:false},
- {id:'spectator-summer',shirt:'#588298',skin:'#dcac8d',hair:'#34251d',pants:'#304253',longHair:true,garment:0,shorts:true},
+ {id:'spectator-olive-jacket',shirt:'#62695e',skin:'#754c36',hair:'#241b16',pants:'#40516c',longHair:true,garment:1,shorts:false},
+ {id:'spectator-wine-blouse',shirt:'#884c53',skin:'#dcac8d',hair:'#726156',pants:'#555b56',longHair:true,garment:2,shorts:false,skirt:true},
  {id:'spectator-sport',shirt:'#497493',skin:'#bb896b',hair:'#261d1a',pants:'#242832',longHair:true,garment:0,shorts:false},
 ]);
 export const REALISTIC_CROWD_BUDGET = Object.freeze({variants:6,maxTriangles:14500,maxDraws:4,maxFileBytes:2300000,parallelLoads:2});
@@ -46,7 +47,7 @@ export function createSpectatorLibrary({load,enabled=typeof window!=='undefined'
    };
    job.cancel=()=>{controller.abort();finish(null);};
    job.timer=setTimeout(job.cancel,Math.max(1,timeoutMs));job.timer.unref?.();
-   Promise.resolve().then(()=>loader(`/assets/crowd/${SPECTATOR_ASSETS[job.index].id}${job.medium?'-crowd':''}.glb`,{signal:controller.signal})).then(result=>{
+   Promise.resolve().then(()=>loader(`/assets/crowd/${SPECTATOR_ASSETS[job.index].id}${job.tier==='medium'?'-crowd':job.tier==='far'?'-far':''}.glb?v=${SPECTATOR_ASSET_VERSION}`,{signal:controller.signal})).then(result=>{
     const root=result.scene||result;
     if(disposed||job.done){finish(root);return;}
     root.traverse(object=>{if(!object.isMesh)return;object.castShadow=false;object.receiveShadow=false;object.frustumCulled=false;
@@ -62,15 +63,15 @@ export function createSpectatorLibrary({load,enabled=typeof window!=='undefined'
    }).catch(()=>finish(null));
   }
  };
- function request(index,medium=false){
+ function request(index,tier='near'){
    if(!enabled||disposed)return Promise.resolve(null);
    index=((index%SPECTATOR_ASSETS.length)+SPECTATOR_ASSETS.length)%SPECTATOR_ASSETS.length;
-   const key=`${index}:${medium?'medium':'near'}`;
-   if(!requests.has(key))requests.set(key,new Promise(resolve=>{queue.push({index,medium,resolve});pump();}));
+   const key=`${index}:${tier}`;
+   if(!requests.has(key))requests.set(key,new Promise(resolve=>{queue.push({index,tier,resolve});pump();}));
    return requests.get(key);
  }
  return {
-  get:index=>request(index),getMedium:index=>request(index,true),
+  get:index=>request(index),getMedium:index=>request(index,'medium'),getFar:index=>request(index,'far'),
   dispose(){if(disposed)return;disposed=true;for(const job of queue.splice(0))job.resolve(null);for(const job of [...activeJobs])job.cancel();for(const root of sources)releaseSource(root);sources.clear();requests.clear();},
   get status(){return {requested:requests.size,loaded:sources.size,active,queued:queue.length,disposed};},
  };
@@ -127,6 +128,8 @@ export function createTexturedSpectator(source) {
   const frame=handFrames.get(suffix),raised=gesture===4||(gesture===0&&side>0)||(gesture===2&&side<0);
   const finger=new THREE.Vector3(raised?side*.09:0,raised||gesture===3||gesture===1?1:-1,gesture===1?.22:.06).normalize();
   const normal=new THREE.Vector3(gesture===1?-side:0,0,gesture===1?.08:1);
+  if(gesture===6){finger.set(-side,.1,.15).normalize();normal.set(0,.65,1);}
+  if(gesture===7&&side>0){finger.set(.35,.10,.8).normalize();normal.set(0,1,-.08);}
   const orientation=(direction,palm)=>{
    palm.addScaledVector(direction,-palm.dot(direction)).normalize();
    const rotation=new THREE.Quaternion().setFromUnitVectors(frame.finger,direction);
@@ -135,7 +138,7 @@ export function createTexturedSpectator(source) {
    return rotation.premultiply(new THREE.Quaternion().setFromAxisAngle(direction,twist)).multiply(rest.get(`hand_${suffix}`).worldQuaternion);
   };
   const relaxed=orientation(new THREE.Vector3(0,-1,.06).normalize(),new THREE.Vector3(0,0,1));
-  setWorldOrientation(`hand_${suffix}`,relaxed.slerp(orientation(finger,normal),gesture===3?1:amount));
+  setWorldOrientation(`hand_${suffix}`,relaxed.slerp(orientation(finger,normal),gesture===3||gesture>=6?1:amount));
  }
  let disposed=false;
  return {
@@ -173,8 +176,8 @@ export function createTexturedSpectator(source) {
    for(const suffix of ['l','r']){
     const side=suffix==='l'?1:-1,upper=`thigh_${suffix}`,lower=`calf_${suffix}`,foot=`foot_${suffix}`;
     const start=worldPosition(upper),target=rest.get(foot).worldPosition.clone();
-    if(person.seated)target.set(side*.14,.075,.37);else {target.x+=side*.012;target.z+=side*.032;}
-    const hint=new THREE.Vector3(side*.16,person.seated?.43:.43,person.seated?.43:.06);
+    if(person.seated)target.set(side*(person.skirt?.105:.14),.075,.37);else {target.x+=side*.012;target.z+=side*.032;}
+    const hint=new THREE.Vector3(side*(person.skirt?.12:.16),.43,person.seated?.43:.06);
     const solved=jointBetween(start,target,hint,rest.get(upper).worldPosition.distanceTo(rest.get(lower).worldPosition),rest.get(lower).worldPosition.distanceTo(rest.get(foot).worldPosition));
     aim(upper,lower,solved.joint);aim(lower,foot,solved.end);setWorldOrientation(foot,rest.get(foot).worldQuaternion);
    }

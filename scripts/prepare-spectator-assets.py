@@ -22,14 +22,14 @@ parser.add_argument('--output', required=True)
 parser.add_argument('--variant', type=int, required=True)
 args = parser.parse_args(sys.argv[sys.argv.index('--') + 1:])
 VARIANTS = [
-    ('spectator-blue-shirt', 1, 'caucasian', 'short01', 'male_casualsuit01', 'shoes01', .50),
-    ('spectator-light-tee', 1, 'african', 'short02', 'male_casualsuit06', 'shoes02', .56),
-    ('spectator-striped-shirt', 1, 'asian', 'short04', 'male_casualsuit03', 'shoes01', .43),
-    ('spectator-denim', 0, 'african', 'afro01', 'female_casualsuit01', 'shoes02', .49),
-    ('spectator-summer', 0, 'caucasian', 'bob01', 'female_casualsuit02', 'shoes03', .43),
-    ('spectator-sport', 0, 'asian', 'ponytail01', 'female_sportsuit01', 'shoes02', .50),
+    ('spectator-blue-shirt', 1, 'caucasian', 'short01', 'male_casualsuit01', 'shoes01', .50, .36, 'young'),
+    ('spectator-light-tee', 1, 'african', 'short02', 'male_casualsuit06', 'shoes02', .61, .52, 'middleage'),
+    ('spectator-striped-shirt', 1, 'asian', 'short04', 'male_casualsuit03', 'shoes01', .47, .63, 'middleage'),
+    ('spectator-olive-jacket', 0, 'african', 'braid01', 'male_casualsuit05', 'shoes02', .56, .52, 'middleage'),
+    ('spectator-wine-blouse', 0, 'caucasian', 'bob02', 'female_elegantsuit01', 'shoes03', .56, .66, 'old'),
+    ('spectator-sport', 0, 'asian', 'ponytail01', 'female_sportsuit01', 'shoes02', .50, .36, 'young'),
 ]
-name, gender, ancestry, hair_name, outfit, shoes, weight = VARIANTS[args.variant]
+name, gender, ancestry, hair_name, outfit, shoes, weight, age, skin_age = VARIANTS[args.variant]
 os.makedirs(args.output, exist_ok=True)
 scratch = '/tmp/camber-mpfb-user'
 os.makedirs(scratch, exist_ok=True)
@@ -48,12 +48,12 @@ from mpfb.entities.objectproperties import HumanObjectProperties
 bpy.ops.object.select_all(action='SELECT')
 bpy.ops.object.delete(use_global=False)
 h = HumanService.create_human()
-props = dict(gender=gender, age=.36, muscle=.48, weight=weight, african=.05, asian=.05, caucasian=.05)
+props = dict(gender=gender, age=age, muscle=.43 if age>.5 else .48, weight=weight, african=.05, asian=.05, caucasian=.05)
 props[ancestry] = .90
 for prop, value in props.items():
     HumanObjectProperties.set_value(prop, value, entity_reference=h)
 TargetService.reapply_macro_details(h)
-skin_name = 'young_' + ancestry + ('_male' if gender else '_female') + '.mhmat'
+skin_name = skin_age + '_' + ancestry + ('_male' if gender else '_female') + '.mhmat'
 HumanService.set_character_skin(AssetService.find_asset_absolute_path(skin_name, asset_subdir='skins'), h, skin_type='GAMEENGINE')
 HumanService.add_builtin_rig(h, 'game_engine')
 for sub, asset, kind in [('eyes', 'low-poly', 'Eyes'), ('eyebrows', 'eyebrow001', 'Eyebrows'),

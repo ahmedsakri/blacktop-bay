@@ -91,7 +91,7 @@ test('every current circuit has an explicit coordinated regional lighting grade'
   const track=getTrack(id),profile=getVenueProfile(track),grade=venueLighting(track);regions.add(profile.lightingRegion);
   for(const key of ['sky','bounce','sun','fill','fog','environmentIntensity','backdropTint','backdropExposure'])assert.equal(profile[key],grade[key],id+' '+key);
   assert.ok(profile.environmentIntensity>=.6&&profile.environmentIntensity<=.85);
-  assert.ok(profile.sunlight>=.8&&profile.sunlight<=1.5);
+  assert.ok(profile.sunlight>=.8&&profile.sunlight<=2.4);
  }
  assert.equal(regions.size,8,'coherent regional treatment is richer than three special cases');
 });

@@ -44,7 +44,7 @@ const server=http.createServer(async(req,res)=>{
    await writeFile(resolve(root,`${id}.webp`),bytes);
    captures.set(id,{...metadata,id,path:`/assets/circuits/previews/${id}.webp`,bytes:bytes.length,sha256:createHash('sha256').update(bytes).digest('hex')});
    const entries=TRACKS.filter(t=>captures.has(t.id)).map(t=>captures.get(t.id));
-   await writeFile(resolve(root,'manifest.json'),JSON.stringify({version:1,source:'Camber Reign actual createWorld WebGL renderer',fixture:'reports/track-world-review.html',captureMethod:'CUA-controlled local browser canvas WebP export',license:'Original project-generated scene imagery; licensed source surfaces retain public/assets/environments/surfaces/provenance.json',dimensions:[960,540],quality:.78,totalBytes:entries.reduce((sum,e)=>sum+e.bytes,0),entries},null,2)+'\n');
+   await writeFile(resolve(root,'manifest.json'),JSON.stringify({version:1,source:'Camber Reign actual createWorld WebGL renderer',fixture:'reports/track-world-review.html',captureMethod:'CUA-controlled local browser canvas WebP export',license:'Original rendered scene imagery incorporating licensed photographs, scanned trees and surfaces; source notices remain in public/assets/environments/**/provenance.json',dimensions:[960,540],quality:.78,totalBytes:entries.reduce((sum,e)=>sum+e.bytes,0),entries},null,2)+'\n');
    res.writeHead(200,{'Content-Type':'application/json'});res.end(JSON.stringify({id,bytes:bytes.length,complete:captures.size,total:TRACKS.length}));
    console.log(`Saved ${id}: ${bytes.length} bytes (${captures.size}/${TRACKS.length})`);
   }catch(error){res.writeHead(400);res.end(String(error.message||error));}

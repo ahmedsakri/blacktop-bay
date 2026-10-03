@@ -2,11 +2,11 @@ import * as THREE from 'three';
 
 // Authored crown silhouettes replace the single ball/cone primitives. Shared
 // geometry keeps every tree in the existing instanced foliage batch.
-export function broadleafCrownGeometry({low=false}={}) {
+export function broadleafCrownGeometry({low=false,clusterCount}={}) {
  // Photographed leaf sprays leave real openings through the canopy.
  // Mobile retains the old 340-triangle crown budget; full detail is cheaper
  // than the former 27 opaque icosahedron clumps. Cutouts use alpha testing.
- const count=low?85:400,positions=[],colours=[],uv=[],transform=new THREE.Object3D(),v=new THREE.Vector3(),colour=new THREE.Color();
+ const count=clusterCount??(low?85:400),positions=[],colours=[],uv=[],transform=new THREE.Object3D(),v=new THREE.Vector3(),colour=new THREE.Color();
  for(let i=0;i<count;i++){
   const a=i*2.399963,t=(i+.5)/count,y=.92-t*1.74;
   const radial=Math.sqrt(Math.max(.04,1-y*y))*(.50+.44*((i*37%101)/100));

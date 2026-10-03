@@ -40,7 +40,7 @@ test('shipping recordings preserve explicit provenance, exact asset hashes and b
   assert.equal(createHash('sha256').update(bytes).digest('hex'),entry.sha256);
   assert.equal(bytes.length,entry.bytes);assert.ok(bytes.length<=RECORDING_BUDGET.downloadBytes);total+=bytes.length;
   assert.equal(bytes.toString('ascii',0,4),'RIFF');assert.equal(bytes.readUInt16LE(22),1);assert.equal(bytes.readUInt16LE(34),16);assert.equal(bytes.readUInt32LE(24),24000);
-  assert.ok(['CC0-1.0','CC-BY-3.0','CC-BY-4.0','Sonniss-GDC-2026-v2'].includes(source.license));assert.ok(source.author&&source.title&&source.sourceVehicle);assert.match(source.sourceUrl,/^https:\/\/(freesound.org|bigsoundbank.com|commons.wikimedia.org|sonniss.com)\//);assert.match(source.use,/proxy/);
+  assert.ok(['CC0-1.0','CC-BY-3.0','CC-BY-4.0','Sonniss-GDC-2026-v2'].includes(source.license));assert.ok(source.author&&source.title&&source.sourceVehicle);assert.match(source.sourceUrl,/^https:\/\/(freesound.org|bigsoundbank.com|commons.wikimedia.org|sonniss.com)\//);assert.ok(source.use.length>60);
   for(const layer of entry.layers){
    const start=Math.round(layer.start*24000),end=Math.round(layer.end*24000);let power=0,peak=0;
    for(let i=start;i<end;i++){const value=bytes.readInt16LE(44+i*2)/32768;power+=value*value;peak=Math.max(peak,Math.abs(value));}
@@ -48,7 +48,7 @@ test('shipping recordings preserve explicit provenance, exact asset hashes and b
    assert.ok(Math.abs(bytes.readInt16LE(44+start*2)-bytes.readInt16LE(44+(end-1)*2))<=1,'loop endpoint is continuous');
   }
  }
- assert.equal(total,3813892);assert.equal(total,data.totalBytes);
+ assert.equal(total,4173980);assert.equal(total,data.totalBytes);
  assert.deepEqual(Object.keys(RECORDING_CARS).sort(),MANUFACTURER_VEHICLES.map(vehicle=>vehicle.id).sort());
  assert.deepEqual(Object.keys(RECORDING_MIXES).sort(),Object.keys(RECORDING_CARS).sort());
  for(const [id,recording] of Object.entries(RECORDING_CARS)){
@@ -57,11 +57,11 @@ test('shipping recordings preserve explicit provenance, exact asset hashes and b
   const source=data.recordings.find(entry=>entry.id===recording);assert.ok(source.cars.includes(id));
   assert.ok(RECORDING_MIXES[id][2]>0&&RECORDING_MIXES[id][2]<=1);
  }
- assert.equal(Object.keys(ENGINE_RECORDINGS).length,23);
- assert.equal(new Set(data.recordings.map(entry=>entry.sha256)).size,23,'families use genuinely different recordings');
- assert.equal(new Set(data.recordings.map(entry=>entry.sourceSha256)).size,23);
- assert.equal(new Set(Object.values(RECORDING_CARS)).size,20);
- assert.equal(data.activeBanks,20);
+ assert.equal(Object.keys(ENGINE_RECORDINGS).length,25);
+ assert.equal(new Set(data.recordings.map(entry=>entry.sha256)).size,25,'families use genuinely different recordings');
+ assert.equal(new Set(data.recordings.map(entry=>entry.sourceSha256)).size,25);
+ assert.equal(new Set(Object.values(RECORDING_CARS)).size,21);
+ assert.equal(data.activeBanks,21);
  assert.equal(recordingForVehicle({id:'unsupported-car'}),null);
  assert.equal(recordingForVehicle({id:'bmw-f22-eurofighter',powertrain:'electric'}),null,'never play combustion loops on an electric vehicle');
  const diesel=data.recordings.find(entry=>entry.id==='bmw-diesel');assert.equal(diesel.additionalSources.length,2);
@@ -266,15 +266,23 @@ test('33-car source audit separates model matches from unresolved years, variant
   assert.ok(row.candidateIds.every(id=>candidates.candidates.some(candidate=>candidate.id===id)),row.carId);
  }
  const byId=Object.fromEntries(coverage.cars.map(row=>[row.carId,row]));
- assert.equal(coverage.modelMatches,3);assert.equal(coverage.improvedAssignments,11);
- assert.equal(coverage.fullyVerifiedExactSpecifications,0,'unspecified target years/builds cannot become a100%exact claim');
+ assert.equal(coverage.modelMatches,5);assert.equal(coverage.improvedAssignments,13);
+ assert.equal(coverage.fullyVerifiedExactSpecifications,0,'unspecified target years/builds cannot become a 100% exact claim');
  for(const id of ['bugatti-veyron','bmw-i8','audi-r18','porsche-919-hybrid'])assert.equal(byId[id].fidelity,'wrong-architecture-proxy');
  assert.match(byId['ferrari-458-italia'].identityGap,/Spider/);assert.equal(byId['ferrari-458-italia'].exactModelVariant,false);
  assert.match(byId['nissan-gt-r-2018'].identityGap,/2012.*modified.*2018/);
  const oldSource=Object.fromEntries(sources.recordings.map(source=>[source.id,source]));
+ assert.equal(byId['ferrari-250-gto'].bank,'ferrari-250-gto');
+ assert.equal(byId['ferrari-250-gto'].modelMatch,true);assert.equal(byId['ferrari-250-gto'].exactModelVariant,false);
+ assert.match(byId['ferrari-250-gto'].identityGap,/1964.*not.*certified/);
+ assert.equal(byId['lotus-elise'].bank,'lotus-elise');
+ assert.equal(byId['lotus-elise'].modelMatch,true);assert.equal(byId['lotus-elise'].exactModelVariant,false);
+ assert.match(byId['lotus-elise'].identityGap,/generation.*engine/);
+ assert.deepEqual(oldSource['honda-na-i4'].cars,[]);
+ assert.doesNotMatch(oldSource['honda-na-i4'].use,/proxy for Lotus/);
  assert.doesNotMatch(oldSource['huracan-v10'].use,/Audi|R8/);
  assert.doesNotMatch(oldSource['murcielago-v12'].use,/Aventador/);
- assert.doesNotMatch(oldSource['ferrari-classic-v12'].use,/Testarossa/);
+ assert.doesNotMatch(oldSource['ferrari-classic-v12'].use,/Testarossa|250 GTO/);
  const studio=sources.recordings.filter(source=>source.license==='Sonniss-GDC-2026-v2');assert.equal(studio.length,7);
  for(const source of studio){
   assert.equal(source.sampleRate,24000);assert.equal(source.layers.length,3);assert.equal(source.bytes,180044);

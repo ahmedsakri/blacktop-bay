@@ -12,7 +12,7 @@ import sys
 import numpy as np
 
 directory = os.path.abspath(sys.argv[sys.argv.index('--') + 1])
-for name in ['blue-shirt', 'light-tee', 'striped-shirt', 'denim', 'summer', 'sport']:
+for name in ['blue-shirt', 'light-tee', 'striped-shirt', 'olive-jacket', 'wine-blouse', 'sport']:
     bpy.ops.object.select_all(action='SELECT')
     bpy.ops.object.delete(use_global=False)
     bpy.ops.outliner.orphans_purge(do_recursive=True)
@@ -46,7 +46,7 @@ for name in ['blue-shirt', 'light-tee', 'striped-shirt', 'denim', 'summer', 'spo
                 cool = blue > red * 1.10 and blue > green * .97 and blue > .014
                 torso = abs(point.x) < .175 and .93 < point.z < 1.285
                 neutral = name == 'light-tee' and torso
-                red_shirt = name == 'striped-shirt' and torso
+                red_shirt = name in ['striped-shirt', 'wine-blouse', 'olive-jacket'] and torso
                 cloth = point.z < 1.36 and (cool or neutral or red_shirt)
                 sums[loop.vertex_index] += float(cloth)
                 samples[loop.vertex_index] += 1
@@ -67,3 +67,20 @@ for name in ['blue-shirt', 'light-tee', 'striped-shirt', 'denim', 'summer', 'spo
                               export_format='GLB', export_apply=False,
                               export_animations=False, export_materials='EXPORT', export_attributes=True)
     print('CAMBER_MEDIUM_DONE', name)
+    # The third tier still uses a coherent fitted human, not independently
+    # scaled head/limb primitives. Its 770-triangle budget is for driving views.
+    for obj in list(bpy.data.objects):
+        if obj.type != 'MESH':
+            continue
+        bpy.context.view_layer.objects.active = obj
+        count = sum(len(p.vertices) - 2 for p in obj.data.polygons)
+        target = 620 if any('Skin_and_cloth_atlas' in m.name for m in obj.data.materials) else 150
+        if count > target:
+            mod = obj.modifiers.new('Distant human silhouette', 'DECIMATE')
+            mod.ratio = target / count
+            mod.use_collapse_triangulate = True
+            bpy.ops.object.modifier_apply(modifier=mod.name)
+    bpy.ops.export_scene.gltf(filepath=os.path.join(directory, 'spectator-' + name + '-far.glb'),
+                              export_format='GLB', export_apply=False,
+                              export_animations=False, export_materials='EXPORT', export_attributes=True)
+    print('CAMBER_FAR_DONE', name)

@@ -3,6 +3,7 @@ import * as THREE from '/node_modules/three/build/three.module.js';
 import {OrbitControls} from '/node_modules/three/examples/jsm/controls/OrbitControls.js';
 import {createSpectatorLibrary,createTexturedSpectator,SPECTATOR_ASSETS} from '/src/realistic-spectator.js';
 import {spectatorProfile,spectatorPose} from '/src/crowd.js';
+import {SPECTATOR_GESTURES} from '/src/spectator-motion-config.js';
 const r=new THREE.WebGLRenderer({antialias:true});r.setSize(innerWidth,innerHeight);r.setPixelRatio(Math.min(devicePixelRatio,1.5));r.outputColorSpace=THREE.SRGBColorSpace;r.toneMapping=THREE.ACESFilmicToneMapping;r.toneMappingExposure=1.1;document.body.appendChild(r.domElement);
 const s=new THREE.Scene();s.background=new THREE.Color('#dbe1e2');s.add(new THREE.HemisphereLight('#e8f3ff','#64523c',2));const l=new THREE.DirectionalLight('#fff1dc',3);l.position.set(2,4,3);s.add(l);const fill=new THREE.DirectionalLight('#bedfff',1);fill.position.set(-2,2,-3);s.add(fill);
 const camera=new THREE.PerspectiveCamera(38,innerWidth/innerHeight,.02,100);camera.position.set(0,2.1,10);const controls=new OrbitControls(camera,r.domElement);controls.target.set(0,1,0);controls.update();
@@ -11,10 +12,10 @@ let selected=-1,gesture=0,seated=false,paused=false,time=0,last=performance.now(
 const library=createSpectatorLibrary();const select=document.querySelector('#look');SPECTATOR_ASSETS.forEach((a,i)=>select.add(new Option(a.id,i)));
 await Promise.all(SPECTATOR_ASSETS.map(async(a,i)=>{const source=await library.get(i);if(!source)throw new Error('Failed '+a.id);const character=createTexturedSpectator(source);characters[i]=character;s.add(character.mesh);}));
 function layout(){characters.forEach((character,i)=>{character.mesh.visible=selected<0||selected===i;});}layout();
-select.onchange=()=>{selected=Number(select.value);layout();};document.querySelector('#pose').onclick=()=>gesture=(gesture+1)%5;document.querySelector('#seated').onclick=()=>seated=!seated;document.querySelector('#pause').onclick=()=>paused=!paused;
+select.onchange=()=>{selected=Number(select.value);layout();};document.querySelector('#pose').onclick=()=>gesture=(gesture+1)%SPECTATOR_GESTURES.length;document.querySelector('#seated').onclick=()=>seated=!seated;document.querySelector('#pause').onclick=()=>paused=!paused;
 document.querySelector('#face').onclick=()=>{if(selected<0){selected=0;select.value='0';layout();}camera.position.set(.25,1.53,1.05);controls.target.set(0,1.42,0);controls.update();};document.querySelector('#wide').onclick=()=>{camera.position.set(0,2.1,10);controls.target.set(0,1,0);controls.update();};
 function draw(now){requestAnimationFrame(draw);const dt=Math.min(.05,(now-last)/1000);last=now;if(!paused)time+=dt;
-characters.forEach((character,i)=>{const person={...spectatorProfile(selected<0?(i-2.5)*1.05:0,0,0,0,seated,()=>.5),gesture:selected<0?(i+gesture)%5:gesture,phase:i*.75,width:1,height:1};character.update(person,spectatorPose(person,time,.9));});
+characters.forEach((character,i)=>{const person={...spectatorProfile(selected<0?(i-2.5)*1.05:0,0,0,0,seated,()=>.5),...SPECTATOR_ASSETS[i],gesture:selected<0?(i+gesture)%SPECTATOR_GESTURES.length:gesture,phase:i*.75,width:1,height:1};character.update(person,spectatorPose(person,time,.9));});
 r.render(s,camera);document.querySelector('#status').textContent=`${characters.length} textured CC0 adults · ${r.info.render.calls} draws · ${r.info.render.triangles.toLocaleString()} triangles · pose ${gesture} · ${seated?'seated':'standing'} · ${paused?'paused':'animated'}`;}requestAnimationFrame(draw);
 addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();r.setSize(innerWidth,innerHeight);});addEventListener('pagehide',()=>{for(const character of characters)character.dispose();library.dispose();});
 </script></body></html>

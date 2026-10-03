@@ -781,6 +781,76 @@ export const ENGINE_RECORDINGS = Object.freeze({
     ],
     "url": "/assets/audio/engines/testarossa-1990-v1.wav?v=e0e5aec8e7445bfb",
     "kind": "combustion"
+  },
+  "lotus-elise": {
+    "id": "lotus-elise",
+    "file": "lotus-elise-v1.wav",
+    "bytes": 180044,
+    "sha256": "3506585008cd734b47a0a7e6c2e664108ca4e915417fea2dcc31759364cdae2f",
+    "duration": 3.75,
+    "sampleRate": 24000,
+    "sourceFile": "113205_137116-hq.mp3",
+    "sourceSha256": "5ac3fb5a84bab3437ac097e864f9fe3e27e1dec26a54de0744c4455157b3b009",
+    "layers": [
+      {
+        "start": 0,
+        "end": 1.25,
+        "rev": 0.1,
+        "sourceStart": 44.1,
+        "sourceDuration": 1.35
+      },
+      {
+        "start": 1.25,
+        "end": 2.5,
+        "rev": 0.55,
+        "sourceStart": 16.7,
+        "sourceDuration": 1.35
+      },
+      {
+        "start": 2.5,
+        "end": 3.75,
+        "rev": 0.95,
+        "sourceStart": 20,
+        "sourceDuration": 1.35
+      }
+    ],
+    "url": "/assets/audio/engines/lotus-elise-v1.wav?v=3506585008cd734b",
+    "kind": "combustion"
+  },
+  "ferrari-250-gto": {
+    "id": "ferrari-250-gto",
+    "file": "ferrari-250-gto-v1.wav",
+    "bytes": 180044,
+    "sha256": "c57d4798ac7b909015dacea8e7c756a168bed2b8e6acb785a95cb4ca43734f4f",
+    "duration": 3.75,
+    "sampleRate": 24000,
+    "sourceFile": "ferrari-250-gto-original.ogg",
+    "sourceSha256": "8cf1408366105aa2a563b3b7e871d1d0ebcd91415c9696bf0e0488aab0030683",
+    "layers": [
+      {
+        "start": 0,
+        "end": 1.25,
+        "rev": 0.1,
+        "sourceStart": 18.3,
+        "sourceDuration": 1.35
+      },
+      {
+        "start": 1.25,
+        "end": 2.5,
+        "rev": 0.55,
+        "sourceStart": 30.5,
+        "sourceDuration": 1.35
+      },
+      {
+        "start": 2.5,
+        "end": 3.75,
+        "rev": 0.95,
+        "sourceStart": 43.5,
+        "sourceDuration": 1.35
+      }
+    ],
+    "url": "/assets/audio/engines/ferrari-250-gto-v1.wav?v=c57d4798ac7b9090",
+    "kind": "combustion"
   }
 });
 export const RECORDING_CARS = Object.freeze({
@@ -798,7 +868,7 @@ export const RECORDING_CARS = Object.freeze({
   "lamborghini-aventador": "aventador-2014",
   "pagani-zonda-c12": "murcielago-v12",
   "bugatti-veyron": "murcielago-v12",
-  "lotus-elise": "honda-na-i4",
+  "lotus-elise": "lotus-elise",
   "audi-r8": "audi-r8-2017",
   "rimac-concept-one": "tesla-electric",
   "gma-t50": "murcielago-v12",
@@ -809,7 +879,7 @@ export const RECORDING_CARS = Object.freeze({
   "bmw-f22-eurofighter": "ferrari-355",
   "audi-r8-lms-gt3": "audi-r8-2017",
   "audi-r18": "bmw-diesel",
-  "ferrari-250-gto": "ferrari-classic-v12",
+  "ferrari-250-gto": "ferrari-250-gto",
   "ferrari-testarossa": "testarossa-1990",
   "nissan-gt-r-2018": "nissan-gtr-2012",
   "bmw-m3-e46": "mercedes-i6",

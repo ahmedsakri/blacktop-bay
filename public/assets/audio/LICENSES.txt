@@ -1,7 +1,7 @@
 Camber Reign — recorded engine texture sources
 Provenance and exact source intervals: ENGINE-SOURCES.json
 Derivative loop banks: engines/*.wav
-Original sources checked 2 October 2026. GranTurismo and AMG sources checked 3 October 2026.
+Original sources checked 2–3 October 2026; each manifest entry records its review date.
 
 The CC0 and CC BY entries below permit redistribution and adaptation under their
 listed terms. The separately marked Sonniss GDC entries are licensed for
@@ -66,7 +66,7 @@ https://freesound.org/people/enginemusic/sounds/43483/
 CC-BY-3.0: https://creativecommons.org/licenses/by/3.0/
 https://creativecommons.org/licenses/by/3.0/legalcode
 Recorded around 1997 at RPM Motorsports in Vergennes, Vermont; Sony D8 DAT and Audio-Technica ATM10. Public HQ MP3 preview, not original master.
-Classic V12 family proxy for Ferrari 250 GTO and Countach LP500S. Neither represented model was recorded in this source session.
+Classic V12 family proxy for Countach LP500S only. Countach was not recorded in this source session.
 
 honda-na-i4-v1.wav
 Adapted from “2002-Honda-F20C.ogg” by Tyler Riddle.
@@ -74,7 +74,7 @@ https://commons.wikimedia.org/wiki/File:2002-Honda-F20C.ogg
 CC-BY-3.0: https://creativecommons.org/licenses/by/3.0/
 https://creativecommons.org/licenses/by/3.0/legalcode
 Uploader-owned recording with an Audio-Technica Proformance P735 in the engine bay, M-Audio FastTrack at 48 kHz/24-bit and REAPER. Derived from original published Ogg Vorbis file.
-Naturally aspirated four-cylinder family proxy for Lotus Elise; not a Lotus or Toyota recording.
+Unassigned legacy Honda F20C proxy retained for reproduction of prior mixes; no current car assignment. Not a Lotus or Toyota recording.
 
 audi-turbo-i4-v1.wav
 Adapted from “audi a4 allroad 20TFSI engine rpm ramp fast mono.wav” by Soundholder.
@@ -129,8 +129,9 @@ Electric-car family proxy for Rimac Concept One and Nevera. No Tesla-to-Rimac or
 
 All 33 game cars have a selected recorded texture. Family/model adaptation
 is explicit; recordings were not made of every exact game model. Electric
-Rimacs use an electric Tesla recording, never a combustion source. W16,
-flat-12 and specialized hybrid race engines use disclosed proxies. Actual
+Rimacs use an electric Tesla recording, never a combustion source. Veyron,
+i8, R18 and 919 retain disclosed engine-layout proxies; Testarossa now uses
+its own flat-12 model recording. Actual
 source RPM and microphone placement are stated only where documented.
 The original synthesis remains a fallback for blocked/failed decoding.
 Nitro, impact, tyre layers and the Liquid Lines lobby soundtrack remain
@@ -229,3 +230,21 @@ https://pole.se/product/ferrari-testarossa-1990/
 https://docs.google.com/spreadsheets/d/1HAJdNA-QIug2IZjUV-DwCo1IZ-XJ4Vv9gWIaumNScfc/edit
 Sonniss GDC v2: https://sonniss.com/gdc-bundle-license/
 Testarossa model and flat-12 recording replaces the unrelated Ferrari 340 America V12 proxy. Source car is 1990; represented visual source does not state its year. Three steady source sections, authored rev-band labels and transitions, not measured RPM calibration.
+
+lotus-elise-v1.wav
+Recorded vehicle: Lotus Elise (generation and engine unspecified)
+Original title: Lotus Elise start rev idle.aif
+victormalloy — Freesound, published 30 January 2011
+https://freesound.org/people/victormalloy/sounds/113205/
+CC0 1.0: https://creativecommons.org/publicdomain/zero/1.0/
+Adapted by Camber Reign from the publisher-hosted HQ MP3 preview: mono 24 kHz PCM, filtering, source interval selection, loop overlap, DC/seam correction and normalization.
+Actual Elise replaces unrelated Honda proxy. Source and target do not establish generation, model year, engine or exhaust build. Stationary rev sections retain pitch movement; in-game bands are authored, not measured RPM.
+
+ferrari-250-gto-v1.wav
+Recorded vehicle: Ferrari 250 GTO (year and build unspecified)
+Original title: Ferrari 250 GTO, Engine Sound.ogg
+Provo rossi — own-work publication on Wikimedia Commons, 1 August 2025
+https://commons.wikimedia.org/wiki/File:Ferrari_250_GTO,_Engine_Sound.ogg
+CC BY 4.0: https://creativecommons.org/licenses/by/4.0/
+Adapted by Camber Reign: mono 24 kHz PCM, filtering, source interval selection, loop overlap, DC/seam correction and normalization.
+Named 250 GTO source replaces Ferrari 340 America. Source does not certify the represented 1964 year, chassis or engine/exhaust build. Three running sections and in-game rev bands are authored, not measured RPM or isolated idle/load stems. No endorsement implied.

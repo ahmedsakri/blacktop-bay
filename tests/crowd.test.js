@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as THREE from 'three';
 import {createCrowd, spectatorProfile, spectatorPose, spectatorSurfacePixels} from '../src/crowd.js';
+import {SPECTATOR_GESTURES} from '../src/spectator-motion-config.js';
 const random = () => {let s=37;return()=>((s=Math.imul(s,1664525)+1013904223)>>>0)/4294967296;};
 const matrices=scene=>scene.children.filter(mesh=>mesh.isInstancedMesh).map(mesh=>Array.from(mesh.instanceMatrix.array));
 
@@ -9,7 +10,7 @@ test('crowd has human proportions, diverse people, and non-synchronous articulat
  const rng=random(), people=Array.from({length:60},(_,i)=>spectatorProfile(i,0,0,0,i%2===0,rng));
  assert.ok(new Set(people.map(p=>p.skin)).size>=5);
  assert.ok(new Set(people.map(p=>p.shirt)).size>=8);
- assert.equal(new Set(people.map(p=>p.gesture)).size,5);
+ assert.equal(new Set(people.map(p=>p.gesture)).size,SPECTATOR_GESTURES.length);
  assert.ok(people.some(p=>p.cap)&&people.some(p=>p.longHair)&&people.some(p=>p.sunglasses));
  for(const p of people){
   const pose=spectatorPose(p,2,1);
@@ -19,6 +20,16 @@ test('crowd has human proportions, diverse people, and non-synchronous articulat
   assert.ok(spectatorPose(standing).head+ .139<1.76,'heads stay in normal adult proportion');
  }
  assert.notDeepEqual(spectatorPose({...people[0],gesture:0},2,1).arms,spectatorPose({...people[1],gesture:0},2,1).arms);
+});
+
+test('most spectators watch quietly and relaxed standing wrists hang below the waist',()=>{
+ const rng=random(),people=Array.from({length:512},()=>spectatorProfile(0,0,0,0,false,rng));
+ assert.ok(people.filter(person=>person.gesture>=5).length>people.length*.55,'ordinary spectators should outnumber permanent cheering poses');
+ for(const person of people.slice(0,24)){
+  const pose=spectatorPose({...person,gesture:5},2,1);assert.equal(pose.mouth,0);
+  assert.ok(pose.arms.every(arm=>arm.hand[1]<pose.hip),'idle arms must not all rest akimbo at the hips');
+  assert.equal(spectatorPose({...person,gesture:6},2,1).mouth,0);
+ }
 });
 
 test('pause and reduced motion freeze crowd transforms, with bounded mobile batches and distance LOD',()=>{
@@ -51,7 +62,7 @@ test('empty crowds and a single person with no optional accessories are safe',()
 
 test('animated cheering keeps both arm bones at anatomical lengths without snapping at activation',()=>{
  const rng=random();
- for(let gesture=0;gesture<5;gesture++)for(const seated of [true,false]){
+ for(let gesture=0;gesture<SPECTATOR_GESTURES.length;gesture++)for(const seated of [true,false]){
   const person={...spectatorProfile(0,0,0,0,seated,rng),gesture};
   for(const excitement of [0,.001,.07,.081,.25,.65,1])for(const time of [0,.2,1,4]){
    const pose=spectatorPose(person,time,excitement);
@@ -69,7 +80,7 @@ test('spectators have garment silhouettes and personalised reaction timing withi
  const rng=random(),crowd=createCrowd({low:true}),scene=new THREE.Scene();
  const people=Array.from({length:90},(_,i)=>crowd.add(i*.8,0,i%3,0,i%2===0,rng));
  assert.equal(new Set(people.map(p=>p.garment)).size,3);
- assert.ok(people.some(p=>p.shorts)&&people.some(p=>p.longHair));
+ assert.ok(people.some(p=>p.skirt)&&people.some(p=>p.longHair)&&people.some(p=>p.garment===1));
  assert.equal(new Set(people.map(p=>p.lookVariant)).size,6,'distant wardrobes match all six textured variants');
  assert.ok(new Set(people.map(p=>p.reactionDistance)).size>80);
  crowd.render(scene);crowd.update(.1,{x:0,z:0,speed:30});

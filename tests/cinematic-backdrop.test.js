@@ -11,22 +11,23 @@ function textureFixture() {
   return {calls, texture:{dispose(){ calls.disposed++; }, image:{close(){ calls.closed++; }}}};
 }
 
-test('every circuit receives matching scenery without adding waterfront art to inland venues', () => {
+test('every circuit receives suitable scenery without adding Alpine ranges to flat inland venues', () => {
   const found = new Set();
   for (const item of TRACKS) {
     const track = getTrack(item.id), venue = getVenueProfile(track);
     const desktop = backdropSource(track, venue), mobile = backdropSource(track, venue, {low:true});
     found.add(desktop.family);
-    if (!venue.water) assert.notEqual(desktop.family,'coastal',track.name);
     if (venue.environment === 'desert') assert.equal(desktop.family,'desert');
     if (venue.environment === 'urban') assert.equal(desktop.family,'urban');
     assert.equal(desktop.family,mobile.family);
-    assert.equal(mobile.maxWidth,1024); assert.equal(desktop.maxWidth,2048);
+    assert.equal(mobile.maxWidth,2048); assert.equal(desktop.maxWidth,4096);
     assert.match(mobile.url, /-mobile\.webp\?v=/);
-    assert.ok(desktop.horizonV > .3 && desktop.horizonV < .51);
+    assert.equal(desktop.horizonV,0);
+    assert.equal(desktop.projection,'equirectangular-upper-hemisphere');
   }
   assert.deepEqual([...found].sort(), [...BACKDROP_FAMILIES].sort());
   assert.equal(backdropSource(getTrack('summit'),getVenueProfile(getTrack('summit'))).family,'alpine');
+  for(const id of ['silverstone','monza','shanghai','suzuka','hungaroring']) assert.equal(backdropSource(getTrack(id),getVenueProfile(getTrack(id))).family,'coastal',id+' uses the sky-only panorama');
 });
 
 test('a successfully loaded image fades in without owning scene lighting or requiring a blocking load', async () => {
@@ -77,20 +78,24 @@ test('disposing during loading aborts the request and frees a late decoded image
   assert.equal(backdrop.uniforms.cinematicMap.value,null);
 });
 
-test('all original panorama variants ship locally with verified hashes and bounded phone texture memory', async () => {
+test('all photographic hemispheres ship locally with verified licenses, hashes and bounded phone texture memory', async () => {
   const base=new URL('../public/assets/environments/',import.meta.url);
   const provenance=JSON.parse(await fs.readFile(new URL('provenance.json',base),'utf8'));
   assert.deepEqual(Object.keys(provenance.families).sort(),[...BACKDROP_FAMILIES].sort());
+  assert.equal(provenance.license,'CC0-1.0');
+  assert.equal(provenance.projection,'equirectangular-upper-hemisphere');
   for (const family of BACKDROP_FAMILIES) for (const detail of ['desktop','mobile']) {
     const entry=provenance.families[family][detail];
     const file=await fs.readFile(new URL(`${family}${detail==='mobile'?'-mobile':''}.webp`,base));
     assert.equal(file.toString('ascii',8,12),'WEBP');
     assert.equal(file.length,entry.bytes);
     assert.equal(createHash('sha256').update(file).digest('hex'),entry.sha256);
-    assert.equal(entry.width/entry.height,2);
-    assert.ok(entry.bytes < (detail==='mobile'?150_000:450_000));
-    assert.ok(entry.width <= (detail==='mobile'?1024:2048));
-    // Exactly one 1024x512 RGBA image plus mip chain stays below 3 MB.
-    if (detail==='mobile') assert.ok(entry.width*entry.height*4*4/3 < 3_000_000);
+    assert.equal(entry.width/entry.height,4);
+    assert.ok(entry.bytes < (detail==='mobile'?450_000:1_200_000));
+    assert.equal(entry.width,detail==='mobile'?2048:4096);
+    // One upper hemisphere uses half a full sphere's pixels. 2048x512
+    // doubles horizontal detail over the former phone map at <6 MB with mips.
+    assert.equal(entry.estimatedGPUMipBytes,Math.ceil(entry.width*entry.height*4*4/3));
+    if (detail==='mobile') assert.ok(entry.estimatedGPUMipBytes < 6_000_000);
   }
 });

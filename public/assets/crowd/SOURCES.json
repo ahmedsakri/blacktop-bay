@@ -14,13 +14,13 @@
     "note": "Only CC0 exported assets are distributed. MPFB authoring code is not shipped."
   },
   "sourceComponents": {
-    "body": "MakeHuman base human and game_engine skeleton; young adult macro targets",
+    "body": "MakeHuman base human and game_engine skeleton; varied young, middle-aged and older adult macro targets",
     "skin": [
       "young_caucasian_male",
-      "young_african_male",
-      "young_asian_male",
-      "young_african_female",
-      "young_caucasian_female",
+      "middleage_african_male",
+      "middleage_asian_male",
+      "middleage_african_female",
+      "old_caucasian_female",
       "young_asian_female"
     ],
     "eyes": "low-poly",
@@ -29,16 +29,16 @@
       "short01",
       "short02",
       "short04",
-      "afro01",
-      "bob01",
+      "braid01",
+      "bob02",
       "ponytail01"
     ],
     "clothes": [
       "male_casualsuit01",
       "male_casualsuit06",
       "male_casualsuit03",
-      "female_casualsuit01",
-      "female_casualsuit02",
+      "male_casualsuit05",
+      "female_elegantsuit01",
       "female_sportsuit01"
     ],
     "shoes": [
@@ -71,18 +71,34 @@
       "joints": 53
     },
     {
-      "file": "spectator-denim.glb",
-      "bytes": 1495632,
-      "sha256": "3d8c65f455c9557e5e8c9fa936ec260a07293faf63a95ea4e6910ea3c0d7ebe0",
-      "triangles": 12883,
+      "file": "spectator-light-tee.glb",
+      "bytes": 1356536,
+      "sha256": "b5e4154954e22082dda5641e8b45bdec9e17d19e8a70d4a96e2478a3cd64d46a",
+      "triangles": 14035,
       "meshDraws": 3,
       "joints": 53
     },
     {
-      "file": "spectator-light-tee.glb",
-      "bytes": 1323780,
-      "sha256": "9d625e52eee4411e69f9f3fcf1364a68a2c1ec4801373fcd64828ff8705ee549",
-      "triangles": 14036,
+      "file": "spectator-striped-shirt.glb",
+      "bytes": 1374328,
+      "sha256": "058f01f366a8c94084ed3d741edba216e70c70599e595b0599cebd07fd4d8abb",
+      "triangles": 11742,
+      "meshDraws": 3,
+      "joints": 53
+    },
+    {
+      "file": "spectator-olive-jacket.glb",
+      "bytes": 1477512,
+      "sha256": "fb3d7772083d2435874b51f22ccd1f598d3de5dee05bf7ffe9a3cbd706377b8a",
+      "triangles": 14098,
+      "meshDraws": 3,
+      "joints": 53
+    },
+    {
+      "file": "spectator-wine-blouse.glb",
+      "bytes": 1374504,
+      "sha256": "e1312cc90865f50906bdb878d7e5fbb8bb6e62527930516636a005dafd5531ba",
+      "triangles": 12940,
       "meshDraws": 3,
       "joints": 53
     },
@@ -90,22 +106,6 @@
       "file": "spectator-sport.glb",
       "bytes": 1492756,
       "sha256": "b85ad3bf7dce4639ea50d8af9c88f90a1379cb0f42f56a28b7ce9338ebdc1448",
-      "triangles": 14098,
-      "meshDraws": 3,
-      "joints": 53
-    },
-    {
-      "file": "spectator-striped-shirt.glb",
-      "bytes": 1361208,
-      "sha256": "72c58f07c32f55a3f8d18db626ef750dedfe4ae9797bce2436cc5380f9cd14a3",
-      "triangles": 11741,
-      "meshDraws": 3,
-      "joints": 53
-    },
-    {
-      "file": "spectator-summer.glb",
-      "bytes": 1508504,
-      "sha256": "82ddb478cf53747489898544fdba41c840bec9c439cf760df0134d3e2c3428aa",
       "triangles": 14098,
       "meshDraws": 3,
       "joints": 53
@@ -126,76 +126,116 @@
         "joints": 53
       },
       {
+        "file": "spectator-blue-shirt-far.glb",
+        "bytes": 89676,
+        "sha256": "813acb59da4f7f2c24fece1f07416626943adb7fca975973e21f683084a9e708",
+        "triangles": 770,
+        "meshDraws": 3,
+        "joints": 53
+      },
+      {
         "file": "spectator-blue-shirt-motion.bin",
-        "bytes": 271360,
-        "sha256": "00a12b12078eca85d0a547c0873c831c5aed03625da4e6c6464907abbcb272c1",
-        "framesPerClip": 16,
-        "clips": 10,
-        "format": "RGBA16F bone matrices"
+        "bytes": 488448,
+        "sha256": "0c6db5e9da10c7769afca382803f2da1b050a22232f5e3a2243870b2b70107fa",
+        "framesPerClip": 24,
+        "clips": 16,
+        "format": "RGBA16F affine bone rows; 3 texels per joint"
       },
       {
         "file": "spectator-light-tee-crowd.glb",
-        "bytes": 183264,
-        "sha256": "61ad631f9a9ad4e02850a4cb0f99a87d51e2fd927cbc40075ed5ca91666c17ea",
+        "bytes": 188712,
+        "sha256": "4aea50bac4361e669212ac37c1f51a2c0e470dcdec09f633669342edd156aad5",
         "triangles": 2450,
+        "meshDraws": 3,
+        "joints": 53
+      },
+      {
+        "file": "spectator-light-tee-far.glb",
+        "bytes": 81292,
+        "sha256": "aceb8b58b1dfb54166286330386416cd64df22048d30f5cc1e220d21ddb4732a",
+        "triangles": 769,
         "meshDraws": 3,
         "joints": 53
       },
       {
         "file": "spectator-light-tee-motion.bin",
-        "bytes": 271360,
-        "sha256": "89f978fcd7ab7b01cddef48961a66fab875ae437aeb13e05a0910964b14ae507",
-        "framesPerClip": 16,
-        "clips": 10,
-        "format": "RGBA16F bone matrices"
+        "bytes": 488448,
+        "sha256": "bf3da3ed55a0ce8f3838650d4d1d1e26b85d5d4cde062c58ac2fc31c385e3a86",
+        "framesPerClip": 24,
+        "clips": 16,
+        "format": "RGBA16F affine bone rows; 3 texels per joint"
       },
       {
         "file": "spectator-striped-shirt-crowd.glb",
-        "bytes": 200092,
-        "sha256": "9a305c9ec6f8b5bea9d5b5cc25520148809f48b340a0649289801adcae96f1eb",
-        "triangles": 2449,
+        "bytes": 202304,
+        "sha256": "cf3e92e926f0e0bec9749721194cde9f48c1edebbf1abcd0158415d323d9b881",
+        "triangles": 2448,
+        "meshDraws": 3,
+        "joints": 53
+      },
+      {
+        "file": "spectator-striped-shirt-far.glb",
+        "bytes": 85972,
+        "sha256": "630cc22423e53386d9f290b7302a4360cbd27cc53fe51374034f6dc3067e759a",
+        "triangles": 769,
         "meshDraws": 3,
         "joints": 53
       },
       {
         "file": "spectator-striped-shirt-motion.bin",
-        "bytes": 271360,
-        "sha256": "755387aa3740e50fbf06b90b7e3400673e83e11289335540a7787c4f3dc287c6",
-        "framesPerClip": 16,
-        "clips": 10,
-        "format": "RGBA16F bone matrices"
+        "bytes": 488448,
+        "sha256": "c6b59ff00a4cf677e67eeede40be1ad08174a9ac8142eb2c4bedcf74f1433959",
+        "framesPerClip": 24,
+        "clips": 16,
+        "format": "RGBA16F affine bone rows; 3 texels per joint"
       },
       {
-        "file": "spectator-denim-crowd.glb",
-        "bytes": 215200,
-        "sha256": "d02b4404b681c306cff92f4c461e9fce1f259b53a2eec612e0c0a901ea66e428",
-        "triangles": 2450,
-        "meshDraws": 2,
-        "joints": 53
-      },
-      {
-        "file": "spectator-denim-motion.bin",
-        "bytes": 271360,
-        "sha256": "a37633e6c5fd57821765b479fd6dfe448d807b8a30df94b37b15c9070064474d",
-        "framesPerClip": 16,
-        "clips": 10,
-        "format": "RGBA16F bone matrices"
-      },
-      {
-        "file": "spectator-summer-crowd.glb",
-        "bytes": 199372,
-        "sha256": "36c0f0af2c0a2481aba92d84ca8b8dd280af830b27a9a563b411c2c55a7ad472",
+        "file": "spectator-olive-jacket-crowd.glb",
+        "bytes": 212620,
+        "sha256": "bbddad98eecedc07d9f57670ea5bba3b29f68a1e1ab17399e5ccf4d454febde9",
         "triangles": 2449,
         "meshDraws": 3,
         "joints": 53
       },
       {
-        "file": "spectator-summer-motion.bin",
-        "bytes": 271360,
-        "sha256": "d185cfd498328f7a5cf87b0b24e16369cdf2e44a35aae8e3a71b5da1818e732d",
-        "framesPerClip": 16,
-        "clips": 10,
-        "format": "RGBA16F bone matrices"
+        "file": "spectator-olive-jacket-far.glb",
+        "bytes": 91472,
+        "sha256": "b7dd723cf15ea30821b45a52790f7663fdd40f187314633d599c5d38d25e61ee",
+        "triangles": 770,
+        "meshDraws": 3,
+        "joints": 53
+      },
+      {
+        "file": "spectator-olive-jacket-motion.bin",
+        "bytes": 488448,
+        "sha256": "3941b42f993ed43df0406e2c6917e266d1b8eda439b12bc3344c97317cb98745",
+        "framesPerClip": 24,
+        "clips": 16,
+        "format": "RGBA16F affine bone rows; 3 texels per joint"
+      },
+      {
+        "file": "spectator-wine-blouse-crowd.glb",
+        "bytes": 197968,
+        "sha256": "4116ff544ec7e5ce11c4dd41a4a70455b3c2ab11631e82b9fa8df90615e54c12",
+        "triangles": 2449,
+        "meshDraws": 3,
+        "joints": 53
+      },
+      {
+        "file": "spectator-wine-blouse-far.glb",
+        "bytes": 85124,
+        "sha256": "26c84f4ee38a923ccff1edd7657ea448856eea19209e7620601a3513d402aba1",
+        "triangles": 770,
+        "meshDraws": 3,
+        "joints": 53
+      },
+      {
+        "file": "spectator-wine-blouse-motion.bin",
+        "bytes": 488448,
+        "sha256": "1a87673441f3b58257c2c402f1a0518c0d3b5c27be54c7031681cfade7adb7e6",
+        "framesPerClip": 24,
+        "clips": 16,
+        "format": "RGBA16F affine bone rows; 3 texels per joint"
       },
       {
         "file": "spectator-sport-crowd.glb",
@@ -206,12 +246,20 @@
         "joints": 53
       },
       {
+        "file": "spectator-sport-far.glb",
+        "bytes": 84376,
+        "sha256": "26325bbb27cb819f19032b9b8dc9d75372e37ff1d36071053de1618294f000a3",
+        "triangles": 770,
+        "meshDraws": 3,
+        "joints": 53
+      },
+      {
         "file": "spectator-sport-motion.bin",
-        "bytes": 271360,
-        "sha256": "dd54dc7e2458067ed12ec8652c90148723196dedfe9ec6efb0e97b3a96d44e23",
-        "framesPerClip": 16,
-        "clips": 10,
-        "format": "RGBA16F bone matrices"
+        "bytes": 488448,
+        "sha256": "077a482e6e4fe8ddbed1268c2d468ef51ef009a82167c8ac3567fc28f63834f4",
+        "framesPerClip": 24,
+        "clips": 16,
+        "format": "RGBA16F affine bone rows; 3 texels per joint"
       }
     ]
   }

@@ -3,9 +3,8 @@ import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { sampleTrack, projectOnTrack } from './track.js';
 import { getTrackObstacles } from './track-obstacles.js';
 import {coastalGroundingLayout} from './coastal-foundations.js';
-import { broadleafCrownGeometry } from './vegetation-geometry.js';
 import {coastalDistrictHeight} from './venue-groundworks.js';
-import {setWorldSurfaceUV,foliageSurfaceMaterial} from './track-surface-materials.js';
+import {setWorldSurfaceUV} from './track-surface-materials.js';
 
 export const DESTINATION_PROFILES = Object.freeze({
   'fuji-skyline': {background:'#8daebf',fog:'#aebdc0',fogDensity:.00065,sky:'#d6e7ef',sun:'#fff1d9',sunlight:1.5,ground:'#546749',vegetation:'woodland',towers:0},
@@ -14,6 +13,14 @@ export const DESTINATION_PROFILES = Object.freeze({
   'san-francisco-hills': {background:'#62778e',fog:'#a9aaad',fogDensity:.00075,sky:'#b8cee4',sun:'#ffcca2',sunlight:1.5,ground:'#576459',vegetation:'street-trees',towers:0},
 });
 
+export function destinationHouseLayout(track,{landmarks=[]}={}){
+ const houses=[];if(track.id!=='san-francisco-hills')return houses;
+ for(let i=0;i<22;i++){const p=sampleTrack(track.length*(.2+i*.015),track),side=i%2?1:-1;if(p.s/track.length>.245&&p.s/track.length<.325)continue;
+  const x=p.x+p.nx*side*25,z=p.z+p.nz*side*25;if(projectOnTrack(x,z,0,track).distance<track.width/2+10||landmarks.some(site=>Math.hypot(x-site.x,z-site.z)<site.radius+10))continue;
+  houses.push({i,p,side,x,z,radius:11});
+ }return houses;
+}
+
 /** Original mesh scenery, including load-bearing viaduct piers and real ramps. */
 export function createMountainVenue(scene, track, {low=false,landmarks=[],surfaces,groundHeight}={}) {
   if (!track.elevationProfile) return;
@@ -21,8 +28,6 @@ export function createMountainVenue(scene, track, {low=false,landmarks=[],surfac
   const concrete=new THREE.MeshStandardMaterial({color:'#8f9690',roughness:.85,map:surfaces?.concreteColor||null,normalMap:surfaces?.concreteNormal||null,normalScale:new THREE.Vector2(.18,.18)});
   const stone=new THREE.MeshStandardMaterial({color:'#596967',roughness:1});
   const snow=new THREE.MeshStandardMaterial({color:'#e9efeb',roughness:.82});
-  const cherry=foliageSurfaceMaterial(surfaces?.foliageLeaf,{color:'#deb1ba'});
-  const trunk=new THREE.MeshStandardMaterial({color:'#55463f',roughness:1});
   const mesh=(geo,mat,x,y,z)=>{const m=new THREE.Mesh(geo,mat);m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;group.add(m);return m;};
   for(let s=0;s<track.length;s+=24){const p=sampleTrack(s,track);if(p.y<2)continue;
     for(const side of [-1,1]){
@@ -57,17 +62,7 @@ export function createMountainVenue(scene, track, {low=false,landmarks=[],surfac
   const capPosition=cap.geometry.attributes.position;
   for(let i=0;i<capPosition.count;i++){const x=capPosition.getX(i),y=capPosition.getY(i),z=capPosition.getZ(i),a=Math.atan2(z,x),edge=Math.max(0,(59-y)/118),wave=1+.055*Math.sin(a*7+y*.025)+.024*Math.cos(a*13);capPosition.setXYZ(i,x*wave,y-edge*(4+4*Math.sin(a*5+.4)),z*wave);}
   cap.geometry.computeVertexNormals();
-  for(let i=0;i<(low?42:70);i++){
-    const p=sampleTrack(track.length*i/(low?42:70),track),side=i%2?1:-1;
-    const x=p.x+p.nx*side*(track.width/2+13),z=p.z+p.nz*side*(track.width/2+13);
-    if(p.y>8||projectOnTrack(x,z,0,track).distance<track.width/2+7||landmarks.some(site=>Math.hypot(x-site.x,z-site.z)<site.radius+4))continue;
-    const height=3.5+(i%4)*.22,angle=i*2.399;
-    mesh(new THREE.CylinderGeometry(.16,.29,height,7),trunk,x,height/2,z);
-    // Visible branching replaces a ball on a straight stick, using the same
-    // trunk draw. Different crown spans and lean break the repeated skyline.
-    for(const direction of [-1,1]){const end=new THREE.Vector3(x+Math.cos(angle)*direction*1.12,height+.58,z+Math.sin(angle)*direction*1.12),start=new THREE.Vector3(x,height*.62,z),delta=end.clone().sub(start),branch=mesh(new THREE.CylinderGeometry(.07,.14,delta.length(),6),trunk,...start.clone().add(end).multiplyScalar(.5).toArray());branch.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),delta.normalize());}
-    const crown=mesh(broadleafCrownGeometry({low}),cherry,x+Math.cos(angle)*.28,height+.65,z+Math.sin(angle)*.28);crown.scale.set(2.6+(i%3)*.22,1.43+(i%4)*.10,2.15+(i%2)*.23);crown.rotation.y=angle;
-  }
+  // Roadside trees are supplied by the grounded shared scan tiers in world.
   }
   const steel=new THREE.MeshStandardMaterial({color:'#34455b',metalness:.72,roughness:.33});
   const gold=new THREE.MeshStandardMaterial({color:'#fff71e',metalness:.3,roughness:.35});
@@ -100,9 +95,7 @@ export function createMountainVenue(scene, track, {low=false,landmarks=[],surfac
     group.userData.houseFoundations=[];
     // Bay houses sit on submerged shoreline shelves and concrete footings.
     // Compact bay houses use distinct roof silhouettes and tall narrow windows.
-    for(let i=0;i<22;i++){const p=sampleTrack(track.length*(.2+i*.015),track),side=i%2?1:-1;
-      if(p.s/track.length>.245&&p.s/track.length<.325)continue;
-      const x=p.x+p.nx*side*25,z=p.z+p.nz*side*25;if(projectOnTrack(x,z,0,track).distance<track.width/2+10||landmarks.some(site=>Math.hypot(x-site.x,z-site.z)<site.radius+10))continue;
+    for(const {i,p,side,x,z}of destinationHouseLayout(track,{landmarks})){
       const support=coastalGroundingLayout(track,[{x,z,radius:6.6}],{padding:3,margin:1.5})[0];
       // Continuous district terrain replaces the former isolated circular shelf.
       const houseGround=Math.max(0,groundHeight?groundHeight(x,z):coastalDistrictHeight(track,x,z));
@@ -144,7 +137,7 @@ export function createMountainVenue(scene, track, {low=false,landmarks=[],surfac
     }
   }
   // Elevated runs use different bridge architecture, not a panorama swap.
-  if(track.id!=='fuji-skyline')for(const fraction of [.26,.31]){
+  if(track.id==='san-francisco-hills'||track.id==='norway-fjord')for(const fraction of [.26,.31]){
     const p=sampleTrack(track.length*fraction,track),bridge=new THREE.Group();bridge.position.set(p.x,p.y,p.z);bridge.rotation.y=Math.atan2(p.tx,p.tz);group.add(bridge);
     const mat=track.id==='san-francisco-hills'?red:steel;
     for(const side of [-1,1]){const leg=new THREE.Mesh(new THREE.BoxGeometry(.7,16,.7),mat);leg.position.set(side*(track.width/2+1.3),8,0);bridge.add(leg);}

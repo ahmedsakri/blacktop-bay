@@ -16,6 +16,7 @@ export function createSpatialInstances(parent,geometry,material,list,{cellSize=1
   if(!items.length)continue;
   const mesh=new THREE.InstancedMesh(geometry,material,items.length);
   items.forEach((p,i)=>{dummy.position.set(p.x,p.y,p.z);dummy.rotation.set(p.rx||0,p.ry||0,p.rz||0,p.order||'XYZ');dummy.scale.set(p.sx??1,p.sy??1,p.sz??1);dummy.updateMatrix();mesh.setMatrixAt(i,dummy.matrix);if(p.color)mesh.setColorAt(i,color.set(p.color));});
+  if(items.some(p=>p.treeId!==undefined))mesh.userData.treeIds=items.map(p=>p.treeId);
   mesh.castShadow=false;mesh.receiveShadow=true;mesh.computeBoundingSphere();mesh.computeBoundingBox();
   // A high tower or mountain should remain on the skyline at every quality.
   // Tag short roadside detail only; retain tall geometry and local subgroups.

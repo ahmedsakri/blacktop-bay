@@ -6,6 +6,7 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {clone as cloneSkeleton} from 'three/addons/utils/SkeletonUtils.js';
 import {createSpectatorLibrary,createTexturedSpectator,createNearSpectator,SPECTATOR_ASSETS,REALISTIC_CROWD_BUDGET} from '../src/realistic-spectator.js';
 import {spectatorProfile,spectatorPose,createCrowd} from '../src/crowd.js';
+import {SPECTATOR_GESTURES} from '../src/spectator-motion-config.js';
 
 const sources=[];
 // The tests exercise real GLB geometry/skinning. Image decoding is browser-only;
@@ -37,7 +38,7 @@ test('actual imported bones and vertices remain finite and human-sized through e
  for(const source of sources){
   const character=createTexturedSpectator(source),v=new THREE.Vector3();
   const p={...spectatorProfile(0,0,0,0,false,()=>.5),height:1,width:1};
-  for(const seated of [false,true])for(let gesture=0;gesture<5;gesture++)for(const time of [.1,1.7]){
+  for(const seated of [false,true])for(let gesture=0;gesture<SPECTATOR_GESTURES.length;gesture++)for(const time of [.1,1.7]){
    Object.assign(p,{seated,gesture});character.update(p,spectatorPose(p,time,.95));
    const bounds=new THREE.Box3();character.mesh.traverse(o=>{if(!o.isSkinnedMesh)return;
     for(let i=0;i<o.geometry.attributes.position.count;i+=5){o.getVertexPosition(i,v);v.applyMatrix4(o.matrixWorld);assert.ok(v.toArray().every(Number.isFinite));bounds.expandByPoint(v);}
@@ -52,7 +53,7 @@ test('palms ease through gesture activation while weight shifts keep feet plante
  const character=createTexturedSpectator(sources[0]);
  const person={...spectatorProfile(0,0,0,0,false,()=>.5),height:1,width:1};
  const orientation=name=>character.mesh.getObjectByName(name).getWorldQuaternion(new THREE.Quaternion());
- for(let gesture=0;gesture<5;gesture++){
+ for(let gesture=0;gesture<SPECTATOR_GESTURES.length;gesture++){
   person.gesture=gesture;character.update(person,spectatorPose(person,1,.249));const before=orientation('hand_l');
   character.update(person,spectatorPose(person,1,.251));assert.ok(before.angleTo(orientation('hand_l'))<.03,'a wrist must not flip when a celebration starts');
  }

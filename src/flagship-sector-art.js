@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {broadleafCrownGeometry} from './vegetation-geometry.js';
 
 export const FLAGSHIP_TRACKS=Object.freeze(['fuji-skyline','san-francisco-hills','singapore-afterdark']);
 
@@ -39,7 +40,7 @@ export function addFlagshipSectorArt(track,site,{low,piece,rod,box,cylinder,mats
   const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(p,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(new Float32Array(p.length/3*2),2));g.computeVertexNormals();add(g,mats.roof);
  };
  const finishGarden=()=>{
-  const fuji=track.id==='fuji-skyline',leaf=fuji?mats.red:mats.roof,stem=fuji?mats.timber:mats.steel;
+  const fuji=track.id==='fuji-skyline',leaf=mats.red,stem=fuji?mats.timber:mats.steel;
   // Curved planting islands cover the rear corners of the existing platform.
   // Their branches and foliage remain within the reserved terrace footprint.
   for(const [i,x] of [-5.6,5.6].entries()){
@@ -50,22 +51,10 @@ export function addFlagshipSectorArt(track,site,{low,piece,rod,box,cylinder,mats
    for(let j=0;j<3;j++){
     const a=j*Math.PI*2/3+i*.7,tip=[x+Math.cos(a)*.63,height+.55,z+Math.sin(a)*.63];beam([x,height*.56,z],tip,stem,.075);
    }
-   if(fuji){
-    for(let j=0;j<(low?7:11);j++){
-     const a=j*2.399,r=j%3===0?.23:.65;
-     add(new THREE.IcosahedronGeometry(1,low?0:1),leaf,x+Math.cos(a)*r,height+.6+(j%3)*.22,z+Math.sin(a)*r,.62+(j%2)*.08,.48,.57);
-    }
-   }else{
-    const p=[],uv=[];
-    // Folded lance-shaped fronds; their ridges read under the cool night fill.
-    for(let j=0;j<(low?10:16);j++){
-     const a=j*2.399,dx=Math.cos(a),dz=Math.sin(a),r=1.18+(j%3)*.07,y=height+.60+(j%2)*.25;
-     const points=[[x,y,z],[x+dx*r*.50-dz*.21,y+.32,z+dz*r*.50+dx*.21],[x+dx*r,y-.12,z+dz*r],[x+dx*r*.50+dz*.21,y+.32,z+dz*r*.50-dx*.21],[x+dx*r*.5,y+.48,z+dz*r*.5]];
-     for(const index of [0,1,4,1,2,4,2,3,4,3,0,4]){p.push(...points[index]);uv.push(0,0);}
-    }
-    const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(p,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));g.computeVertexNormals();add(g,leaf);
-    for(const side of [-1,1])block(mats.warm,x+side*1.08,.61,z-.70,.32,.045,.10);
-   }
+   // A fine photographed canopy replaces solid blossom lumps and a handful
+   // of oversized tropical blades. The small tree has actual branch openings.
+   const canopy=add(broadleafCrownGeometry({clusterCount:low?48:80}),leaf,x,height+.72,z,fuji?1.18:1.27,fuji?.94:1.18,1.10);canopy.rotation.y=i*1.71;
+   if(!fuji)for(const side of [-1,1])block(mats.warm,x+side*1.08,.61,z-.70,.32,.045,.10);
    for(let j=0;j<3;j++){const rock=add(new THREE.IcosahedronGeometry(.27,0),mats.concrete,x-.88+j*.34,.63,z-.53,1,.55,.80);rock.rotation.y=j*.7;}
   }
   // A pedestrian path and end benches give the platform human scale while
@@ -105,7 +94,7 @@ export function addFlagshipSectorArt(track,site,{low,piece,rod,box,cylinder,mats
    const g=new THREE.CylinderGeometry(3.15,3.8,.35,8);add(g,mats.timber,0,.40,0);
    for(let i=0;i<8;i++){const a=i*Math.PI/4,x=Math.cos(a)*2.9,z=Math.sin(a)*2.9;block(mats.timber,x,3,z,.2,5.8,.2);beam([x,5.5,z],[0,7.5,0],mats.timber,.095);}
    add(new THREE.ConeGeometry(4.9,2.4,8,1,true),mats.cream,0,6.5,0);add(new THREE.ConeGeometry(2.5,1.5,8,1,true),mats.roof,0,8.15,0);
-   block(mats.timber,0,8.8,0,.18,2.5,.18);block(mats.red,0,9.4,0,1.6,.14,.20);
+   block(mats.timber,0,8.8,0,.18,2.5,.18);block(mats.timber,0,9.4,0,1.6,.14,.20);
    ring(2.94,.08,0,1.35,0,mats.timber,16);lantern(-5.3,-2.7);lantern(5.3,-2.7);bench(0,4.6,6);
   }
   finishGarden();return names[site.index];

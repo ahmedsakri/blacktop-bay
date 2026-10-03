@@ -3,7 +3,7 @@ import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {sampleTrack,projectOnTrack,TRACKS} from './track.js';
 import {VENUE_REGIONS} from './showcase-lighting.js';
 import {originalLandmarkLayout} from './original-venues.js';
-import {setWorldSurfaceUV,pavingSurfaceMaterial} from './track-surface-materials.js';
+import {setWorldSurfaceUV,pavingSurfaceMaterial,foliageSurfaceMaterial} from './track-surface-materials.js';
 import {addFlagshipSectorArt} from './flagship-sector-art.js';
 
 // These are authored sectors on the game's original arcade routes. Fractions
@@ -71,10 +71,10 @@ export function applyShowcaseSurface(road,track){
   shader.vertexShader=shader.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\nvRoadSurface=roadSurface;');
   shader.fragmentShader='varying vec2 vRoadSurface;\n'+shader.fragmentShader;
   // Preserve the fine PBR roughness map underneath the authored sector grade.
-  shader.fragmentShader=shader.fragmentShader.replace('#include <roughnessmap_fragment>','#include <roughnessmap_fragment>\nroughnessFactor=clamp(vRoadSurface.x*roughnessFactor/max(roughness,.01),.55,.96);');
+  shader.fragmentShader=shader.fragmentShader.replace('#include <roughnessmap_fragment>',`#include <roughnessmap_fragment>\nroughnessFactor=clamp(vRoadSurface.x*roughnessFactor/max(roughness,.01),${track.id==='singapore-afterdark'?'.74':'.55'},.96);`);
   shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>','#include <map_fragment>\ndiffuseColor.rgb*=1.-vRoadSurface.y*.19;');
  };
- road.material.customProgramCacheKey=()=> 'authored-showcase-road-v2';
+ road.material.customProgramCacheKey=()=> 'authored-showcase-road-v3-'+(track.id==='singapore-afterdark'?'dry-urban':'regional');
  road.userData.surfaceSectors=showcase.sectors.map(({s,roughness,wear})=>({s,roughness,wear}));
 }
 export function showcaseLayout(track,{stands=[]}={}){
@@ -127,6 +127,8 @@ export function createShowcaseVenue(scene,track,{low=false,stands=[],crowd,rng=M
   glass:new THREE.MeshStandardMaterial({color:'#233f50',metalness:.53,roughness:.25}),
   warm:new THREE.MeshBasicMaterial({color:'#ffd7a3',toneMapped:false}),
   accent:new THREE.MeshBasicMaterial({color:'#9246ff',toneMapped:false})};
+ if(['fuji-skyline','singapore-afterdark'].includes(track.id)){mats.red.dispose();mats.red=foliageSurfaceMaterial(surfaces?.foliageLeaf,{color:track.id==='fuji-skyline'?'#aebd93':'#8daa8f'});}
+ const emissive=new THREE.MeshBasicMaterial({color:'white',vertexColors:true,toneMapped:false});
  mats.paving=mats.concrete; // Terrace masonry and paving share one batch.
  const box=new THREE.BoxGeometry(1,1,1),cylinder=new THREE.CylinderGeometry(1,1,1,8),parts=[];
  const piece=(site,geometry,material,x,y,z,sx,sy,sz,rotation=0)=>{
@@ -264,8 +266,10 @@ export function createShowcaseVenue(scene,track,{low=false,stands=[],crowd,rng=M
  // be culled independently. Shared palette reduces each terrace to few draws.
  const batches=new Map();root.updateMatrixWorld(true);
  const geometryStats={sourceTriangles:parts.reduce((sum,p)=>sum+(p.geometry.index?.count??p.geometry.attributes.position.count)/3,0),batchedTriangles:0,fallbackBatches:0};
- for(const part of parts){const siteKey=String(part.userData.sector),key=siteKey+part.material.uuid+':'+Object.keys(part.geometry.attributes).sort().join(',');
-  const g=part.geometry.index?part.geometry.toNonIndexed():part.geometry.clone();g.applyMatrix4(part.matrixWorld);if(surfaces&&part.material===mats.concrete)setWorldSurfaceUV(g,3);if(part.material===mats.paving)setWorldSurfaceUV(g,2.12);
+ for(const part of parts){
+  const g=part.geometry.index?part.geometry.toNonIndexed():part.geometry.clone();
+  if(part.material===mats.warm||part.material===mats.accent){const color=part.material.color,values=new Float32Array(g.attributes.position.count*3);for(let i=0;i<values.length;i+=3)values.set([color.r,color.g,color.b],i);g.setAttribute('color',new THREE.BufferAttribute(values,3));part.material=emissive;}
+  const siteKey=String(part.userData.sector),key=siteKey+part.material.uuid+':'+Object.keys(g.attributes).sort().join(',');g.applyMatrix4(part.matrixWorld);if(surfaces&&part.material===mats.concrete)setWorldSurfaceUV(g,3);if(part.material===mats.paving)setWorldSurfaceUV(g,2.12);
   if(!batches.has(key))batches.set(key,{material:part.material,geometries:[]});batches.get(key).geometries.push(g);part.removeFromParent();
  }
  for(const {material,geometries}of batches.values()){

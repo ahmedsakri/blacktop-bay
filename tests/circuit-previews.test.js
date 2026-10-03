@@ -32,6 +32,10 @@ test('all 38 circuit previews are distinct actual-world WebP captures with verif
   assert.ok(entry.sector>=0&&entry.sector<1);assert.equal(entry.camera.position.length,3);assert.equal(entry.camera.quaternion.length,4);
   assert.ok([...entry.camera.position,...entry.camera.quaternion].every(Number.isFinite));
   assert.ok(entry.camera.fov>20&&entry.camera.fov<100);assert.ok(entry.draws>0&&entry.triangles>0);
+  assert.equal(entry.sky.state,'ready',entry.id+' background loaded before capture');
+  assert.equal(entry.sky.gpuCompressed,true,entry.id+' uses the delivered high resolution sky');
+  assert.equal(entry.sky.width,8192);assert.equal(entry.sky.height,2048);
+  assert.ok(['ready','disabled'].includes(entry.trees.state),entry.id+' applicable scanned trees resolved before capture');
   assert.equal(entry.surfaces.loaded,Object.keys(TRACK_SURFACE_MAPS).length,entry.id+' actual surface maps finished loading');
   assert.equal(entry.textureProof.length,Object.keys(TRACK_SURFACE_MAPS).length);assert.ok(entry.textureProof.every(p=>p.gpuRedStdDev>0),entry.id+' maps were sampled on the GPU');
  }

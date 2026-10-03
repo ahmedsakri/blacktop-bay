@@ -2,10 +2,10 @@
 // foreground lighting. No per-frame cube captures or extra scene lights.
 export const SHOWCASE_LIGHTING=Object.freeze({
  harbor:{sky:'#9cb9d9',bounce:'#635042',sun:'#ffd3a0',sunlight:1.28,fill:'#9fc9ed',fillIntensity:.62,fog:'#62758c',fogDensity:.00095,environmentIntensity:.72,backdropTint:'#fff2df',backdropExposure:1.02},
- 'fuji-skyline':{sky:'#c4d9e5',bounce:'#59604c',sun:'#fff0d1',sunlight:1.36,fill:'#bad5e8',fillIntensity:.48,fog:'#a0b7bd',fogDensity:.00080,environmentIntensity:.66,backdropTint:'#f2f8ff',backdropExposure:1.04},
+ 'fuji-skyline':{sky:'#d6e6ef',bounce:'#59604c',ambient:.62,sun:'#fff0d1',sunlight:2.35,fill:'#bad5e8',fillIntensity:.32,fog:'#a0b7bd',fogDensity:.00080,environmentIntensity:.66,backdropTint:'#ffffff',backdropExposure:1.0},
  // Keep the metropolitan key-light level for readable physical road/car forms.
  // Night character comes from the coordinated palette, fill, fog and backdrop.
- 'singapore-afterdark':{sky:'#7999b4',bounce:'#293a40',sun:'#c5dbe8',sunlight:.84,fill:'#93bfc8',fillIntensity:.60,fog:'#263e50',fogDensity:.00105,environmentIntensity:.70,backdropTint:'#d7ebed',backdropExposure:.88},
+ 'singapore-afterdark':{sky:'#7999b4',bounce:'#293a40',sun:'#c5dbe8',sunlight:.84,fill:'#93bfc8',fillIntensity:.60,fog:'#263e50',fogDensity:.00105,environmentIntensity:.70,backdropTint:'#d7ebed',backdropExposure:.56},
  'san-francisco-hills':{sky:'#bad3e3',bounce:'#77624d',sun:'#ffdbad',sunlight:1.34,fill:'#a9cde4',fillIntensity:.56,fog:'#8fa6b5',fogDensity:.00086,environmentIntensity:.70,backdropTint:'#fff1df',backdropExposure:1.02},
 });
 
@@ -20,7 +20,7 @@ export const REGIONAL_LIGHTING=Object.freeze({
  alpine:{sky:'#c7dce8',bounce:'#647066',sun:'#f6eddb',sunlight:1.24,fill:'#bcd9ea',fillIntensity:.59,fog:'#a2bec8',fogDensity:.00092,environmentIntensity:.66,backdropTint:'#ecf6ff',backdropExposure:1.03},
  tropical:{sky:'#a9c9d7',bounce:'#655e45',sun:'#ffe5bb',sunlight:1.35,fill:'#aad3e7',fillIntensity:.54,fog:'#91b1b4',fogDensity:.00105,environmentIntensity:.72,backdropTint:'#fff2df',backdropExposure:1.01},
  arid:{sky:'#d4cbb5',bounce:'#a07956',sun:'#ffe0a7',sunlight:1.48,fill:'#b6c6d3',fillIntensity:.49,fog:'#b8a38a',fogDensity:.00072,environmentIntensity:.67,backdropTint:'#fff1d8',backdropExposure:1.01},
- metropolitan:{sky:'#8aa2c4',bounce:'#363449',sun:'#d1d9fa',sunlight:.84,fill:'#a59ee3',fillIntensity:.68,fog:'#38435c',fogDensity:.00113,environmentIntensity:.78,backdropTint:'#e8e9ff',backdropExposure:.95},
+ metropolitan:{sky:'#8aa2c4',bounce:'#363449',sun:'#d1d9fa',sunlight:.84,fill:'#a59ee3',fillIntensity:.68,fog:'#38435c',fogDensity:.00113,environmentIntensity:.78,backdropTint:'#e8e9ff',backdropExposure:.62},
  industrial:{sky:'#9bb8d1',bounce:'#5c5857',sun:'#ffd4a2',sunlight:1.19,fill:'#a1c4e0',fillIntensity:.59,fog:'#7d95a8',fogDensity:.00104,environmentIntensity:.69,backdropTint:'#f8ecdf',backdropExposure:.99},
 });
 export const VENUE_REGIONS=Object.freeze({

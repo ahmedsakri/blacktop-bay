@@ -50,7 +50,7 @@ export function districtParcelLayout(track,buildings,{low=false}={}){
  for(const b of sorted){
   if(sites.length>=limit)break;
   const sx=b.sx+12,sz=b.sz+14,radius=Math.hypot(sx,sz)/2;
-  if(b.roadDistance<track.width/2+radius+2)continue;
+  if(b.parcelFootprint?b.parcelFootprint.some(p=>projectOnTrack(p.x,p.z,undefined,track).distance<track.width/2+2.5):b.roadDistance<track.width/2+radius+2)continue;
   if(sites.some(s=>Math.hypot(b.x-s.x,b.z-s.z)<Math.min(radius,s.radius)*.65))continue;
   sites.push({x:b.x,z:b.z,y:Math.max(-.14,b.y-b.sy/2+.01),sx,sz,sy:.22,ry:b.ry||0,radius,role:'parcel',building:b});
  }

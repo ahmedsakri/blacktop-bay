@@ -1,12 +1,12 @@
 {
   "version": 1,
   "checked": "2026-10-03",
-  "scope": "Official Sonniss GDC2016/2017/2018/2019/2020/2023 tracklists (2024 archive links2023 list), identified Freesound source pages/searches, Wikimedia vehicle-audio categories, creator/vendor libraries. Some search requests timed out or rate-limited. No purchases, new accounts or copyrighted-video extraction.",
+  "scope": "Official Sonniss GDC 2016/2017/2018/2019/2020/2023 tracklists (2024 archive links 2023 list), Freesound source pages and direct searches, Wikimedia audio/video searches, Sounding Sweet complete November 2025 catalogue, AudioSparx identified product pages and license, creator/vendor libraries, official manufacturer press assets and original videographer publications. Some requests timed out or rate-limited. No purchases, new accounts, sent enquiries or copyrighted-video extraction.",
   "candidates": [
     {
       "id": "sonniss-570s",
       "decision": "adopted-game-only",
-      "vehicle": "2016 McLaren 570S Coupé",
+      "vehicle": "2016 McLaren 570S Coup\u00e9",
       "primaryUrls": [
         "https://sonniss.com/gameaudiogdc/",
         "https://pole.se/product/mclaren-570s-2016/",
@@ -104,7 +104,7 @@
     {
       "id": "sonniss-huracan",
       "decision": "reviewed-not-selected",
-      "vehicle": "2014 Lamborghini Huracán LP610-4",
+      "vehicle": "2014 Lamborghini Hurac\u00e1n LP610-4",
       "primaryUrls": [
         "https://sonniss.com/gameaudiogdc/",
         "https://pole.se/product/lamborghini-huracan-2014/",
@@ -140,9 +140,12 @@
       "primaryUrls": [
         "https://sound-ideas.com/products/mclaren-senna-by-sounding-sweet",
         "https://www.sweetsfx.com/product/mclaren-senna/",
-        "https://sound-ideas.com/pages/faq"
+        "https://sound-ideas.com/pages/faq",
+        "https://www.sweetsfx.com/licensing/",
+        "https://www.sweetsfx.com/wp-content/uploads/2025/11/Sounding-Sweet-Sweet-SFX-Catalogue-November-2025.pdf",
+        "https://www.sweetsfx.com/wp-content/uploads/2023/11/Sweet-SFX-Catalogue_Web.pdf"
       ],
-      "reason": "Identified stock2018 Senna,231takes; useful exact-model candidate. SoundIdeas game permission requires embedded sound not accessible for standalone download. Current public WAV game architecture requires vendor confirmation or a compliant distribution design before purchase/use.",
+      "reason": "2018 stock Senna verified in creator 2025 catalogue page 11. $349 reseller listing is not a confirmed game-session quote. Creator separates fuller game sessions from retail packs; 2023 catalogue states game licensing starts at five seats. Direct EULA 7.4.8 demands safeguards against standalone access/extraction, so public WAV/browser/public Git delivery requires written agreement before acquisition.",
       "priceUSD": 349,
       "priceChecked": "2026-10-03",
       "license": "Vendor royalty-free EULA, conditional game embedding"
@@ -266,7 +269,7 @@
       "primaryUrls": [
         "https://freesound.org/people/Walking.With.Microphones/sounds/556039/"
       ],
-      "reason": "CC0 own ZoomH6 race-pass recording lists17cars including650SGT3 andR8LMSUltra. No timestamp-isolated, uncontaminated bank established; multiple vehicles/track ambience overlap. Do not relabel the whole field as650S."
+      "reason": "CC0 own ZoomH6 race-pass recording lists17cars including650SGT3 andR8LMSUltra. No timestamp-isolated, uncontaminated bank established; multiple vehicles/track ambience overlap. Do not relabel the whole field as650S. HQ preview now downloaded and waveform/spectrum reviewed: multiple contemporaneous harmonic tracks and passes remain; no reliable isolated three-band 650S bank established from car-order text alone."
     },
     {
       "id": "skyline-rip",
@@ -282,7 +285,7 @@
       "decision": "rejected-unverified-provenance",
       "vehicle": "Bugatti Veyron",
       "primaryUrls": [
-        "https://pixabay.com/sound-effects/bugatti-veyron-361741/"
+        "https://pixabay.com/sound-effects/film-special-effects-bugatti-veyron-super-sport-sound-effect-361741/"
       ],
       "reason": "Title-only upload; primary recording ownership/model origin not established. No audio copied."
     },
@@ -291,7 +294,7 @@
       "decision": "rejected-unverified-provenance",
       "vehicle": "BMW i8",
       "primaryUrls": [
-        "https://pixabay.com/sound-effects/bmw-i8-engine-sound-252644/"
+        "https://pixabay.com/es/sound-effects/pel%C3%ADculas-y-efectos-especiales-bmw-i8-noise-252644/"
       ],
       "reason": "Title-only clip; source chain not established. No audio copied."
     },
@@ -370,7 +373,7 @@
     },
     {
       "id": "250-gto-research",
-      "decision": "no-ready-exact-source-in-checked-catalogues",
+      "decision": "superseded-by-identified-free-source",
       "vehicle": "1964 Ferrari250GTO",
       "primaryUrls": [
         "https://sonniss.com/gameaudiogdc/",
@@ -378,7 +381,7 @@
         "https://commons.wikimedia.org/wiki/Category:Sounds_of_automobiles",
         "https://pole.se/shop/car-sound-libraries/"
       ],
-      "reason": "Ferrari275GTB1965 in GDC2016 is a different model; no validated downloadable exact250GTO bank found. This is a bounded search result, not a claim that no recording exists anywhere."
+      "reason": "Earlier checked catalogues found only different Ferrari models; expanded Commons audio search found the named CC BY4 250 GTO upload subsequently adopted as commons-250-gto. Target1964 year remains uncertified."
     },
     {
       "id": "919-research",
@@ -475,6 +478,204 @@
         "https://pole.se/shop/car-sound-libraries/"
       ],
       "reason": "Custom visual target engine build not documented and no validated freely downloadable exactT50recording found. This is a bounded search result, not a claim that no recording exists anywhere."
+    },
+    {
+      "id": "freesound-elise",
+      "decision": "adopted-cc0-model-match",
+      "vehicle": "Lotus Elise, unspecified generation/engine",
+      "primaryUrls": [
+        "https://freesound.org/people/victormalloy/sounds/113205/",
+        "https://freesound.org/people/victormalloy/packs/7118/"
+      ],
+      "license": "CC0-1.0",
+      "costUSD": 0,
+      "reason": "Own sports-car recording collection, 51-second stationary start/rev/idle, published 2011. Public HQ preview acquired and three bounded loops prepared. Replaces unrelated Honda; no exact generation, year, engine or exhaust claim."
+    },
+    {
+      "id": "sweet-elise",
+      "decision": "not-needed-for-base-model-improvement",
+      "vehicle": "2014 Lotus Elise Club Racer I4 1.6L",
+      "primaryUrls": [
+        "https://www.sweetsfx.com/product/lotus-elise-club-racer/",
+        "https://www.sweetsfx.com/wp-content/uploads/2025/11/Sounding-Sweet-Sweet-SFX-Catalogue-November-2025.pdf"
+      ],
+      "reason": "Creator catalogue identifies 2014 Club Racer as stock, while product prose says custom exhaust. Clarification required; neither matches unspecified target generation conclusively. Free named Elise source adopted instead; do not buy to make an exact-spec claim."
+    },
+    {
+      "id": "sweet-m3-e46",
+      "decision": "quote-and-build-review-required",
+      "vehicle": "2003 BMW M3 E46 I6 3.2L manual, Eissmann exhaust and custom intake",
+      "primaryUrls": [
+        "https://www.sweetsfx.com/wp-content/uploads/2025/11/Sounding-Sweet-Sweet-SFX-Catalogue-November-2025.pdf",
+        "https://www.sweetsfx.com/licensing/"
+      ],
+      "priceUSD": null,
+      "reason": "Creator 2025 catalogue page 5 identifies actual E46 M3 but modified exhaust/intake. Full sessions include steady idles and multiple-gear ramps. Quote required for game license; direct EULA 7.4.8 extraction safeguards need explicit browser/public-repository agreement. Not acquired and not certified stock."
+    },
+    {
+      "id": "sweet-992-gt3",
+      "decision": "quote-and-generation-review-required",
+      "vehicle": "2021 Porsche 992 GT3, stock 4.0L flat-six/manual",
+      "primaryUrls": [
+        "https://www.sweetsfx.com/wp-content/uploads/2025/11/Sounding-Sweet-Sweet-SFX-Catalogue-November-2025.pdf",
+        "https://www.sweetsfx.com/licensing/"
+      ],
+      "priceUSD": null,
+      "reason": "Creator 2025 catalogue page 13 identifies stock road GT3; target visual generation remains unspecified. Quote and browser distribution permission required. Do not select RS/R/Cup as exact road GT3."
+    },
+    {
+      "id": "audiosparx-enzo",
+      "decision": "purchase-and-source-delivery-review-required",
+      "vehicle": "Ferrari Enzo",
+      "primaryUrls": [
+        "https://www.audiosparx.com/sa/archive/Cars-Generic/Car-accelerations/Ferrari-Enzo-Full-Speed-Off/538702",
+        "https://www.audiosparx.com/sa/legal/license.cfm"
+      ],
+      "priceUSD": 1.5,
+      "priceChecked": "2026-10-03",
+      "reason": "Cenoura Roxa catalogue 538702 explicitly sells a six-second Enzo full-speed clip. Vendor warrants licensing authority; small candidate, not a full idle/load bank. Original recording provenance, clean sustained content and browser asset/public Git distribution should be confirmed before buying. Preview/master not copied."
+    },
+    {
+      "id": "audiosparx-gt3",
+      "decision": "purchase-and-generation-review-required",
+      "vehicle": "Porsche 911 GT3, generation/year unspecified",
+      "primaryUrls": [
+        "https://www.audiosparx.com/sa/summary/play.cfm/crumb.26/sound_iid.361717",
+        "https://www.audiosparx.com/sa/legal/license.cfm"
+      ],
+      "priceUSD": 4,
+      "priceChecked": "2026-10-03",
+      "reason": "Takuya Katsu catalogue 361717, 34 seconds, 48 kHz/24-bit mono exterior garage start/rev/idle. Named GT3 improves generic 911 identity but generation unknown. Browser/public Git permission and generation confirmation required; not purchased."
+    },
+    {
+      "id": "audiosparx-gallardo",
+      "decision": "purchase-and-year-review-required",
+      "vehicle": "Lamborghini Gallardo, year unspecified",
+      "primaryUrls": [
+        "https://www.audiosparx.com/sa/artist/sounds.cfm/artist_iid.4052/soundGroup_iid.3163",
+        "https://www.audiosparx.com/sa/legal/license.cfm"
+      ],
+      "priceUSD": 3.8,
+      "priceChecked": "2026-10-03",
+      "reason": "Cenoura Roxa Gallardo2 catalogue 397930, 27 seconds. No 2004/5.0L evidence. Do not purchase as exact 2004 solution until source year/exhaust and browser distribution are confirmed."
+    },
+    {
+      "id": "echo-gt3-r",
+      "decision": "rejected-variant",
+      "vehicle": "2014 Porsche 911 GT3 R race car",
+      "primaryUrls": [
+        "https://www.asoundeffect.com/sound-library/porsche-911-gt3/",
+        "https://sonniss.com/sound-effects-tag/barrel/"
+      ],
+      "priceUSD": 50,
+      "priceChecked": "2026-10-03",
+      "reason": "The shortened product title The Porsche 911 GT3 conceals R race specification in description. Not an exact road GT3 source."
+    },
+    {
+      "id": "audi-r18-press-photos",
+      "decision": "rejected-no-audio",
+      "vehicle": "2015 Audi R18 e-tron quattro",
+      "primaryUrls": [
+        "https://www.mynewsdesk.com/dk/audi-danmark/pressreleases/audi-stiller-med-tre-audi-r18-e-tron-quattro-til-le-mans-i-2015-og-tom-k-bliver-grand-marshal-1114594"
+      ],
+      "reason": "Official Audi press release grants Creative Commons attribution for four attached JPG images only. No engine recording or transferable audio grant; no media copied."
+    },
+    {
+      "id": "bmw-i8-press-footage",
+      "decision": "permission-required",
+      "vehicle": "BMW i8 Roadster sound measurement",
+      "primaryUrls": [
+        "https://www.press.bmwgroup.com/deutschland/tv-footage/detail/PF0006748/bmw-electric-sounddesign/2"
+      ],
+      "reason": "Official 2019 BMW footage documents sound testing, but press availability does not itself grant commercial game audio extraction. Roadster variant also needs target comparison. No audio copied."
+    },
+    {
+      "id": "gta-veyron-rip",
+      "decision": "rejected-origin",
+      "vehicle": "Bugatti Veyron W16 mod",
+      "primaryUrls": [
+        "https://www.gta5-mods.com/fr/vehicles/bugatti-veyron-w16-sound-mod-sp-fivem-add-on"
+      ],
+      "reason": "Original mod author Legacy_DMC explicitly identifies NFS:Rivals source and says no reupload. Public availability is not game-asset reuse authorization."
+    },
+    {
+      "id": "gta-m3-rip",
+      "decision": "rejected-origin",
+      "vehicle": "BMW M3 E46/Z4 M S54 mod",
+      "primaryUrls": [
+        "https://www.gta5-mods.com/vehicles/bmw-m3-z4-m-s54b32-engine-sound-oiv-add-on-fivem"
+      ],
+      "reason": "Original author credits GT Sport and Forza Motorsport 7 extracted audio; do not reuse as an original permissively licensed recording."
+    },
+    {
+      "id": "bozzy-919-2017",
+      "decision": "creator-permission-and-master-required",
+      "vehicle": "2017 Porsche 919 Hybrid LMP1",
+      "primaryUrls": [
+        "https://www.youtube.com/watch?v=pt6a4iSIrsI",
+        "https://www.youtube.com/user/19Bozzy92"
+      ],
+      "reason": "Original creator 19Bozzy92 identifies the 2017 WEC Prologue car at Monza. This is an actual target-year video lead, not a downloadable game audio licence. Publication describes collaboration with Italiansupercarvideo, so a future request must identify individually owned master takes and clear all contributing rights. No media copied; price unknown."
+    },
+    {
+      "id": "bozzy-r18-2013",
+      "decision": "creator-permission-and-master-required",
+      "vehicle": "2013 Audi R18 e-tron quattro long-tail",
+      "primaryUrls": [
+        "https://www.youtube.com/watch?v=CKIc1BcWDlM",
+        "https://www.youtube.com/user/19Bozzy92"
+      ],
+      "reason": "Original creator identifies the 2013 long-tail R18 at Monza. Available video is not a game reuse grant; isolated master takes and permission must be obtained directly. Target R18 year/build also needs certification. No media copied; price unknown."
+    },
+    {
+      "id": "commons-250-gto",
+      "decision": "adopted-model-source-year-unverified",
+      "vehicle": "Ferrari 250 GTO (year/build unspecified)",
+      "primaryUrls": [
+        "https://commons.wikimedia.org/wiki/File:Ferrari_250_GTO,_Engine_Sound.ogg",
+        "https://commons.wikimedia.org/w/index.php?title=File:Ferrari_250_GTO,_Engine_Sound.ogg&oldid=1251383729",
+        "https://creativecommons.org/licenses/by/4.0/"
+      ],
+      "license": "CC-BY-4.0",
+      "costUSD": 0,
+      "reason": "Publisher expressly declares own work, named 250 GTO and CC BY4; original public Ogg SHA-1 matches page metadata. Three bounded running intervals inspected numerically and prepared with unchanged processing. No model year/chassis/microphone/build proof; target1964 remains unverified. Commons account past unrelated photograph permission notices do not identify a dispute on this audio, and are not proof against this particular grant. No independent recorder-session evidence beyond the upload declaration."
+    },
+    {
+      "id": "pixabay-enzo",
+      "decision": "recording-provenance-unverified",
+      "vehicle": "Ferrari Enzo claimed by title",
+      "primaryUrls": [
+        "https://pixabay.com/sound-effects/film-special-effects-ferrari-enzo-sound-effect-360529/"
+      ],
+      "reason": "Eight-second 2025 upload by AstonMartinVantageV12 under Pixabay terms; no original recording session/source evidence or engine specification. Not counted as verified exact model or copied."
+    },
+    {
+      "id": "audi-r18-official-video",
+      "decision": "rejected-journalistic-use-only",
+      "vehicle": "2014 Audi R18 e-tron quattro",
+      "primaryUrls": [
+        "https://audi-mediacenter.pl/film,18564,audi-r18-e-tron-quattro.html"
+      ],
+      "reason": "Official downloadable MP4 has explicit free exclusively journalistic-use limitation. Game sound derivative is not authorized by that grant; no media downloaded."
+    },
+    {
+      "id": "rimac-official-rights",
+      "decision": "rejected-permission-required",
+      "vehicle": "Rimac Nevera / Concept One",
+      "primaryUrls": [
+        "https://www.rimac-automobili.com/legal-notice/"
+      ],
+      "reason": "Official terms include aural content, allow personal noncommercial access and require written permission for public/commercial distribution, modification or reuse. No recording-specific open grant found."
+    },
+    {
+      "id": "gma-official-rights",
+      "decision": "rejected-permission-required",
+      "vehicle": "GMA T.50",
+      "primaryUrls": [
+        "https://www.gordonmurray.com/terms-and-conditions"
+      ],
+      "reason": "Official terms section8 includes audio/video; personal noncommercial access is not permission to distribute modified game loops. Read-only partner research verified no recording-specific open grant."
     }
-  ]
+  ],
+  "acquisitionScope": "Freely licensed recordings only, per user instruction. Paid candidates below are historical research and are not approved acquisition steps; no enquiry sent and no purchase made."
 }

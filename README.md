@@ -183,7 +183,7 @@ Racing Sans One is used for display headlines, Barlow Condensed for telemetry an
 
 **Liquid Lines** is the lobby soundtrack: an original 168 BPM liquid drum & bass composition with syncopated drums, deep bass and bright keys. Previous lobby arrangements have been removed, and older saved soundtrack selections migrate to Liquid Lines. Music is synthesized for this game; it is not a recording taken from another racing game.
 
-Game volume and Lobby music have separate controls. The speaker button mutes the whole game; setting Lobby music to zero leaves driving audio available. Music fades away when a race starts, and audio waits for a player gesture before unlocking. Each car has a distinct synthesized engine or electric voice, with gearing, tyre scrub and layered Nitro thrust responding to driving. These are designed game sounds, not recordings of the manufacturers’ vehicles.
+Game volume and Lobby music have separate controls. The speaker button mutes the whole game; setting Lobby music to zero leaves driving audio available. Music fades away when a race starts, and audio waits for a player gesture before unlocking. Each car blends licensed engine or electric recordings with a distinct synthesized voice, with gearing, tyre scrub and layered Nitro thrust responding to driving. Five cars now have base-model recording matches; most recordings remain related-model or engine-family substitutes, and no exact model-year/trim specification is certified. The complete identity audit is in `public/assets/audio/ENGINE-COVERAGE.json`.
 
 ## Development
 
@@ -207,8 +207,9 @@ Local: http://127.0.0.1:4180/. Production output: `dist/`.
 - `src/progression.js`, `src/upgrades-ui.js`: bounded upgrade levels, credit economy, persistence and workshop previews.
 - `src/manufacturer-car.js`, `src/vehicles.js`, `src/garage.js`: cached licensed manufacturer models, materials, animations, catalogue and inspection studio. Legacy geometry helpers remain in `src/car.js` and `src/prototype-car.js`.
 - `src/main.js`: loader, race/menu lifecycle, camera, input, garage and results.
+- `src/cinematic-backdrop.js`, `src/photographic-sky-loader.js`, `src/scanned-trees.js`, `src/roadside-planting.js`, `src/urban-district.js`: licensed photographic hemispheres, bounded GPU-compressed skies, scanned tree tiers, continuous verge planting and road-cleared city parcels. `scripts/prepare-photographic-skies.mjs --verify` checks shipping texture hashes and dimensions; original source photographs remain outside the repository.
 - `src/world.js`, `src/effects.js`, `src/race-feedback.js`: environment, bounded tyre/impact effects and event-based collision, lap and recovery feedback.
-- `src/audio.js`, `src/driving-sound.js`, `src/recorded-engine.js`, `src/lobby-music.js`: bounded synthesized driving voices, 23 licensed recording banks (20 active) serving all 33 cars; seven studio recordings improve eleven assignments, Nitro layers and the Liquid Lines lobby soundtrack. [Recording provenance and limits](docs/recorded-engine-audio.md).
+- `src/audio.js`, `src/driving-sound.js`, `src/recorded-engine.js`, `src/lobby-music.js`: bounded synthesized driving voices, 25 licensed recording banks (21 active) serving all 33 cars; nine newly integrated recordings improve thirteen assignments, Nitro layers and the Liquid Lines lobby soundtrack. [Recording provenance and limits](docs/recorded-engine-audio.md).
 - `src/storage.js`: validated race records with graceful storage failure.
 - `src/domain-migration.js`, `src/domain-migration-ui.js`: explicit old-origin save transfer, exact sender validation, confirmation and backup/rollback.
 - `legacy-host/save-transfer/`: former-origin first-party storage bridge and shared bounded transfer protocol; only this bridge stays on the old Hosting site.

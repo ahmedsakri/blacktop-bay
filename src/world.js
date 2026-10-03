@@ -5,8 +5,11 @@ import { RIVAL_GRID } from './rivals.js';
 import { cornerApproachMarkers } from './track-details.js';
 import { createCrowd } from './crowd.js';
 import { createTracksideServices,tracksideServiceLayout } from './trackside-services.js';
+import {createScannedTrees} from './scanned-trees.js';
+import {createRoadsidePlanting,vergeGroundSampler,forestMarginLayout} from './roadside-planting.js';
+import {urbanBlockLayout,createUrbanBlockEdges} from './urban-district.js';
 import { broadleafCrownGeometry, coniferBoughGeometry } from './vegetation-geometry.js';
-import { createMountainVenue, DESTINATION_PROFILES } from './mountain-venue.js';
+import { createMountainVenue, DESTINATION_PROFILES,destinationHouseLayout } from './mountain-venue.js';
 import { ORIGINAL_VENUE_PROFILES, originalLandmarkLayout, createOriginalLandmarks } from './original-venues.js';
 import {createSpatialInstances,createDistanceDetail} from './spatial-detail.js';
 import {applyShowcaseSurface,createShowcaseVenue,showcaseLayout,showcaseApproachLayout} from './showcase-venues.js';
@@ -57,9 +60,11 @@ export function venueSceneryLayout(track=TRACK,{low=false}={}) {
   if(stands.some(stand=>Math.hypot(x-stand.x,z-stand.z)<radius+14))continue;
   if(landmarks.some(item=>Math.hypot(x-item.x,z-item.z)<radius+item.radius+4))continue;
   if(items.some(item=>Math.hypot(x-item.x,z-item.z)<radius+item.radius+3))continue;
+  if(kind==='building')continue; // Urban buildings belong to complete street blocks.
   items.push({kind,x,z,radius,height:kind==='building'?16+rng()*44:kind==='rock'?radius*(.5+rng()*.6):6+rng()*8,yaw:Math.atan2(p.tx,p.tz),shade:rng()});
  }
- return items;
+ const houses=destinationHouseLayout(track,{landmarks});
+ return houses.length?items.filter(item=>houses.every(h=>Math.hypot(item.x-h.x,item.z-h.z)>=item.radius+h.radius+2)):items;
 }
 
 function random(seed = 81) { let s = seed; return () => ((s = Math.imul(1664525, s) + 1013904223) >>> 0) / 4294967296; }
@@ -155,7 +160,7 @@ export function createWorld(renderer, { low = false, reducedMotion = false } = {
  scene.add(new THREE.HemisphereLight(venue.sky,venue.bounce,venue.ambient));
  const sun = new THREE.DirectionalLight(venue.sun,venue.sunlight); sun.position.set(-180,venue.sunHeight,130); sun.castShadow = true; sun.shadow.mapSize.set(low ? 1024 : 2048, low ? 1024 : 2048); Object.assign(sun.shadow.camera, { left: -20, right: 20, top: 20, bottom: -20, near: 1, far: 360 }); sun.shadow.bias = -.00065; sun.shadow.normalBias = .015; scene.add(sun, sun.target);
  const fill = new THREE.DirectionalLight(venue.fill,venue.fillIntensity); fill.position.set(20, 45, -30); scene.add(fill);
- const backdrop = createCinematicBackdrop({track:TRACK,venue,low,reducedMotion});
+ const backdrop = createCinematicBackdrop({track:TRACK,venue,renderer,low,reducedMotion});
  scene.userData.cinematicBackdrop = backdrop.status;
  const sky = new THREE.Mesh(new THREE.SphereGeometry(1800, 48, 24), new THREE.ShaderMaterial({ side: THREE.BackSide, depthWrite: false, uniforms: {venueStyle:{value:venue.skyStyle},...backdrop.uniforms}, vertexShader: 'varying vec3 vPosition;void main(){vPosition=position;gl_Position=projectionMatrix*mat4(mat3(viewMatrix))*vec4(position,1.);}', fragmentShader: `${noiseGLSL}
  ${CINEMATIC_BACKDROP_GLSL}
@@ -424,6 +429,7 @@ export function createWorld(renderer, { low = false, reducedMotion = false } = {
  frontageBuildings.push(...towers.filter(b=>projectOnTrack(b.x,b.z).distance<180&&b.y-b.sy/2<.5).slice(0,low?16:28));
  terrainOccupied.push(...towers.map(b=>({x:b.x,z:b.z,radius:Math.hypot(b.sx,b.sz)/2+4})));
  const land = new THREE.Mesh(terrainUV(new THREE.RingGeometry(venue.original?216:venue.radius+30,venue.groundRadius,100),venue.original?0:venue.centerX,venue.original?0:venue.centerZ,venue.environment==='urban'?3:90), venue.environment==='urban'?restrainedPavementMaterial(surfaces.maps.asphaltColor):new THREE.MeshStandardMaterial({ color:venue.environment==='urban'?'#929a9b':'#c6c9b5',map:venue.environment==='urban'?surfaces.maps.concreteColor:surfaces.maps.terrainColor, roughness: 1 })); land.rotation.x = -Math.PI / 2; land.position.set(venue.original?0:venue.centerX,-.28,venue.original?0:venue.centerZ); scene.add(land);
+ const treeCandidates=[],treeFallbackGroups=[];
  const coastalDistrict=createCoastalDistrict(scene,TRACK,{low,map:surfaces.maps.terrainColor});
  const roadsideVerge=TRACK.id==='san-francisco-hills'?null:createRoadVerge(scene,TRACK,venue,{low,surfaces:surfaces.maps});
  if(!venue.original&&!venue.water){
@@ -433,37 +439,30 @@ export function createWorld(renderer, { low = false, reducedMotion = false } = {
   terrain.name='venue-terrain';terrain.rotation.x=-Math.PI/2;terrain.position.set(venue.centerX,-.16,venue.centerZ);terrain.receiveShadow=true;scene.add(terrain);
  }
  if(!venue.original&&(!venue.water||TRACK.scenery==='breakwater'||venue.vegetation==='street-trees')){
-  const foliage=[],treeTrunks=[],rocks=[],cityBlocks=[],cityRoofs=[];
+  const foliage=[],treeTrunks=[],rocks=[];
   const decorations=venueSceneryLayout(TRACK,{low});scene.userData.venueDecorationCount=decorations.length;terrainOccupied.push(...decorations);
 
-  for(const item of decorations){
+  for(const [treeId,item] of decorations.entries()){
    const {x,z,radius,height,yaw,shade}=item,ground=TRACK.id==='san-francisco-hills'?coastalGroundAt(coastalDistrict,x,z):0;
-   if(item.kind==='building'){
-    cityBlocks.push({x,z,y:height/2-.16,sx:radius*1.3,sy:height,sz:radius*.8,ry:yaw});
-    cityRoofs.push({x,z,y:height+.1,sx:radius*1.34,sy:.32,sz:radius*.84,ry:yaw,color:shade>.7?'#67a8af':'#354759'});
-   }else if(item.kind==='rock')rocks.push({x,z,y:height*.18-.8,sx:radius*.84,sy:height*.65,sz:radius*.71,ry:yaw,color:TRACK.scenery==='breakwater'?(shade>.5?'#4d5960':'#354047'):TRACK.scenery==='copper-canyon'?(shade>.5?'#a16c4c':'#86543d'):shade>.5?'#9a805e':'#76644e'});
+   if(item.kind==='rock')rocks.push({x,z,y:height*.18-.8,sx:radius*.84,sy:height*.65,sz:radius*.71,ry:yaw,color:TRACK.scenery==='breakwater'?(shade>.5?'#4d5960':'#354047'):TRACK.scenery==='copper-canyon'?(shade>.5?'#a16c4c':'#86543d'):shade>.5?'#9a805e':'#76644e'});
    else{
-    treeTrunks.push({x,z,y:ground+height*.29,sx:.18,sy:height*.58,sz:.18});
+    treeTrunks.push({x,z,y:ground+height*.29,sx:.18,sy:height*.58,sz:.18,treeId});
     if(venue.vegetation==='conifers'){
      for(let layer=0;layer<3;layer++)foliage.push({x,z,y:ground+height*(.50+layer*.17),sx:radius*(1-layer*.23),sy:height*(.35-layer*.04),sz:radius*(1-layer*.23),ry:yaw,color:shade>.66?'#405a40':shade>.33?'#304d3a':'#263e32'});
     }else {
-     foliage.push({x,z,y:ground+height*.72,sx:radius*.90,sy:height*.37,sz:radius*.80,ry:yaw,color:shade>.66?'#647454':shade>.33?'#4c6449':'#405841'});
-     for(const side of [-1,1])segment(treeTrunks,[x,ground+height*.35,z],[x+Math.cos(yaw)*side*radius*.48,ground+height*.72,z+Math.sin(yaw)*side*radius*.48],.10);
+     treeCandidates.push({x,z,y:ground,height,radius,yaw,treeId});
+     foliage.push({treeId,x,z,y:ground+height*.72,sx:radius*.90,sy:height*.37,sz:radius*.80,ry:yaw,color:shade>.66?'#647454':shade>.33?'#4c6449':'#405841'});
+     for(const side of [-1,1]){segment(treeTrunks,[x,ground+height*.35,z],[x+Math.cos(yaw)*side*radius*.48,ground+height*.72,z+Math.sin(yaw)*side*radius*.48],.10);treeTrunks.at(-1).treeId=treeId;}
     }
    }
   }
   if(foliage.length){
    // Three pieces per broadleaf tree must not turn a small original trunk
    // batch into dozens of draws merely because branches were added.
-   createSpatialInstances(scene,new THREE.CylinderGeometry(1,1.1,1,6),new THREE.MeshStandardMaterial({color:'#594d3d',roughness:1}),treeTrunks,{partitionThreshold:venue.vegetation==='conifers'?48:144});
-   instances(scene,venue.vegetation==='conifers'?coniferBoughGeometry({low}):broadleafCrownGeometry({low}),venue.vegetation==='conifers'?new THREE.MeshStandardMaterial({color:'white',vertexColors:true,roughness:1}):foliageSurfaceMaterial(surfaces.maps.foliageLeaf),foliage);
+   treeFallbackGroups.push(createSpatialInstances(scene,new THREE.CylinderGeometry(1,1.1,1,6),new THREE.MeshStandardMaterial({color:'#594d3d',roughness:1}),treeTrunks,{partitionThreshold:venue.vegetation==='conifers'?48:144}));
+   treeFallbackGroups.push(instances(scene,venue.vegetation==='conifers'?coniferBoughGeometry({low}):broadleafCrownGeometry({low}),venue.vegetation==='conifers'?new THREE.MeshStandardMaterial({color:'white',vertexColors:true,roughness:1}):foliageSurfaceMaterial(surfaces.maps.foliageLeaf),foliage));
   }
   if(rocks.length)instances(scene,new THREE.DodecahedronGeometry(1,1),new THREE.MeshStandardMaterial({color:'white',roughness:1}),rocks);
-  if(cityBlocks.length){
-   frontageBuildings.unshift(...cityBlocks);
-   instances(scene,box,architecturalFacadeMaterial({night:venue.night}),cityBlocks);
-   instances(scene,box,new THREE.MeshStandardMaterial({color:'white',roughness:.65,metalness:.35}),cityRoofs);
-  }
   if(venue.environment==='desert'&&TRACK.scenery!=='copper-canyon'){
    const dunes=[];
    for(let i=0;i<(low?15:24);i++){
@@ -477,16 +476,21 @@ export function createWorld(renderer, { low = false, reducedMotion = false } = {
  }
  const landmarks=createOriginalLandmarks(scene,TRACK,{low,stands:standLayouts});
  terrainOccupied.push(...tracksideServiceLayout(TRACK,{low,stands:standLayouts,landmarks:[...(scene.userData.originalLandmarks||[]),...showcaseSites]}));
- const streetSites=streetscapeLayout(TRACK,venue,{low,occupied:[...terrainOccupied,...standLayouts.map(s=>({...s,radius:16})),...(scene.userData.originalLandmarks||[]),...showcaseSites]});
- instances(scene,box,concreteSurfaceMaterial(surfaces.maps,{color:'#d2cec1'}),streetSites.map(b=>({...b,color:b.frontageTint})));
- frontageBuildings.unshift(...streetSites);terrainOccupied.push(...streetSites);
+ const streetOccupied=[...terrainOccupied,...standLayouts.map(s=>({...s,radius:16})),...(scene.userData.originalLandmarks||[]),...showcaseSites,...destinationHouseLayout(TRACK,{landmarks:showcaseSites})];
+ treeCandidates.push(...forestMarginLayout(TRACK,venue,{low,occupied:streetOccupied,groundAt:coastalDistrict?(x,z)=>coastalGroundAt(coastalDistrict,x,z):undefined}));
+ const district=urbanBlockLayout(TRACK,venue,{low,occupied:streetOccupied});
+ const streetSites=venue.environment==='urban'?district.units:streetscapeLayout(TRACK,venue,{low,occupied:streetOccupied});
+ createSpatialInstances(scene,box,venue.environment==='urban'?architecturalFacadeMaterial({night:venue.night}):concreteSurfaceMaterial(surfaces.maps,{color:'#d2cec1'}),streetSites.map(b=>({...b,color:b.frontageTint})),{partitionThreshold:144,distance:520});
+ const blockEdges=createUrbanBlockEdges(scene,district.units);
+ frontageBuildings.unshift(...streetSites.filter(b=>venue.environment!=='urban'||b.centerUnit));terrainOccupied.push(...(venue.environment==='urban'?district.blocks:streetSites));
  const quay=venue.water?createWaterfrontGrounding(scene,TRACK,[...streetSites,...towers],concreteSurfaceMaterial(surfaces.maps,{color:'#7f8a88'})):null;
- const parcels=createDistrictParcels(scene,TRACK,[...streetSites,...frontageBuildings,...towers],{low,surfaces:surfaces.maps,water:venue.water&&TRACK.id!=='san-francisco-hills'});
+ const parcels=createDistrictParcels(scene,TRACK,venue.environment==='urban'?[...district.blocks,...towers]:[...streetSites,...frontageBuildings,...towers],{low,surfaces:surfaces.maps,water:venue.water&&TRACK.id!=='san-francisco-hills'});
  const frontage=createArchitecturalDetails(scene,frontageBuildings.slice(0,low?32:52),{low,night:venue.night,concreteMap:surfaces.maps.concreteColor,concreteNormal:surfaces.maps.concreteNormal});
  const reliefBuilder=venue.environment==='parkland'&&!venue.water?createInlandRelief:createTerrainRelief;
  const relief=reliefBuilder(scene,TRACK,venue,{low,map:surfaces.maps.terrainColor,occupied:[...terrainOccupied,...standLayouts.map(s=>({...s,radius:16})),...(scene.userData.originalLandmarks||[]),...showcaseSites]});
+ const planting=createRoadsidePlanting(scene,TRACK,venue,{low,occupied:[...terrainOccupied.filter(o=>o.kind!=='tree'),...standLayouts.map(s=>({...s,radius:16})),...(scene.userData.originalLandmarks||[]),...showcaseSites],groundAt:vergeGroundSampler(roadsideVerge,coastalDistrict?(x,z)=>coastalGroundAt(coastalDistrict,x,z):relief.userData.grid?(x,z)=>coastalGroundAt(relief,x,z):()=>-.16)});
  const edgeDetails=createRoadEdgeDetails(scene,TRACK,{low});
- scene.userData.trackWorldDetail={coastalDistrict:coastalDistrict?.userData,verge:roadsideVerge?.userData,parcels:parcels.userData,frontages:frontage.userData,streets:streetSites,quays:quay?.userData,relief:relief.userData,edges:edgeDetails.userData};
+ scene.userData.trackWorldDetail={planting:planting.status,urbanBlocks:district.blocks,blockEdges:blockEdges.userData,coastalDistrict:coastalDistrict?.userData,verge:roadsideVerge?.userData,parcels:parcels.userData,frontages:frontage.userData,streets:streetSites,quays:quay?.userData,relief:relief.userData,edges:edgeDetails.userData};
  createTracksideServices(scene,TRACK,{low,stands:standLayouts,landmarks:[...(scene.userData.originalLandmarks||[]),...showcaseSites],crowd,rng:crowdRng});
  const mountainPositions = [], mountainIndices = [];
  const ridgeSegments = 320;
@@ -614,8 +618,9 @@ export function createWorld(renderer, { low = false, reducedMotion = false } = {
   }
  }
  crowd.render(scene);
+ const trees=createScannedTrees(scene,treeCandidates,treeFallbackGroups,{low,groundAt:coastalDistrict?(x,z)=>coastalGroundAt(coastalDistrict,x,z):relief.userData.grid?(x,z)=>coastalGroundAt(relief,x,z):()=>-.16});scene.userData.scannedTrees=trees.status;
  const detail=createDistanceDetail(scene,{low});scene.userData.distanceDetail=detail.stats;
  let motionTime=0,lastWorldTime=null;
- return { scene, reflection, sun, startLights, backdrop, surfaces,disposeCrowd:()=>crowd.dispose?.(),disposeSurfaceTextures:surfaces.dispose,rebuildEnvironment:environment.rebuild,disposeEnvironment:environment.dispose, setQuality:settings=>detail.setQuality(settings), update(time, car, motion = {}) {
- const dt=lastWorldTime===null?0:Math.max(0,Math.min(.1,time-lastWorldTime));lastWorldTime=time;if(!motion.paused&&!(motion.reducedMotion??reducedMotion))motionTime+=dt;detail.update(time,car); backdrop.update(time,{reducedMotion:motion.reducedMotion??reducedMotion});fallbackRidge.material.opacity=1-backdrop.uniforms.cinematicAmount.value;fallbackRidge.visible=fallbackRidge.material.opacity>.001;crowd.update(time, car, motion); landmarks.update(time,{paused:motion.paused,reducedMotion:motion.reducedMotion??reducedMotion}); sea.material.uniforms.time.value = motionTime; boat.position.y = -.8 + Math.sin(motionTime * .7) * .065; if (car) { sun.position.set(car.x - 150,venue.sunHeight+(car.y||0),car.z + 130); sun.target.position.set(car.x, car.y||0, car.z); } } };
+ return { scene, reflection, sun, startLights, backdrop, surfaces,trees,disposeCrowd:()=>crowd.dispose?.(),disposeSurfaceTextures:()=>{surfaces.dispose();trees.dispose();planting.dispose();},rebuildEnvironment:environment.rebuild,disposeEnvironment:environment.dispose, setQuality:settings=>detail.setQuality(settings), update(time, car, motion = {}) {
+ const dt=lastWorldTime===null?0:Math.max(0,Math.min(.1,time-lastWorldTime));lastWorldTime=time;if(!motion.paused&&!(motion.reducedMotion??reducedMotion))motionTime+=dt;detail.update(time,car);trees.update(time,car);planting.update(time,car); backdrop.update(time,{reducedMotion:motion.reducedMotion??reducedMotion});fallbackRidge.material.opacity=1-backdrop.uniforms.cinematicAmount.value;fallbackRidge.visible=fallbackRidge.material.opacity>.001;crowd.update(time, car, motion); landmarks.update(time,{paused:motion.paused,reducedMotion:motion.reducedMotion??reducedMotion}); sea.material.uniforms.time.value = motionTime; boat.position.y = -.8 + Math.sin(motionTime * .7) * .065; if (car) { sun.position.set(car.x - 150,venue.sunHeight+(car.y||0),car.z + 130); sun.target.position.set(car.x, car.y||0, car.z); } } };
 }

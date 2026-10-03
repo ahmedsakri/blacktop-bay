@@ -4,25 +4,27 @@
   "criteria": "Model-match identifies the represented base model, with target year/trim omissions explicit. exactModelVariant requires affirmative evidence for target model, generation/year and named variant/build; none is inferred from visual appearance, pitch, EQ or engine layout. All loops and transitions are authored adaptations, not measured engine telemetry.",
   "summary": {
     "model-match-target-year-unspecified": 2,
-    "related-model-proxy": 5,
+    "related-model-proxy": 4,
     "unverified-variant-proxy": 4,
     "model-match-target-variant-unspecified": 1,
-    "unrelated-model-proxy": 10,
+    "unrelated-model-proxy": 9,
     "wrong-architecture-proxy": 4,
     "variant-proxy": 4,
+    "model-match-generation-unverified": 1,
     "unverified-model-proxy": 2,
+    "model-match-source-year-unverified": 1,
     "year-and-exhaust-proxy": 1
   },
   "cars": [
     {
       "carId": "mclaren-570s",
-      "representedModel": "McLaren 570S Coupé",
+      "representedModel": "McLaren 570S Coup\u00e9",
       "visualSource": "https://sketchfab.com/3d-models/mclaren-570s-coupe-869feee8011d4803894318f6f0ddf2c6",
       "bank": "mclaren-570s-2016",
-      "recordedVehicle": "2016 McLaren 570S Coupé V8 biturbo",
+      "recordedVehicle": "2016 McLaren 570S Coup\u00e9 V8 biturbo",
       "fidelity": "model-match-target-year-unspecified",
       "exactModelVariant": false,
-      "identityGap": "The recording is a 2016 570S Coupé, matching the represented model/body. Visual source does not state model year; exact year/exhaust specification is not certified.",
+      "identityGap": "The recording is a 2016 570S Coup\u00e9, matching the represented model/body. Visual source does not state model year; exact year/exhaust specification is not certified.",
       "sourceLicense": "Sonniss-GDC-2026-v2",
       "sourceUrl": "https://pole.se/product/mclaren-570s-2016/",
       "rightsReadiness": "ready-for-game-incorporated-use-only",
@@ -37,7 +39,7 @@
       "representedModel": "McLaren Senna",
       "visualSource": "https://sketchfab.com/3d-models/mclaren-senna-42a67f79f3d64ba58c7746b6d48d0ab7",
       "bank": "mclaren-570s-2016",
-      "recordedVehicle": "2016 McLaren 570S Coupé V8 biturbo",
+      "recordedVehicle": "2016 McLaren 570S Coup\u00e9 V8 biturbo",
       "fidelity": "related-model-proxy",
       "exactModelVariant": false,
       "identityGap": "Source is 570S V8 biturbo, not Senna4.0V8. More appropriate McLaren recording replaces the naturally aspirated Ferrari355 substitute.",
@@ -56,7 +58,7 @@
       "representedModel": "McLaren P1 GTR",
       "visualSource": "https://sketchfab.com/3d-models/free-mclaren-p1-gtr-d805bec04cf5407fa7c036c20c726d39",
       "bank": "mclaren-570s-2016",
-      "recordedVehicle": "2016 McLaren 570S Coupé V8 biturbo",
+      "recordedVehicle": "2016 McLaren 570S Coup\u00e9 V8 biturbo",
       "fidelity": "related-model-proxy",
       "exactModelVariant": false,
       "identityGap": "Source is 570S V8 biturbo, not P1GTR or its hybrid system.",
@@ -131,7 +133,7 @@
       "representedModel": "Pagani Zonda C12",
       "visualSource": "https://sketchfab.com/3d-models/pagani-zonda-c12-de954b33bc8e4552903f98941ae41be2",
       "bank": "murcielago-v12",
-      "recordedVehicle": "Lamborghini Murciélago LP 670 SuperVeloce V12",
+      "recordedVehicle": "Lamborghini Murci\u00e9lago LP 670 SuperVeloce V12",
       "fidelity": "unrelated-model-proxy",
       "exactModelVariant": false,
       "identityGap": "Murcielago V12 is not the Mercedes-derived Zonda C12 engine. Zonda F and R are different variants.",
@@ -150,7 +152,7 @@
       "representedModel": "Bugatti Veyron",
       "visualSource": "https://sketchfab.com/3d-models/bugatti-veyron-653d089ba9304657ab7f0e3552a8f87b",
       "bank": "murcielago-v12",
-      "recordedVehicle": "Lamborghini Murciélago LP 670 SuperVeloce V12",
+      "recordedVehicle": "Lamborghini Murci\u00e9lago LP 670 SuperVeloce V12",
       "fidelity": "wrong-architecture-proxy",
       "exactModelVariant": false,
       "identityGap": "Murcielago V12 is not a Veyron W16. Pitching it down does not change its identity.",
@@ -159,7 +161,8 @@
       "rightsReadiness": "ready-for-current-game-use",
       "candidateIds": [
         "commons-veyron",
-        "pixabay-veyron"
+        "pixabay-veyron",
+        "gta-veyron-rip"
       ],
       "previousBank": "murcielago-v12",
       "modelMatch": false
@@ -186,23 +189,25 @@
       "carId": "lotus-elise",
       "representedModel": "Lotus Elise",
       "visualSource": "https://sketchfab.com/3d-models/lotus-elise-75e9045ac1af4cdbb69318108c81edfd",
-      "bank": "honda-na-i4",
-      "recordedVehicle": "2002 Honda F20C naturally aspirated inline-four",
-      "fidelity": "unrelated-model-proxy",
+      "bank": "lotus-elise",
+      "recordedVehicle": "Lotus Elise (generation and engine unspecified)",
+      "fidelity": "model-match-generation-unverified",
       "exactModelVariant": false,
-      "identityGap": "Honda F20C is not a documented Elise engine; game Elise generation and engine build are unspecified.",
-      "sourceLicense": "CC-BY-3.0",
-      "sourceUrl": "https://commons.wikimedia.org/wiki/File:2002-Honda-F20C.ogg",
+      "identityGap": "Both source and visual asset name Lotus Elise, but neither establishes generation, model year, engine or exhaust build. Actual Elise replaces the unrelated Honda F20C proxy; exact specification is not certified.",
+      "sourceLicense": "CC0-1.0",
+      "sourceUrl": "https://freesound.org/people/victormalloy/sounds/113205/",
       "rightsReadiness": "ready-for-current-game-use",
       "candidateIds": [
-        "classic-gt-elise"
+        "freesound-elise",
+        "classic-gt-elise",
+        "sweet-elise"
       ],
       "previousBank": "honda-na-i4",
-      "modelMatch": false
+      "modelMatch": true
     },
     {
       "carId": "audi-r8",
-      "representedModel": "Audi R8 · Custom",
+      "representedModel": "Audi R8 \u00b7 Custom",
       "visualSource": "https://sketchfab.com/3d-models/audi-r8-e17e438f076f4427a58d93aa779edaed",
       "bank": "audi-r8-2017",
       "recordedVehicle": "2017 Audi R8 FSI 5.2 V10",
@@ -232,14 +237,15 @@
       "sourceUrl": "https://freesound.org/people/justVova/sounds/761685/",
       "rightsReadiness": "ready-for-current-game-use",
       "candidateIds": [
-        "rimac-research"
+        "rimac-research",
+        "rimac-official-rights"
       ],
       "previousBank": "tesla-electric",
       "modelMatch": false
     },
     {
       "carId": "porsche-930-turbo",
-      "representedModel": "Porsche 911 (930) Turbo · 1975",
+      "representedModel": "Porsche 911 (930) Turbo \u00b7 1975",
       "visualSource": "https://sketchfab.com/3d-models/free-1975-porsche-911-930-turbo-8568d9d14a994b9cae59499f0dbed21e",
       "bank": "porsche-911",
       "recordedVehicle": "Porsche 911 (year/variant unspecified)",
@@ -257,10 +263,10 @@
     },
     {
       "carId": "gma-t50",
-      "representedModel": "Gordon Murray Automotive T.50 · Custom",
+      "representedModel": "Gordon Murray Automotive T.50 \u00b7 Custom",
       "visualSource": "https://sketchfab.com/3d-models/gordon-murray-t50-8965e24f9aaa42d5ba156b53b2e978bb",
       "bank": "murcielago-v12",
-      "recordedVehicle": "Lamborghini Murciélago LP 670 SuperVeloce V12",
+      "recordedVehicle": "Lamborghini Murci\u00e9lago LP 670 SuperVeloce V12",
       "fidelity": "unrelated-model-proxy",
       "exactModelVariant": false,
       "identityGap": "Murcielago V12 is not the Cosworth T.50 engine; game model is an artist custom interpretation.",
@@ -268,7 +274,8 @@
       "sourceUrl": "https://freesound.org/people/cheesepuff/sounds/112075/",
       "rightsReadiness": "ready-for-current-game-use",
       "candidateIds": [
-        "t50-research"
+        "t50-research",
+        "gma-official-rights"
       ],
       "previousBank": "murcielago-v12",
       "modelMatch": false
@@ -304,7 +311,8 @@
       "sourceUrl": "https://freesound.org/people/justVova/sounds/761685/",
       "rightsReadiness": "ready-for-current-game-use",
       "candidateIds": [
-        "rimac-research"
+        "rimac-research",
+        "rimac-official-rights"
       ],
       "previousBank": "tesla-electric",
       "modelMatch": false
@@ -323,17 +331,20 @@
       "rightsReadiness": "ready-for-current-game-use",
       "candidateIds": [
         "sonniss-gt3",
-        "freesound-gt3"
+        "freesound-gt3",
+        "sweet-992-gt3",
+        "audiosparx-gt3",
+        "echo-gt3-r"
       ],
       "previousBank": "porsche-911",
       "modelMatch": false
     },
     {
       "carId": "lamborghini-gallardo",
-      "representedModel": "Lamborghini Gallardo · 2004",
+      "representedModel": "Lamborghini Gallardo \u00b7 2004",
       "visualSource": "https://sketchfab.com/3d-models/free-lamborghini-gallardo-2004-e6a7d7e98f4c46ca841eb930184b0f09",
       "bank": "huracan-v10",
-      "recordedVehicle": "Lamborghini Huracán EVO Spyder V10",
+      "recordedVehicle": "Lamborghini Hurac\u00e1n EVO Spyder V10",
       "fidelity": "related-model-proxy",
       "exactModelVariant": false,
       "identityGap": "Huracan EVO Spyder is not a 2004 Gallardo. Later 5.2-litre Gallardo recordings do not establish the 2004 car.",
@@ -342,17 +353,18 @@
       "rightsReadiness": "ready-for-current-game-use",
       "candidateIds": [
         "pole-gallardo",
-        "freesound-gallardo"
+        "freesound-gallardo",
+        "audiosparx-gallardo"
       ],
       "previousBank": "huracan-v10",
       "modelMatch": false
     },
     {
       "carId": "lamborghini-huracan",
-      "representedModel": "Lamborghini Huracán",
+      "representedModel": "Lamborghini Hurac\u00e1n",
       "visualSource": "https://sketchfab.com/3d-models/lamborghini-huracan-b2f5c24c44fd417fb89286603af9b5a5",
       "bank": "huracan-v10",
-      "recordedVehicle": "Lamborghini Huracán EVO Spyder V10",
+      "recordedVehicle": "Lamborghini Hurac\u00e1n EVO Spyder V10",
       "fidelity": "variant-proxy",
       "exactModelVariant": false,
       "identityGap": "Source is Huracan EVO Spyder; game asset says Huracan without a documented variant.",
@@ -378,7 +390,8 @@
       "sourceUrl": "https://freesound.org/people/Soundholder/sounds/425384/",
       "rightsReadiness": "ready-for-current-game-use",
       "candidateIds": [
-        "pixabay-i8"
+        "pixabay-i8",
+        "bmw-i8-press-footage"
       ],
       "previousBank": "audi-turbo-i4",
       "modelMatch": false
@@ -403,7 +416,7 @@
     },
     {
       "carId": "audi-r8-lms-gt3",
-      "representedModel": "Audi R8 LMS GT3 · 2019",
+      "representedModel": "Audi R8 LMS GT3 \u00b7 2019",
       "visualSource": "https://sketchfab.com/3d-models/audi-r8-gt3-lms-80d3f346956b43cebcab72d25ac3e81e",
       "bank": "audi-r8-2017",
       "recordedVehicle": "2017 Audi R8 FSI 5.2 V10",
@@ -434,28 +447,32 @@
       "sourceUrl": "https://freesound.org/people/GiocoSound/sounds/401550/",
       "rightsReadiness": "ready-for-current-game-use",
       "candidateIds": [
-        "r18-research"
+        "r18-research",
+        "audi-r18-press-photos",
+        "bozzy-r18-2013",
+        "audi-r18-official-video"
       ],
       "previousBank": "bmw-diesel",
       "modelMatch": false
     },
     {
       "carId": "ferrari-250-gto",
-      "representedModel": "Ferrari 250 GTO · 1964",
+      "representedModel": "Ferrari 250 GTO \u00b7 1964",
       "visualSource": "https://sketchfab.com/3d-models/1964-ferrari-250-gto-849c88c65911496d92363dc2980f6f4e",
-      "bank": "ferrari-classic-v12",
-      "recordedVehicle": "Ferrari 340 America 4-litre V12",
-      "fidelity": "related-model-proxy",
+      "bank": "ferrari-250-gto",
+      "recordedVehicle": "Ferrari 250 GTO (year and build unspecified)",
+      "fidelity": "model-match-source-year-unverified",
       "exactModelVariant": false,
-      "identityGap": "Ferrari 340 America V12 is not the 1964 250 GTO.",
-      "sourceLicense": "CC-BY-3.0",
-      "sourceUrl": "https://freesound.org/people/enginemusic/sounds/43483/",
+      "identityGap": "Source uploader identifies Ferrari 250 GTO but not model year, chassis or engine/exhaust build. Replaces unrelated Ferrari 340 America. Target is 1964; that year/specification is not independently certified by the recording.",
+      "sourceLicense": "CC-BY-4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Ferrari_250_GTO,_Engine_Sound.ogg",
       "rightsReadiness": "ready-for-current-game-use",
       "candidateIds": [
-        "250-gto-research"
+        "250-gto-research",
+        "commons-250-gto"
       ],
       "previousBank": "ferrari-classic-v12",
-      "modelMatch": false
+      "modelMatch": true
     },
     {
       "carId": "ferrari-testarossa",
@@ -496,7 +513,7 @@
     },
     {
       "carId": "nissan-gt-r-2018",
-      "representedModel": "Nissan GT-R · 2018",
+      "representedModel": "Nissan GT-R \u00b7 2018",
       "visualSource": "https://sketchfab.com/3d-models/nissan-gtr-2018-e595ef868dd94f77b83c332f9d5c6f5d",
       "bank": "nissan-gtr-2012",
       "recordedVehicle": "2012 Nissan GT-R R35 turbo V6, modified performance exhaust",
@@ -518,7 +535,7 @@
       "representedModel": "McLaren 650S GT3",
       "visualSource": "https://sketchfab.com/3d-models/mc-laren-650s-gt3-2d0dcf63909f40b0b4546726606414e7",
       "bank": "mclaren-570s-2016",
-      "recordedVehicle": "2016 McLaren 570S Coupé V8 biturbo",
+      "recordedVehicle": "2016 McLaren 570S Coup\u00e9 V8 biturbo",
       "fidelity": "related-model-proxy",
       "exactModelVariant": false,
       "identityGap": "Source is 570S road V8 biturbo, not 650SGT3 race recording.",
@@ -534,7 +551,7 @@
     },
     {
       "carId": "bmw-m3-e46",
-      "representedModel": "BMW M3 E46 Coupé",
+      "representedModel": "BMW M3 E46 Coup\u00e9",
       "visualSource": "https://sketchfab.com/3d-models/bmw-m3-e46-f1b00ff37d504629b10031da32bc7497",
       "bank": "mercedes-i6",
       "recordedVehicle": "1995 Mercedes E320 inline-six",
@@ -546,7 +563,8 @@
       "rightsReadiness": "ready-for-current-game-use",
       "candidateIds": [
         "freesound-m3",
-        "sonniss-e46"
+        "sonniss-e46",
+        "sweet-m3-e46"
       ],
       "previousBank": "mercedes-i6",
       "modelMatch": false
@@ -592,7 +610,7 @@
       "representedModel": "Ferrari Enzo",
       "visualSource": "https://sketchfab.com/3d-models/96c16ea6d7704ad397a8f02bf0250bff",
       "bank": "murcielago-v12",
-      "recordedVehicle": "Lamborghini Murciélago LP 670 SuperVeloce V12",
+      "recordedVehicle": "Lamborghini Murci\u00e9lago LP 670 SuperVeloce V12",
       "fidelity": "unrelated-model-proxy",
       "exactModelVariant": false,
       "identityGap": "Murcielago V12 is not the Ferrari Enzo engine.",
@@ -600,14 +618,16 @@
       "sourceUrl": "https://freesound.org/people/cheesepuff/sounds/112075/",
       "rightsReadiness": "ready-for-current-game-use",
       "candidateIds": [
-        "enzo-research"
+        "enzo-research",
+        "audiosparx-enzo",
+        "pixabay-enzo"
       ],
       "previousBank": "murcielago-v12",
       "modelMatch": false
     },
     {
       "carId": "porsche-919-hybrid",
-      "representedModel": "Porsche 919 Hybrid · 2017",
+      "representedModel": "Porsche 919 Hybrid \u00b7 2017",
       "visualSource": "https://sketchfab.com/3d-models/porsche-919-hybrid-2017-b4ca76b4b83e4d84b1e1a994e79140f3",
       "bank": "audi-turbo-i4",
       "recordedVehicle": "Audi A4 Allroad 2.0 TFSI turbo inline-four",
@@ -618,14 +638,15 @@
       "sourceUrl": "https://freesound.org/people/Soundholder/sounds/425384/",
       "rightsReadiness": "ready-for-current-game-use",
       "candidateIds": [
-        "919-research"
+        "919-research",
+        "bozzy-919-2017"
       ],
       "previousBank": "audi-turbo-i4",
       "modelMatch": false
     }
   ],
-  "modelMatches": 3,
+  "modelMatches": 5,
   "fullyVerifiedExactSpecifications": 0,
-  "improvedAssignments": 11,
+  "improvedAssignments": 13,
   "candidateRegistry": "ENGINE-CANDIDATES.json"
 }

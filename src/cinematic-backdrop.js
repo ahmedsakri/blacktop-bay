@@ -1,29 +1,30 @@
 import * as THREE from 'three';
 import {venueLighting} from './showcase-lighting.js';
+import {supportsCompressedSky,loadPhotographicSky} from './photographic-sky-loader.js';
 
-// Original illustrated scenery; its loaded, graded sky also supplies the world reflection map.
-// A race requests just one image. Smaller phone textures avoid retaining four
-// large decoded panoramas or allocating an additional cube/PMREM render target.
+// Licensed photographic upper hemispheres. Their loaded sky also supplies the
+// world reflection map. Cropping the unused nadir doubles angular resolution
+// without retaining a full panorama's ground pixels on the GPU.
 export const BACKDROP_FAMILIES = Object.freeze(['coastal', 'desert', 'alpine', 'urban']);
-const VERSION = 'original-panorama-1';
-// Image-space skyline levels differ; below these rows is foreground artwork,
-// which must never replace the real terrain beneath the car.
-const HORIZON_V = Object.freeze({coastal: .495, desert: .365, alpine: .35, urban: .448});
+const VERSION = 'photographic-hemisphere-4';
 
 export function backdropSource(track = {}, venue = {}, {low = false} = {}) {
-  const family = track.id === 'summit' || track.scenery === 'cedar-ridge' ? 'alpine'
-    : venue.environment === 'desert' ? 'desert'
+  const family = track.id === 'summit' || track.scenery === 'cedar-ridge' || venue.lightingRegion === 'alpine' ? 'alpine'
+    : venue.environment === 'desert' || venue.lightingRegion === 'arid' ? 'desert'
     : venue.environment === 'urban' ? 'urban'
-    : venue.water ? 'coastal' : 'alpine';
+    // The coastal file is sky-only: it also suits flat inland circuits. Do
+    // not put an Alpine mountain photograph around Silverstone or Monza.
+    : 'coastal';
   return Object.freeze({family, detail: low ? 'mobile' : 'desktop',
     url: `/assets/environments/${family}${low ? '-mobile' : ''}.webp?v=${VERSION}`,
-    maxWidth: low ? 1024 : 2048, horizonV: HORIZON_V[family]});
+    maxWidth: low ? 2048 : 4096, horizonV: 0,
+    projection: 'equirectangular-upper-hemisphere'});
 }
 
-// Equirectangular sampling follows the camera direction, not its translation.
-// Clamp imagery below the distant horizon: the real road, land, water and fog
-// remain responsible for every foreground surface. Narrow seam blending avoids
-// a conspicuous hard cut at the panorama's joined left/right edges.
+// Correct 360° x 90° angular sampling follows camera direction, not translation.
+// The former illustration used an arbitrary vertical stretch: distant ranges
+// became a gigantic blurry wall. Photographs now retain their real angular size.
+// Geometry remains responsible for all foreground terrain and architecture.
 export const CINEMATIC_BACKDROP_GLSL = `
 uniform sampler2D cinematicMap;
 uniform float cinematicAmount;
@@ -34,16 +35,18 @@ uniform float cinematicExposure;
 vec3 cinematicBackdrop(vec3 fallback, vec3 direction) {
   if (cinematicAmount <= 0.) return fallback;
   float u = fract(atan(direction.z, direction.x) * .15915494309189535 + .5);
-  float v = clamp(cinematicHorizon + max(0., asin(clamp(direction.y, -1., 1.))) * .5252113122032546, cinematicHorizon, 1.);
+  float v = clamp(max(0., asin(clamp(direction.y, -1., 1.))) * .6366197723675814, 0., 1.);
   vec3 photograph = texture2D(cinematicMap, vec2(u, v)).rgb;
   float seam = min(u, 1.-u);
-  if (seam < .018) {
+  if (seam < .001) {
     vec3 joined = (texture2D(cinematicMap, vec2(.001, v)).rgb + texture2D(cinematicMap, vec2(.999, v)).rgb) * .5;
-    photograph = mix(joined, photograph, smoothstep(0., .018, seam));
+    photograph = mix(joined, photograph, smoothstep(0., .001, seam));
   }
   photograph *= cinematicTint * cinematicExposure;
   photograph = mix(photograph, cinematicHaze, (1.-smoothstep(.015, .15, abs(direction.y))) * .10);
-  float horizonMask = smoothstep(-.075, -.012, direction.y);
+  // The texture contains no below-horizon pixels. Fade to the procedural
+  // haze before its bottom row can be stretched across an elevated view.
+  float horizonMask = smoothstep(0., .035, direction.y);
   return mix(fallback, photograph, cinematicAmount * horizonMask);
 }
 `;
@@ -88,7 +91,7 @@ async function loadBackdropTexture(url, {signal}) {
   return texture;
 }
 
-export function createCinematicBackdrop({track, venue, low = false, reducedMotion = false,
+export function createCinematicBackdrop({track, venue, renderer, low = false, reducedMotion = false,
   loadTexture = loadBackdropTexture} = {}) {
   const source = backdropSource(track, venue, {low});
   const controller = new AbortController();
@@ -102,12 +105,23 @@ export function createCinematicBackdrop({track, venue, low = false, reducedMotio
   };
   const status = {family: source.family, detail: source.detail, state: 'loading', url: source.url};
   let disposed = false, texture = null, startedAt = null;
-  const ready = Promise.resolve().then(() => loadTexture(source.url, {signal: controller.signal})).then(loaded => {
+  const ready = Promise.resolve().then(async () => {
+    if(supportsCompressedSky(renderer)&&renderer.capabilities.maxTextureSize>=4096){
+      const compressedLow=low||renderer.capabilities.maxTextureSize<8192;
+      const url=`/assets/environments/${source.family}${compressedLow?'-mobile':''}.ktx2?v=${VERSION}`;
+      try{const loaded=await loadPhotographicSky(renderer,url,{signal:controller.signal});status.url=url;return loaded;}
+      catch(error){if(controller.signal.aborted)throw error;}
+    }
+    return loadTexture(source.url, {signal: controller.signal});
+  }).then(loaded => {
     if (disposed) { releaseTexture(loaded); return false; }
     texture = loaded;
     uniforms.cinematicMap.value = texture;
     uniforms.cinematicAmount.value = reducedMotion ? 1 : 0;
     status.state = 'ready';
+    status.gpuCompressed=Boolean(loaded.userData?.photographicGPU);
+    status.width=loaded.image?.width||source.maxWidth;
+    status.height=loaded.image?.height||source.maxWidth/4;
     return true;
   }).catch(() => {
     if (!disposed) status.state = 'fallback';

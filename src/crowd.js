@@ -1,7 +1,8 @@
 import * as THREE from 'three';
 import {CHARACTER_LIMITS} from './spectator-character.js';
 import {createNearSpectator, createSpectatorLibrary, SPECTATOR_ASSETS} from './realistic-spectator.js';
-import {createMediumCrowd,MEDIUM_CROWD_BUDGET} from './medium-spectator.js';
+import {createMediumCrowd,MEDIUM_CROWD_BUDGET,FAR_CROWD_BUDGET} from './medium-spectator.js';
+import {SPECTATOR_GESTURES,SPECTATOR_GESTURE_WEIGHTS} from './spectator-motion-config.js';
 
 const TAU = Math.PI * 2;
 const SHIRTS = ['#e7e4db', '#f5c444', '#9e392f', '#486e92', '#425c51', '#303d58', '#ad8171', '#826893', '#cbd2cf', '#3c3547'];
@@ -21,7 +22,7 @@ export function spectatorProfile(x, floor, z, yaw, seated, rng = Math.random) {
  return {
   x, floor, z, yaw, seated, height: .91 + rng() * .17, width: .91 + rng() * .18,
   shirt: pick(SHIRTS, rng), skin: pick(SKIN, rng), hair: pick(HAIR, rng), pants: pick(TROUSERS, rng),
-  phase: rng() * TAU, tempo: .72 + rng() * .53, gesture: Math.floor(rng() * 5),
+  phase: rng() * TAU, tempo: .72 + rng() * .53, gesture: pick(SPECTATOR_GESTURE_WEIGHTS,rng),
   cap: rng() < .20, longHair: rng() < .24, sunglasses: rng() < .24,
   shift: (rng() - .5) * .045, reaction: 0, lookYaw: 0, previousDistance: Infinity,
   faceWidth: .94 + rng() * .13, jawWidth: .85 + rng() * .22, polo: rng() < .36,
@@ -47,7 +48,7 @@ export function solveSpectatorArm(shoulder, desiredHand, elbowHint, upper=.285, 
  return {elbow:shoulder.map((v,i)=>v+axis[i]*along+pole[i]*out),hand:shoulder.map((v,i)=>v+axis[i]*distance)};
 }
 
-// All five gestures have distinct shoulder/elbow/wrist silhouettes at driving
+// Celebrations and quiet poses have distinct shoulder/elbow/wrist silhouettes at driving
 // distance. Never flap every spectator in synchrony or make them jump through seats.
 export function spectatorPose(person, time = 0, excitement = 0) {
  const t = time * person.tempo + person.phase, hip = person.seated ? .48 : .84;
@@ -65,8 +66,8 @@ export function spectatorPose(person, time = 0, excitement = 0) {
  const arms = [];
  for (const side of [-1, 1]) {
   const shoulder = [side * .202 + sway, hip + .46 + breathe, lean];
-  let elbow = [side * .265 + sway, hip + .20, .085];
-  let hand = [side * .14 + sway, hip + .07, person.seated ? .30 : .12];
+  let elbow = [side * .245 + sway, hip + .20, person.seated?.085:.015];
+  let hand = [side * (person.seated?.14:.205) + sway, hip + (person.seated?.07:-.075), person.seated ? .30 : .045];
   const active = energy > .001;
   const restElbow=[...elbow],restHand=[...hand];
   if (person.role === 'marshal') {
@@ -89,8 +90,14 @@ export function spectatorPose(person, time = 0, excitement = 0) {
   } else if (person.gesture === 4 && active) { // Both hands high, independently offset.
    elbow = [side * .32, hip + .66 + Math.sin(t + side) * .025, .025];
    hand = [side * .36, hip + .98 + Math.sin(t * 2.1 + side) * .045, .10];
+  } else if(person.gesture===6){ // Quiet folded hands at the lap or waist.
+   elbow=[side*.27+sway,hip+.24,.09];
+   hand=[side*.035+sway,hip+(person.seated?.075:.06)+(side<0?.014:0),person.seated?.30:.20];
+  } else if(person.gesture===7&&side>0){ // A restrained palm-up conversation gesture.
+   elbow=[.275+sway,hip+.22,.12];
+   hand=[.235+sway,hip+.37+Math.sin(t*1.1)*.015,.33];
   }
-  const blend=person.role==='marshal'||person.gesture===3?1:Math.min(1,Math.max(0,energy*1.45));
+  const blend=person.role==='marshal'||person.gesture===3||person.gesture>=6?1:Math.min(1,Math.max(0,energy*1.45));
   const eased=blend*blend*(3-2*blend);
   elbow=mixPoint(restElbow,elbow,eased);hand=mixPoint(restHand,hand,eased);
   shoulder[0]*=person.width;elbow[0]*=person.width;hand[0]*=person.width;
@@ -98,11 +105,11 @@ export function spectatorPose(person, time = 0, excitement = 0) {
   arms.push({side, shoulder, elbow, hand});
  }
  return {hip, chest, head, lean, sway, breathe, arms, weightShift, energy,
-  headYaw:(person.lookYaw||0)+Math.sin(t*.37)*.035, headPitch:-excitement*.035+Math.sin(t*.53)*.025,
+  headYaw:(person.lookYaw||0)+Math.sin(t*.37)*(person.gesture===7?.14:.035), headPitch:-excitement*.035+Math.sin(t*.53)*.025,
   headRoll:Math.sin(t*.42)*.020-weightShift*.35, torsoTilt:.025+energy*.035,
   torsoYaw:(person.lookYaw||0)*.16, torsoRoll:-weightShift*.32,
   blink:1-.94*Math.max(0,1-Math.abs(((time+(person.blinkPhase||0))%5.7)-.095)/.095),
-  mouth:(person.role==='marshal'?0:Math.max(0,energy-.24))*(person.gesture===0||person.gesture===2||person.gesture===4?1:.24),
+  mouth:(person.role==='marshal'||person.gesture===5||person.gesture===6?0:Math.max(0,energy-.24))*(person.gesture===0||person.gesture===2||person.gesture===4?1:.24),
  };
 }
 
@@ -369,7 +376,7 @@ export function createCrowd({low = false, reducedMotion = false, spectatorLibrar
    Object.assign(person,SPECTATOR_ASSETS[person.lookVariant]);
    person.cap=false;person.sunglasses=false;person.scarf=false;
    if(Array.isArray(palette)&&palette.length&&palette.every(value=>/^#[a-f0-9]{6}$/i.test(value)))person.shirt=pick(palette,rng);
-   if(Number.isInteger(gesture)&&gesture>=0&&gesture<=4)person.gesture=gesture;
+   if(Number.isInteger(gesture)&&gesture>=0&&gesture<SPECTATOR_GESTURES.length)person.gesture=gesture;
    if(role==='marshal'){person.role='marshal';person.shirt='#e97938';person.garment=2;person.pants='#233844';person.shorts=false;person.scarf=false;person.cap=true;person.gesture=rng()>.55?3:1;person.shirtLight='#e3e6cf';}
    person.parts=[];people.push(person);
    compose(person,person.phase,Math.sin(person.phase)>.45?.3:0,true);return person;
@@ -395,6 +402,7 @@ export function createCrowd({low = false, reducedMotion = false, spectatorLibrar
    }
    medium.render(scene);
    scene.userData.crowd.mediumLimit=low?MEDIUM_CROWD_BUDGET.mobile:MEDIUM_CROWD_BUDGET.desktop;
+   scene.userData.crowd.farLimit=low?FAR_CROWD_BUDGET.mobile:FAR_CROWD_BUDGET.desktop;
   },
   update(time,car,{paused=false,reducedMotion:reduce=reducedMotion}={}){
    if(!scene||disposed)return;
@@ -432,14 +440,24 @@ export function createCrowd({low = false, reducedMotion = false, spectatorLibrar
    }
    const mediumPeople=medium.select(people),mediumSet=new Set(mediumPeople);
    for(const person of people){const selected=mediumSet.has(person);if(Boolean(person.mediumCharacter)!==selected){person.mediumCharacter=selected;faceLodChanged=true;}}
-   if(fullTick||faceLodChanged||reduce)medium.update(mediumPeople,motionTime);
+   const farPeople=medium.selectFar(people),farSet=new Set(farPeople);let suppressedPeople=0;
+   for(const person of people){
+    const selected=farSet.has(person);
+    // Once its coherent distant asset is ready, a spectator never falls back
+    // to disconnected primitive anatomy just because the near pool is full.
+    const suppressed=person.role!=='marshal'&&person.inRange&&medium.hasFar(person.lookVariant)&&!person.authoredCharacter&&!person.mediumCharacter&&!selected;
+    if(Boolean(person.farCharacter)!==selected||Boolean(person.crowdSuppressed)!==suppressed){person.farCharacter=selected;person.crowdSuppressed=suppressed;faceLodChanged=true;}
+    if(suppressed)suppressedPeople++;
+   }
+   if(fullTick||faceLodChanged||reduce)medium.update(mediumPeople,motionTime,farPeople);
    scene.userData.crowd.activeCharacters=desiredCharacters.length;scene.userData.crowd.drawCalls=scene.userData.crowd.baseDrawCalls+medium.drawCalls+characters.filter(item=>item.person).reduce((sum,item)=>sum+item.drawCalls,0);
-   scene.userData.crowd.mediumCharacters=medium.active;scene.userData.crowd.mediumDrawCalls=medium.drawCalls;
+   scene.userData.crowd.mediumCharacters=medium.active;scene.userData.crowd.mediumDrawCalls=medium.mediumDrawCalls;
+   scene.userData.crowd.farCharacters=medium.farActive;scene.userData.crowd.farDrawCalls=medium.farDrawCalls;scene.userData.crowd.suppressedPeople=suppressedPeople;
    scene.userData.crowd.texturedCharacters=characters.filter(item=>item.person&&item.kind==='textured').length;
    scene.userData.crowd.assetLoading=library.status;
    const foregroundSet=new Set(foreground.sort((left,right)=>left.viewDistance-right.viewDistance).slice(0,low?10:20));
    scene.userData.crowd.foregroundAnimated=reduce?0:foregroundSet.size;
-   scene.userData.crowd.visiblePeople=visiblePeople;
+   scene.userData.crowd.visiblePeople=visiblePeople-suppressedPeople;
    if(faceLodChanged){
     // Distant spectators leave every draw, not just the facial detail batch.
     // Otherwise a global stand batch still rasterizes the entire venue's
@@ -448,7 +466,7 @@ export function createCrowd({low = false, reducedMotion = false, spectatorLibrar
     for(const batch of batches.values()){
      if(!batch.mesh)continue;let visible=0;
      for(const entry of batch.entries){
-      entry.drawIndex=entry.person.authoredCharacter||entry.person.mediumCharacter||!entry.person.inRange||((entry.faceDetail||entry.nearDetail)&&!entry.person.nearFace)?-1:visible++;
+      entry.drawIndex=entry.person.authoredCharacter||entry.person.mediumCharacter||entry.person.farCharacter||entry.person.crowdSuppressed||!entry.person.inRange||((entry.faceDetail||entry.nearDetail)&&!entry.person.nearFace)?-1:visible++;
       if(entry.drawIndex>=0){write(entry);batch.mesh.setColorAt(entry.drawIndex,color.set(entry.tint));}
      }
      if(batch.mesh){batch.mesh.count=visible;batch.mesh.instanceColor.needsUpdate=true;}
@@ -456,7 +474,7 @@ export function createCrowd({low = false, reducedMotion = false, spectatorLibrar
     changed=true;
    }
    for(const person of people){
-    if(reduce||!person.inRange)continue;
+    if(reduce||!person.inRange||person.crowdSuppressed)continue;
     const distance=person.viewDistance;
     if(distance>(low?76:110))continue;
     if(foregroundSet.has(person)?!foregroundTick:!fullTick)continue;
@@ -473,7 +491,7 @@ export function createCrowd({low = false, reducedMotion = false, spectatorLibrar
     const spontaneous=Math.sin(motionTime*.19+person.phase)> .72?.16:0;
     const excitement=spontaneous+person.reaction*.84;
     if(person.authoredCharacter)characters.find(item=>item.person===person)?.update(person,spectatorPose(person,motionTime,excitement));
-    else if(!person.mediumCharacter)compose(person,motionTime,excitement);changed=true;
+    else if(!person.mediumCharacter&&!person.farCharacter)compose(person,motionTime,excitement);changed=true;
    }
    if(changed)for(const batch of batches.values())if(batch.mesh)batch.mesh.instanceMatrix.needsUpdate=true;
   },

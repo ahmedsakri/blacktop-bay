@@ -3,13 +3,13 @@
   "source": "Camber Reign actual createWorld WebGL renderer",
   "fixture": "reports/track-world-review.html",
   "captureMethod": "CUA-controlled local browser canvas WebP export",
-  "license": "Original project-generated scene imagery; licensed source surfaces retain public/assets/environments/surfaces/provenance.json",
+  "license": "Original rendered scene imagery incorporating licensed photographs, scanned trees and surfaces; source notices remain in public/assets/environments/**/provenance.json",
   "dimensions": [
     960,
     540
   ],
   "quality": 0.78,
-  "totalBytes": 1462496,
+  "totalBytes": 1648084,
   "entries": [
     {
       "id": "harbor",
@@ -32,13 +32,35 @@
       },
       "width": 960,
       "height": 540,
-      "draws": 166,
-      "triangles": 778110,
+      "draws": 163,
+      "triangles": 789734,
       "surfaces": {
         "loaded": 9,
         "failed": 0,
         "files": 9,
         "estimatedBytes": 25165823.999999996
+      },
+      "sky": {
+        "family": "coastal",
+        "detail": "desktop",
+        "state": "ready",
+        "url": "/assets/environments/coastal.ktx2?v=photographic-hemisphere-4",
+        "gpuCompressed": true,
+        "width": 8192,
+        "height": 2048
+      },
+      "trees": {
+        "state": "disabled",
+        "capacity": 12,
+        "farCapacity": 128,
+        "candidates": 0,
+        "forestCandidates": 0,
+        "visible": 0,
+        "farVisible": 0,
+        "draws": 0,
+        "triangles": 0,
+        "url": "/assets/environments/trees/tree-small-02.glb",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
       },
       "textureProof": [
         {
@@ -123,11 +145,9 @@
           "gpuRedStdDev": 5.015361410193434
         }
       ],
-      "capturedAt": "2026-10-03",
-      "errors": [],
       "path": "/assets/circuits/previews/harbor.webp",
-      "bytes": 40702,
-      "sha256": "a839f690d15b85c578bbabc264bf58a2eca455b2b8c9720f52b90032e440de61"
+      "bytes": 46660,
+      "sha256": "ac47e60d037387e0b06b998b72ac77a974d6fa5188767321a7af1974bf378bf7"
     },
     {
       "id": "dockyard",
@@ -139,7 +159,7 @@
           -170.91786626835443
         ],
         "quaternion": [
-          0.10753397578312508,
+          0.10753397578312507,
           0.8810943412794867,
           0.2416714664922612,
           -0.3920511549543267
@@ -150,13 +170,35 @@
       },
       "width": 960,
       "height": 540,
-      "draws": 176,
-      "triangles": 453494,
+      "draws": 173,
+      "triangles": 470854,
       "surfaces": {
         "loaded": 9,
         "failed": 0,
         "files": 9,
         "estimatedBytes": 25165823.999999996
+      },
+      "sky": {
+        "family": "coastal",
+        "detail": "desktop",
+        "state": "ready",
+        "url": "/assets/environments/coastal.ktx2?v=photographic-hemisphere-4",
+        "gpuCompressed": true,
+        "width": 8192,
+        "height": 2048
+      },
+      "trees": {
+        "state": "disabled",
+        "capacity": 12,
+        "farCapacity": 128,
+        "candidates": 0,
+        "forestCandidates": 0,
+        "visible": 0,
+        "farVisible": 0,
+        "draws": 0,
+        "triangles": 0,
+        "url": "/assets/environments/trees/tree-small-02.glb",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
       },
       "textureProof": [
         {
@@ -241,11 +283,9 @@
           "gpuRedStdDev": 5.015361410193434
         }
       ],
-      "capturedAt": "2026-10-03",
-      "errors": [],
       "path": "/assets/circuits/previews/dockyard.webp",
-      "bytes": 46034,
-      "sha256": "03b2ff850d0902c01531d1e8a2bf23ee865302ef1e0ad6ccdbf2ea36f9f0a182"
+      "bytes": 52448,
+      "sha256": "7e968d762083b54d474b37f28f43a88c6801a7ca6b8630731d7b2fa1fc25c8df"
     },
     {
       "id": "coast",
@@ -259,7 +299,7 @@
         "quaternion": [
           0.125611355912182,
           0.8487081584556406,
-          0.2327884037707829,
+          0.23278840377078286,
           -0.4579583038952229
         ],
         "fov": 52,
@@ -268,13 +308,35 @@
       },
       "width": 960,
       "height": 540,
-      "draws": 157,
-      "triangles": 935984,
+      "draws": 154,
+      "triangles": 947524,
       "surfaces": {
         "loaded": 9,
         "failed": 0,
         "files": 9,
         "estimatedBytes": 25165823.999999996
+      },
+      "sky": {
+        "family": "coastal",
+        "detail": "desktop",
+        "state": "ready",
+        "url": "/assets/environments/coastal.ktx2?v=photographic-hemisphere-4",
+        "gpuCompressed": true,
+        "width": 8192,
+        "height": 2048
+      },
+      "trees": {
+        "state": "disabled",
+        "capacity": 12,
+        "farCapacity": 128,
+        "candidates": 0,
+        "forestCandidates": 0,
+        "visible": 0,
+        "farVisible": 0,
+        "draws": 0,
+        "triangles": 0,
+        "url": "/assets/environments/trees/tree-small-02.glb",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
       },
       "textureProof": [
         {
@@ -359,11 +421,9 @@
           "gpuRedStdDev": 5.015361410193434
         }
       ],
-      "capturedAt": "2026-10-03",
-      "errors": [],
       "path": "/assets/circuits/previews/coast.webp",
-      "bytes": 43244,
-      "sha256": "325bb5031db54335869448dde58c5673774485fa91a8f9b14d2f49bf9835448e"
+      "bytes": 47694,
+      "sha256": "3dcc1617a306d81277d61ec454eb8e40627dc67b9aebeadd2110bdcab19ededf"
     },
     {
       "id": "summit",
@@ -376,7 +436,7 @@
         ],
         "quaternion": [
           0.08990576382160038,
-          0.90696778862628,
+          0.9069677886262801,
           0.24876817982993835,
           -0.3277815991328819
         ],
@@ -386,13 +446,35 @@
       },
       "width": 960,
       "height": 540,
-      "draws": 174,
-      "triangles": 286010,
+      "draws": 171,
+      "triangles": 297298,
       "surfaces": {
         "loaded": 9,
         "failed": 0,
         "files": 9,
         "estimatedBytes": 25165823.999999996
+      },
+      "sky": {
+        "family": "alpine",
+        "detail": "desktop",
+        "state": "ready",
+        "url": "/assets/environments/alpine.ktx2?v=photographic-hemisphere-4",
+        "gpuCompressed": true,
+        "width": 8192,
+        "height": 2048
+      },
+      "trees": {
+        "state": "disabled",
+        "capacity": 12,
+        "farCapacity": 128,
+        "candidates": 0,
+        "forestCandidates": 0,
+        "visible": 0,
+        "farVisible": 0,
+        "draws": 0,
+        "triangles": 0,
+        "url": "/assets/environments/trees/tree-small-02.glb",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
       },
       "textureProof": [
         {
@@ -477,11 +559,9 @@
           "gpuRedStdDev": 5.015361410193434
         }
       ],
-      "capturedAt": "2026-10-03",
-      "errors": [],
       "path": "/assets/circuits/previews/summit.webp",
-      "bytes": 38708,
-      "sha256": "4eebe44669f817c8ee9d58544141bac75fc7b663c30e5351fa950f51b2698847"
+      "bytes": 43922,
+      "sha256": "fe7970c7c81af4ef00f33b65d91539f566da84474a5e4bf03f991b38337d8394"
     },
     {
       "id": "grandprix",
@@ -504,13 +584,35 @@
       },
       "width": 960,
       "height": 540,
-      "draws": 149,
-      "triangles": 859456,
+      "draws": 146,
+      "triangles": 873984,
       "surfaces": {
         "loaded": 9,
         "failed": 0,
         "files": 9,
         "estimatedBytes": 25165823.999999996
+      },
+      "sky": {
+        "family": "coastal",
+        "detail": "desktop",
+        "state": "ready",
+        "url": "/assets/environments/coastal.ktx2?v=photographic-hemisphere-4",
+        "gpuCompressed": true,
+        "width": 8192,
+        "height": 2048
+      },
+      "trees": {
+        "state": "disabled",
+        "capacity": 12,
+        "farCapacity": 128,
+        "candidates": 0,
+        "forestCandidates": 0,
+        "visible": 0,
+        "farVisible": 0,
+        "draws": 0,
+        "triangles": 0,
+        "url": "/assets/environments/trees/tree-small-02.glb",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
       },
       "textureProof": [
         {
@@ -595,11 +697,9 @@
           "gpuRedStdDev": 5.015361410193434
         }
       ],
-      "capturedAt": "2026-10-03",
-      "errors": [],
       "path": "/assets/circuits/previews/grandprix.webp",
-      "bytes": 36080,
-      "sha256": "16d126e09ca5563d2b829982ce602036eb9e2241ecc831f4f971aeefc54b2898"
+      "bytes": 40516,
+      "sha256": "88f1cad379a5ff2c87a5dc895005bf0709bbdfa71e996d92cc74581a069dd6bb"
     },
     {
       "id": "melbourne",
@@ -622,13 +722,35 @@
       },
       "width": 960,
       "height": 540,
-      "draws": 235,
-      "triangles": 280494,
+      "draws": 232,
+      "triangles": 289574,
       "surfaces": {
         "loaded": 9,
         "failed": 0,
         "files": 9,
         "estimatedBytes": 25165823.999999996
+      },
+      "sky": {
+        "family": "coastal",
+        "detail": "desktop",
+        "state": "ready",
+        "url": "/assets/environments/coastal.ktx2?v=photographic-hemisphere-4",
+        "gpuCompressed": true,
+        "width": 8192,
+        "height": 2048
+      },
+      "trees": {
+        "state": "disabled",
+        "capacity": 12,
+        "farCapacity": 128,
+        "candidates": 0,
+        "forestCandidates": 0,
+        "visible": 0,
+        "farVisible": 0,
+        "draws": 0,
+        "triangles": 0,
+        "url": "/assets/environments/trees/tree-small-02.glb",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
       },
       "textureProof": [
         {
@@ -713,11 +835,9 @@
           "gpuRedStdDev": 5.015361410193434
         }
       ],
-      "capturedAt": "2026-10-03",
-      "errors": [],
       "path": "/assets/circuits/previews/melbourne.webp",
-      "bytes": 42918,
-      "sha256": "4d2388692aad725c38f27ee0e11bf02f4436b13bef64ca321a4a8ca86f316ad5"
+      "bytes": 47340,
+      "sha256": "fb239f9ee949d6c67f2d290b19f69fc8b5f62c708954c35862bbdcdf599a9c9a"
     },
     {
       "id": "shanghai",
@@ -740,13 +860,35 @@
       },
       "width": 960,
       "height": 540,
-      "draws": 84,
-      "triangles": 133212,
+      "draws": 81,
+      "triangles": 308768,
       "surfaces": {
         "loaded": 9,
         "failed": 0,
         "files": 9,
         "estimatedBytes": 25165823.999999996
+      },
+      "sky": {
+        "family": "coastal",
+        "detail": "desktop",
+        "state": "ready",
+        "url": "/assets/environments/coastal.ktx2?v=photographic-hemisphere-4",
+        "gpuCompressed": true,
+        "width": 8192,
+        "height": 2048
+      },
+      "trees": {
+        "state": "ready",
+        "capacity": 12,
+        "farCapacity": 128,
+        "candidates": 301,
+        "forestCandidates": 220,
+        "visible": 12,
+        "farVisible": 128,
+        "draws": 6,
+        "triangles": 179308,
+        "url": "/assets/environments/trees/tree-small-02.glb",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
       },
       "textureProof": [
         {
@@ -831,11 +973,9 @@
           "gpuRedStdDev": 5.015361410193434
         }
       ],
-      "capturedAt": "2026-10-03",
-      "errors": [],
       "path": "/assets/circuits/previews/shanghai.webp",
-      "bytes": 37230,
-      "sha256": "50b20ea26a8805ff8df50007eedb90e148b62f17e6f5ca709c637da261d9b2e1"
+      "bytes": 42550,
+      "sha256": "2b59e2d85f227c8fd66ff248b79225087881ebca3b4b090f5b729f7347e45d6e"
     },
     {
       "id": "suzuka",
@@ -858,13 +998,35 @@
       },
       "width": 960,
       "height": 540,
-      "draws": 150,
-      "triangles": 190568,
+      "draws": 137,
+      "triangles": 330348,
       "surfaces": {
         "loaded": 9,
         "failed": 0,
         "files": 9,
         "estimatedBytes": 25165823.999999996
+      },
+      "sky": {
+        "family": "coastal",
+        "detail": "desktop",
+        "state": "ready",
+        "url": "/assets/environments/coastal.ktx2?v=photographic-hemisphere-4",
+        "gpuCompressed": true,
+        "width": 8192,
+        "height": 2048
+      },
+      "trees": {
+        "state": "ready",
+        "capacity": 12,
+        "farCapacity": 128,
+        "candidates": 330,
+        "forestCandidates": 220,
+        "visible": 12,
+        "farVisible": 128,
+        "draws": 6,
+        "triangles": 179308,
+        "url": "/assets/environments/trees/tree-small-02.glb",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
       },
       "textureProof": [
         {
@@ -949,11 +1111,9 @@
           "gpuRedStdDev": 5.015361410193434
         }
       ],
-      "capturedAt": "2026-10-03",
-      "errors": [],
       "path": "/assets/circuits/previews/suzuka.webp",
-      "bytes": 35654,
-      "sha256": "8fb26cf7829cbbf1a0683e3ff4229a52af756f20b9e8c778c46ff557cf0f426c"
+      "bytes": 41944,
+      "sha256": "cc7bd8e05051bb4ecf521db090f9eb7e0c63639a799d326183c5869d7622e0d5"
     },
     {
       "id": "miami",
@@ -967,7 +1127,7 @@
         "quaternion": [
           -0.24410998640204293,
           0.37142755999731814,
-          0.10187722121770028,
+          0.10187722121770029,
           0.8899847830217058
         ],
         "fov": 52,
@@ -976,13 +1136,35 @@
       },
       "width": 960,
       "height": 540,
-      "draws": 132,
-      "triangles": 209090,
+      "draws": 133,
+      "triangles": 226778,
       "surfaces": {
         "loaded": 9,
         "failed": 0,
         "files": 9,
         "estimatedBytes": 25165823.999999996
+      },
+      "sky": {
+        "family": "coastal",
+        "detail": "desktop",
+        "state": "ready",
+        "url": "/assets/environments/coastal.ktx2?v=photographic-hemisphere-4",
+        "gpuCompressed": true,
+        "width": 8192,
+        "height": 2048
+      },
+      "trees": {
+        "state": "disabled",
+        "capacity": 12,
+        "farCapacity": 128,
+        "candidates": 0,
+        "forestCandidates": 0,
+        "visible": 0,
+        "farVisible": 0,
+        "draws": 0,
+        "triangles": 0,
+        "url": "/assets/environments/trees/tree-small-02.glb",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
       },
       "textureProof": [
         {
@@ -1067,11 +1249,9 @@
           "gpuRedStdDev": 5.015361410193434
         }
       ],
-      "capturedAt": "2026-10-03",
-      "errors": [],
       "path": "/assets/circuits/previews/miami.webp",
-      "bytes": 33334,
-      "sha256": "ccae676859a612c5ccd65026ad9e32a910799d26e5e7237149aa57f36a59e367"
+      "bytes": 39306,
+      "sha256": "c3f0eae8d1818ab88360d37debeba6e0b07945acb849d318e9dc399c04353609"
     },
     {
       "id": "montreal",
@@ -1084,7 +1264,7 @@
         ],
         "quaternion": [
           -0.08736661000237766,
-          0.910260204766398,
+          0.9102602047663981,
           0.2496712420783346,
           0.31852426274051565
         ],
@@ -1094,13 +1274,35 @@
       },
       "width": 960,
       "height": 540,
-      "draws": 227,
-      "triangles": 266176,
+      "draws": 224,
+      "triangles": 275280,
       "surfaces": {
         "loaded": 9,
         "failed": 0,
         "files": 9,
         "estimatedBytes": 25165823.999999996
+      },
+      "sky": {
+        "family": "coastal",
+        "detail": "desktop",
+        "state": "ready",
+        "url": "/assets/environments/coastal.ktx2?v=photographic-hemisphere-4",
+        "gpuCompressed": true,
+        "width": 8192,
+        "height": 2048
+      },
+      "trees": {
+        "state": "disabled",
+        "capacity": 12,
+        "farCapacity": 128,
+        "candidates": 0,
+        "forestCandidates": 0,
+        "visible": 0,
+        "farVisible": 0,
+        "draws": 0,
+        "triangles": 0,
+        "url": "/assets/environments/trees/tree-small-02.glb",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
       },
       "textureProof": [
         {
@@ -1185,11 +1387,9 @@
           "gpuRedStdDev": 5.015361410193434
         }
       ],
-      "capturedAt": "2026-10-03",
-      "errors": [],
       "path": "/assets/circuits/previews/montreal.webp",
-      "bytes": 48460,
-      "sha256": "c1ed12b698d7ff9a8933b49576edcf04cd0c554ad8cb481607e86612d287305c"
+      "bytes": 52720,
+      "sha256": "e98ca1f48a72ac02703ae01eb9fb815eb33ad4c068bba015577699c45e9d2377"
     },
     {
       "id": "monaco",
@@ -1212,13 +1412,35 @@
       },
       "width": 960,
       "height": 540,
-      "draws": 234,
-      "triangles": 323642,
+      "draws": 231,
+      "triangles": 339034,
       "surfaces": {
         "loaded": 9,
         "failed": 0,
         "files": 9,
         "estimatedBytes": 25165823.999999996
+      },
+      "sky": {
+        "family": "coastal",
+        "detail": "desktop",
+        "state": "ready",
+        "url": "/assets/environments/coastal.ktx2?v=photographic-hemisphere-4",
+        "gpuCompressed": true,
+        "width": 8192,
+        "height": 2048
+      },
+      "trees": {
+        "state": "disabled",
+        "capacity": 12,
+        "farCapacity": 128,
+        "candidates": 0,
+        "forestCandidates": 0,
+        "visible": 0,
+        "farVisible": 0,
+        "draws": 0,
+        "triangles": 0,
+        "url": "/assets/environments/trees/tree-small-02.glb",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
       },
       "textureProof": [
         {
@@ -1303,11 +1525,9 @@
           "gpuRedStdDev": 5.015361410193434
         }
       ],
-      "capturedAt": "2026-10-03",
-      "errors": [],
       "path": "/assets/circuits/previews/monaco.webp",
-      "bytes": 47302,
-      "sha256": "67e3f77cafda1bb22d6607b9d9f1e3db4af5d259c3dbe2abe4e34713719c5e7c"
+      "bytes": 53274,
+      "sha256": "de9f8945d8cab8b7d73e39cc53a18a41017ebc3a807ccbccd521cfa881028534"
     },
     {
       "id": "barcelona",
@@ -1330,13 +1550,35 @@
       },
       "width": 960,
       "height": 540,
-      "draws": 160,
-      "triangles": 227978,
+      "draws": 152,
+      "triangles": 366702,
       "surfaces": {
         "loaded": 9,
         "failed": 0,
         "files": 9,
         "estimatedBytes": 25165823.999999996
+      },
+      "sky": {
+        "family": "coastal",
+        "detail": "desktop",
+        "state": "ready",
+        "url": "/assets/environments/coastal.ktx2?v=photographic-hemisphere-4",
+        "gpuCompressed": true,
+        "width": 8192,
+        "height": 2048
+      },
+      "trees": {
+        "state": "ready",
+        "capacity": 12,
+        "farCapacity": 128,
+        "candidates": 318,
+        "forestCandidates": 220,
+        "visible": 12,
+        "farVisible": 128,
+        "draws": 6,
+        "triangles": 179308,
+        "url": "/assets/environments/trees/tree-small-02.glb",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
       },
       "textureProof": [
         {
@@ -1421,18 +1663,16 @@
           "gpuRedStdDev": 5.015361410193434
         }
       ],
-      "capturedAt": "2026-10-03",
-      "errors": [],
       "path": "/assets/circuits/previews/barcelona.webp",
-      "bytes": 45936,
-      "sha256": "aa14daf9a490b5dd3c9fecd57db846a2dcaab72d81d147f89aa3fe7d206cb7ec"
+      "bytes": 50990,
+      "sha256": "5d01efba8587f7469c1e33a36cfd7027a14b1f1b9753da8f52cfd18966f03de0"
     },
     {
       "id": "spielberg",
       "sector": 0.13,
       "camera": {
         "position": [
-          -96.91557842161605,
+          -96.91557842161603,
           28,
           255.69757826758976
         ],
@@ -1448,13 +1688,35 @@
       },
       "width": 960,
       "height": 540,
-      "draws": 251,
-      "triangles": 267778,
+      "draws": 241,
+      "triangles": 402878,
       "surfaces": {
         "loaded": 9,
         "failed": 0,
         "files": 9,
         "estimatedBytes": 25165823.999999996
+      },
+      "sky": {
+        "family": "alpine",
+        "detail": "desktop",
+        "state": "ready",
+        "url": "/assets/environments/alpine.ktx2?v=photographic-hemisphere-4",
+        "gpuCompressed": true,
+        "width": 8192,
+        "height": 2048
+      },
+      "trees": {
+        "state": "ready",
+        "capacity": 12,
+        "farCapacity": 128,
+        "candidates": 327,
+        "forestCandidates": 220,
+        "visible": 12,
+        "farVisible": 128,
+        "draws": 6,
+        "triangles": 179308,
+        "url": "/assets/environments/trees/tree-small-02.glb",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
       },
       "textureProof": [
         {
@@ -1539,11 +1801,9 @@
           "gpuRedStdDev": 5.015361410193434
         }
       ],
-      "capturedAt": "2026-10-03",
-      "errors": [],
       "path": "/assets/circuits/previews/spielberg.webp",
-      "bytes": 40700,
-      "sha256": "2f9b3032437ee7b47e75833c745167fb6207bcdc7452560f28ed80c13bf706ed"
+      "bytes": 48656,
+      "sha256": "6f13fb0517d3609ad1b11b64e417a6ca568ec30aeea39815cd19ca3ae7b8bd7a"
     },
     {
       "id": "silverstone",
@@ -1566,13 +1826,35 @@
       },
       "width": 960,
       "height": 540,
-      "draws": 171,
-      "triangles": 209020,
+      "draws": 160,
+      "triangles": 346128,
       "surfaces": {
         "loaded": 9,
         "failed": 0,
         "files": 9,
         "estimatedBytes": 25165823.999999996
+      },
+      "sky": {
+        "family": "coastal",
+        "detail": "desktop",
+        "state": "ready",
+        "url": "/assets/environments/coastal.ktx2?v=photographic-hemisphere-4",
+        "gpuCompressed": true,
+        "width": 8192,
+        "height": 2048
+      },
+      "trees": {
+        "state": "ready",
+        "capacity": 12,
+        "farCapacity": 128,
+        "candidates": 326,
+        "forestCandidates": 220,
+        "visible": 12,
+        "farVisible": 128,
+        "draws": 6,
+        "triangles": 179308,
+        "url": "/assets/environments/trees/tree-small-02.glb",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
       },
       "textureProof": [
         {
@@ -1657,11 +1939,9 @@
           "gpuRedStdDev": 5.015361410193434
         }
       ],
-      "capturedAt": "2026-10-03",
-      "errors": [],
       "path": "/assets/circuits/previews/silverstone.webp",
-      "bytes": 38030,
-      "sha256": "4cde9207777d801a88a78ff2d03935c6c17d1c7b1c6493d102ceb48ebf12a818"
+      "bytes": 46512,
+      "sha256": "12768269e6a692b3494be53d924ea980dc2f285da2c349fe2061b2245d9df9de"
     },
     {
       "id": "spa",
@@ -1684,13 +1964,35 @@
       },
       "width": 960,
       "height": 540,
-      "draws": 159,
-      "triangles": 193524,
+      "draws": 150,
+      "triangles": 352360,
       "surfaces": {
         "loaded": 9,
         "failed": 0,
         "files": 9,
         "estimatedBytes": 25165823.999999996
+      },
+      "sky": {
+        "family": "alpine",
+        "detail": "desktop",
+        "state": "ready",
+        "url": "/assets/environments/alpine.ktx2?v=photographic-hemisphere-4",
+        "gpuCompressed": true,
+        "width": 8192,
+        "height": 2048
+      },
+      "trees": {
+        "state": "ready",
+        "capacity": 12,
+        "farCapacity": 128,
+        "candidates": 327,
+        "forestCandidates": 220,
+        "visible": 12,
+        "farVisible": 128,
+        "draws": 6,
+        "triangles": 179308,
+        "url": "/assets/environments/trees/tree-small-02.glb",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
       },
       "textureProof": [
         {
@@ -1775,11 +2077,9 @@
           "gpuRedStdDev": 5.015361410193434
         }
       ],
-      "capturedAt": "2026-10-03",
-      "errors": [],
       "path": "/assets/circuits/previews/spa.webp",
-      "bytes": 36552,
-      "sha256": "44de2da03c11af6b5426c04bfb3abe4ec974f44248bdc75797c5ae01cef6123c"
+      "bytes": 41424,
+      "sha256": "976f0ba9cafa4f4d008974dac1e8d9ffbd93faf0f0fb010f39e9c971cff675ad"
     },
     {
       "id": "hungaroring",
@@ -1791,7 +2091,7 @@
           56.10036339771525
         ],
         "quaternion": [
-          -0.2018687373225163,
+          -0.20186873732251634,
           -0.6231890285342104,
           -0.1709317599396284,
           0.7359801499023878
@@ -1802,13 +2102,35 @@
       },
       "width": 960,
       "height": 540,
-      "draws": 227,
-      "triangles": 286808,
+      "draws": 213,
+      "triangles": 410852,
       "surfaces": {
         "loaded": 9,
         "failed": 0,
         "files": 9,
         "estimatedBytes": 25165823.999999996
+      },
+      "sky": {
+        "family": "coastal",
+        "detail": "desktop",
+        "state": "ready",
+        "url": "/assets/environments/coastal.ktx2?v=photographic-hemisphere-4",
+        "gpuCompressed": true,
+        "width": 8192,
+        "height": 2048
+      },
+      "trees": {
+        "state": "ready",
+        "capacity": 12,
+        "farCapacity": 128,
+        "candidates": 321,
+        "forestCandidates": 220,
+        "visible": 12,
+        "farVisible": 128,
+        "draws": 6,
+        "triangles": 179308,
+        "url": "/assets/environments/trees/tree-small-02.glb",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
       },
       "textureProof": [
         {
@@ -1893,11 +2215,9 @@
           "gpuRedStdDev": 5.015361410193434
         }
       ],
-      "capturedAt": "2026-10-03",
-      "errors": [],
       "path": "/assets/circuits/previews/hungaroring.webp",
-      "bytes": 41822,
-      "sha256": "1ed554a71272b156ce9ed36b310e2ef0e4a37a16bfddd56e1254e81240420f48"
+      "bytes": 47790,
+      "sha256": "1669e52f863c7809aa915a566c2a46f9dc4a7419421061883bbfd4820033ee47"
     },
     {
       "id": "zandvoort",
@@ -1906,10 +2226,10 @@
         "position": [
           -200.62519790003049,
           28,
-          -178.6785144964784
+          -178.67851449647839
         ],
         "quaternion": [
-          -0.2290434139991224,
+          -0.22904341399912242,
           -0.4824056972400078,
           -0.13231692321042118,
           0.8350545428929393
@@ -1920,13 +2240,35 @@
       },
       "width": 960,
       "height": 540,
-      "draws": 140,
-      "triangles": 205568,
+      "draws": 137,
+      "triangles": 220216,
       "surfaces": {
         "loaded": 9,
         "failed": 0,
         "files": 9,
         "estimatedBytes": 25165823.999999996
+      },
+      "sky": {
+        "family": "coastal",
+        "detail": "desktop",
+        "state": "ready",
+        "url": "/assets/environments/coastal.ktx2?v=photographic-hemisphere-4",
+        "gpuCompressed": true,
+        "width": 8192,
+        "height": 2048
+      },
+      "trees": {
+        "state": "disabled",
+        "capacity": 12,
+        "farCapacity": 128,
+        "candidates": 0,
+        "forestCandidates": 0,
+        "visible": 0,
+        "farVisible": 0,
+        "draws": 0,
+        "triangles": 0,
+        "url": "/assets/environments/trees/tree-small-02.glb",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
       },
       "textureProof": [
         {
@@ -2011,11 +2353,9 @@
           "gpuRedStdDev": 5.015361410193434
         }
       ],
-      "capturedAt": "2026-10-03",
-      "errors": [],
       "path": "/assets/circuits/previews/zandvoort.webp",
-      "bytes": 40744,
-      "sha256": "c6615cf34a34f433a23a7208b0180f6e85320676710b4088668ba41553655f7b"
+      "bytes": 46950,
+      "sha256": "6ca3d784180c33bfbdf93b056a184f99fddc9b6693ecbe9663f4e59be0a65dc8"
     },
     {
       "id": "monza",
@@ -2038,13 +2378,35 @@
       },
       "width": 960,
       "height": 540,
-      "draws": 160,
-      "triangles": 209214,
+      "draws": 147,
+      "triangles": 337106,
       "surfaces": {
         "loaded": 9,
         "failed": 0,
         "files": 9,
         "estimatedBytes": 25165823.999999996
+      },
+      "sky": {
+        "family": "coastal",
+        "detail": "desktop",
+        "state": "ready",
+        "url": "/assets/environments/coastal.ktx2?v=photographic-hemisphere-4",
+        "gpuCompressed": true,
+        "width": 8192,
+        "height": 2048
+      },
+      "trees": {
+        "state": "ready",
+        "capacity": 12,
+        "farCapacity": 128,
+        "candidates": 331,
+        "forestCandidates": 220,
+        "visible": 12,
+        "farVisible": 128,
+        "draws": 6,
+        "triangles": 179308,
+        "url": "/assets/environments/trees/tree-small-02.glb",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
       },
       "textureProof": [
         {
@@ -2129,11 +2491,9 @@
           "gpuRedStdDev": 5.015361410193434
         }
       ],
-      "capturedAt": "2026-10-03",
-      "errors": [],
       "path": "/assets/circuits/previews/monza.webp",
-      "bytes": 41300,
-      "sha256": "5e0192f2bda12d63794476686ee96e125893c96d296ae86d16e2022bba6cd61f"
+      "bytes": 47638,
+      "sha256": "dde70ab41f6ea8d2f161d5b56ea911ffce48176b5ec5e837411d7a6ee27d527e"
     },
     {
       "id": "madring",
@@ -2146,7 +2506,7 @@
         ],
         "quaternion": [
           -0.2632853077094626,
-          0.09291519633356124,
+          0.09291519633356123,
           0.025485297890734403,
           0.959894844566867
         ],
@@ -2156,13 +2516,35 @@
       },
       "width": 960,
       "height": 540,
-      "draws": 233,
-      "triangles": 260586,
+      "draws": 199,
+      "triangles": 287517,
       "surfaces": {
         "loaded": 9,
         "failed": 0,
         "files": 9,
         "estimatedBytes": 25165823.999999996
+      },
+      "sky": {
+        "family": "urban",
+        "detail": "desktop",
+        "state": "ready",
+        "url": "/assets/environments/urban.ktx2?v=photographic-hemisphere-4",
+        "gpuCompressed": true,
+        "width": 8192,
+        "height": 2048
+      },
+      "trees": {
+        "state": "ready",
+        "capacity": 12,
+        "farCapacity": 128,
+        "candidates": 35,
+        "forestCandidates": 0,
+        "visible": 4,
+        "farVisible": 23,
+        "draws": 6,
+        "triangles": 41735,
+        "url": "/assets/environments/trees/tree-small-02.glb",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
       },
       "textureProof": [
         {
@@ -2247,11 +2629,9 @@
           "gpuRedStdDev": 5.015361410193434
         }
       ],
-      "capturedAt": "2026-10-03",
-      "errors": [],
       "path": "/assets/circuits/previews/madring.webp",
-      "bytes": 39834,
-      "sha256": "57a3f5b92b40a8677a0482670c1b6ac31adb27b1570f79e093f78755fd0744c9"
+      "bytes": 31202,
+      "sha256": "fb048075da9b4b886e3a509a40fef2089758221ba19725efb06ad9e00c1e96f2"
     },
     {
       "id": "baku",
@@ -2274,13 +2654,35 @@
       },
       "width": 960,
       "height": 540,
-      "draws": 108,
-      "triangles": 229426,
+      "draws": 106,
+      "triangles": 263841,
       "surfaces": {
         "loaded": 9,
         "failed": 0,
         "files": 9,
         "estimatedBytes": 25165823.999999996
+      },
+      "sky": {
+        "family": "urban",
+        "detail": "desktop",
+        "state": "ready",
+        "url": "/assets/environments/urban.ktx2?v=photographic-hemisphere-4",
+        "gpuCompressed": true,
+        "width": 8192,
+        "height": 2048
+      },
+      "trees": {
+        "state": "ready",
+        "capacity": 12,
+        "farCapacity": 128,
+        "candidates": 34,
+        "forestCandidates": 0,
+        "visible": 5,
+        "farVisible": 14,
+        "draws": 6,
+        "triangles": 38643,
+        "url": "/assets/environments/trees/tree-small-02.glb",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
       },
       "textureProof": [
         {
@@ -2365,11 +2767,9 @@
           "gpuRedStdDev": 5.015361410193434
         }
       ],
-      "capturedAt": "2026-10-03",
-      "errors": [],
       "path": "/assets/circuits/previews/baku.webp",
-      "bytes": 30366,
-      "sha256": "76f13c1aba96f030808ec5c96466573cf8315a8939210d40ff49a63a2bfd033b"
+      "bytes": 32498,
+      "sha256": "f40b7d9fdc36ac7fc1177b8ac6db62c387fe2705c986e0345e5b74a317b78804"
     },
     {
       "id": "sepang",
@@ -2392,13 +2792,35 @@
       },
       "width": 960,
       "height": 540,
-      "draws": 184,
-      "triangles": 241848,
+      "draws": 185,
+      "triangles": 256512,
       "surfaces": {
         "loaded": 9,
         "failed": 0,
         "files": 9,
         "estimatedBytes": 25165823.999999996
+      },
+      "sky": {
+        "family": "coastal",
+        "detail": "desktop",
+        "state": "ready",
+        "url": "/assets/environments/coastal.ktx2?v=photographic-hemisphere-4",
+        "gpuCompressed": true,
+        "width": 8192,
+        "height": 2048
+      },
+      "trees": {
+        "state": "disabled",
+        "capacity": 12,
+        "farCapacity": 128,
+        "candidates": 0,
+        "forestCandidates": 0,
+        "visible": 0,
+        "farVisible": 0,
+        "draws": 0,
+        "triangles": 0,
+        "url": "/assets/environments/trees/tree-small-02.glb",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
       },
       "textureProof": [
         {
@@ -2483,11 +2905,9 @@
           "gpuRedStdDev": 5.015361410193434
         }
       ],
-      "capturedAt": "2026-10-03",
-      "errors": [],
       "path": "/assets/circuits/previews/sepang.webp",
-      "bytes": 43394,
-      "sha256": "d91ecb5f28326c95d30e1d039b2db2302c7070674cdf79ac105158910b601efc"
+      "bytes": 49772,
+      "sha256": "bcdc70a91e4c85ce9527ddfb1a86b1013e59ed5d704bcd2ed22f335e3e58e085"
     },
     {
       "id": "singapore",
@@ -2510,13 +2930,35 @@
       },
       "width": 960,
       "height": 540,
-      "draws": 278,
-      "triangles": 288700,
+      "draws": 238,
+      "triangles": 316265,
       "surfaces": {
         "loaded": 9,
         "failed": 0,
         "files": 9,
         "estimatedBytes": 25165823.999999996
+      },
+      "sky": {
+        "family": "urban",
+        "detail": "desktop",
+        "state": "ready",
+        "url": "/assets/environments/urban.ktx2?v=photographic-hemisphere-4",
+        "gpuCompressed": true,
+        "width": 8192,
+        "height": 2048
+      },
+      "trees": {
+        "state": "ready",
+        "capacity": 12,
+        "farCapacity": 128,
+        "candidates": 37,
+        "forestCandidates": 0,
+        "visible": 4,
+        "farVisible": 29,
+        "draws": 6,
+        "triangles": 47237,
+        "url": "/assets/environments/trees/tree-small-02.glb",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
       },
       "textureProof": [
         {
@@ -2601,24 +3043,22 @@
           "gpuRedStdDev": 5.015361410193434
         }
       ],
-      "capturedAt": "2026-10-03",
-      "errors": [],
       "path": "/assets/circuits/previews/singapore.webp",
-      "bytes": 43054,
-      "sha256": "b7dd41e0f35c490e2eeca35047205316596577f2aa527cf0b7911052fcd27120"
+      "bytes": 39076,
+      "sha256": "744ecde2b817c3afa9b3e56484966aa46236a3175fa6a6e22874683ac76607d5"
     },
     {
       "id": "austin",
       "sector": 0.13,
       "camera": {
         "position": [
-          -181.93513871374185,
+          -181.93513871374182,
           28,
-          192.07719320525743
+          192.07719320525746
         ],
         "quaternion": [
           -0.24304360730621377,
-          -0.3806094563324736,
+          -0.38060945633247356,
           -0.10439568291758436,
           0.8860969405691755
         ],
@@ -2628,13 +3068,35 @@
       },
       "width": 960,
       "height": 540,
-      "draws": 207,
-      "triangles": 416050,
+      "draws": 200,
+      "triangles": 565970,
       "surfaces": {
         "loaded": 9,
         "failed": 0,
         "files": 9,
         "estimatedBytes": 25165823.999999996
+      },
+      "sky": {
+        "family": "desert",
+        "detail": "desktop",
+        "state": "ready",
+        "url": "/assets/environments/desert.ktx2?v=photographic-hemisphere-4",
+        "gpuCompressed": true,
+        "width": 8192,
+        "height": 2048
+      },
+      "trees": {
+        "state": "ready",
+        "capacity": 12,
+        "farCapacity": 128,
+        "candidates": 323,
+        "forestCandidates": 220,
+        "visible": 12,
+        "farVisible": 128,
+        "draws": 6,
+        "triangles": 179308,
+        "url": "/assets/environments/trees/tree-small-02.glb",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
       },
       "textureProof": [
         {
@@ -2719,11 +3181,9 @@
           "gpuRedStdDev": 5.015361410193434
         }
       ],
-      "capturedAt": "2026-10-03",
-      "errors": [],
       "path": "/assets/circuits/previews/austin.webp",
-      "bytes": 41400,
-      "sha256": "519c65e7be84e6cab6f96cd736d7c7d5934ef5bc79a96dc0524db162eb13681e"
+      "bytes": 52500,
+      "sha256": "c85bc98dfdd109d43b48f0bfcd440df57ae1df9b1cf41cfefe9f74a0879ebb71"
     },
     {
       "id": "mexico",
@@ -2746,13 +3206,35 @@
       },
       "width": 960,
       "height": 540,
-      "draws": 245,
-      "triangles": 268096,
+      "draws": 202,
+      "triangles": 279246,
       "surfaces": {
         "loaded": 9,
         "failed": 0,
         "files": 9,
         "estimatedBytes": 25165823.999999996
+      },
+      "sky": {
+        "family": "urban",
+        "detail": "desktop",
+        "state": "ready",
+        "url": "/assets/environments/urban.ktx2?v=photographic-hemisphere-4",
+        "gpuCompressed": true,
+        "width": 8192,
+        "height": 2048
+      },
+      "trees": {
+        "state": "ready",
+        "capacity": 12,
+        "farCapacity": 128,
+        "candidates": 38,
+        "forestCandidates": 0,
+        "visible": 5,
+        "farVisible": 33,
+        "draws": 6,
+        "triangles": 56066,
+        "url": "/assets/environments/trees/tree-small-02.glb",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
       },
       "textureProof": [
         {
@@ -2837,11 +3319,9 @@
           "gpuRedStdDev": 5.015361410193434
         }
       ],
-      "capturedAt": "2026-10-03",
-      "errors": [],
       "path": "/assets/circuits/previews/mexico.webp",
-      "bytes": 30924,
-      "sha256": "5870fc363baa4ff366ab89e1719c8436c36abcf304bb8664c97c614f5426598e"
+      "bytes": 45346,
+      "sha256": "1b94c306c411dce4c59bae78de2ecd1ac21a89b49d350d9a7e5a1723eed64702"
     },
     {
       "id": "interlagos",
@@ -2850,12 +3330,12 @@
         "position": [
           186.50061345076733,
           28,
-          -116.10600804928224
+          -116.10600804928225
         ],
         "quaternion": [
-          -0.2462010834786335,
+          -0.24620108347863354,
           0.3526048586992999,
-          0.09671442580190852,
+          0.09671442580190853,
           0.8976085783666513
         ],
         "fov": 52,
@@ -2864,13 +3344,35 @@
       },
       "width": 960,
       "height": 540,
-      "draws": 148,
-      "triangles": 192706,
+      "draws": 143,
+      "triangles": 338902,
       "surfaces": {
         "loaded": 9,
         "failed": 0,
         "files": 9,
         "estimatedBytes": 25165823.999999996
+      },
+      "sky": {
+        "family": "coastal",
+        "detail": "desktop",
+        "state": "ready",
+        "url": "/assets/environments/coastal.ktx2?v=photographic-hemisphere-4",
+        "gpuCompressed": true,
+        "width": 8192,
+        "height": 2048
+      },
+      "trees": {
+        "state": "ready",
+        "capacity": 12,
+        "farCapacity": 128,
+        "candidates": 317,
+        "forestCandidates": 220,
+        "visible": 12,
+        "farVisible": 128,
+        "draws": 6,
+        "triangles": 179308,
+        "url": "/assets/environments/trees/tree-small-02.glb",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
       },
       "textureProof": [
         {
@@ -2955,18 +3457,16 @@
           "gpuRedStdDev": 5.015361410193434
         }
       ],
-      "capturedAt": "2026-10-03",
-      "errors": [],
       "path": "/assets/circuits/previews/interlagos.webp",
-      "bytes": 43720,
-      "sha256": "d71672f1a7bd1299b8b2611190840b4ecbe7b42564e426289b21f628d0b38e40"
+      "bytes": 51280,
+      "sha256": "bb730a341421459d398b67a0ede992a38b2a4ce0e5328aec2c1874a1a77b87f9"
     },
     {
       "id": "lasvegas",
       "sector": 0.13,
       "camera": {
         "position": [
-          144.1774394518117,
+          144.17743945181167,
           28,
           -149.3013533638888
         ],
@@ -2982,13 +3482,35 @@
       },
       "width": 960,
       "height": 540,
-      "draws": 114,
-      "triangles": 236384,
+      "draws": 110,
+      "triangles": 282708,
       "surfaces": {
         "loaded": 9,
         "failed": 0,
         "files": 9,
         "estimatedBytes": 25165823.999999996
+      },
+      "sky": {
+        "family": "urban",
+        "detail": "desktop",
+        "state": "ready",
+        "url": "/assets/environments/urban.ktx2?v=photographic-hemisphere-4",
+        "gpuCompressed": true,
+        "width": 8192,
+        "height": 2048
+      },
+      "trees": {
+        "state": "ready",
+        "capacity": 12,
+        "farCapacity": 128,
+        "candidates": 39,
+        "forestCandidates": 0,
+        "visible": 6,
+        "farVisible": 30,
+        "draws": 6,
+        "triangles": 58476,
+        "url": "/assets/environments/trees/tree-small-02.glb",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
       },
       "textureProof": [
         {
@@ -3073,11 +3595,9 @@
           "gpuRedStdDev": 5.015361410193434
         }
       ],
-      "capturedAt": "2026-10-03",
-      "errors": [],
       "path": "/assets/circuits/previews/lasvegas.webp",
-      "bytes": 28044,
-      "sha256": "49b099e09e132e3dce09620c9549a86c2cd0a650bd25d395aae276f66eb5ce71"
+      "bytes": 27338,
+      "sha256": "673aa2af6bb511cad3ac4b24330d7b3d8210c43adcdcbb60d3dde4393359e6ef"
     },
     {
       "id": "lusail",
@@ -3100,13 +3620,35 @@
       },
       "width": 960,
       "height": 540,
-      "draws": 125,
-      "triangles": 130498,
+      "draws": 123,
+      "triangles": 129530,
       "surfaces": {
         "loaded": 9,
         "failed": 0,
         "files": 9,
         "estimatedBytes": 25165823.999999996
+      },
+      "sky": {
+        "family": "desert",
+        "detail": "desktop",
+        "state": "ready",
+        "url": "/assets/environments/desert.ktx2?v=photographic-hemisphere-4",
+        "gpuCompressed": true,
+        "width": 8192,
+        "height": 2048
+      },
+      "trees": {
+        "state": "disabled",
+        "capacity": 12,
+        "farCapacity": 128,
+        "candidates": 0,
+        "forestCandidates": 0,
+        "visible": 0,
+        "farVisible": 0,
+        "draws": 0,
+        "triangles": 0,
+        "url": "/assets/environments/trees/tree-small-02.glb",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
       },
       "textureProof": [
         {
@@ -3191,11 +3733,9 @@
           "gpuRedStdDev": 5.015361410193434
         }
       ],
-      "capturedAt": "2026-10-03",
-      "errors": [],
       "path": "/assets/circuits/previews/lusail.webp",
-      "bytes": 46540,
-      "sha256": "c09f9be9f213aa6880240c9921b78a140a4597c71fd92492661cf527f7ec7b69"
+      "bytes": 46558,
+      "sha256": "a16d0a6b15d5a448e37b09b07db2d1288485e6ffaba675634a9814f0a18a4d1f"
     },
     {
       "id": "yasmarina",
@@ -3207,9 +3747,9 @@
           -22.77333661149041
         ],
         "quaternion": [
-          -0.1185119709853708,
+          -0.11851197098537081,
           0.8621730917545158,
-          0.23648164071954617,
+          0.23648164071954614,
           0.43207511637470314
         ],
         "fov": 52,
@@ -3218,13 +3758,35 @@
       },
       "width": 960,
       "height": 540,
-      "draws": 115,
-      "triangles": 235436,
+      "draws": 114,
+      "triangles": 246271,
       "surfaces": {
         "loaded": 9,
         "failed": 0,
         "files": 9,
         "estimatedBytes": 25165823.999999996
+      },
+      "sky": {
+        "family": "urban",
+        "detail": "desktop",
+        "state": "ready",
+        "url": "/assets/environments/urban.ktx2?v=photographic-hemisphere-4",
+        "gpuCompressed": true,
+        "width": 8192,
+        "height": 2048
+      },
+      "trees": {
+        "state": "ready",
+        "capacity": 12,
+        "farCapacity": 128,
+        "candidates": 31,
+        "forestCandidates": 0,
+        "visible": 5,
+        "farVisible": 26,
+        "draws": 6,
+        "triangles": 49647,
+        "url": "/assets/environments/trees/tree-small-02.glb",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
       },
       "textureProof": [
         {
@@ -3309,11 +3871,9 @@
           "gpuRedStdDev": 5.015361410193434
         }
       ],
-      "capturedAt": "2026-10-03",
-      "errors": [],
       "path": "/assets/circuits/previews/yasmarina.webp",
-      "bytes": 34528,
-      "sha256": "99d15f1bb14da945c99bae3ccb984426a2eed86b4e764602cc4582a68cdf4917"
+      "bytes": 45998,
+      "sha256": "f23f7c34157f31679930c0d4af30b1e2b63938a1678ee8454b8996627a761810"
     },
     {
       "id": "sakhir",
@@ -3326,7 +3886,7 @@
         ],
         "quaternion": [
           -0.2564410327870068,
-          -0.23646411518175223,
+          -0.23646411518175225,
           -0.0648586953875827,
           0.9349417460821102
         ],
@@ -3336,13 +3896,35 @@
       },
       "width": 960,
       "height": 540,
-      "draws": 264,
-      "triangles": 191790,
+      "draws": 262,
+      "triangles": 190822,
       "surfaces": {
         "loaded": 9,
         "failed": 0,
         "files": 9,
         "estimatedBytes": 25165823.999999996
+      },
+      "sky": {
+        "family": "desert",
+        "detail": "desktop",
+        "state": "ready",
+        "url": "/assets/environments/desert.ktx2?v=photographic-hemisphere-4",
+        "gpuCompressed": true,
+        "width": 8192,
+        "height": 2048
+      },
+      "trees": {
+        "state": "disabled",
+        "capacity": 12,
+        "farCapacity": 128,
+        "candidates": 0,
+        "forestCandidates": 0,
+        "visible": 0,
+        "farVisible": 0,
+        "draws": 0,
+        "triangles": 0,
+        "url": "/assets/environments/trees/tree-small-02.glb",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
       },
       "textureProof": [
         {
@@ -3427,11 +4009,9 @@
           "gpuRedStdDev": 5.015361410193434
         }
       ],
-      "capturedAt": "2026-10-03",
-      "errors": [],
       "path": "/assets/circuits/previews/sakhir.webp",
-      "bytes": 49030,
-      "sha256": "7926aaef1346e28b61ded4756f69ac65dd9c4a0a0ff4a1375c91852ccbaec527"
+      "bytes": 48788,
+      "sha256": "51bdc8a94a25fcea0196716ddbdcfcc1088cf7e8a04f2ef4d9ed4fed984259df"
     },
     {
       "id": "jeddah",
@@ -3446,7 +4026,7 @@
           -0.2532347226377876,
           -0.27863410758701046,
           -0.07642531592874621,
-          0.9232520676526776
+          0.9232520676526775
         ],
         "fov": 52,
         "near": 0.1,
@@ -3454,13 +4034,35 @@
       },
       "width": 960,
       "height": 540,
-      "draws": 159,
-      "triangles": 228732,
+      "draws": 156,
+      "triangles": 243452,
       "surfaces": {
         "loaded": 9,
         "failed": 0,
         "files": 9,
         "estimatedBytes": 25165823.999999996
+      },
+      "sky": {
+        "family": "desert",
+        "detail": "desktop",
+        "state": "ready",
+        "url": "/assets/environments/desert.ktx2?v=photographic-hemisphere-4",
+        "gpuCompressed": true,
+        "width": 8192,
+        "height": 2048
+      },
+      "trees": {
+        "state": "disabled",
+        "capacity": 12,
+        "farCapacity": 128,
+        "candidates": 0,
+        "forestCandidates": 0,
+        "visible": 0,
+        "farVisible": 0,
+        "draws": 0,
+        "triangles": 0,
+        "url": "/assets/environments/trees/tree-small-02.glb",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
       },
       "textureProof": [
         {
@@ -3545,11 +4147,9 @@
           "gpuRedStdDev": 5.015361410193434
         }
       ],
-      "capturedAt": "2026-10-03",
-      "errors": [],
       "path": "/assets/circuits/previews/jeddah.webp",
-      "bytes": 34550,
-      "sha256": "a3ce11e7e09e6e33ec609480a91b92f6ba7456a1532b64be274c44f46660275c"
+      "bytes": 42208,
+      "sha256": "70f9e7caa412adc69c72826fd9bd233e1ef642e6e545233b0d64be1daa223fa2"
     },
     {
       "id": "breakwater",
@@ -3572,13 +4172,35 @@
       },
       "width": 960,
       "height": 540,
-      "draws": 151,
-      "triangles": 136076,
+      "draws": 147,
+      "triangles": 133828,
       "surfaces": {
         "loaded": 9,
         "failed": 0,
         "files": 9,
         "estimatedBytes": 25165823.999999996
+      },
+      "sky": {
+        "family": "coastal",
+        "detail": "desktop",
+        "state": "ready",
+        "url": "/assets/environments/coastal.ktx2?v=photographic-hemisphere-4",
+        "gpuCompressed": true,
+        "width": 8192,
+        "height": 2048
+      },
+      "trees": {
+        "state": "disabled",
+        "capacity": 12,
+        "farCapacity": 128,
+        "candidates": 0,
+        "forestCandidates": 0,
+        "visible": 0,
+        "farVisible": 0,
+        "draws": 0,
+        "triangles": 0,
+        "url": "/assets/environments/trees/tree-small-02.glb",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
       },
       "textureProof": [
         {
@@ -3663,11 +4285,9 @@
           "gpuRedStdDev": 5.015361410193434
         }
       ],
-      "capturedAt": "2026-10-03",
-      "errors": [],
       "path": "/assets/circuits/previews/breakwater.webp",
-      "bytes": 29722,
-      "sha256": "bb91fda0606640d0457716db3e066429a11d3b4125a6ba5135e70a4fa4286d7f"
+      "bytes": 32228,
+      "sha256": "4ef3b35f2d085af01af0cd44822bb4c822c728316412ee643c124ac60860b9aa"
     },
     {
       "id": "copper-canyon",
@@ -3690,13 +4310,35 @@
       },
       "width": 960,
       "height": 540,
-      "draws": 128,
-      "triangles": 157258,
+      "draws": 126,
+      "triangles": 156290,
       "surfaces": {
         "loaded": 9,
         "failed": 0,
         "files": 9,
         "estimatedBytes": 25165823.999999996
+      },
+      "sky": {
+        "family": "desert",
+        "detail": "desktop",
+        "state": "ready",
+        "url": "/assets/environments/desert.ktx2?v=photographic-hemisphere-4",
+        "gpuCompressed": true,
+        "width": 8192,
+        "height": 2048
+      },
+      "trees": {
+        "state": "disabled",
+        "capacity": 12,
+        "farCapacity": 128,
+        "candidates": 0,
+        "forestCandidates": 0,
+        "visible": 0,
+        "farVisible": 0,
+        "draws": 0,
+        "triangles": 0,
+        "url": "/assets/environments/trees/tree-small-02.glb",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
       },
       "textureProof": [
         {
@@ -3781,11 +4423,9 @@
           "gpuRedStdDev": 5.015361410193434
         }
       ],
-      "capturedAt": "2026-10-03",
-      "errors": [],
       "path": "/assets/circuits/previews/copper-canyon.webp",
-      "bytes": 37756,
-      "sha256": "e1fb8f60878747219edc03127d82cc57a60cf950ff131e91ea7998318c607140"
+      "bytes": 36744,
+      "sha256": "180211c3572a483f3d27a7d5111a8dc69d9feedb1937958489829c74072dc3ac"
     },
     {
       "id": "cedar-ridge",
@@ -3798,7 +4438,7 @@
         ],
         "quaternion": [
           0.010523510226041198,
-          0.9636178292598092,
+          0.9636178292598091,
           0.26430646870019714,
           -0.0383669840926737
         ],
@@ -3808,13 +4448,35 @@
       },
       "width": 960,
       "height": 540,
-      "draws": 199,
-      "triangles": 184504,
+      "draws": 198,
+      "triangles": 197432,
       "surfaces": {
         "loaded": 9,
         "failed": 0,
         "files": 9,
         "estimatedBytes": 25165823.999999996
+      },
+      "sky": {
+        "family": "alpine",
+        "detail": "desktop",
+        "state": "ready",
+        "url": "/assets/environments/alpine.ktx2?v=photographic-hemisphere-4",
+        "gpuCompressed": true,
+        "width": 8192,
+        "height": 2048
+      },
+      "trees": {
+        "state": "disabled",
+        "capacity": 12,
+        "farCapacity": 128,
+        "candidates": 0,
+        "forestCandidates": 0,
+        "visible": 0,
+        "farVisible": 0,
+        "draws": 0,
+        "triangles": 0,
+        "url": "/assets/environments/trees/tree-small-02.glb",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
       },
       "textureProof": [
         {
@@ -3899,11 +4561,9 @@
           "gpuRedStdDev": 5.015361410193434
         }
       ],
-      "capturedAt": "2026-10-03",
-      "errors": [],
       "path": "/assets/circuits/previews/cedar-ridge.webp",
-      "bytes": 35304,
-      "sha256": "5c961a905fc60eb526361a3503978c9b4d603fee3ae5e6d243944fbff8aa0401"
+      "bytes": 36618,
+      "sha256": "8307ac3f23631143286dd4bc89889ac88d753ddca9e03c51ce256d1ba3d7e5fb"
     },
     {
       "id": "neon-freight",
@@ -3912,10 +4572,10 @@
         "position": [
           168.2347104340941,
           28,
-          -253.52087456603329
+          -253.52087456603326
         ],
         "quaternion": [
-          0.1079295529120102,
+          0.10792955291201019,
           0.8804512018509791,
           0.2414950626254283,
           -0.3934933639782512
@@ -3926,13 +4586,35 @@
       },
       "width": 960,
       "height": 540,
-      "draws": 129,
-      "triangles": 260646,
+      "draws": 118,
+      "triangles": 275666,
       "surfaces": {
         "loaded": 9,
         "failed": 0,
         "files": 9,
         "estimatedBytes": 25165823.999999996
+      },
+      "sky": {
+        "family": "urban",
+        "detail": "desktop",
+        "state": "ready",
+        "url": "/assets/environments/urban.ktx2?v=photographic-hemisphere-4",
+        "gpuCompressed": true,
+        "width": 8192,
+        "height": 2048
+      },
+      "trees": {
+        "state": "ready",
+        "capacity": 12,
+        "farCapacity": 128,
+        "candidates": 37,
+        "forestCandidates": 0,
+        "visible": 6,
+        "farVisible": 26,
+        "draws": 6,
+        "triangles": 54808,
+        "url": "/assets/environments/trees/tree-small-02.glb",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
       },
       "textureProof": [
         {
@@ -4017,26 +4699,24 @@
           "gpuRedStdDev": 5.015361410193434
         }
       ],
-      "capturedAt": "2026-10-03",
-      "errors": [],
       "path": "/assets/circuits/previews/neon-freight.webp",
-      "bytes": 37018,
-      "sha256": "71e7f57b62e17575fdc3f16eb03bd0561ce1a87b2d1b08735bfad95e3d9f36d5"
+      "bytes": 41600,
+      "sha256": "e41050aaf39c6dde0f1ffe04e4556828bab5672d716f9801217374b7dbd4f7c1"
     },
     {
       "id": "fuji-skyline",
       "sector": 0.13,
       "camera": {
         "position": [
-          76.08489251330627,
-          12.00040445867608,
-          -213.87882269762895
+          95.57582187240195,
+          28.244974812258675,
+          -226.73064423363257
         ],
         "quaternion": [
-          -0.12138298743127585,
-          -0.491072263091217,
-          -0.0693250920871656,
-          0.8598303520996659
+          0.09468112884617852,
+          0.9004854092837192,
+          0.2469901566958878,
+          -0.3451917930700074
         ],
         "fov": 52,
         "near": 0.1,
@@ -4044,13 +4724,35 @@
       },
       "width": 960,
       "height": 540,
-      "draws": 70,
-      "triangles": 137564,
+      "draws": 140,
+      "triangles": 353790,
       "surfaces": {
         "loaded": 9,
         "failed": 0,
         "files": 9,
         "estimatedBytes": 25165823.999999996
+      },
+      "sky": {
+        "family": "alpine",
+        "detail": "desktop",
+        "state": "ready",
+        "url": "/assets/environments/alpine.ktx2?v=photographic-hemisphere-4",
+        "gpuCompressed": true,
+        "width": 8192,
+        "height": 2048
+      },
+      "trees": {
+        "state": "ready",
+        "capacity": 12,
+        "farCapacity": 128,
+        "candidates": 315,
+        "forestCandidates": 220,
+        "visible": 12,
+        "farVisible": 128,
+        "draws": 6,
+        "triangles": 179308,
+        "url": "/assets/environments/trees/tree-small-02.glb",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
       },
       "textureProof": [
         {
@@ -4135,26 +4837,24 @@
           "gpuRedStdDev": 5.015361410193434
         }
       ],
-      "capturedAt": "2026-10-03",
-      "errors": [],
       "path": "/assets/circuits/previews/fuji-skyline.webp",
-      "bytes": 28178,
-      "sha256": "292f3ad8ee6f561d18d79e6e475fb2bffbee461c895759bb423ef97ab7239980"
+      "bytes": 44004,
+      "sha256": "c4422f0049b61e6aa9b92ee5dcdfffa664c66f23ddf4ca4d0523f694de53f320"
     },
     {
       "id": "singapore-afterdark",
-      "sector": 0.13,
+      "sector": 0.28,
       "camera": {
         "position": [
-          32.839132071666185,
-          12,
-          -196.63179103827989
+          328.75521142416414,
+          41.060449373280015,
+          16.012778336980368
         ],
         "quaternion": [
-          -0.12530662058428632,
-          -0.4388440352151935,
-          -0.0619519884134559,
-          0.8876238588081162
+          -0.19171941139192644,
+          0.6644260443876636,
+          0.18224247847244382,
+          0.698977380088309
         ],
         "fov": 52,
         "near": 0.1,
@@ -4162,13 +4862,35 @@
       },
       "width": 960,
       "height": 540,
-      "draws": 105,
-      "triangles": 216636,
+      "draws": 224,
+      "triangles": 306444,
       "surfaces": {
         "loaded": 9,
         "failed": 0,
         "files": 9,
         "estimatedBytes": 25165823.999999996
+      },
+      "sky": {
+        "family": "urban",
+        "detail": "desktop",
+        "state": "ready",
+        "url": "/assets/environments/urban.ktx2?v=photographic-hemisphere-4",
+        "gpuCompressed": true,
+        "width": 8192,
+        "height": 2048
+      },
+      "trees": {
+        "state": "ready",
+        "capacity": 12,
+        "farCapacity": 128,
+        "candidates": 36,
+        "forestCandidates": 0,
+        "visible": 7,
+        "farVisible": 27,
+        "draws": 6,
+        "triangles": 60886,
+        "url": "/assets/environments/trees/tree-small-02.glb",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
       },
       "textureProof": [
         {
@@ -4253,11 +4975,9 @@
           "gpuRedStdDev": 5.015361410193434
         }
       ],
-      "capturedAt": "2026-10-03",
-      "errors": [],
       "path": "/assets/circuits/previews/singapore-afterdark.webp",
-      "bytes": 30514,
-      "sha256": "26affb7a7a2591a7fd0a69ccf71ea0fa442dad19d1117a4f4cfdc803efe09da3"
+      "bytes": 37514,
+      "sha256": "b169bb6b4110c7a1dcf6e48a0ea64672afe21e5b0507d19681ad3cd6bbea285b"
     },
     {
       "id": "norway-fjord",
@@ -4266,12 +4986,12 @@
         "position": [
           -71.37338119370655,
           33.336856018076986,
-          -227.08412704217776
+          -227.08412704217778
         ],
         "quaternion": [
           0.11243690688224606,
           0.8729213396557194,
-          0.2394297300566472,
+          0.23942973005664722,
           -0.40992643377735255
         ],
         "fov": 52,
@@ -4280,13 +5000,35 @@
       },
       "width": 960,
       "height": 540,
-      "draws": 150,
-      "triangles": 164672,
+      "draws": 149,
+      "triangles": 177204,
       "surfaces": {
         "loaded": 9,
         "failed": 0,
         "files": 9,
         "estimatedBytes": 25165823.999999996
+      },
+      "sky": {
+        "family": "alpine",
+        "detail": "desktop",
+        "state": "ready",
+        "url": "/assets/environments/alpine.ktx2?v=photographic-hemisphere-4",
+        "gpuCompressed": true,
+        "width": 8192,
+        "height": 2048
+      },
+      "trees": {
+        "state": "disabled",
+        "capacity": 12,
+        "farCapacity": 128,
+        "candidates": 0,
+        "forestCandidates": 0,
+        "visible": 0,
+        "farVisible": 0,
+        "draws": 0,
+        "triangles": 0,
+        "url": "/assets/environments/trees/tree-small-02.glb",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
       },
       "textureProof": [
         {
@@ -4371,26 +5113,24 @@
           "gpuRedStdDev": 5.015361410193434
         }
       ],
-      "capturedAt": "2026-10-03",
-      "errors": [],
       "path": "/assets/circuits/previews/norway-fjord.webp",
-      "bytes": 37254,
-      "sha256": "70cbb24dce039c79b61f45b3df6548d043e074ac1191d315af6fc2eebf7a9999"
+      "bytes": 36916,
+      "sha256": "22b55f7f35298503e092ec26b9063f188370926b8b2fb67fc585259a9d098a10"
     },
     {
       "id": "san-francisco-hills",
       "sector": 0.13,
       "camera": {
         "position": [
-          -24.854963716887134,
-          13.970708172341132,
-          -214.05347640998812
+          -12.290281953667003,
+          30.002281897836138,
+          -256.09141314195637
         ],
         "quaternion": [
-          0.05732180164208738,
-          0.9030986619663944,
-          0.12749121180356093,
-          -0.4060455746882022
+          0.11467057815356753,
+          0.8690505137202111,
+          0.23836801834594443,
+          -0.4180700311411848
         ],
         "fov": 52,
         "near": 0.1,
@@ -4398,13 +5138,35 @@
       },
       "width": 960,
       "height": 540,
-      "draws": 244,
-      "triangles": 228444,
+      "draws": 203,
+      "triangles": 371616,
       "surfaces": {
         "loaded": 9,
         "failed": 0,
         "files": 9,
         "estimatedBytes": 25165823.999999996
+      },
+      "sky": {
+        "family": "coastal",
+        "detail": "desktop",
+        "state": "ready",
+        "url": "/assets/environments/coastal.ktx2?v=photographic-hemisphere-4",
+        "gpuCompressed": true,
+        "width": 8192,
+        "height": 2048
+      },
+      "trees": {
+        "state": "ready",
+        "capacity": 12,
+        "farCapacity": 128,
+        "candidates": 309,
+        "forestCandidates": 220,
+        "visible": 12,
+        "farVisible": 128,
+        "draws": 6,
+        "triangles": 179308,
+        "url": "/assets/environments/trees/tree-small-02.glb",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
       },
       "textureProof": [
         {
@@ -4489,11 +5251,9 @@
           "gpuRedStdDev": 5.015361410193434
         }
       ],
-      "capturedAt": "2026-10-03",
-      "errors": [],
       "path": "/assets/circuits/previews/san-francisco-hills.webp",
-      "bytes": 26616,
-      "sha256": "1167d9e8a891d2b2a12e524298914c58acd94d1d4310747450cbcde22e4ffc13"
+      "bytes": 31562,
+      "sha256": "fe0426c600b1b912841eff1459e3867bc4a7ff56d290c24006054aa66439482c"
     }
   ]
 }

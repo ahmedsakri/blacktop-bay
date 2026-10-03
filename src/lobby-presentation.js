@@ -9,7 +9,7 @@ const trackIds = new Set(TRACKS.map(track => track.id));
 
 // These are stills of the actual runtime world, never a promised concept image.
 export function circuitPreviewImage(track) {
-  return trackIds.has(track?.id) ? `/assets/circuits/previews/${track.id}.webp` : null;
+  return trackIds.has(track?.id) ? `/assets/circuits/previews/${track.id}.webp?v=20261003-photo4` : null;
 }
 
 export function lobbyRaceLabels(options, event = null) {

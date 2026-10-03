@@ -3,10 +3,11 @@ import assert from 'node:assert/strict';
 import * as THREE from 'three';
 import {createSpectatorCharacterGeometry,createSpectatorCharacter,CHARACTER_LIMITS} from '../src/spectator-character.js';
 import {spectatorProfile,spectatorPose,createCrowd} from '../src/crowd.js';
+import {SPECTATOR_GESTURES} from '../src/spectator-motion-config.js';
 const rng=()=>{let s=89;return()=>((s=Math.imul(s,1664525)+1013904223)>>>0)/4294967296;};
 
 test('authored character is one indexed mesh with 18 valid joints, two facial morphs and bounded triangles',()=>{
- for(const low of [false,true])for(let gesture=0;gesture<5;gesture++){
+ for(const low of [false,true])for(let gesture=0;gesture<SPECTATOR_GESTURES.length;gesture++){
   const p=spectatorProfile(0,0,0,0,false,rng());p.gesture=gesture;p.cap=true;p.longHair=true;
   const g=createSpectatorCharacterGeometry(p,{low});
   assert.ok(g.index.count/3>5000&&g.index.count/3<=CHARACTER_LIMITS.maxTriangles);
@@ -24,7 +25,7 @@ test('authored character is one indexed mesh with 18 valid joints, two facial mo
 
 test('all gestures deform actual mesh into finite adult bounds for standing and seated spectators',()=>{
  const random=rng(),v=new THREE.Vector3();
- for(const seated of [false,true])for(let gesture=0;gesture<5;gesture++){
+ for(const seated of [false,true])for(let gesture=0;gesture<SPECTATOR_GESTURES.length;gesture++){
   const p=spectatorProfile(0,0,0,0,seated,random);p.gesture=gesture;
   const character=createSpectatorCharacter(p,{low:true});
   for(const time of [0,.3,1.6,3.2]){
