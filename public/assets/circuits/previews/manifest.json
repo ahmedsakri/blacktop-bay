@@ -9,7 +9,7 @@
     540
   ],
   "quality": 0.78,
-  "totalBytes": 1583034,
+  "totalBytes": 1556304,
   "entries": [
     {
       "id": "harbor",
@@ -59,8 +59,13 @@
         "farVisible": 0,
         "draws": 0,
         "triangles": 0,
-        "url": "/assets/environments/trees/tree-small-02.glb",
-        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
+        "url": "/assets/environments/trees/tree-small-02.glb?v=87fee78dc710aed0ff008de7b4c3e9ec45bb8d10da93300c1516ceac76f05a3a",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb?v=f2d22737f142cf282abc149a23d019205b4511aeabef9badcbfe7ff1a3a5ec5a"
+      },
+      "water": {
+        "reflection": "shared-venue-environment",
+        "extraTextures": 0,
+        "extraRenderPasses": 0
       },
       "crowd": {
         "textured": 0,
@@ -176,8 +181,8 @@
         }
       ],
       "path": "/assets/circuits/previews/harbor.webp",
-      "bytes": 45666,
-      "sha256": "68139d26889a65dd1edf2120a4071febc4e526ae3bd473c0c18c17ce6358dff7"
+      "bytes": 46548,
+      "sha256": "8601eebfbbb61b119d310b9e00188d2e033edc86edd65560544a3fb548541b42"
     },
     {
       "id": "dockyard",
@@ -227,8 +232,13 @@
         "farVisible": 0,
         "draws": 0,
         "triangles": 0,
-        "url": "/assets/environments/trees/tree-small-02.glb",
-        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
+        "url": "/assets/environments/trees/tree-small-02.glb?v=87fee78dc710aed0ff008de7b4c3e9ec45bb8d10da93300c1516ceac76f05a3a",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb?v=f2d22737f142cf282abc149a23d019205b4511aeabef9badcbfe7ff1a3a5ec5a"
+      },
+      "water": {
+        "reflection": "shared-venue-environment",
+        "extraTextures": 0,
+        "extraRenderPasses": 0
       },
       "crowd": {
         "textured": 0,
@@ -344,8 +354,8 @@
         }
       ],
       "path": "/assets/circuits/previews/dockyard.webp",
-      "bytes": 51688,
-      "sha256": "9217569160d32ddfe2664d9603f60e65a5bae557a8334ed7f9b32792fc0af76c"
+      "bytes": 52150,
+      "sha256": "16359fb82a49f54c5ac1827754e581f9d7d4285d05cfef6c1d79913179e722aa"
     },
     {
       "id": "coast",
@@ -395,8 +405,13 @@
         "farVisible": 0,
         "draws": 0,
         "triangles": 0,
-        "url": "/assets/environments/trees/tree-small-02.glb",
-        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
+        "url": "/assets/environments/trees/tree-small-02.glb?v=87fee78dc710aed0ff008de7b4c3e9ec45bb8d10da93300c1516ceac76f05a3a",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb?v=f2d22737f142cf282abc149a23d019205b4511aeabef9badcbfe7ff1a3a5ec5a"
+      },
+      "water": {
+        "reflection": "shared-venue-environment",
+        "extraTextures": 0,
+        "extraRenderPasses": 0
       },
       "crowd": {
         "textured": 0,
@@ -512,8 +527,8 @@
         }
       ],
       "path": "/assets/circuits/previews/coast.webp",
-      "bytes": 47084,
-      "sha256": "a1cdb239b0fb92069e65f0a97c2e0cec85c8ec27db120bc758c1a25c4c699d18"
+      "bytes": 48186,
+      "sha256": "5e9a495326282bfe1f715fbe292879f8f0db6409080f098504b0ad7dc306ab49"
     },
     {
       "id": "summit",
@@ -563,8 +578,13 @@
         "farVisible": 0,
         "draws": 0,
         "triangles": 0,
-        "url": "/assets/environments/trees/tree-small-02.glb",
-        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
+        "url": "/assets/environments/trees/tree-small-02.glb?v=87fee78dc710aed0ff008de7b4c3e9ec45bb8d10da93300c1516ceac76f05a3a",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb?v=f2d22737f142cf282abc149a23d019205b4511aeabef9badcbfe7ff1a3a5ec5a"
+      },
+      "water": {
+        "reflection": "shared-venue-environment",
+        "extraTextures": 0,
+        "extraRenderPasses": 0
       },
       "crowd": {
         "textured": 0,
@@ -731,8 +751,13 @@
         "farVisible": 0,
         "draws": 0,
         "triangles": 0,
-        "url": "/assets/environments/trees/tree-small-02.glb",
-        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
+        "url": "/assets/environments/trees/tree-small-02.glb?v=87fee78dc710aed0ff008de7b4c3e9ec45bb8d10da93300c1516ceac76f05a3a",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb?v=f2d22737f142cf282abc149a23d019205b4511aeabef9badcbfe7ff1a3a5ec5a"
+      },
+      "water": {
+        "reflection": "shared-venue-environment",
+        "extraTextures": 0,
+        "extraRenderPasses": 0
       },
       "crowd": {
         "textured": 0,
@@ -899,8 +924,13 @@
         "farVisible": 0,
         "draws": 0,
         "triangles": 0,
-        "url": "/assets/environments/trees/tree-small-02.glb",
-        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
+        "url": "/assets/environments/trees/tree-small-02.glb?v=87fee78dc710aed0ff008de7b4c3e9ec45bb8d10da93300c1516ceac76f05a3a",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb?v=f2d22737f142cf282abc149a23d019205b4511aeabef9badcbfe7ff1a3a5ec5a"
+      },
+      "water": {
+        "reflection": "shared-venue-environment",
+        "extraTextures": 0,
+        "extraRenderPasses": 0
       },
       "crowd": {
         "textured": 0,
@@ -1016,8 +1046,8 @@
         }
       ],
       "path": "/assets/circuits/previews/melbourne.webp",
-      "bytes": 45644,
-      "sha256": "8d6c33cae7f5e9e4de4adc35873ffba9c71e71c150270a643b8a489d14e05feb"
+      "bytes": 47338,
+      "sha256": "0aa22bd83cc07179cda2463434763fd1e715385b481b6d2b8fd9d473bd9d24f8"
     },
     {
       "id": "shanghai",
@@ -1067,8 +1097,13 @@
         "farVisible": 128,
         "draws": 6,
         "triangles": 179308,
-        "url": "/assets/environments/trees/tree-small-02.glb",
-        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
+        "url": "/assets/environments/trees/tree-small-02.glb?v=87fee78dc710aed0ff008de7b4c3e9ec45bb8d10da93300c1516ceac76f05a3a",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb?v=f2d22737f142cf282abc149a23d019205b4511aeabef9badcbfe7ff1a3a5ec5a"
+      },
+      "water": {
+        "reflection": "shared-venue-environment",
+        "extraTextures": 0,
+        "extraRenderPasses": 0
       },
       "crowd": {
         "textured": 0,
@@ -1184,8 +1219,8 @@
         }
       ],
       "path": "/assets/circuits/previews/shanghai.webp",
-      "bytes": 40270,
-      "sha256": "8676a70e8ab578074b9f1e69777ece646e7e0f8ed937030cc65e8e10a81559a2"
+      "bytes": 37924,
+      "sha256": "2d40fd2678a86f03a76de3b1a5ed4f706e7376533e9ad19abba62720211c35f9"
     },
     {
       "id": "suzuka",
@@ -1235,8 +1270,13 @@
         "farVisible": 128,
         "draws": 6,
         "triangles": 179308,
-        "url": "/assets/environments/trees/tree-small-02.glb",
-        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
+        "url": "/assets/environments/trees/tree-small-02.glb?v=87fee78dc710aed0ff008de7b4c3e9ec45bb8d10da93300c1516ceac76f05a3a",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb?v=f2d22737f142cf282abc149a23d019205b4511aeabef9badcbfe7ff1a3a5ec5a"
+      },
+      "water": {
+        "reflection": "shared-venue-environment",
+        "extraTextures": 0,
+        "extraRenderPasses": 0
       },
       "crowd": {
         "textured": 0,
@@ -1352,8 +1392,8 @@
         }
       ],
       "path": "/assets/circuits/previews/suzuka.webp",
-      "bytes": 38100,
-      "sha256": "34e07b756d5614eceac05a1835415d15a6fc7e58ed6c5ece039d4ff66cb3ba1c"
+      "bytes": 35398,
+      "sha256": "ce6f8ce698c84928118a4d9fee842d215579ea7f56d1cf828c7e5a9b26369d13"
     },
     {
       "id": "miami",
@@ -1403,8 +1443,13 @@
         "farVisible": 0,
         "draws": 0,
         "triangles": 0,
-        "url": "/assets/environments/trees/tree-small-02.glb",
-        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
+        "url": "/assets/environments/trees/tree-small-02.glb?v=87fee78dc710aed0ff008de7b4c3e9ec45bb8d10da93300c1516ceac76f05a3a",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb?v=f2d22737f142cf282abc149a23d019205b4511aeabef9badcbfe7ff1a3a5ec5a"
+      },
+      "water": {
+        "reflection": "shared-venue-environment",
+        "extraTextures": 0,
+        "extraRenderPasses": 0
       },
       "crowd": {
         "textured": 0,
@@ -1520,8 +1565,8 @@
         }
       ],
       "path": "/assets/circuits/previews/miami.webp",
-      "bytes": 39302,
-      "sha256": "b3cffe88870ce92afd60d7e70b11aca93cdc28e95f5405b263257a594a380d96"
+      "bytes": 41924,
+      "sha256": "1e005cdb23735b698d9cb70c6559ee0fae3057185ec6bd743c4e8448a94cb92b"
     },
     {
       "id": "montreal",
@@ -1571,8 +1616,13 @@
         "farVisible": 0,
         "draws": 0,
         "triangles": 0,
-        "url": "/assets/environments/trees/tree-small-02.glb",
-        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
+        "url": "/assets/environments/trees/tree-small-02.glb?v=87fee78dc710aed0ff008de7b4c3e9ec45bb8d10da93300c1516ceac76f05a3a",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb?v=f2d22737f142cf282abc149a23d019205b4511aeabef9badcbfe7ff1a3a5ec5a"
+      },
+      "water": {
+        "reflection": "shared-venue-environment",
+        "extraTextures": 0,
+        "extraRenderPasses": 0
       },
       "crowd": {
         "textured": 0,
@@ -1688,8 +1738,8 @@
         }
       ],
       "path": "/assets/circuits/previews/montreal.webp",
-      "bytes": 51648,
-      "sha256": "69347748f17d716214f1accf7d41a7104b628ded52296a22dc0c611ca43e9b94"
+      "bytes": 48858,
+      "sha256": "62dbdb9f5cb6001f3c385a53306223e4e5027b85c1c1767d49fab9244cca639c"
     },
     {
       "id": "monaco",
@@ -1739,8 +1789,13 @@
         "farVisible": 0,
         "draws": 0,
         "triangles": 0,
-        "url": "/assets/environments/trees/tree-small-02.glb",
-        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
+        "url": "/assets/environments/trees/tree-small-02.glb?v=87fee78dc710aed0ff008de7b4c3e9ec45bb8d10da93300c1516ceac76f05a3a",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb?v=f2d22737f142cf282abc149a23d019205b4511aeabef9badcbfe7ff1a3a5ec5a"
+      },
+      "water": {
+        "reflection": "shared-venue-environment",
+        "extraTextures": 0,
+        "extraRenderPasses": 0
       },
       "crowd": {
         "textured": 0,
@@ -1856,8 +1911,8 @@
         }
       ],
       "path": "/assets/circuits/previews/monaco.webp",
-      "bytes": 52292,
-      "sha256": "9a2f77ea72d4c91c85799e228656a1fa969b6f86edacd86b36e5b16c67ca4a79"
+      "bytes": 54492,
+      "sha256": "c5041444f2ecbdfc3750cd092e4a88462e4ead5ce94f8bd31e6d0b9d9932a90d"
     },
     {
       "id": "barcelona",
@@ -1907,8 +1962,13 @@
         "farVisible": 128,
         "draws": 6,
         "triangles": 179308,
-        "url": "/assets/environments/trees/tree-small-02.glb",
-        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
+        "url": "/assets/environments/trees/tree-small-02.glb?v=87fee78dc710aed0ff008de7b4c3e9ec45bb8d10da93300c1516ceac76f05a3a",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb?v=f2d22737f142cf282abc149a23d019205b4511aeabef9badcbfe7ff1a3a5ec5a"
+      },
+      "water": {
+        "reflection": "shared-venue-environment",
+        "extraTextures": 0,
+        "extraRenderPasses": 0
       },
       "crowd": {
         "textured": 0,
@@ -2024,8 +2084,8 @@
         }
       ],
       "path": "/assets/circuits/previews/barcelona.webp",
-      "bytes": 48274,
-      "sha256": "2cbe3ea8c2b8db80001f71c365e29fda20eeff6545830b6f0551b42984ce4999"
+      "bytes": 45472,
+      "sha256": "a9e26e49bd50127dcf654f8aa91ef73e27c0e0118c736d92235cddb6e58b7d64"
     },
     {
       "id": "spielberg",
@@ -2075,8 +2135,13 @@
         "farVisible": 128,
         "draws": 6,
         "triangles": 179308,
-        "url": "/assets/environments/trees/tree-small-02.glb",
-        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
+        "url": "/assets/environments/trees/tree-small-02.glb?v=87fee78dc710aed0ff008de7b4c3e9ec45bb8d10da93300c1516ceac76f05a3a",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb?v=f2d22737f142cf282abc149a23d019205b4511aeabef9badcbfe7ff1a3a5ec5a"
+      },
+      "water": {
+        "reflection": "shared-venue-environment",
+        "extraTextures": 0,
+        "extraRenderPasses": 0
       },
       "crowd": {
         "textured": 0,
@@ -2192,8 +2257,8 @@
         }
       ],
       "path": "/assets/circuits/previews/spielberg.webp",
-      "bytes": 45328,
-      "sha256": "78a56380e3ebc4d7fe146d37bf1b3cf5c7306b84323b595ba3726ba15475fb54"
+      "bytes": 42002,
+      "sha256": "a2c5ed6764b63b8a4e34f4eb5ae22f857d297644f91de292b44726b88f172c58"
     },
     {
       "id": "silverstone",
@@ -2243,8 +2308,13 @@
         "farVisible": 128,
         "draws": 6,
         "triangles": 179308,
-        "url": "/assets/environments/trees/tree-small-02.glb",
-        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
+        "url": "/assets/environments/trees/tree-small-02.glb?v=87fee78dc710aed0ff008de7b4c3e9ec45bb8d10da93300c1516ceac76f05a3a",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb?v=f2d22737f142cf282abc149a23d019205b4511aeabef9badcbfe7ff1a3a5ec5a"
+      },
+      "water": {
+        "reflection": "shared-venue-environment",
+        "extraTextures": 0,
+        "extraRenderPasses": 0
       },
       "crowd": {
         "textured": 0,
@@ -2360,8 +2430,8 @@
         }
       ],
       "path": "/assets/circuits/previews/silverstone.webp",
-      "bytes": 42912,
-      "sha256": "c6c2823369ff6b327eb1af7f7a790398215f4f4c8777e8a7d4a32929aaa88d05"
+      "bytes": 39496,
+      "sha256": "c8371d6df5275a749620791098e9e15fa2d9592288bfe74a8256531ea1906118"
     },
     {
       "id": "spa",
@@ -2411,8 +2481,13 @@
         "farVisible": 128,
         "draws": 6,
         "triangles": 179308,
-        "url": "/assets/environments/trees/tree-small-02.glb",
-        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
+        "url": "/assets/environments/trees/tree-small-02.glb?v=87fee78dc710aed0ff008de7b4c3e9ec45bb8d10da93300c1516ceac76f05a3a",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb?v=f2d22737f142cf282abc149a23d019205b4511aeabef9badcbfe7ff1a3a5ec5a"
+      },
+      "water": {
+        "reflection": "shared-venue-environment",
+        "extraTextures": 0,
+        "extraRenderPasses": 0
       },
       "crowd": {
         "textured": 0,
@@ -2528,8 +2603,8 @@
         }
       ],
       "path": "/assets/circuits/previews/spa.webp",
-      "bytes": 38656,
-      "sha256": "9a4d98561844db8a41f5d25c2abfe94ab1bdb41569cf19d86aa27d740ee0898f"
+      "bytes": 35608,
+      "sha256": "7de61b6d7b3747f8c4459e0e60a9e3541a5b0f3592a329b8fbd78a5150c5a1ea"
     },
     {
       "id": "hungaroring",
@@ -2579,8 +2654,13 @@
         "farVisible": 128,
         "draws": 6,
         "triangles": 179308,
-        "url": "/assets/environments/trees/tree-small-02.glb",
-        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
+        "url": "/assets/environments/trees/tree-small-02.glb?v=87fee78dc710aed0ff008de7b4c3e9ec45bb8d10da93300c1516ceac76f05a3a",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb?v=f2d22737f142cf282abc149a23d019205b4511aeabef9badcbfe7ff1a3a5ec5a"
+      },
+      "water": {
+        "reflection": "shared-venue-environment",
+        "extraTextures": 0,
+        "extraRenderPasses": 0
       },
       "crowd": {
         "textured": 0,
@@ -2696,8 +2776,8 @@
         }
       ],
       "path": "/assets/circuits/previews/hungaroring.webp",
-      "bytes": 45232,
-      "sha256": "6b8a49d85cc8ff7548a6bcd7f0db7ae9f82825cbede6984da3b5d808c79ec1fe"
+      "bytes": 43260,
+      "sha256": "5c67a2bfc93e73f87d0d84a5b47a7557f927b21d5624113a9177f5f6397c5797"
     },
     {
       "id": "zandvoort",
@@ -2747,8 +2827,13 @@
         "farVisible": 0,
         "draws": 0,
         "triangles": 0,
-        "url": "/assets/environments/trees/tree-small-02.glb",
-        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
+        "url": "/assets/environments/trees/tree-small-02.glb?v=87fee78dc710aed0ff008de7b4c3e9ec45bb8d10da93300c1516ceac76f05a3a",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb?v=f2d22737f142cf282abc149a23d019205b4511aeabef9badcbfe7ff1a3a5ec5a"
+      },
+      "water": {
+        "reflection": "shared-venue-environment",
+        "extraTextures": 0,
+        "extraRenderPasses": 0
       },
       "crowd": {
         "textured": 0,
@@ -2864,8 +2949,8 @@
         }
       ],
       "path": "/assets/circuits/previews/zandvoort.webp",
-      "bytes": 45646,
-      "sha256": "a61577dbaba2f36e2faaad39c2740b840eed11d3756c9e1e2cd369b3cd306ebe"
+      "bytes": 46264,
+      "sha256": "da517343ad70d0c8bdab2ad5efdc6b88eb44630c8d9a22a14b50e1444a610606"
     },
     {
       "id": "monza",
@@ -2915,8 +3000,13 @@
         "farVisible": 128,
         "draws": 6,
         "triangles": 179308,
-        "url": "/assets/environments/trees/tree-small-02.glb",
-        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
+        "url": "/assets/environments/trees/tree-small-02.glb?v=87fee78dc710aed0ff008de7b4c3e9ec45bb8d10da93300c1516ceac76f05a3a",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb?v=f2d22737f142cf282abc149a23d019205b4511aeabef9badcbfe7ff1a3a5ec5a"
+      },
+      "water": {
+        "reflection": "shared-venue-environment",
+        "extraTextures": 0,
+        "extraRenderPasses": 0
       },
       "crowd": {
         "textured": 0,
@@ -3032,8 +3122,8 @@
         }
       ],
       "path": "/assets/circuits/previews/monza.webp",
-      "bytes": 44814,
-      "sha256": "c4762c1aa85cd9965ced5a02afe524bfaf3f2fc86fabcc81c012d45cd8593b76"
+      "bytes": 41664,
+      "sha256": "d04d059ef38a0632f315a6a6cbe554c1474776ce2a0e3dbd3247b00d3f689b51"
     },
     {
       "id": "madring",
@@ -3083,8 +3173,13 @@
         "farVisible": 23,
         "draws": 6,
         "triangles": 41735,
-        "url": "/assets/environments/trees/tree-small-02.glb",
-        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
+        "url": "/assets/environments/trees/tree-small-02.glb?v=87fee78dc710aed0ff008de7b4c3e9ec45bb8d10da93300c1516ceac76f05a3a",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb?v=f2d22737f142cf282abc149a23d019205b4511aeabef9badcbfe7ff1a3a5ec5a"
+      },
+      "water": {
+        "reflection": "shared-venue-environment",
+        "extraTextures": 0,
+        "extraRenderPasses": 0
       },
       "crowd": {
         "textured": 0,
@@ -3200,8 +3295,8 @@
         }
       ],
       "path": "/assets/circuits/previews/madring.webp",
-      "bytes": 30862,
-      "sha256": "4303a1d8a87ed03508eeb23043b3c94f56292ffde6a8cf3edf53bc70d03094f3"
+      "bytes": 30846,
+      "sha256": "39b1d676fe050f72a575a7effe35143e8f00bf93b6adcde6c2f308774ab8431c"
     },
     {
       "id": "baku",
@@ -3251,8 +3346,13 @@
         "farVisible": 14,
         "draws": 6,
         "triangles": 38643,
-        "url": "/assets/environments/trees/tree-small-02.glb",
-        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
+        "url": "/assets/environments/trees/tree-small-02.glb?v=87fee78dc710aed0ff008de7b4c3e9ec45bb8d10da93300c1516ceac76f05a3a",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb?v=f2d22737f142cf282abc149a23d019205b4511aeabef9badcbfe7ff1a3a5ec5a"
+      },
+      "water": {
+        "reflection": "shared-venue-environment",
+        "extraTextures": 0,
+        "extraRenderPasses": 0
       },
       "crowd": {
         "textured": 0,
@@ -3368,8 +3468,8 @@
         }
       ],
       "path": "/assets/circuits/previews/baku.webp",
-      "bytes": 32148,
-      "sha256": "5c15859c62e5f4b030fcf0fa82222a7db08130158b188ec3852a29f960f03a48"
+      "bytes": 32098,
+      "sha256": "cad37cb3da4543ba27307e43ac623bca6ec45efefea30e8f2dc78229aa3a80b0"
     },
     {
       "id": "sepang",
@@ -3419,8 +3519,13 @@
         "farVisible": 0,
         "draws": 0,
         "triangles": 0,
-        "url": "/assets/environments/trees/tree-small-02.glb",
-        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
+        "url": "/assets/environments/trees/tree-small-02.glb?v=87fee78dc710aed0ff008de7b4c3e9ec45bb8d10da93300c1516ceac76f05a3a",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb?v=f2d22737f142cf282abc149a23d019205b4511aeabef9badcbfe7ff1a3a5ec5a"
+      },
+      "water": {
+        "reflection": "shared-venue-environment",
+        "extraTextures": 0,
+        "extraRenderPasses": 0
       },
       "crowd": {
         "textured": 0,
@@ -3536,8 +3641,8 @@
         }
       ],
       "path": "/assets/circuits/previews/sepang.webp",
-      "bytes": 48766,
-      "sha256": "d1e453737277e6aaf413795299fe7559e54ef2e0a62c9aa4cda75adebf2b6e64"
+      "bytes": 50186,
+      "sha256": "9d2b1acd1a7538fa16a5a7912087b70e885d979c11d93d322fd476b3e51ce108"
     },
     {
       "id": "singapore",
@@ -3587,8 +3692,13 @@
         "farVisible": 29,
         "draws": 6,
         "triangles": 47237,
-        "url": "/assets/environments/trees/tree-small-02.glb",
-        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
+        "url": "/assets/environments/trees/tree-small-02.glb?v=87fee78dc710aed0ff008de7b4c3e9ec45bb8d10da93300c1516ceac76f05a3a",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb?v=f2d22737f142cf282abc149a23d019205b4511aeabef9badcbfe7ff1a3a5ec5a"
+      },
+      "water": {
+        "reflection": "shared-venue-environment",
+        "extraTextures": 0,
+        "extraRenderPasses": 0
       },
       "crowd": {
         "textured": 0,
@@ -3704,8 +3814,8 @@
         }
       ],
       "path": "/assets/circuits/previews/singapore.webp",
-      "bytes": 38598,
-      "sha256": "e3f0564196d11d7acbcd36ca34d42b31e336016e07002186c77e7e94b1441e71"
+      "bytes": 38896,
+      "sha256": "6a4a6de58d69725303195d99252e585bb4a95ead56003f0ebead589f11d9ae45"
     },
     {
       "id": "austin",
@@ -3755,8 +3865,13 @@
         "farVisible": 128,
         "draws": 6,
         "triangles": 179308,
-        "url": "/assets/environments/trees/tree-small-02.glb",
-        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
+        "url": "/assets/environments/trees/tree-small-02.glb?v=87fee78dc710aed0ff008de7b4c3e9ec45bb8d10da93300c1516ceac76f05a3a",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb?v=f2d22737f142cf282abc149a23d019205b4511aeabef9badcbfe7ff1a3a5ec5a"
+      },
+      "water": {
+        "reflection": "shared-venue-environment",
+        "extraTextures": 0,
+        "extraRenderPasses": 0
       },
       "crowd": {
         "textured": 0,
@@ -3872,8 +3987,8 @@
         }
       ],
       "path": "/assets/circuits/previews/austin.webp",
-      "bytes": 50094,
-      "sha256": "02b60f39f4e9a1810f63e238241f802d1ded725f6b6e7786f2b45a80adadcccb"
+      "bytes": 44222,
+      "sha256": "35625a4a63455f18f146951d730004100a28940d7e2aa5d02266716432c50425"
     },
     {
       "id": "mexico",
@@ -3923,8 +4038,13 @@
         "farVisible": 33,
         "draws": 6,
         "triangles": 56066,
-        "url": "/assets/environments/trees/tree-small-02.glb",
-        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
+        "url": "/assets/environments/trees/tree-small-02.glb?v=87fee78dc710aed0ff008de7b4c3e9ec45bb8d10da93300c1516ceac76f05a3a",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb?v=f2d22737f142cf282abc149a23d019205b4511aeabef9badcbfe7ff1a3a5ec5a"
+      },
+      "water": {
+        "reflection": "shared-venue-environment",
+        "extraTextures": 0,
+        "extraRenderPasses": 0
       },
       "crowd": {
         "textured": 0,
@@ -4040,8 +4160,8 @@
         }
       ],
       "path": "/assets/circuits/previews/mexico.webp",
-      "bytes": 44996,
-      "sha256": "5f9c15fb54d740560218517f8a87302a487c395268487570d0bab4aef87d7ef5"
+      "bytes": 45012,
+      "sha256": "61fd1f8d110abb00df513117ad18bfe9b05bebe8375d8b1fcc82ad22a5f4b747"
     },
     {
       "id": "interlagos",
@@ -4091,8 +4211,13 @@
         "farVisible": 128,
         "draws": 6,
         "triangles": 179308,
-        "url": "/assets/environments/trees/tree-small-02.glb",
-        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
+        "url": "/assets/environments/trees/tree-small-02.glb?v=87fee78dc710aed0ff008de7b4c3e9ec45bb8d10da93300c1516ceac76f05a3a",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb?v=f2d22737f142cf282abc149a23d019205b4511aeabef9badcbfe7ff1a3a5ec5a"
+      },
+      "water": {
+        "reflection": "shared-venue-environment",
+        "extraTextures": 0,
+        "extraRenderPasses": 0
       },
       "crowd": {
         "textured": 0,
@@ -4208,8 +4333,8 @@
         }
       ],
       "path": "/assets/circuits/previews/interlagos.webp",
-      "bytes": 48198,
-      "sha256": "13fd3fdf63e88af7cbb0ed5ff2292bb7d00e687523a726b7b19fde4337e61e8b"
+      "bytes": 43744,
+      "sha256": "e3016e8602dee554cf61da3c0544a4dd036ee83a30e4731c9a370b3021a0f0b5"
     },
     {
       "id": "lasvegas",
@@ -4259,8 +4384,13 @@
         "farVisible": 30,
         "draws": 6,
         "triangles": 58476,
-        "url": "/assets/environments/trees/tree-small-02.glb",
-        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
+        "url": "/assets/environments/trees/tree-small-02.glb?v=87fee78dc710aed0ff008de7b4c3e9ec45bb8d10da93300c1516ceac76f05a3a",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb?v=f2d22737f142cf282abc149a23d019205b4511aeabef9badcbfe7ff1a3a5ec5a"
+      },
+      "water": {
+        "reflection": "shared-venue-environment",
+        "extraTextures": 0,
+        "extraRenderPasses": 0
       },
       "crowd": {
         "textured": 0,
@@ -4376,8 +4506,8 @@
         }
       ],
       "path": "/assets/circuits/previews/lasvegas.webp",
-      "bytes": 26932,
-      "sha256": "941ee3cbef3c13182297b3b0b9b818d34136b336352a1a4224ee341f76b4741e"
+      "bytes": 26952,
+      "sha256": "bcc70bbb544ebdd2d04f7caf2f5741a4649d60a3c6182a6d61ba1ee7aa51a812"
     },
     {
       "id": "lusail",
@@ -4427,8 +4557,13 @@
         "farVisible": 0,
         "draws": 0,
         "triangles": 0,
-        "url": "/assets/environments/trees/tree-small-02.glb",
-        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
+        "url": "/assets/environments/trees/tree-small-02.glb?v=87fee78dc710aed0ff008de7b4c3e9ec45bb8d10da93300c1516ceac76f05a3a",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb?v=f2d22737f142cf282abc149a23d019205b4511aeabef9badcbfe7ff1a3a5ec5a"
+      },
+      "water": {
+        "reflection": "shared-venue-environment",
+        "extraTextures": 0,
+        "extraRenderPasses": 0
       },
       "crowd": {
         "textured": 0,
@@ -4595,8 +4730,13 @@
         "farVisible": 26,
         "draws": 6,
         "triangles": 49647,
-        "url": "/assets/environments/trees/tree-small-02.glb",
-        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
+        "url": "/assets/environments/trees/tree-small-02.glb?v=87fee78dc710aed0ff008de7b4c3e9ec45bb8d10da93300c1516ceac76f05a3a",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb?v=f2d22737f142cf282abc149a23d019205b4511aeabef9badcbfe7ff1a3a5ec5a"
+      },
+      "water": {
+        "reflection": "shared-venue-environment",
+        "extraTextures": 0,
+        "extraRenderPasses": 0
       },
       "crowd": {
         "textured": 0,
@@ -4712,8 +4852,8 @@
         }
       ],
       "path": "/assets/circuits/previews/yasmarina.webp",
-      "bytes": 45628,
-      "sha256": "e475eebe9835ea91f8baa0a5a09bd8562ee01187e8f76ebce6b170e5e4f57858"
+      "bytes": 45568,
+      "sha256": "c49822a7a58ad9d1f7742a5cd6a5d67a11edea4f4a988cce35391ba6751aee43"
     },
     {
       "id": "sakhir",
@@ -4763,8 +4903,13 @@
         "farVisible": 0,
         "draws": 0,
         "triangles": 0,
-        "url": "/assets/environments/trees/tree-small-02.glb",
-        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
+        "url": "/assets/environments/trees/tree-small-02.glb?v=87fee78dc710aed0ff008de7b4c3e9ec45bb8d10da93300c1516ceac76f05a3a",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb?v=f2d22737f142cf282abc149a23d019205b4511aeabef9badcbfe7ff1a3a5ec5a"
+      },
+      "water": {
+        "reflection": "shared-venue-environment",
+        "extraTextures": 0,
+        "extraRenderPasses": 0
       },
       "crowd": {
         "textured": 0,
@@ -4931,8 +5076,13 @@
         "farVisible": 0,
         "draws": 0,
         "triangles": 0,
-        "url": "/assets/environments/trees/tree-small-02.glb",
-        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
+        "url": "/assets/environments/trees/tree-small-02.glb?v=87fee78dc710aed0ff008de7b4c3e9ec45bb8d10da93300c1516ceac76f05a3a",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb?v=f2d22737f142cf282abc149a23d019205b4511aeabef9badcbfe7ff1a3a5ec5a"
+      },
+      "water": {
+        "reflection": "shared-venue-environment",
+        "extraTextures": 0,
+        "extraRenderPasses": 0
       },
       "crowd": {
         "textured": 0,
@@ -5048,8 +5198,8 @@
         }
       ],
       "path": "/assets/circuits/previews/jeddah.webp",
-      "bytes": 41842,
-      "sha256": "77aa90f237fad88a3b6607b8c8ec5040362333ce603a7c0b5e97af74110d8058"
+      "bytes": 42330,
+      "sha256": "8b56f732c7b6fe31392d4f656a4927b0c41e0e2f43e1a470c3b29b7dda1397e1"
     },
     {
       "id": "breakwater",
@@ -5099,8 +5249,13 @@
         "farVisible": 0,
         "draws": 0,
         "triangles": 0,
-        "url": "/assets/environments/trees/tree-small-02.glb",
-        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
+        "url": "/assets/environments/trees/tree-small-02.glb?v=87fee78dc710aed0ff008de7b4c3e9ec45bb8d10da93300c1516ceac76f05a3a",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb?v=f2d22737f142cf282abc149a23d019205b4511aeabef9badcbfe7ff1a3a5ec5a"
+      },
+      "water": {
+        "reflection": "shared-venue-environment",
+        "extraTextures": 0,
+        "extraRenderPasses": 0
       },
       "crowd": {
         "textured": 0,
@@ -5216,8 +5371,8 @@
         }
       ],
       "path": "/assets/circuits/previews/breakwater.webp",
-      "bytes": 30744,
-      "sha256": "808e8da27066a1f2f367cbe14d60885481fac20082cc27c4f78a097b2f5b0faf"
+      "bytes": 33224,
+      "sha256": "7cb97012877c2155395c7c13a9560181eb2f0f37cc477338b66e0e74c64ed085"
     },
     {
       "id": "copper-canyon",
@@ -5267,8 +5422,13 @@
         "farVisible": 0,
         "draws": 0,
         "triangles": 0,
-        "url": "/assets/environments/trees/tree-small-02.glb",
-        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
+        "url": "/assets/environments/trees/tree-small-02.glb?v=87fee78dc710aed0ff008de7b4c3e9ec45bb8d10da93300c1516ceac76f05a3a",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb?v=f2d22737f142cf282abc149a23d019205b4511aeabef9badcbfe7ff1a3a5ec5a"
+      },
+      "water": {
+        "reflection": "shared-venue-environment",
+        "extraTextures": 0,
+        "extraRenderPasses": 0
       },
       "crowd": {
         "textured": 0,
@@ -5435,8 +5595,13 @@
         "farVisible": 0,
         "draws": 0,
         "triangles": 0,
-        "url": "/assets/environments/trees/tree-small-02.glb",
-        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
+        "url": "/assets/environments/trees/tree-small-02.glb?v=87fee78dc710aed0ff008de7b4c3e9ec45bb8d10da93300c1516ceac76f05a3a",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb?v=f2d22737f142cf282abc149a23d019205b4511aeabef9badcbfe7ff1a3a5ec5a"
+      },
+      "water": {
+        "reflection": "shared-venue-environment",
+        "extraTextures": 0,
+        "extraRenderPasses": 0
       },
       "crowd": {
         "textured": 0,
@@ -5603,8 +5768,13 @@
         "farVisible": 26,
         "draws": 6,
         "triangles": 54808,
-        "url": "/assets/environments/trees/tree-small-02.glb",
-        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
+        "url": "/assets/environments/trees/tree-small-02.glb?v=87fee78dc710aed0ff008de7b4c3e9ec45bb8d10da93300c1516ceac76f05a3a",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb?v=f2d22737f142cf282abc149a23d019205b4511aeabef9badcbfe7ff1a3a5ec5a"
+      },
+      "water": {
+        "reflection": "shared-venue-environment",
+        "extraTextures": 0,
+        "extraRenderPasses": 0
       },
       "crowd": {
         "textured": 0,
@@ -5720,8 +5890,8 @@
         }
       ],
       "path": "/assets/circuits/previews/neon-freight.webp",
-      "bytes": 41360,
-      "sha256": "ee5ad787a1a7f4cf5f199542ff3c8611bb53463ca4349361e7acf827be13ccdb"
+      "bytes": 41070,
+      "sha256": "2d2f1e36f70d19527d314b32cace08f3d2311fe5c53f85e8256959abe60a8535"
     },
     {
       "id": "fuji-skyline",
@@ -5771,8 +5941,13 @@
         "farVisible": 128,
         "draws": 6,
         "triangles": 179308,
-        "url": "/assets/environments/trees/tree-small-02.glb",
-        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
+        "url": "/assets/environments/trees/tree-small-02.glb?v=87fee78dc710aed0ff008de7b4c3e9ec45bb8d10da93300c1516ceac76f05a3a",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb?v=f2d22737f142cf282abc149a23d019205b4511aeabef9badcbfe7ff1a3a5ec5a"
+      },
+      "water": {
+        "reflection": "shared-venue-environment",
+        "extraTextures": 0,
+        "extraRenderPasses": 0
       },
       "crowd": {
         "textured": 0,
@@ -5888,8 +6063,8 @@
         }
       ],
       "path": "/assets/circuits/previews/fuji-skyline.webp",
-      "bytes": 37812,
-      "sha256": "c25a883fe29efe5e02b6a07bec8db9363b3e3d0006f0f87c987892d3b330bbc9"
+      "bytes": 35104,
+      "sha256": "cf55d0086b068356d1072da19bd2133f12e3a15026beb63c37b8475a8f80dde4"
     },
     {
       "id": "singapore-afterdark",
@@ -5939,8 +6114,13 @@
         "farVisible": 27,
         "draws": 6,
         "triangles": 60886,
-        "url": "/assets/environments/trees/tree-small-02.glb",
-        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
+        "url": "/assets/environments/trees/tree-small-02.glb?v=87fee78dc710aed0ff008de7b4c3e9ec45bb8d10da93300c1516ceac76f05a3a",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb?v=f2d22737f142cf282abc149a23d019205b4511aeabef9badcbfe7ff1a3a5ec5a"
+      },
+      "water": {
+        "reflection": "shared-venue-environment",
+        "extraTextures": 0,
+        "extraRenderPasses": 0
       },
       "crowd": {
         "textured": 0,
@@ -6056,8 +6236,8 @@
         }
       ],
       "path": "/assets/circuits/previews/singapore-afterdark.webp",
-      "bytes": 37526,
-      "sha256": "f8fba53392ab4139fd48374a7f3a1dc1bab327aa1015e00ebfde4037810133d6"
+      "bytes": 37568,
+      "sha256": "be2fefb192235c245668f879257cbee08cee125a240c3a512d6681f14bad06af"
     },
     {
       "id": "norway-fjord",
@@ -6107,8 +6287,13 @@
         "farVisible": 0,
         "draws": 0,
         "triangles": 0,
-        "url": "/assets/environments/trees/tree-small-02.glb",
-        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
+        "url": "/assets/environments/trees/tree-small-02.glb?v=87fee78dc710aed0ff008de7b4c3e9ec45bb8d10da93300c1516ceac76f05a3a",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb?v=f2d22737f142cf282abc149a23d019205b4511aeabef9badcbfe7ff1a3a5ec5a"
+      },
+      "water": {
+        "reflection": "shared-venue-environment",
+        "extraTextures": 0,
+        "extraRenderPasses": 0
       },
       "crowd": {
         "textured": 0,
@@ -6275,8 +6460,13 @@
         "farVisible": 128,
         "draws": 6,
         "triangles": 179308,
-        "url": "/assets/environments/trees/tree-small-02.glb",
-        "farUrl": "/assets/environments/trees/tree-small-02-far.glb"
+        "url": "/assets/environments/trees/tree-small-02.glb?v=87fee78dc710aed0ff008de7b4c3e9ec45bb8d10da93300c1516ceac76f05a3a",
+        "farUrl": "/assets/environments/trees/tree-small-02-far.glb?v=f2d22737f142cf282abc149a23d019205b4511aeabef9badcbfe7ff1a3a5ec5a"
+      },
+      "water": {
+        "reflection": "shared-venue-environment",
+        "extraTextures": 0,
+        "extraRenderPasses": 0
       },
       "crowd": {
         "textured": 0,
@@ -6392,8 +6582,8 @@
         }
       ],
       "path": "/assets/circuits/previews/san-francisco-hills.webp",
-      "bytes": 30346,
-      "sha256": "2be1df098acc7d4bea90ab6e0c209020aba79ee33035fb6271b69ab5af3f5c56"
+      "bytes": 28274,
+      "sha256": "3bd5d4bf3af93fddacd635b7a23b4a647b208c698ef32cbd3a90f86c3c9420d6"
     }
   ]
 }

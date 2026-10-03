@@ -3,17 +3,29 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {SCANNED_TREE_VARIANTS} from './scanned-tree-manifest.js';
 
 export const SCANNED_TREE_BUDGET=Object.freeze({mobile:8,desktop:12,mobileDistance:100,desktopDistance:145,mobileFar:64,desktopFar:128,mobileFarDistance:430,desktopFarDistance:620,draws:6});
+// Tree Small 02 is a spreading small broadleaf, about 4.8m high with a 3.2m
+// crown radius. Tall legacy tree slots must not stretch its branches and leaf
+// sprays into columns. Fit within the existing footprint, allowing at most
+// about 1.6x vertical exaggeration of the scanned species' proportions.
+export const SCANNED_TREE_SHAPE=Object.freeze({maxHeightToRadius:2.35});
 function release(root){const geometries=new Set(),materials=new Set(),textures=new Set();root?.traverse(o=>{if(!o.isMesh)return;geometries.add(o.geometry);for(const m of [o.material].flat()){materials.add(m);for(const v of Object.values(m))if(v?.isTexture)textures.add(v);}});for(const g of geometries)g.dispose();for(const m of materials)m.dispose();for(const t of textures){t.dispose();t.image?.close?.();}}
 
 // Two fixed instanced tiers share reduced scan geometry. Hidden fallback
 // instances are compacted out of the draw count, not merely scaled to zero.
 export function createScannedTrees(scene,candidates,fallbackGroups,{low=false,load,groundAt,enabled=typeof window!=='undefined',timeoutMs=20000}={}){
  const group=new THREE.Group();group.name='scanned-near-trees';scene.add(group);
- const rootOffsets=new Map();candidates=candidates.map(p=>{const y=groundAt?groundAt(p.x,p.z):p.y;rootOffsets.set(p.treeId,y-p.y);return {...p,y};});
+ const placements=new Map();candidates=candidates.map(p=>{
+  const y=groundAt?groundAt(p.x,p.z):p.y,height=Math.min(p.height,p.radius*SCANNED_TREE_SHAPE.maxHeightToRadius);
+  placements.set(p.treeId,{fromY:p.y,y,heightScale:height/p.height});return {...p,y,height};
+ });
  const tiers=[{key:low?'mobile':'desktop',capacity:low?SCANNED_TREE_BUDGET.mobile:SCANNED_TREE_BUDGET.desktop,distance:low?SCANNED_TREE_BUDGET.mobileDistance:SCANNED_TREE_BUDGET.desktopDistance,meshes:[]},{key:low?'mobileFar':'desktopFar',capacity:low?SCANNED_TREE_BUDGET.mobileFar:SCANNED_TREE_BUDGET.desktopFar,distance:low?SCANNED_TREE_BUDGET.mobileFarDistance:SCANNED_TREE_BUDGET.desktopFarDistance,meshes:[]}];
- for(const tier of tiers){tier.variant=SCANNED_TREE_VARIANTS[tier.key];tier.url='/assets/environments/trees/'+tier.variant.file;}
+ for(const tier of tiers){tier.variant=SCANNED_TREE_VARIANTS[tier.key];tier.url='/assets/environments/trees/'+tier.variant.file+'?v='+tier.variant.sha256;}
  const status={state:enabled&&candidates.length?'loading':'disabled',capacity:tiers[0].capacity,farCapacity:tiers[1].capacity,candidates:candidates.length,forestCandidates:candidates.filter(p=>p.treeId>=10000).length,visible:0,farVisible:0,draws:0,triangles:0,url:tiers[0].url,farUrl:tiers[1].url},fallbacks=[],dummy=new THREE.Object3D();
- for(const fallback of fallbackGroups)fallback?.traverse(mesh=>{if(!mesh.isInstancedMesh)return;const items=[];for(const [index,id]of (mesh.userData.treeIds||[]).entries()){const matrix=new THREE.Matrix4();mesh.getMatrixAt(index,matrix);matrix.elements[13]+=rootOffsets.get(id)||0;mesh.setMatrixAt(index,matrix);items.push({id,matrix});}if(items.length){mesh.instanceMatrix.needsUpdate=true;fallbacks.push({mesh,items});}});
+ for(const fallback of fallbackGroups)fallback?.traverse(mesh=>{if(!mesh.isInstancedMesh)return;const items=[];for(const [index,id]of (mesh.userData.treeIds||[]).entries()){
+  const matrix=new THREE.Matrix4();mesh.getMatrixAt(index,matrix);const placement=placements.get(id);
+  if(placement){const e=matrix.elements;for(const axis of [1,5,9])e[axis]*=placement.heightScale;e[13]=placement.y+(e[13]-placement.fromY)*placement.heightScale;}
+  mesh.setMatrixAt(index,matrix);items.push({id,matrix});
+ }if(items.length){mesh.instanceMatrix.needsUpdate=true;fallbacks.push({mesh,items});}});
  const controller=new AbortController(),roots=new Set(),releasedRoots=new WeakSet();const free=root=>{if(root&&!releasedRoots.has(root)){releasedRoots.add(root);release(root);}};let disposed=false,next=0,selected=new Set(),nearSelected=new Set(),lastPosition=null;
  const fallbackSelection=hidden=>{for(const {mesh,items}of fallbacks){let count=0;for(const item of items)if(!hidden.has(item.id))mesh.setMatrixAt(count++,item.matrix);mesh.count=count;mesh.instanceMatrix.needsUpdate=true;}};
  const select=(time,position,force=false)=>{

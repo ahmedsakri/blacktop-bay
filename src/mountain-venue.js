@@ -6,6 +6,7 @@ import {coastalGroundingLayout} from './coastal-foundations.js';
 import {coastalDistrictHeight} from './venue-groundworks.js';
 import {setWorldSurfaceUV} from './track-surface-materials.js';
 import {erodedMountainGeometry} from './terrain-landscape.js';
+import {createWaterSurfaceMaterial} from './water-surface.js';
 
 export const DESTINATION_PROFILES = Object.freeze({
   'fuji-skyline': {background:'#8daebf',fog:'#aebdc0',fogDensity:.00065,sky:'#d6e7ef',sun:'#fff1d9',sunlight:1.5,ground:'#546749',vegetation:'woodland',towers:0},
@@ -23,7 +24,7 @@ export function destinationHouseLayout(track,{landmarks=[]}={}){
 }
 
 /** Original mesh scenery, including load-bearing viaduct piers and real ramps. */
-export function createMountainVenue(scene, track, {low=false,landmarks=[],surfaces,groundHeight}={}) {
+export function createMountainVenue(scene, track, {low=false,landmarks=[],surfaces,groundHeight,waterMaterial}={}) {
   if (!track.elevationProfile) return;
   const group=new THREE.Group();group.name=`destination-${track.id}`;scene.add(group);
   const concrete=new THREE.MeshStandardMaterial({color:'#8f9690',roughness:.85,map:surfaces?.concreteColor||null,normalMap:surfaces?.concreteNormal||null,normalScale:new THREE.Vector2(.18,.18)});
@@ -84,7 +85,7 @@ export function createMountainVenue(scene, track, {low=false,landmarks=[],surfac
     for(let i=0;i<10;i++){const a=i/10*Math.PI*2,x=Math.cos(a)*610,z=Math.sin(a)*530;
       const height=130+(i%3)*55;mesh(new THREE.ConeGeometry(120,height,7,3),stone,x,height/2-10,z);
       if(i%2===0)mesh(new THREE.ConeGeometry(32,height*.27,7),snow,x,height*.86-10,z);}
-    const lake=new THREE.Mesh(new THREE.CircleGeometry(95,48),new THREE.MeshPhysicalMaterial({color:'#336374',metalness:.35,roughness:.2,clearcoat:1}));lake.rotation.x=-Math.PI/2;lake.position.set(25,.05,25);group.add(lake);
+    const lake=new THREE.Mesh(new THREE.CircleGeometry(95,48),waterMaterial||createWaterSurfaceMaterial({environment:'parkland'}).material);lake.rotation.x=-Math.PI/2;lake.position.set(25,.05,25);group.add(lake);
   }
   if(track.id==='san-francisco-hills'){
     const houseMaterials=['#d2b29b','#c4c9bc','#b8a7c4','#899fa9'].map(color=>new THREE.MeshStandardMaterial({color,roughness:.9}));

@@ -17,6 +17,7 @@ import { createCinematicBackdrop, CINEMATIC_BACKDROP_GLSL } from './cinematic-ba
 import {venueLighting} from './showcase-lighting.js';
 import {createEnvironmentResource} from './environment-resource.js';
 import {addWorldGroundDetail} from './terrain-surface.js';
+import {createWaterSurfaceMaterial} from './water-surface.js';
 import {createTrackSurfaceLibrary,roadSurfaceMaterial,concreteSurfaceMaterial,pavingSurfaceMaterial,foliageSurfaceMaterial,barrierProfileGeometry,architecturalFacadeMaterial} from './track-surface-materials.js';
 import {createCoastalDistrict,coastalGroundAt,createDistrictParcels,createRoadVerge,createInlandRelief} from './venue-groundworks.js';
 import {createArchitecturalDetails,createTerrainRelief,createRoadEdgeDetails,streetscapeLayout,createWaterfrontGrounding,restrainedPavementMaterial,createAccessRailGeometry} from './track-world-detail.js';
@@ -209,23 +210,10 @@ export function createWorld(renderer, { low = false, reducedMotion = false } = {
  });
  environment.rebuild();scene.environmentIntensity=venue.environmentIntensity??.72;
  backdrop.ready.then(ready=>{if(ready)environment.rebuild();}).catch(()=>{/* Context restoration retries the owned environment resource. */});
- const sea = new THREE.Mesh(new THREE.PlaneGeometry(3000, 3000), new THREE.ShaderMaterial({ uniforms: { time: { value: 0 } }, vertexShader: 'varying vec3 p;void main(){vec4 w=modelMatrix*vec4(position,1.);p=w.xyz;gl_Position=projectionMatrix*viewMatrix*w;}', fragmentShader: `${noiseGLSL}
- varying vec3 p;uniform float time;
- float heightAt(vec2 p){return sin(dot(p,vec2(.43,.31))+time*.45)*.12+sin(dot(p,vec2(-.7,.29))-time*.57)*.075+sin(dot(p,vec2(.21,1.1))+time*.67)*.034+(fbm(p*.75+vec2(time*.04,-time*.05))-.45)*.13;}
- void main(){
-  vec2 q=p.xz;float h=heightAt(q);vec3 normal=normalize(vec3((h-heightAt(q+vec2(.16,0)))*2.3,1.,(h-heightAt(q+vec2(0,.16)))*2.3));
-  vec3 view=normalize(cameraPosition-p),r=reflect(-view,normal);float fresnel=pow(1.-max(0.,dot(view,normal)),3.);
-  vec3 reflected=mix(vec3(.045,.065,.11),vec3(.009,.027,.058),smoothstep(0.,.48,r.y));
-  float facing=pow(max(0.,dot(normalize(r.xz),normalize(vec2(-.8,.65)))),18.);
-  reflected+=vec3(.32,.095,.023)*facing*exp(-abs(r.y-.045)*9.);
-  float sparkle=pow(max(0.,dot(r,normalize(vec3(-.8,.11,.65)))),120.)*(.45+noise21(q*3.1)*.55);
-  vec3 color=mix(vec3(.005,.021,.034),reflected,fresnel*.8+.1)+vec3(1.,.51,.17)*sparkle*.60;
-  color+=vec3(.014,.04,.060)*smoothstep(.035,.17,h)*(.25+fbm(q*.16)*.5);
-  float distanceToCamera=length(cameraPosition-p);color=mix(color,vec3(.044,.063,.098),1.-exp(-distanceToCamera*.00075));
-  gl_FragColor=vec4(color,1.);
-  #include <tonemapping_fragment>
-  #include <colorspace_fragment>
- }` })); sea.rotation.x = -Math.PI / 2; sea.position.y = -.65; sea.visible=venue.water; scene.add(sea);
+ const waterSurface=createWaterSurfaceMaterial(venue);
+ const sea=new THREE.Mesh(new THREE.PlaneGeometry(3000,3000),waterSurface.material);
+ sea.name='venue-water';sea.rotation.x=-Math.PI/2;sea.position.y=-.65;sea.visible=venue.water;scene.add(sea);
+ scene.userData.waterSurface=waterSurface.material.userData.waterSurface;
 
  const base = new THREE.Mesh(roadGeometry(TRACK.width + 11), new THREE.MeshStandardMaterial({ color: venue.environment==='desert'?'#736855':'#303a43', roughness: .9 })); base.position.y = -.10; scene.add(base);
  if(TRACK.scenery==='breakwater'){
@@ -606,7 +594,7 @@ export function createWorld(renderer, { low = false, reducedMotion = false } = {
   const nameboard = new THREE.Mesh(new THREE.PlaneGeometry(28, 3.5), new THREE.MeshBasicMaterial({ map: identity }));nameboard.rotation.y = Math.PI / 2;nameboard.position.set(-18.80, 6.65, 0);paddock.add(nameboard);
  }
  // Three synchronized twin-lamp columns use the existing countdown hook.
- createMountainVenue(scene, TRACK, {low,landmarks:showcaseSites,surfaces:surfaces.maps,groundHeight:coastalDistrict?(x,z)=>coastalGroundAt(coastalDistrict,x,z):undefined});
+ createMountainVenue(scene, TRACK, {low,waterMaterial:waterSurface.material,landmarks:showcaseSites,surfaces:surfaces.maps,groundHeight:coastalDistrict?(x,z)=>coastalGroundAt(coastalDistrict,x,z):undefined});
  createShowcaseVenue(scene,TRACK,{low,stands:standLayouts,crowd,rng:crowdRng,surfaces:surfaces.maps});
  const lampHousing = new THREE.Mesh(new THREE.BoxGeometry(3.55, 1.13, .42), metal); lampHousing.position.set(0, 5.83, -.08); finishArch.add(lampHousing);
  const startLights = [];
@@ -624,5 +612,5 @@ export function createWorld(renderer, { low = false, reducedMotion = false } = {
  const detail=createDistanceDetail(scene,{low});scene.userData.distanceDetail=detail.stats;
  let motionTime=0,lastWorldTime=null;
  return { scene, reflection, sun, startLights, backdrop, surfaces,trees,disposeCrowd:()=>crowd.dispose?.(),disposeSurfaceTextures:()=>{surfaces.dispose();trees.dispose();planting.dispose();},rebuildEnvironment:environment.rebuild,disposeEnvironment:environment.dispose, setQuality:settings=>detail.setQuality(settings), update(time, car, motion = {}) {
- const dt=lastWorldTime===null?0:Math.max(0,Math.min(.1,time-lastWorldTime));lastWorldTime=time;if(!motion.paused&&!(motion.reducedMotion??reducedMotion))motionTime+=dt;detail.update(time,car);trees.update(time,car);planting.update(time,car); backdrop.update(time,{reducedMotion:motion.reducedMotion??reducedMotion});fallbackRidge.material.opacity=1-backdrop.uniforms.cinematicAmount.value;fallbackRidge.visible=fallbackRidge.material.opacity>.001;crowd.update(time, car, motion); landmarks.update(time,{paused:motion.paused,reducedMotion:motion.reducedMotion??reducedMotion}); sea.material.uniforms.time.value = motionTime; boat.position.y = -.8 + Math.sin(motionTime * .7) * .065; if (car) { sun.position.set(car.x - 150,venue.sunHeight+(car.y||0),car.z + 130); sun.target.position.set(car.x, car.y||0, car.z); } } };
+ const dt=lastWorldTime===null?0:Math.max(0,Math.min(.1,time-lastWorldTime));lastWorldTime=time;if(!motion.paused&&!(motion.reducedMotion??reducedMotion))motionTime+=dt;detail.update(time,car);trees.update(time,car);planting.update(time,car); backdrop.update(time,{reducedMotion:motion.reducedMotion??reducedMotion});fallbackRidge.material.opacity=1-backdrop.uniforms.cinematicAmount.value;fallbackRidge.visible=fallbackRidge.material.opacity>.001;crowd.update(time, car, motion); landmarks.update(time,{paused:motion.paused,reducedMotion:motion.reducedMotion??reducedMotion}); waterSurface.setTime(motionTime); boat.position.y = -.8 + Math.sin(motionTime * .7) * .065; if (car) { sun.position.set(car.x - 150,venue.sunHeight+(car.y||0),car.z + 130); sun.target.position.set(car.x, car.y||0, car.z); } } };
 }

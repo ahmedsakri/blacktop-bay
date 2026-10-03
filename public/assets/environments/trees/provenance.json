@@ -35,93 +35,269 @@
       "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/tree_small_02/tree_small_02_nor_gl_1k.jpg",
       "md5": "115a20da8621cd3e034e9b1bbe574746",
       "size": 1228646
+    },
+    {
+      "file": "textures/tree_small_02_leaves_diff_1k.jpg",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/tree_small_02/tree_small_02_leaves_diff_1k.jpg",
+      "md5": "315cbc2cebfb399e649ccd39112c109a",
+      "size": 340003
     }
   ],
-  "changes": "Scanned trunk/branches simplified with attribute-weighted error cap; original canopy distribution sampled into textured leaf sprays. Original source geometry not redistributed.",
+  "changes": "Scanned trunk/branches simplified with attribute-weighted error cap; original canopy distribution sampled into crossed cutout clusters baked from the original tree leaf meshes and photograph. High-resolution input geometry is not shipped.",
   "variants": {
     "mobile": {
       "file": "tree-small-02-mobile.glb",
       "triangles": 2481,
       "primitives": 3,
-      "bytes": 390936,
-      "sha256": "77f97472edf73d6ba2e520e6cde65b5dff65594445555590b9706abb3a5e55f9",
+      "bytes": 518532,
+      "sha256": "a993b0d8145419ca0cba3d3a4b1de8ebc46df5313bec5d5475c226dcf2d7b6e6",
       "minY": -0.024031998589634895,
-      "height": 4.845494629815221,
-      "radius": 3.2645277900855576,
+      "height": 4.950847985222936,
+      "radius": 3.2326379947291115,
       "leafSprays": 180,
+      "canopyCards": 360,
+      "canopyAtlasGrid": 4,
       "maxRelativeError": 0.005728180054575205
     },
     "desktop": {
       "file": "tree-small-02.glb",
       "triangles": 5161,
       "primitives": 3,
-      "bytes": 1128112,
-      "sha256": "3dd82ec0810752ac2f03fe1e607e8958b27d89862637614372912e3bf8b108a2",
+      "bytes": 1286196,
+      "sha256": "87fee78dc710aed0ff008de7b4c3e9ec45bb8d10da93300c1516ceac76f05a3a",
       "minY": -0.024031998589634895,
-      "height": 4.757522942498326,
-      "radius": 3.139286814369621,
+      "height": 4.834372403100133,
+      "radius": 3.11734689198799,
       "leafSprays": 340,
+      "canopyCards": 680,
+      "canopyAtlasGrid": 4,
       "maxRelativeError": 0.0037161570508033037
     },
     "mobileFar": {
       "file": "tree-small-02-far-mobile.glb",
       "triangles": 586,
       "primitives": 3,
-      "bytes": 55540,
-      "sha256": "1aa8ddad1c1622714f9fe3edfd15da49b4bdbd5ee6a43b86930ef8281f3387df",
+      "bytes": 65484,
+      "sha256": "37ec807c1d855f39c3ab65f4576abb839cfe9800f4a53bc7b153279679aae31d",
       "minY": -0.022265257313847542,
-      "height": 4.753713907673955,
-      "radius": 3.522453235574418,
+      "height": 5.210821928456426,
+      "radius": 3.501108565853519,
       "leafSprays": 48,
+      "canopyCards": 96,
+      "canopyAtlasGrid": 2,
       "maxRelativeError": 0.013514033518731594
     },
     "desktopFar": {
       "file": "tree-small-02-far.glb",
       "triangles": 917,
       "primitives": 3,
-      "bytes": 137704,
-      "sha256": "fb0b2f8c15435ce62a87b207646b580a52f0aa7b11cde7a196f7c0cd5981bc2c",
+      "bytes": 160020,
+      "sha256": "f2d22737f142cf282abc149a23d019205b4511aeabef9badcbfe7ff1a3a5ec5a",
       "minY": -0.024031998589634895,
-      "height": 4.682838322594762,
-      "radius": 3.4311239887390492,
+      "height": 5.092588784173131,
+      "radius": 3.364508258783898,
       "leafSprays": 80,
+      "canopyCards": 160,
+      "canopyAtlasGrid": 2,
       "maxRelativeError": 0.01040109246969223
     }
   },
   "canopyPhotograph": {
-    "asset": "https://polyhaven.com/a/potted_plant_02",
+    "asset": "https://polyhaven.com/a/tree_small_02",
     "author": "Rico Cilliers",
     "license": "CC0-1.0",
-    "derivativeRecord": "../surfaces/provenance.json",
     "inputFiles": [
       {
-        "file": "foliage-leaf.webp",
-        "sha256": "25b6d1f6cf8a12cae96af5be6d72bb23b6242b7e6f2b0dd6aec327eafd3666f8",
-        "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/potted_plant_02/potted_plant_02_leaves_diff_1k.jpg",
-        "sourceMD5": "e8a026bd7bfa6497729d855c59da03ce",
-        "alphaSource": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/potted_plant_02/potted_plant_02_leaves_alpha_1k.jpg",
-        "alphaSourceMD5": "f7a94b00b6094b55c59712c2145c6c97",
-        "crop": {
-          "left": 27,
-          "top": 0,
-          "width": 421,
-          "height": 642
-        }
-      },
-      {
-        "file": "foliage-leaf-mobile.webp",
-        "sha256": "44989e116a34d4d4346a4b853f4909c36f8893c5c5b46006c3bf69560d3d2762",
-        "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/potted_plant_02/potted_plant_02_leaves_diff_1k.jpg",
-        "sourceMD5": "e8a026bd7bfa6497729d855c59da03ce",
-        "alphaSource": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/potted_plant_02/potted_plant_02_leaves_alpha_1k.jpg",
-        "alphaSourceMD5": "f7a94b00b6094b55c59712c2145c6c97",
-        "crop": {
-          "left": 27,
-          "top": 0,
-          "width": 421,
-          "height": 642
-        }
+        "file": "textures/tree_small_02_leaves_diff_1k.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/tree_small_02/tree_small_02_leaves_diff_1k.jpg",
+        "md5": "315cbc2cebfb399e649ccd39112c109a",
+        "size": 340003
       }
-    ]
+    ],
+    "bake": {
+      "method": "Orthographic alpha bake of complete connected leaf meshes, original UVs and diffuse photograph; paired views on crossed canopy cards",
+      "sourceComponents": 30250,
+      "sourceTriangles": 1939380,
+      "nearGrid": 4,
+      "farGrid": 2,
+      "farTiles": [
+        0,
+        3,
+        8,
+        13
+      ],
+      "clusterCenters": [
+        [
+          0.5495632559922909,
+          3.0229363176731594,
+          0.5233260813307459
+        ],
+        [
+          -0.525539032568117,
+          3.7164708466862875,
+          -0.1596551746273117
+        ],
+        [
+          -0.15345368605313603,
+          4.0326226839315344,
+          0.16920957674104567
+        ],
+        [
+          0.15718793508198367,
+          3.339180145955012,
+          -0.5017151137926135
+        ],
+        [
+          -0.47048963641619956,
+          3.6668958125763367,
+          1.2156611788171712
+        ],
+        [
+          -0.2130573445562258,
+          4.035499956567702,
+          0.8716728992969117
+        ],
+        [
+          1.1970526276633529,
+          3.2445943539046915,
+          -0.49902837782157733
+        ],
+        [
+          0.861584277671416,
+          2.9833231660984767,
+          0.12258495378596934
+        ]
+      ],
+      "tiles": [
+        {
+          "cluster": 0,
+          "side": 0,
+          "sourceComponents": 994,
+          "sourceTriangles": 67410,
+          "diameter": 0.6568812974799259,
+          "alphaCoverage": 0.3659820556640625
+        },
+        {
+          "cluster": 0,
+          "side": 1,
+          "sourceComponents": 994,
+          "sourceTriangles": 67410,
+          "diameter": 0.6568812974799259,
+          "alphaCoverage": 0.3235015869140625
+        },
+        {
+          "cluster": 1,
+          "side": 0,
+          "sourceComponents": 983,
+          "sourceTriangles": 67135,
+          "diameter": 0.6994232968778998,
+          "alphaCoverage": 0.250274658203125
+        },
+        {
+          "cluster": 1,
+          "side": 1,
+          "sourceComponents": 983,
+          "sourceTriangles": 67135,
+          "diameter": 0.6994232968778998,
+          "alphaCoverage": 0.2333526611328125
+        },
+        {
+          "cluster": 2,
+          "side": 0,
+          "sourceComponents": 922,
+          "sourceTriangles": 63586,
+          "diameter": 0.732343385724903,
+          "alphaCoverage": 0.2676239013671875
+        },
+        {
+          "cluster": 2,
+          "side": 1,
+          "sourceComponents": 922,
+          "sourceTriangles": 63586,
+          "diameter": 0.732343385724903,
+          "alphaCoverage": 0.29010009765625
+        },
+        {
+          "cluster": 3,
+          "side": 0,
+          "sourceComponents": 678,
+          "sourceTriangles": 47203,
+          "diameter": 0.7208041581156499,
+          "alphaCoverage": 0.2381744384765625
+        },
+        {
+          "cluster": 3,
+          "side": 1,
+          "sourceComponents": 678,
+          "sourceTriangles": 47203,
+          "diameter": 0.7208041581156499,
+          "alphaCoverage": 0.205322265625
+        },
+        {
+          "cluster": 4,
+          "side": 0,
+          "sourceComponents": 718,
+          "sourceTriangles": 46249,
+          "diameter": 0.6621075884737767,
+          "alphaCoverage": 0.2132415771484375
+        },
+        {
+          "cluster": 4,
+          "side": 1,
+          "sourceComponents": 718,
+          "sourceTriangles": 46249,
+          "diameter": 0.6621075884737767,
+          "alphaCoverage": 0.2627716064453125
+        },
+        {
+          "cluster": 5,
+          "side": 0,
+          "sourceComponents": 643,
+          "sourceTriangles": 45445,
+          "diameter": 0.7152892974185184,
+          "alphaCoverage": 0.2343902587890625
+        },
+        {
+          "cluster": 5,
+          "side": 1,
+          "sourceComponents": 643,
+          "sourceTriangles": 45445,
+          "diameter": 0.7152892974185184,
+          "alphaCoverage": 0.24993896484375
+        },
+        {
+          "cluster": 6,
+          "side": 0,
+          "sourceComponents": 491,
+          "sourceTriangles": 33702,
+          "diameter": 0.6534794338610578,
+          "alphaCoverage": 0.1943359375
+        },
+        {
+          "cluster": 6,
+          "side": 1,
+          "sourceComponents": 491,
+          "sourceTriangles": 33702,
+          "diameter": 0.6534794338610578,
+          "alphaCoverage": 0.1709747314453125
+        },
+        {
+          "cluster": 7,
+          "side": 0,
+          "sourceComponents": 438,
+          "sourceTriangles": 29295,
+          "diameter": 0.6204356854578048,
+          "alphaCoverage": 0.1858978271484375
+        },
+        {
+          "cluster": 7,
+          "side": 1,
+          "sourceComponents": 438,
+          "sourceTriangles": 29295,
+          "diameter": 0.6204356854578048,
+          "alphaCoverage": 0.176910400390625
+        }
+      ]
+    }
   }
 }
