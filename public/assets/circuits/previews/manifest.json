@@ -9,7 +9,7 @@
     540
   ],
   "quality": 0.78,
-  "totalBytes": 1776194,
+  "totalBytes": 1777406,
   "entries": [
     {
       "id": "harbor",
@@ -3127,10 +3127,6 @@
       ]
     },
     {
-      "id": "singapore-afterdark",
-      "path": "/assets/circuits/previews/singapore-afterdark.webp",
-      "bytes": 36562,
-      "sha256": "05101cf231595d91048c4dd92bf66cd945559b004c40ab4ccbba1a839cab0f0e",
       "sector": 0.13,
       "camera": {
         "position": [
@@ -3213,7 +3209,11 @@
           "gpuRedMean": 21.03521728515625,
           "gpuRedStdDev": 5.015361410193434
         }
-      ]
+      ],
+      "id": "singapore-afterdark",
+      "path": "/assets/circuits/previews/singapore-afterdark.webp",
+      "bytes": 37774,
+      "sha256": "d467d38e8a0e5358e36bc8518a3241c70635b183fd82b3d93d38058783724648"
     },
     {
       "id": "norway-fjord",

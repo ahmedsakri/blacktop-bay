@@ -3,7 +3,7 @@
 ## Delivered behavior
 
 - Neutral garage, softer HDR reflections, actual-wheel contact shadows and rubber microdetail on verified tyre materials; authored liveries/glass and physics remain unchanged.
-- All 38 circuits have a unique 960×540 WebP captured from the actual game renderer. Preview set is 1,776,194 bytes; only selected lobby artwork is loaded there. Route shapes are brighter; “Change circuit” is explicit. The circuit browser uses these same real scenes.
+- All 38 circuits have a unique 960×540 WebP captured from the actual game renderer. Preview set is 1,777,406 bytes; only selected lobby artwork is loaded there. Route shapes are brighter; “Change circuit” is explicit. The circuit browser uses these same real scenes.
 - The installed-upgrade count opens the selected car's workshop. A real local purchase was checked: credit deduction, installed count, performance update and reload persistence.
 - Race, Time attack and Tour are directly available in lower navigation beside Career and Circuits. Duplicate mode cards are removed from settings. Settings now focus on difficulty or solo targets/ghosts, while Tour continuation remains accessible. Opening/closing settings preserves a selected career event; actually changing difficulty explicitly leaves that event. A single race action remains prominent.
 - Goals show actual objective, saved progress and the actual next unlock. Completed career flows into selected-car mastery, then circuit browsing. No invented currency reward. Closing a goal returns focus to the goal button.
@@ -23,6 +23,8 @@ A tiny-landscape inherited style initially hid both circuit labels; overridden a
 A real game route was entered and countdown/pause/recovery navigation checked. Background automation triggered the game's long-interruption pause, so this is not represented as a sustained race or physical-device performance test. iPhone/iPad sensor accuracy, heat and endurance were not remeasured in this release.
 
 Final browser audio rendering: 33 cars / 15 active banks, all finite; maximum peak 0.556661, maximum RMS ratio 0.945421 relative to the revised synthesis-only baseline. Correct bank mapping, bounded voices/cache/fetches and silent pause tails passed. New source loops reproduce their recorded hashes.
+
+The first complete deployment gate passed 1,055 of 1,056 tests and correctly stopped publication on the Singapore key-light range check. Its override was restored from 0.68 to the established metropolitan 0.84 value, retaining the new night palette, fog and fill. The actual desktop renderer and Singapore preview were refreshed; the other 37 preview hashes were preserved. The existing test limit was not relaxed.
 
 Full release-gate results and production verification are appended after deployment.
 

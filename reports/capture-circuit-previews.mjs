@@ -1,7 +1,7 @@
 // Local-only receiver for the actual WebGL review fixture. It is not part of
 // the production build and accepts no arbitrary destination paths or track IDs.
 import http from 'node:http';
-import {mkdir,writeFile} from 'node:fs/promises';
+import {mkdir,readFile,writeFile} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 import {resolve} from 'node:path';
 import {TRACKS} from '../src/track.js';
@@ -9,6 +9,21 @@ import {TRACKS} from '../src/track.js';
 const root=resolve(import.meta.dirname,'../public/assets/circuits/previews');
 const valid=new Set(TRACKS.map(t=>t.id)),captures=new Map(),origin='http://127.0.0.1:4197';
 await mkdir(root,{recursive:true});
+// Recapturing one route must retain every other image and manifest entry.
+// Verify the existing catalogue before accepting new writes; fail loudly on a
+// stale hash, duplicate ID or unexpected path instead of silently dropping it.
+let previous=null;
+try{previous=JSON.parse(await readFile(resolve(root,'manifest.json'),'utf8'));}catch(error){if(error.code!=='ENOENT')throw error;}
+if(previous){
+ for(const entry of previous.entries||[]){
+  if(!valid.has(entry.id)||captures.has(entry.id)||entry.path!==`/assets/circuits/previews/${entry.id}.webp`)throw new Error('Invalid existing preview manifest entry');
+  const bytes=await readFile(resolve(root,`${entry.id}.webp`));
+  if(bytes.length!==entry.bytes||createHash('sha256').update(bytes).digest('hex')!==entry.sha256)throw new Error(`Existing preview hash mismatch: ${entry.id}`);
+  captures.set(entry.id,entry);
+ }
+ console.log(`Preserved ${captures.size} verified existing preview entries`);
+}
+
 const server=http.createServer(async(req,res)=>{
  if(req.headers.origin!==origin){res.writeHead(403);res.end('Local fixture origin required');return;}
  res.setHeader('Access-Control-Allow-Origin',origin);res.setHeader('Vary','Origin');
@@ -27,7 +42,7 @@ const server=http.createServer(async(req,res)=>{
    const p=metadata.camera?.position,q=metadata.camera?.quaternion;
    if(!Array.isArray(p)||p.length!==3||!p.every(Number.isFinite)||!Array.isArray(q)||q.length!==4||!q.every(Number.isFinite))throw new Error('Actual camera pose required');
    await writeFile(resolve(root,`${id}.webp`),bytes);
-   captures.set(id,{id,path:`/assets/circuits/previews/${id}.webp`,bytes:bytes.length,sha256:createHash('sha256').update(bytes).digest('hex'),...metadata});
+   captures.set(id,{...metadata,id,path:`/assets/circuits/previews/${id}.webp`,bytes:bytes.length,sha256:createHash('sha256').update(bytes).digest('hex')});
    const entries=TRACKS.filter(t=>captures.has(t.id)).map(t=>captures.get(t.id));
    await writeFile(resolve(root,'manifest.json'),JSON.stringify({version:1,source:'Camber Reign actual createWorld WebGL renderer',fixture:'reports/track-world-review.html',captureMethod:'CUA-controlled local browser canvas WebP export',license:'Original project-generated scene imagery; licensed source surfaces retain public/assets/environments/surfaces/provenance.json',dimensions:[960,540],quality:.78,totalBytes:entries.reduce((sum,e)=>sum+e.bytes,0),entries},null,2)+'\n');
    res.writeHead(200,{'Content-Type':'application/json'});res.end(JSON.stringify({id,bytes:bytes.length,complete:captures.size,total:TRACKS.length}));
