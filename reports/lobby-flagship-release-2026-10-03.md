@@ -26,7 +26,13 @@ Final browser audio rendering: 33 cars / 15 active banks, all finite; maximum pe
 
 The first complete deployment gate passed 1,055 of 1,056 tests and correctly stopped publication on the Singapore key-light range check. Its override was restored from 0.68 to the established metropolitan 0.84 value, retaining the new night palette, fog and fill. The actual desktop renderer and Singapore preview were refreshed; the other 37 preview hashes were preserved. The existing test limit was not relaxed.
 
-Full release-gate results and production verification are appended after deployment.
+## Released and verified
+
+- Source release `8d8aa7a` is pushed to GitHub `main` and deployed to Firebase Hosting site `camber-reign` in project `echo-heist` using the authorized account.
+- Mandatory full suite: **1,056/1,056 passed**, zero failures/skips/cancellations, 308.1 seconds. The production build completed in 1.21 seconds. Vite retains its non-blocking large-chunk warning; this is not a measured mobile-performance result.
+- Live verification at `2026-10-03T08:49:26Z`: homepage, guide, five compiled JS/CSS assets, preview manifest, all three flagship previews and both new audio banks returned HTTP 200 and matched the local production build byte-for-byte (13 resources).
+- A fresh production browser tab loaded the real McLaren P1 GTR lobby, selected circuit scene, direct workshop count, actual First light objective and five-choice navigation with no captured browser warnings/errors. The live phone-width controls displayed Enable Gyroscope, Recenter Gyroscope and the corrected explanatory copy. Closing the panel returned focus to Controls and sound.
+- Local browser fixtures, receivers and temporary review servers/tabs were stopped. User-owned local servers and browser tabs were preserved. Physical sensor permissions were not requested during this wording check.
 
 ## Limits
 
