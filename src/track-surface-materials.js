@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-// Nine shared maps, resident once per world. Mobile uses half-resolution files;
+// Shared maps, resident once per world. Mobile uses half-resolution files;
 // colour maps are sRGB, while normal/roughness data remains linear.
 export const TRACK_SURFACE_MAPS = Object.freeze({
   asphaltColor: {file:'asphalt-color',size:1024,color:true,fallback:'#575958'},
@@ -12,6 +12,8 @@ export const TRACK_SURFACE_MAPS = Object.freeze({
   pavingNormal: {file:'paving-normal',size:512,fallback:'#8080ff'},
   foliageLeaf: {file:'foliage-leaf',size:512,color:true,fallback:'#91a17a'},
   terrainColor: {file:'terrain-color',size:1024,color:true,fallback:'#8a8777'},
+  groundDetailColor: {file:'ground-detail-color',size:1024,color:true,fallback:'#808080'},
+  groundDetailNormal: {file:'ground-detail-normal',size:1024,fallback:'#8080ff'},
 });
 
 function browserImage(url) {

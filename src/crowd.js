@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import {CHARACTER_LIMITS} from './spectator-character.js';
 import {createNearSpectator, createSpectatorLibrary, SPECTATOR_ASSETS} from './realistic-spectator.js';
 import {createMediumCrowd,MEDIUM_CROWD_BUDGET,FAR_CROWD_BUDGET} from './medium-spectator.js';
-import {SPECTATOR_GESTURES,SPECTATOR_GESTURE_WEIGHTS} from './spectator-motion-config.js';
+import {SPECTATOR_GESTURES,SPECTATOR_GESTURE_WEIGHTS,SPECTATOR_SEAT_HEIGHT} from './spectator-motion-config.js';
 
 const TAU = Math.PI * 2;
 const SHIRTS = ['#e7e4db', '#f5c444', '#9e392f', '#486e92', '#425c51', '#303d58', '#ad8171', '#826893', '#cbd2cf', '#3c3547'];
@@ -20,7 +20,7 @@ const pick = (items, rng) => items[Math.floor(rng() * items.length)];
 // the skull: heads must not become the oversized balls of the former crowd.
 export function spectatorProfile(x, floor, z, yaw, seated, rng = Math.random) {
  return {
-  x, floor, z, yaw, seated, height: .91 + rng() * .17, width: .91 + rng() * .18,
+  x, floor, z, yaw, seated, seatHeight:SPECTATOR_SEAT_HEIGHT, height: .91 + rng() * .17, width: .91 + rng() * .18,
   shirt: pick(SHIRTS, rng), skin: pick(SKIN, rng), hair: pick(HAIR, rng), pants: pick(TROUSERS, rng),
   phase: rng() * TAU, tempo: .72 + rng() * .53, gesture: pick(SPECTATOR_GESTURE_WEIGHTS,rng),
   cap: rng() < .20, longHair: rng() < .24, sunglasses: rng() < .24,
@@ -367,13 +367,14 @@ export function createCrowd({low = false, reducedMotion = false, spectatorLibrar
 
  }
  return {
-  add(x,floor,z,yaw,seated,rng=Math.random,{role='spectator',palette,gesture}={}){
+  add(x,floor,z,yaw,seated,rng=Math.random,{role='spectator',palette,gesture,seatHeight=SPECTATOR_SEAT_HEIGHT}={}){
    if(scene)throw new Error('Add spectators before rendering the crowd');
    const person=spectatorProfile(x,floor,z,yaw,seated,rng);
    person.lookVariant=people.length%SPECTATOR_ASSETS.length;
    // The distant palette echoes the textured foreground wardrobes, reducing
    // colour popping at the bounded near-mesh transition.
    Object.assign(person,SPECTATOR_ASSETS[person.lookVariant]);
+   person.seatHeight=Number.isFinite(seatHeight)?THREE.MathUtils.clamp(seatHeight,.3,.6):SPECTATOR_SEAT_HEIGHT;
    person.cap=false;person.sunglasses=false;person.scarf=false;
    if(Array.isArray(palette)&&palette.length&&palette.every(value=>/^#[a-f0-9]{6}$/i.test(value)))person.shirt=pick(palette,rng);
    if(Number.isInteger(gesture)&&gesture>=0&&gesture<SPECTATOR_GESTURES.length)person.gesture=gesture;

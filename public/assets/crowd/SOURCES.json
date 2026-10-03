@@ -136,7 +136,7 @@
       {
         "file": "spectator-blue-shirt-motion.bin",
         "bytes": 488448,
-        "sha256": "0c6db5e9da10c7769afca382803f2da1b050a22232f5e3a2243870b2b70107fa",
+        "sha256": "962e107653ffd6998bbfde47534fdb28e7411ec2db6968e309d8e7efbf4db5eb",
         "framesPerClip": 24,
         "clips": 16,
         "format": "RGBA16F affine bone rows; 3 texels per joint"
@@ -160,7 +160,7 @@
       {
         "file": "spectator-light-tee-motion.bin",
         "bytes": 488448,
-        "sha256": "bf3da3ed55a0ce8f3838650d4d1d1e26b85d5d4cde062c58ac2fc31c385e3a86",
+        "sha256": "e5528efaa687b3b4b4fb3a7b2cabd2ec545b3b99c9d70176d58c68042a33cb9e",
         "framesPerClip": 24,
         "clips": 16,
         "format": "RGBA16F affine bone rows; 3 texels per joint"
@@ -184,7 +184,7 @@
       {
         "file": "spectator-striped-shirt-motion.bin",
         "bytes": 488448,
-        "sha256": "c6b59ff00a4cf677e67eeede40be1ad08174a9ac8142eb2c4bedcf74f1433959",
+        "sha256": "752be90a3b480bdc6932e0b9df04018ae69110b86b76346a332a1c42ce4f0748",
         "framesPerClip": 24,
         "clips": 16,
         "format": "RGBA16F affine bone rows; 3 texels per joint"
@@ -208,7 +208,7 @@
       {
         "file": "spectator-olive-jacket-motion.bin",
         "bytes": 488448,
-        "sha256": "3941b42f993ed43df0406e2c6917e266d1b8eda439b12bc3344c97317cb98745",
+        "sha256": "4893b2b6e84b630bdcf1f40abbf483d0ecf22bcd2465aec31dc32adb700a718d",
         "framesPerClip": 24,
         "clips": 16,
         "format": "RGBA16F affine bone rows; 3 texels per joint"
@@ -232,7 +232,7 @@
       {
         "file": "spectator-wine-blouse-motion.bin",
         "bytes": 488448,
-        "sha256": "1a87673441f3b58257c2c402f1a0518c0d3b5c27be54c7031681cfade7adb7e6",
+        "sha256": "9bf963fd626b51b5112b11a1e845f0d573db975c32251c2a5258b3146781bc64",
         "framesPerClip": 24,
         "clips": 16,
         "format": "RGBA16F affine bone rows; 3 texels per joint"
@@ -256,7 +256,7 @@
       {
         "file": "spectator-sport-motion.bin",
         "bytes": 488448,
-        "sha256": "077a482e6e4fe8ddbed1268c2d468ef51ef009a82167c8ac3567fc28f63834f4",
+        "sha256": "94281786938609801bfd1bad784791a2d840205eb36ef20622e498e8a8e4c6ca",
         "framesPerClip": 24,
         "clips": 16,
         "format": "RGBA16F affine bone rows; 3 texels per joint"

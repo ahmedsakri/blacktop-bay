@@ -4,7 +4,7 @@ export const MOUNTAIN_CIRCUITS = [{
   id: 'fuji-skyline', name: 'Fuji Skyline', region: 'Japan', country: 'Japan',
   environment: 'parkland', scenery: 'fuji-skyline', series: 'original',
   layoutKind: 'original', width: 18, difficulty: 'Technical',
-  description: 'Climb from the cherry-lined lake to an elevated mountain viaduct. Two optional launch ramps reward a clean approach.',
+  description: 'Climb from the wooded lakeshore to an elevated mountain viaduct. Two optional launch ramps reward a clean approach.',
   points: [[-260,-210],[-120,-220],[45,-205],[190,-172],[285,-90],[310,35],
     [252,120],[150,145],[90,95],[135,30],[220,15],[255,60],[205,100],
     [120,65],[25,18],[-65,52],[-18,120],[60,172],[20,242],[-90,270],

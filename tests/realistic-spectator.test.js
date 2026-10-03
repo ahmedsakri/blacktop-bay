@@ -62,6 +62,35 @@ test('palms ease through gesture activation while weight shifts keep feet plante
  character.dispose();
 });
 
+test('actual shoe soles stay on the row floor and seated pelvises follow chair height at both body scales',()=>{
+ const point=new THREE.Vector3();
+ for(const [index,source] of sources.entries()){
+  const character=createTexturedSpectator(source),asset=SPECTATOR_ASSETS[index],shoes=[];
+  character.mesh.traverse(object=>{
+   if(!object.isSkinnedMesh)return;
+   const {position,skinIndex,skinWeight}=object.geometry.attributes;
+   for(let vertex=0;vertex<position.count;vertex++){
+    let footWeight=0;
+    for(let slot=0;slot<4;slot++)if(/^(foot|ball)_[lr]$/.test(object.skeleton.bones[skinIndex.array[vertex*4+slot]].name))footWeight+=skinWeight.array[vertex*4+slot];
+    if(footWeight>.75)shoes.push({object,vertex});
+   }
+  });
+  assert.ok(shoes.length>20,'measure the actual weighted shoe mesh');
+  for(const height of [.91,1.08])for(const seated of [false,true])for(const seatHeight of [.39,.455])for(const gesture of [0,3,5,7])for(const time of [.1,3.7]){
+   const person={...spectatorProfile(7,2.3,-4,.7,seated,()=>.5),...asset,height,width:1,seatHeight,gesture};
+   character.update(person,spectatorPose(person,time,.8));
+   let sole=Infinity;
+   for(const {object,vertex} of shoes){object.getVertexPosition(vertex,point).applyMatrix4(object.matrixWorld);sole=Math.min(sole,point.y-person.floor);}
+   assert.ok(sole>-.008&&sole<.018,`${asset.id}: ${seated?'seated':'standing'} sole ${sole} must contact its row`);
+   if(seated){
+    const hip=character.mesh.getObjectByName('pelvis').getWorldPosition(point).y;
+    assert.ok(Math.abs(hip-person.floor-seatHeight-asset.seatHipOffset*height)<.00001,'human stature must not move the pelvis away from the fixed chair top');
+   }
+  }
+  character.dispose();
+ }
+});
+
 test('asset library deduplicates loads, caps decodes and disposes late responses without reviving a race',async()=>{
  const pending=[],loaded=[];let active=0,max=0;
  const library=createSpectatorLibrary({enabled:true,load:url=>new Promise(resolve=>{active++;max=Math.max(max,active);pending.push(()=>{active--;const scene=new THREE.Group();const geometry=new THREE.BoxGeometry();const material=new THREE.MeshStandardMaterial();scene.add(new THREE.Mesh(geometry,material));let disposed=0;geometry.addEventListener('dispose',()=>disposed++);loaded.push(()=>disposed);resolve({scene});});})});

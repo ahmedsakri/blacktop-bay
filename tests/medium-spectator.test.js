@@ -145,3 +145,44 @@ test('dense crowds obey the far-person cap without exposing primitive bodies aft
  const far=scene.children.filter(mesh=>mesh.name==='race-spectators-textured-far');const triangles=far.reduce((n,mesh)=>n+mesh.count*mesh.geometry.index.count/3,0);assert.ok(triangles<=FAR_CROWD_BUDGET.mobile*FAR_CROWD_BUDGET.maxTriangles);
  crowd.dispose();assert.equal(scene.children.length,0);
 });
+
+test('baked middle/far shoe vertices remain grounded at both stature and chair heights',()=>{
+ const bone=new THREE.Matrix4(),point=new THREE.Vector3(),weighted=new THREE.Vector3(),input=new THREE.Vector3(),placement=new THREE.Matrix4();
+ for(const [index,fixture] of fixtures.entries())for(const [tier,geometry] of [['medium',fixture.geometry],['far',fixture.farGeometry]]){
+  const variant=createMediumVariant(fixture.source,geometry,fixture.palette,{capacity:1,tier}),floats=Float32Array.from(fixture.palette,THREE.DataUtils.fromHalfFloat);
+  let skeleton;geometry.traverse(object=>{if(object.isSkinnedMesh)skeleton=object.skeleton;});
+  const shoeVertices=variant.meshes.map(mesh=>{
+   const {position,crowdJoints,crowdWeights}=mesh.geometry.attributes,vertices=[];
+   for(let vertex=0;vertex<position.count;vertex++){
+    let weight=0;
+    for(let slot=0;slot<4;slot++)if(/^(foot|ball)_[lr]$/.test(skeleton.bones[crowdJoints.array[vertex*4+slot]].name))weight+=crowdWeights.array[vertex*4+slot];
+    if(weight>.75)vertices.push(vertex);
+   }
+   return vertices;
+  });
+  assert.ok(shoeVertices.flat().length>8,'the low-detail mesh retains actual shoe support vertices');
+  for(const height of [.91,1.08])for(const seated of [false,true])for(const seatHeight of [.39,.455])for(const gesture of [0,5])for(const time of [.1,2.7]){
+   const person={...spectatorProfile(3,2.3,-8,.7,seated,()=>.5),...SPECTATOR_ASSETS[index],height,width:1,seatHeight,gesture};
+   variant.update([person],time);let sole=Infinity;
+   for(const [part,mesh] of variant.meshes.entries()){
+    const {position,crowdJoints,crowdWeights,crowdFrames}=mesh.geometry.attributes,frames=crowdFrames.array;mesh.getMatrixAt(0,placement);
+    for(const vertex of shoeVertices[part]){
+     input.fromBufferAttribute(position,vertex);weighted.set(0,0,0);
+     for(let influence=0;influence<4;influence++)for(let endpoint=0;endpoint<2;endpoint++){
+      const joint=crowdJoints.array[vertex*4+influence],weight=crowdWeights.array[vertex*4+influence]*(endpoint?frames[2]:1-frames[2]);
+      const offset=(frames[endpoint]*CROWD_MOTION.bones+joint)*CROWD_MOTION.matrixElements;bone.set(...floats.subarray(offset,offset+12),0,0,0,1);
+      point.copy(input).applyMatrix4(bone);weighted.addScaledVector(point,weight);
+     }
+     weighted.y+=frames[3]*THREE.MathUtils.smoothstep(weighted.y,.09,.42);
+     weighted.applyMatrix4(placement);sole=Math.min(sole,weighted.y-person.floor);
+    }
+   }
+   // The 770-triangle far mesh shares the middle palette; decimation can move
+   // its shoe edge by up to 18mm. Keep that bounded without adding a second
+   // motion texture, while requiring tighter contact for the middle mesh.
+   const tolerance=tier==='far'?.025:.008;
+   assert.ok(Math.abs(sole)<tolerance,`${SPECTATOR_ASSETS[index].id} ${tier} ${seated?'seated':'standing'} sole ${sole} must contact the floor`);
+  }
+  variant.dispose();
+ }
+});

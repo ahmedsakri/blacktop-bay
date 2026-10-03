@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {sampleTrack,projectOnTrack} from './track.js';
 import {setWorldSurfaceUV,pavingSurfaceMaterial} from './track-surface-materials.js';
+import {appendTerrainOutskirts} from './terrain-landscape.js';
 
 export function coastalDistrictHeight(track,x,z){
  const p=projectOnTrack(x,z,undefined,track),f=p.s/track.length;
@@ -127,14 +128,22 @@ export function createRoadVerge(scene,track,venue,{low=false,surfaces={}}={}){
 // Rolling inland ground is one shared surface. Flat pads around structures
 // blend into the landscape, avoiding isolated circular mounds on a flat floor.
 export function createInlandRelief(scene,track,venue,{low=false,occupied=[],map}={}){
- const xs=track.samples.map(p=>p.x),zs=track.samples.map(p=>p.z),minX=Math.min(...xs)-100,maxX=Math.max(...xs)+100,minZ=Math.min(...zs)-100,maxZ=Math.max(...zs)+100;
- const area=(maxX-minX)*(maxZ-minZ),step=Math.max(low?18:12,Math.sqrt(area/(low?3300:7600))),nx=Math.ceil((maxX-minX)/step),nz=Math.ceil((maxZ-minZ)/step),dx=(maxX-minX)/nx,dz=(maxZ-minZ)/nz,guard=Math.hypot(dx,dz),positions=[],uv=[],colors=[],indices=[],tint=new THREE.Color();
+ const xs=track.samples.map(p=>p.x),zs=track.samples.map(p=>p.z),minX=Math.min(...xs)-150,maxX=Math.max(...xs)+150,minZ=Math.min(...zs)-150,maxZ=Math.max(...zs)+150;
+ const area=(maxX-minX)*(maxZ-minZ),step=Math.max(low?18:12,Math.sqrt(area/(low?2450:6400))),nx=Math.ceil((maxX-minX)/step),nz=Math.ceil((maxZ-minZ)/step),dx=(maxX-minX)/nx,dz=(maxZ-minZ)/nz,guard=Math.hypot(dx,dz),positions=[],uv=[],colors=[],indices=[],tint=new THREE.Color();
+ // Trees are grounded from this mesh after construction. Flattening a broad
+ // pad around every trunk had erased the hills across entire planted sectors.
+ const pads=occupied.filter(o=>o.kind!=='tree');
+ const hill=(x,z)=>{
+  const ridge=.5+.5*Math.sin(x*.012+z*.006+.38*Math.sin(z*.018));
+  const drainage=Math.pow(.5+.5*Math.sin(z*.031-x*.013),4);
+  return (track.id==='fuji-skyline'?28:11)*(.24+.54*ridge+.13*Math.cos(z*.021-x*.006)-.10*drainage);
+ };
  const vertices=[];
  for(let j=0;j<=nz;j++)for(let i=0;i<=nx;i++){
-  const x=minX+i*dx,z=minZ+j*dz,p=projectOnTrack(x,z,undefined,track),wave=.50+.22*Math.sin(x*.014+z*.006)+.16*Math.cos(z*.023-x*.007)+.09*Math.sin(x*.041+z*.027);
-  let amount=THREE.MathUtils.smoothstep(p.distance-track.width/2-guard,0,55);
-  for(const o of occupied)amount=Math.min(amount,THREE.MathUtils.smoothstep(Math.hypot(x-o.x,z-o.z)-(o.radius||12)-guard*.6,0,25));
-  const edge=Math.min(i*dx,(nx-i)*dx,j*dz,(nz-j)*dz),height=(track.id==='fuji-skyline'?12:6)*wave*amount*THREE.MathUtils.smoothstep(edge,0,65);
+  const x=minX+i*dx,z=minZ+j*dz,p=projectOnTrack(x,z,undefined,track);
+  let amount=THREE.MathUtils.smoothstep(p.distance-track.width/2-guard*.65,0,62);
+  for(const o of pads)amount=Math.min(amount,THREE.MathUtils.smoothstep(Math.hypot(x-o.x,z-o.z)-(o.radius||12)-guard*.6,0,18));
+  const height=hill(x,z)*amount;
   vertices.push({x,z,y:-.22+height});
  }
  // Shared vertex caps cover the whole raster cell, including between sample
@@ -144,9 +153,10 @@ export function createInlandRelief(scene,track,venue,{low=false,occupied=[],map}
   for(const p of track.samples)if(Math.hypot(p.x-x,p.z-z)<r)cap=Math.min(cap,p.y-.30);
   if(Number.isFinite(cap))for(const k of [j*(nx+1)+i,j*(nx+1)+i+1,(j+1)*(nx+1)+i,(j+1)*(nx+1)+i+1])vertices[k].y=Math.min(vertices[k].y,cap);
  }
- for(const p of vertices){positions.push(p.x,p.y,p.z);uv.push(p.x/90,p.z/90);tint.set('#b5c3a3').multiplyScalar(.86+.08*Math.sin(p.x*.019)*Math.cos(p.z*.025));colors.push(tint.r,tint.g,tint.b);}
  for(let j=0;j<nz;j++)for(let i=0;i<nx;i++){const a=j*(nx+1)+i;indices.push(a,a+nx+1,a+1,a+1,a+nx+1,a+nx+2);}
+ const grid={nx,nz,minX,minZ,dx,dz},outskirts=appendTerrainOutskirts(vertices,indices,grid,hill);
+ for(const p of vertices){positions.push(p.x,p.y,p.z);uv.push(p.x/90,p.z/90);tint.set('#b5c3a3').multiplyScalar(.86+.08*Math.sin(p.x*.019)*Math.cos(p.z*.025));colors.push(tint.r,tint.g,tint.b);}
  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));g.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));g.setIndex(indices);g.computeVertexNormals();
  const group=new THREE.Group();group.name='continuous-inland-relief';const mesh=new THREE.Mesh(g,new THREE.MeshStandardMaterial({map:map||null,color:'white',vertexColors:true,roughness:1}));mesh.receiveShadow=true;group.add(mesh);scene.add(group);
- group.userData={triangles:indices.length/3,drawCalls:1,grid:{nx,nz,minX,minZ,dx,dz},vertices,continuous:true};return group;
+ group.userData={triangles:indices.length/3,drawCalls:1,grid,vertices,continuous:true,outskirts,fixedPads:pads.length};return group;
 }

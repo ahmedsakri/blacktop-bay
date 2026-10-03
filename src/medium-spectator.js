@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import {SPECTATOR_ASSETS} from './realistic-spectator.js';
-import {SPECTATOR_GESTURES,SPECTATOR_ASSET_VERSION} from './spectator-motion-config.js';
+import {SPECTATOR_GESTURES,SPECTATOR_ASSET_VERSION,SPECTATOR_SEAT_HEIGHT} from './spectator-motion-config.js';
 
 // Shared, offline-baked human motion. Only these small palettes and the reduced
 // geometry are additional downloads: body/hair materials reuse the near atlases.
@@ -15,14 +15,18 @@ const CLOTH_TINTS=['#ffffff','#9aadb5','#a1b5a1','#b39ea9','#87989e','#b6af9c','
 export function crowdMotionFrame(person,time){
  const frame=((time*(person.tempo||1)+(person.phase||0))%CROWD_MOTION.duration)/CROWD_MOTION.duration*(CROWD_MOTION.frames-1);
  const clip=(person.seated?CROWD_MOTION.gestures:0)+person.gesture,first=Math.floor(frame);
- return [clip*CROWD_MOTION.frames+first,clip*CROWD_MOTION.frames+Math.min(first+1,CROWD_MOTION.frames-1),frame-first];
+ // The palettes use a unit-height person and the main chair. Stature must not
+ // raise/lower the seat contact, and the paddock has a lower chair. Shoes stay
+ // at the floor while the shin region accommodates this small height change.
+ const seatOffset=person.seated?(person.seatHeight??SPECTATOR_SEAT_HEIGHT)/person.height-SPECTATOR_SEAT_HEIGHT:0;
+ return [clip*CROWD_MOTION.frames+first,clip*CROWD_MOTION.frames+Math.min(first+1,CROWD_MOTION.frames-1),frame-first,seatOffset];
 }
 
 function materialForCrowd(source,texture,bindMatrix,bindMatrixInverse){
  const material=source.clone();material.userData={...source.userData,instancedHuman:true};
  material.onBeforeCompile=shader=>{
   Object.assign(shader.uniforms,{crowdPoseData:{value:texture},crowdBind:{value:bindMatrix},crowdBindInverse:{value:bindMatrixInverse}});
-  shader.vertexShader=`attribute vec4 crowdJoints; attribute vec4 crowdWeights; attribute vec3 crowdFrames;
+  shader.vertexShader=`attribute vec4 crowdJoints; attribute vec4 crowdWeights; attribute vec4 crowdFrames;
 attribute float crowdGarment; varying float vCrowdGarment;
 uniform sampler2D crowdPoseData; uniform mat4 crowdBind; uniform mat4 crowdBindInverse;
 mat4 crowdBone(float joint,float row){
@@ -33,15 +37,18 @@ mat4 crowdBone(float joint,float row){
 mat4 crowdBlend(float joint){return crowdBone(joint,crowdFrames.x)*(1.0-crowdFrames.z)+crowdBone(joint,crowdFrames.y)*crowdFrames.z;}
 `+shader.vertexShader;
   shader.vertexShader=shader.vertexShader.replace('#include <skinbase_vertex>',`mat4 crowdSkin=crowdBindInverse*(crowdBlend(crowdJoints.x)*crowdWeights.x+crowdBlend(crowdJoints.y)*crowdWeights.y+crowdBlend(crowdJoints.z)*crowdWeights.z+crowdBlend(crowdJoints.w)*crowdWeights.w)*crowdBind;`);
-  shader.vertexShader=shader.vertexShader.replace('#include <skinnormal_vertex>','objectNormal=mat3(crowdSkin)*objectNormal;');
-  shader.vertexShader=shader.vertexShader.replace('#include <skinning_vertex>','transformed=(crowdSkin*vec4(transformed,1.0)).xyz;');
+  shader.vertexShader=shader.vertexShader.replace('#include <skinnormal_vertex>',`objectNormal=mat3(crowdSkin)*objectNormal;
+float crowdSeatT=clamp(((crowdSkin*vec4(position,1.0)).y-0.09)/0.33,0.0,1.0);
+objectNormal.y/=1.0+crowdFrames.w*6.0*crowdSeatT*(1.0-crowdSeatT)/0.33;`);
+  shader.vertexShader=shader.vertexShader.replace('#include <skinning_vertex>',`transformed=(crowdSkin*vec4(transformed,1.0)).xyz;
+transformed.y+=crowdFrames.w*smoothstep(0.09,0.42,transformed.y);`);
   shader.vertexShader=shader.vertexShader.replace('#include <color_vertex>','#include <color_vertex>\nvCrowdGarment=crowdGarment;');
   shader.fragmentShader='varying float vCrowdGarment;\n'+shader.fragmentShader;
   shader.fragmentShader=shader.fragmentShader.replace('#include <color_fragment>',`#ifdef USE_INSTANCING_COLOR
 diffuseColor.rgb*=mix(vec3(1.0),vColor.rgb,clamp(vCrowdGarment,0.0,1.0));
 #endif`);
  };
- material.customProgramCacheKey=()=> 'camber-instanced-human-v4';
+ material.customProgramCacheKey=()=> 'camber-instanced-human-v5';
  return material;
 }
 
@@ -61,9 +68,9 @@ export function createMediumVariant(source,geometrySource,palette,{capacity=MEDI
   const geometry=object.geometry.clone();geometry.setAttribute('crowdJoints',geometry.attributes.skinIndex);geometry.setAttribute('crowdWeights',geometry.attributes.skinWeight);
   geometry.setAttribute('crowdGarment',geometry.attributes._crowd_garment||new THREE.Float32BufferAttribute(new Float32Array(geometry.attributes.position.count),1));geometry.deleteAttribute('_crowd_garment');
   geometry.deleteAttribute('skinIndex');geometry.deleteAttribute('skinWeight');
-  geometry.setAttribute('crowdFrames',new THREE.InstancedBufferAttribute(new Float32Array(capacity*3),3).setUsage(THREE.DynamicDrawUsage));
+  geometry.setAttribute('crowdFrames',new THREE.InstancedBufferAttribute(new Float32Array(capacity*4),4).setUsage(THREE.DynamicDrawUsage));
   const material=materialForCrowd(original,texture,object.bindMatrix.clone(),object.bindMatrixInverse.clone());
-  const mesh=new THREE.InstancedMesh(geometry,material,capacity);mesh.name=`race-spectators-textured-${tier}`;mesh.count=0;mesh.frustumCulled=false;mesh.castShadow=false;mesh.receiveShadow=false;mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);meshes.push(mesh);
+  const mesh=new THREE.InstancedMesh(geometry,material,capacity);mesh.name=`race-spectators-textured-${tier}`;mesh.count=0;mesh.frustumCulled=false;mesh.castShadow=false;mesh.receiveShadow=true;mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);meshes.push(mesh);
  });}catch(error){for(const mesh of meshes){mesh.geometry.dispose();mesh.material.dispose();}if(!sharedTexture)texture.dispose();throw error;}
  return {meshes,texture,capacity,
   update(people,time){
@@ -71,7 +78,7 @@ export function createMediumVariant(source,geometrySource,palette,{capacity=MEDI
    for(const mesh of meshes){mesh.count=Math.min(people.length,capacity);const frames=mesh.geometry.attributes.crowdFrames;
     for(let i=0;i<mesh.count;i++){
      const person=people[i];transform.position.set(person.x,person.floor,person.z);transform.rotation.set(0,person.yaw,0);transform.scale.set(person.height*person.width,person.height,person.height);transform.updateMatrix();mesh.setMatrixAt(i,transform.matrix);
-     frames.setXYZ(i,...crowdMotionFrame(person,time));
+     frames.setXYZW(i,...crowdMotionFrame(person,time));
      mesh.setColorAt(i,tint.set(CLOTH_TINTS[Math.floor(person.phase*11.37)%CLOTH_TINTS.length]));
     }
     mesh.instanceMatrix.needsUpdate=true;frames.needsUpdate=true;if(mesh.instanceColor)mesh.instanceColor.needsUpdate=true;

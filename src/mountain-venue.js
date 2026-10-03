@@ -5,6 +5,7 @@ import { getTrackObstacles } from './track-obstacles.js';
 import {coastalGroundingLayout} from './coastal-foundations.js';
 import {coastalDistrictHeight} from './venue-groundworks.js';
 import {setWorldSurfaceUV} from './track-surface-materials.js';
+import {erodedMountainGeometry} from './terrain-landscape.js';
 
 export const DESTINATION_PROFILES = Object.freeze({
   'fuji-skyline': {background:'#8daebf',fog:'#aebdc0',fogDensity:.00065,sky:'#d6e7ef',sun:'#fff1d9',sunlight:1.5,ground:'#546749',vegetation:'woodland',towers:0},
@@ -52,16 +53,11 @@ export function createMountainVenue(scene, track, {low=false,landmarks=[],surfac
     }
   }
   if(bankPositions.length){const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(bankPositions,3));g.computeVertexNormals();setWorldSurfaceUV(g,90);const bank=new THREE.Mesh(g,new THREE.MeshStandardMaterial({color:track.id==='san-francisco-hills'?'#a3a699':'#9aab89',roughness:1,map:surfaces?.terrainColor||null,side:THREE.DoubleSide}));bank.receiveShadow=true;group.add(bank);}
-  // The summit is a scene landmark with a separate snow cap, outside the route.
+  // One eroded surface joins the summit, snow line and foothills. The old close
+  // cone produced a blank triangular wall against the photographic background.
   if(track.id==='fuji-skyline') {
-  const mountain=mesh(new THREE.ConeGeometry(390,380,low?28:48,6),stone,80,170,-790);
-  const mountainPosition=mountain.geometry.attributes.position;
-  for(let i=0;i<mountainPosition.count;i++){const x=mountainPosition.getX(i),y=mountainPosition.getY(i),z=mountainPosition.getZ(i),a=Math.atan2(z,x),wave=1+.065*Math.sin(a*7+y*.025)+.03*Math.cos(a*13-y*.017);mountainPosition.setXYZ(i,x*wave,y,z*wave);}
-  mountain.geometry.computeVertexNormals();mountain.rotation.y=.12;
-  const cap=mesh(new THREE.ConeGeometry(122,118,low?28:48,3),snow,80,301,-790);
-  const capPosition=cap.geometry.attributes.position;
-  for(let i=0;i<capPosition.count;i++){const x=capPosition.getX(i),y=capPosition.getY(i),z=capPosition.getZ(i),a=Math.atan2(z,x),edge=Math.max(0,(59-y)/118),wave=1+.055*Math.sin(a*7+y*.025)+.024*Math.cos(a*13);capPosition.setXYZ(i,x*wave,y-edge*(4+4*Math.sin(a*5+.4)),z*wave);}
-  cap.geometry.computeVertexNormals();
+  const mountain=mesh(erodedMountainGeometry({low}),new THREE.MeshStandardMaterial({color:'white',vertexColors:true,map:surfaces?.terrainColor||null,roughness:1}),0,0,0);
+  mountain.name='eroded-volcanic-landform';
   // Roadside trees are supplied by the grounded shared scan tiers in world.
   }
   const steel=new THREE.MeshStandardMaterial({color:'#34455b',metalness:.72,roughness:.33});

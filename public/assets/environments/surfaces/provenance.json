@@ -1,6 +1,6 @@
 {
   "license": "https://polyhaven.com/license",
-  "derivatives": "Resized and WebP encoded from Poly Haven 1K JPG sources; foliage combines a recorded diffuse/alpha crop into an original 24-leaf spray. No generated branding or content borrowed from another game.",
+  "derivatives": "Resized and WebP encoded from the listed Poly Haven JPG sources; foliage combines a recorded diffuse/alpha crop into an original 24-leaf spray. No generated branding or content borrowed from another game.",
   "maps": [
     {
       "file": "asphalt-color.webp",
@@ -257,6 +257,66 @@
       "license": "CC0-1.0",
       "colorSpace": "sRGB",
       "usage": "24 photographed leaves assembled into original cutout spray"
+    },
+    {
+      "file": "ground-detail-color.webp",
+      "width": 1024,
+      "height": 1024,
+      "bytes": 277422,
+      "sha256": "cacf9f6b42efdf84624cdf55041e230bf8cee3c5b1cfee353ad36589748ec22b",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/4k/sparse_grass/sparse_grass_diff_4k.jpg",
+      "sourceMD5": "569f9a6a0cf566c88d281bc81f832e97",
+      "sourceSHA256": "115cdde3b995d91024859533585c2472d512679a47089d9dc17aaaa8c202f1a7",
+      "asset": "https://polyhaven.com/a/sparse_grass",
+      "author": "Amal Kumar",
+      "license": "CC0-1.0",
+      "colorSpace": "sRGB",
+      "metres": 2
+    },
+    {
+      "file": "ground-detail-color-mobile.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 63796,
+      "sha256": "0b9425ab2415d72be4d5b2b0e3758b7aa4e63e041568984f5b002a832f778771",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/4k/sparse_grass/sparse_grass_diff_4k.jpg",
+      "sourceMD5": "569f9a6a0cf566c88d281bc81f832e97",
+      "sourceSHA256": "115cdde3b995d91024859533585c2472d512679a47089d9dc17aaaa8c202f1a7",
+      "asset": "https://polyhaven.com/a/sparse_grass",
+      "author": "Amal Kumar",
+      "license": "CC0-1.0",
+      "colorSpace": "sRGB",
+      "metres": 2
+    },
+    {
+      "file": "ground-detail-normal.webp",
+      "width": 1024,
+      "height": 1024,
+      "bytes": 742976,
+      "sha256": "9a6c4e5ed1642982658c96d8fbff33992913d2792e5fca93716a174be58c976d",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/4k/sparse_grass/sparse_grass_nor_gl_4k.jpg",
+      "sourceMD5": "593823ffcf6fad3ee04e20111168d9dd",
+      "sourceSHA256": "a68f31dcffa05ce530f1206cfeb0a590f86d6903db21b8b24dbe0c2d63562ec6",
+      "asset": "https://polyhaven.com/a/sparse_grass",
+      "author": "Amal Kumar",
+      "license": "CC0-1.0",
+      "colorSpace": "linear data",
+      "metres": 2
+    },
+    {
+      "file": "ground-detail-normal-mobile.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 161214,
+      "sha256": "9b40a788af1d4828d0043c71583cec16ccde1009ba3726705bcb0b2b0172605a",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/4k/sparse_grass/sparse_grass_nor_gl_4k.jpg",
+      "sourceMD5": "593823ffcf6fad3ee04e20111168d9dd",
+      "sourceSHA256": "a68f31dcffa05ce530f1206cfeb0a590f86d6903db21b8b24dbe0c2d63562ec6",
+      "asset": "https://polyhaven.com/a/sparse_grass",
+      "author": "Amal Kumar",
+      "license": "CC0-1.0",
+      "colorSpace": "linear data",
+      "metres": 2
     }
   ]
 }

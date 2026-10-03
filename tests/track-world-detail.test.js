@@ -13,7 +13,7 @@ import {terrainReliefLayout,createTerrainRelief,streetscapeLayout,createArchitec
 
 const provenance=JSON.parse(readFileSync(new URL('../public/assets/environments/surfaces/provenance.json',import.meta.url)));
 test('all desktop/mobile surface derivatives match their source record and real WebP dimensions',()=>{
-  assert.equal(provenance.maps.length,18);
+  assert.equal(provenance.maps.length,22);
   for(const map of provenance.maps){
     const bytes=readFileSync(new URL('../public/assets/environments/surfaces/'+map.file,import.meta.url));
     assert.equal(bytes.length,map.bytes);assert.equal(createHash('sha256').update(bytes).digest('hex'),map.sha256);
@@ -28,10 +28,10 @@ test('surface library is bounded, marks data maps correctly, and retains CPU sou
   for(const low of [true,false]){
     const urls=[],library=createTrackSurfaceLibrary({low,anisotropy:16,placeholder:()=>({width:1,height:1}),loadImage:async url=>{urls.push(url);const info=provenance.maps.find(m=>url.endsWith(m.file));return {width:info.width,height:info.height};}});
     for(const [key,texture]of Object.entries(library.maps))assert.equal(texture.image.width,TRACK_SURFACE_MAPS[key].size/(low?2:1),'initial placeholder already matches immutable GPU allocation');
-    await library.ready;assert.deepEqual([library.status.loaded,library.status.failed,urls.length],[9,0,9]);
-    assert.ok(Math.abs(library.status.estimatedBytes-(low?6:24)*1024*1024)<.01);
+    await library.ready;assert.deepEqual([library.status.loaded,library.status.failed,urls.length],[11,0,11]);
+    assert.ok(Math.abs(library.status.estimatedBytes-(low?26/3:104/3)*1024*1024)<.01);
     for(const [key,texture] of Object.entries(library.maps)){assert.equal(texture.anisotropy,8);assert.equal(texture.colorSpace,TRACK_SURFACE_MAPS[key].color?THREE.SRGBColorSpace:THREE.NoColorSpace);assert.ok(texture.image.width>1);assert.equal(texture.wrapS,THREE.RepeatWrapping);}
-    let disposed=0;for(const t of Object.values(library.maps))t.addEventListener('dispose',()=>disposed++);library.dispose();library.dispose();assert.equal(disposed,9);
+    let disposed=0;for(const t of Object.values(library.maps))t.addEventListener('dispose',()=>disposed++);library.dispose();library.dispose();assert.equal(disposed,11);
   }
 });
 
@@ -39,8 +39,8 @@ test('late or failed surface loading cannot resurrect disposed textures or attac
   let resolve,closed=0;const pending=new Promise(r=>resolve=r),library=createTrackSurfaceLibrary({low:true,placeholder:()=>({width:1,height:1}),loadImage:()=>pending});
   const placeholders=Object.values(library.maps).map(t=>t.image);
   await Promise.resolve();library.dispose();resolve({width:512,height:512,close(){closed++;}});await library.ready;
-  assert.equal(library.status.loaded,0);assert.equal(closed,9);assert.ok(Object.values(library.maps).every((t,i)=>t.image===placeholders[i]));
-  const invalid=createTrackSurfaceLibrary({placeholder:()=>({width:1,height:1}),loadImage:async()=>({width:4096,height:4096,close(){}})});await invalid.ready;assert.equal(invalid.status.failed,9);assert.equal(invalid.status.loaded,0);invalid.dispose();
+  assert.equal(library.status.loaded,0);assert.equal(closed,11);assert.ok(Object.values(library.maps).every((t,i)=>t.image===placeholders[i]));
+  const invalid=createTrackSurfaceLibrary({placeholder:()=>({width:1,height:1}),loadImage:async()=>({width:4096,height:4096,close(){}})});await invalid.ready;assert.equal(invalid.status.failed,11);assert.equal(invalid.status.loaded,0);invalid.dispose();
 });
 
 test('tapered barriers retain the former collision envelope and upward caps',()=>{

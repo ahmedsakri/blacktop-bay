@@ -16,6 +16,7 @@ import {applyShowcaseSurface,createShowcaseVenue,showcaseLayout,showcaseApproach
 import { createCinematicBackdrop, CINEMATIC_BACKDROP_GLSL } from './cinematic-backdrop.js';
 import {venueLighting} from './showcase-lighting.js';
 import {createEnvironmentResource} from './environment-resource.js';
+import {addWorldGroundDetail} from './terrain-surface.js';
 import {createTrackSurfaceLibrary,roadSurfaceMaterial,concreteSurfaceMaterial,pavingSurfaceMaterial,foliageSurfaceMaterial,barrierProfileGeometry,architecturalFacadeMaterial} from './track-surface-materials.js';
 import {createCoastalDistrict,coastalGroundAt,createDistrictParcels,createRoadVerge,createInlandRelief} from './venue-groundworks.js';
 import {createArchitecturalDetails,createTerrainRelief,createRoadEdgeDetails,streetscapeLayout,createWaterfrontGrounding,restrainedPavementMaterial,createAccessRailGeometry} from './track-world-detail.js';
@@ -594,7 +595,7 @@ export function createWorld(renderer, { low = false, reducedMotion = false } = {
     seats.push({ x: x + .31, y: 1.37 + row * .75, z, sx: .10, sy: .59, sz: .90, color });
     if (crowdRng() > .13) {
      const standing = row === 6 && seat % 3 === 0, px = x - (standing ? .67 : 0);
-     crowd.add(p.x + p.nx * px + p.tx * z, .73 + row * .75, p.z + p.nz * px + p.tz * z, paddock.rotation.y - Math.PI / 2 + (crowdRng() - .5) * .2, !standing, crowdRng);
+     crowd.add(p.x + p.nx * px + p.tx * z, .73 + row * .75, p.z + p.nz * px + p.tz * z, paddock.rotation.y - Math.PI / 2 + (crowdRng() - .5) * .2, !standing, crowdRng, {seatHeight:.39});
     }
    }
   }
@@ -618,6 +619,7 @@ export function createWorld(renderer, { low = false, reducedMotion = false } = {
   }
  }
  crowd.render(scene);
+ scene.userData.groundDetail=addWorldGroundDetail(scene,surfaces.maps);
  const trees=createScannedTrees(scene,treeCandidates,treeFallbackGroups,{low,groundAt:coastalDistrict?(x,z)=>coastalGroundAt(coastalDistrict,x,z):relief.userData.grid?(x,z)=>coastalGroundAt(relief,x,z):()=>-.16});scene.userData.scannedTrees=trees.status;
  const detail=createDistanceDetail(scene,{low});scene.userData.distanceDetail=detail.stats;
  let motionTime=0,lastWorldTime=null;

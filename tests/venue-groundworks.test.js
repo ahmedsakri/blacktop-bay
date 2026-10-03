@@ -43,8 +43,30 @@ test('continuous inland relief stays below every road, grounds venue pads and re
   for(const low of [true,false]){const occupied=venueSceneryLayout(track,{low}),group=createInlandRelief(new THREE.Scene(),track,venue,{low,occupied});assert.equal(group.userData.drawCalls,1);assert.ok(group.userData.triangles<(low?7000:16000));
    isFiniteGeometry(group.children[0]);
    for(let s=0;s<track.length;s+=3){const p=sampleTrack(s,track);for(const lane of [-track.width/2,0,track.width/2])assert.ok(coastalGroundAt(group,p.x+p.nx*lane,p.z+p.nz*lane)<p.y-.15,id+' complete lane remains above terrain');}
-   for(const site of occupied)assert.ok(coastalGroundAt(group,site.x,site.z)<.01,id+' scenery pad remains at its existing ground height');
+   for(const site of occupied.filter(p=>p.kind!=='tree'))assert.ok(coastalGroundAt(group,site.x,site.z)<.01,id+' fixed scenery pad remains at its existing ground height');
+   assert.equal(group.userData.fixedPads,occupied.filter(p=>p.kind!=='tree').length,'trees follow the rendered slope instead of flattening a broad pad');
    assert.ok(Math.max(...group.userData.vertices.map(p=>p.y))>1,id+' the surface has actual coherent relief');
   }
+ }
+});
+
+test('the extended inland surface shares its complete boundary and retains flat structure pads',async()=>{
+ const {createInlandRelief}=await import('../src/venue-groundworks.js');
+ const track=getTrack('fuji-skyline'),venue=getVenueProfile(track),pad={x:track.spawn.x-65,z:track.spawn.z-55,radius:14};
+ for(const low of [true,false]){
+  const group=createInlandRelief(new THREE.Scene(),track,venue,{low,occupied:[pad]}),{grid,outskirts,vertices}=group.userData,g=group.children[0].geometry,edges=new Map();
+  assert.equal(group.children.length,1);assert.equal(outskirts.rings,4);assert.equal(outskirts.outerReach,550);
+  assert.ok(Math.max(...vertices.map(p=>p.y))>20,'real rolling hills remain beyond the road apron');
+  assert.ok(coastalGroundAt(group,pad.x,pad.z)<.01,'fixed venue footprint retains its old base');
+  group.updateMatrixWorld(true);
+  for(const tree of venueSceneryLayout(track,{low}).filter(p=>p.kind==='tree')){
+   const hit=new THREE.Raycaster(new THREE.Vector3(tree.x,100,tree.z),new THREE.Vector3(0,-1,0)).intersectObject(group,true)[0];
+   assert.ok(hit);assert.ok(Math.abs(hit.point.y-coastalGroundAt(group,tree.x,tree.z))<1e-4,'tree root sampler matches the new rendered hills');
+  }
+  for(let i=0;i<g.index.count;i+=3){const tri=[g.index.getX(i),g.index.getX(i+1),g.index.getX(i+2)];for(let j=0;j<3;j++){const edge=[tri[j],tri[(j+1)%3]].sort((a,b)=>a-b).join(':');edges.set(edge,(edges.get(edge)||0)+1);}}
+  assert.ok([...edges.values()].every(n=>n===1||n===2),'no overlapping terrain faces or non-manifold joins');
+  const open=[...edges].filter(([,n])=>n===1);assert.equal(open.length,2*(grid.nx+grid.nz),'only the outermost boundary remains open');
+  const outerFirst=vertices.length-outskirts.boundary;assert.ok(open.every(([key])=>key.split(':').every(v=>Number(v)>=outerFirst)),'the original rectangular grid edge is completely stitched');
+  assert.ok([...g.attributes.normal.array].every(Number.isFinite));
  }
 });
