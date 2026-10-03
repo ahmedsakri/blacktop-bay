@@ -24,7 +24,11 @@ The independent water review found no additional resource ownership or pause/res
 
 ## Publication
 
-Commit, push, deployment and live hash verification are recorded after the release succeeds.
+Runtime/assets published in commit `05009a5`, pushed to `origin/main`. Firebase Hosting deployment to `camber-reign` in project `echo-heist` completed successfully using the requested account. The required tests and production build passed before deployment; committed hosting configuration retains both predeploy checks.
+
+All **61 live paths matched the production build byte-for-byte**, including homepage/guide, JavaScript/CSS, the audio candidate registry, all 38 previews and manifest, tree provenance and all four SHA-versioned tree GLBs. The ignored local receipt is `reports/polish-canopy-live-hashes.json`. This confirms deployed bytes, not a new claim of complete audio authenticity or physical-device performance.
+
+The published landscape game also advanced beyond 50 seconds and 7% progress in an actual McLaren P1 GTR race. The inspected session reported no console warning/error. Screenshot: `reports/polish-canopy-live-race.png` (local, ignored). Focus emulation and viewport overrides were reset, and the temporary browser tab was closed.
 
 ## Limits
 
