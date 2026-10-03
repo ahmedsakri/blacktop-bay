@@ -16,7 +16,7 @@ Use **Save backup** to export a versioned JSON file and import it on another bro
 
 ## Find your next race
 
-The Race HQ lobby keeps your selected car on the studio floor, with its current speed, Nitro capacity and installed upgrade count. Open Garage from the top header strip beside race credits. The lower navigation switches between Circuit race, Time attack and Career, or opens Circuits. The race settings button below the circuit preview changes rival difficulty and shows medal targets or a saved tour. Changing a mode updates its own record immediately; Race Now starts the selected mode.
+The Race HQ lobby keeps your selected car on the studio floor, with its current speed, Nitro capacity and installed upgrade count. Open Garage from the top header strip beside race credits. The lower navigation selects Race, Time attack or Tour, opens Career, or browses Circuits. Race and Tour settings change difficulty; Time attack settings show targets and ghost options. Select Tour to access saved-tour continuation. Changing a mode updates its own record immediately; Race Now starts the selected mode.
 
 Choose **Garage** in the top header strip to open the full 33-car collection. Preview a car using its card or the previous/next controls, then choose **Open garage** to load and select its actual 3D model. The collection distinguishes the preview from your current car. In the garage, use **Upgrades** for performance upgrades, **Paint** for finishes, **Race** to drive or **Back** to return to the lobby. The credit balance at the top of the lobby also opens your current car’s workshop.
 

@@ -9,7 +9,7 @@
 - Goals show actual objective, saved progress and the actual next unlock. Completed career flows into selected-car mastery, then circuit browsing. No invented currency reward. Closing a goal returns focus to the goal button.
 - Nine modeled landmarks across Fuji Skyline, San Francisco Hills and Singapore Afterdark, finished garden/terrace sites, supported access walks and gaps only in decorative outer railings. Solid race barriers and progression are unchanged. Singapore's broad ground no longer magnifies repeating wall stains.
 - GranTurismo S and S63 AMG recordings replace unrelated Mustang-family substitutions; source identities and limitations appear in public credits. All 33 cars use 15 active recording banks (16 bundled, one legacy bank unassigned).
-- Initial samples were rejected by the user as harsh/synthetic. The revision makes recordings more prominent, reduces procedural harmonics/turbine, narrows pitch variation, smooths shifts and softens Nitro. New samples were offered for listening; subjective acceptance is not inferred from numeric checks.
+- Initial samples were rejected by the user as harsh/synthetic. The revision makes recordings more prominent, reduces procedural harmonics/turbine, narrows pitch variation, smooths shifts and softens Nitro. The user approved the revised samples: “Yes, this sounds better.” That acceptance is based on the explicit listening reply, not the numeric checks.
 - Player-facing “Tilt” labels now read “Gyroscope” in settings, HUD, help, guide, structured data and crawler copy. Internal sensor logic and persisted identifiers are retained.
 
 ## Integrated checks
@@ -28,6 +28,6 @@ Full release-gate results and production verification are appended after deploym
 
 ## Limits
 
-The three tracks remain original, stylized arcade environments. This work does not establish Asphalt-level visual parity, exact brand/model engine recordings for every car, physical-phone performance, or headphone/speaker acceptance. Veyron, Testarossa and Rimac proxies are documented in the audio source report. Vehicle models and their authored texture quality remain heterogeneous.
+The three tracks remain original, stylized arcade environments. This work does not establish Asphalt-level visual parity, exact brand/model engine recordings for every car, physical-phone performance, or exhaustive headphone/speaker coverage. The user approved the two revised samples, but their playback device was not specified. Veyron, Testarossa and Rimac proxies are documented in the audio source report. Vehicle models and their authored texture quality remain heterogeneous.
 
 Local proof: `polish-lobby-desktop.png`, `polish-lobby-568-landscape.png`, phone/landscape captures, `polish-audio-validation-v2.json`, and two `polish-*-audio-v2.wav` listening renders. Those generated review media are local artifacts, excluded from production and Git; source, reproducible fixtures, licensed banks and circuit previews are committed.

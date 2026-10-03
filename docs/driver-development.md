@@ -53,7 +53,7 @@ Mount helpers return `update(partialOptions)` and `destroy()`. They dispatch int
 
 ## Live menu connections
 
-The lobby's **Career** button opens the campaign. Three-race tours remain under race setup. The garage's **Upgrades → Setup & mastery** view changes the selected car's setup, refreshes its displayed numbers and saves the choice. Race rewards feed both progression reducers, and results list newly earned objectives and mastery goals.
+The lobby's **Career** button opens the campaign. The bottom-navigation Tour button selects the three-race tour; its settings retain saved-tour continuation. The garage's **Upgrades → Setup & mastery** view changes the selected car's setup, refreshes its displayed numbers and saves the choice. Race rewards feed both progression reducers, and results list newly earned objectives and mastery goals.
 
 Cross-circuit campaign selection uses a single-use session-storage intent with a 30-minute expiry. The destination must match the authored circuit and the event must still be unlocked. The arriving page shows the selected event for review; it never starts the race automatically. A failed storage write keeps the current selection in place. Free-race mode selection clears the active campaign context without erasing campaign progress.
 
