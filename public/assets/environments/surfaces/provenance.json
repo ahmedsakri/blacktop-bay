@@ -1,6 +1,6 @@
 {
   "license": "https://polyhaven.com/license",
-  "derivatives": "Resized and WebP encoded from Poly Haven 1K JPG sources. No baked lighting, generated branding or content borrowed from another game.",
+  "derivatives": "Resized and WebP encoded from Poly Haven 1K JPG sources; foliage combines a recorded diffuse/alpha crop into an original 24-leaf spray. No generated branding or content borrowed from another game.",
   "maps": [
     {
       "file": "asphalt-color.webp",
@@ -157,6 +157,106 @@
       "author": "Amal Kumar",
       "license": "CC0-1.0",
       "colorSpace": "sRGB"
+    },
+    {
+      "file": "paving-color.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 94948,
+      "sha256": "de90bf3fc0f1aed077efec2003295ae6c9feeeef287b66b5ff1709b0f4ca4cba",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/pavement_02/pavement_02_diff_1k.jpg",
+      "sourceMD5": "aa8b6d83c9005d001db57cd76646981a",
+      "asset": "https://polyhaven.com/a/pavement_02",
+      "author": "Charlotte Baglioni (photography), Dario Barresi (processing)",
+      "license": "CC0-1.0",
+      "colorSpace": "sRGB",
+      "metres": 2.12
+    },
+    {
+      "file": "paving-color-mobile.webp",
+      "width": 256,
+      "height": 256,
+      "bytes": 19068,
+      "sha256": "c1c88564b18ea362bd53b115a57ec2bcd79ca9c114f76c79076abd153cee3f48",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/pavement_02/pavement_02_diff_1k.jpg",
+      "sourceMD5": "aa8b6d83c9005d001db57cd76646981a",
+      "asset": "https://polyhaven.com/a/pavement_02",
+      "author": "Charlotte Baglioni (photography), Dario Barresi (processing)",
+      "license": "CC0-1.0",
+      "colorSpace": "sRGB",
+      "metres": 2.12
+    },
+    {
+      "file": "paving-normal.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 58638,
+      "sha256": "78fd5e1f3af11fb3f509a42596ea962ffa37491ab5ca5cc2689b2c175e1b254f",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/pavement_02/pavement_02_nor_gl_1k.jpg",
+      "sourceMD5": "9a244f2fdee3ad5c7c1cd6cef81713e6",
+      "asset": "https://polyhaven.com/a/pavement_02",
+      "author": "Charlotte Baglioni (photography), Dario Barresi (processing)",
+      "license": "CC0-1.0",
+      "colorSpace": "linear",
+      "metres": 2.12
+    },
+    {
+      "file": "paving-normal-mobile.webp",
+      "width": 256,
+      "height": 256,
+      "bytes": 8412,
+      "sha256": "6bf1d353b2b2455ba72349af80de7c51c9609a144f15075913acb8c4869bdbf0",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/pavement_02/pavement_02_nor_gl_1k.jpg",
+      "sourceMD5": "9a244f2fdee3ad5c7c1cd6cef81713e6",
+      "asset": "https://polyhaven.com/a/pavement_02",
+      "author": "Charlotte Baglioni (photography), Dario Barresi (processing)",
+      "license": "CC0-1.0",
+      "colorSpace": "linear",
+      "metres": 2.12
+    },
+    {
+      "file": "foliage-leaf.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 58988,
+      "sha256": "25b6d1f6cf8a12cae96af5be6d72bb23b6242b7e6f2b0dd6aec327eafd3666f8",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/potted_plant_02/potted_plant_02_leaves_diff_1k.jpg",
+      "sourceMD5": "e8a026bd7bfa6497729d855c59da03ce",
+      "alphaSource": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/potted_plant_02/potted_plant_02_leaves_alpha_1k.jpg",
+      "alphaSourceMD5": "f7a94b00b6094b55c59712c2145c6c97",
+      "crop": {
+        "left": 27,
+        "top": 0,
+        "width": 421,
+        "height": 642
+      },
+      "asset": "https://polyhaven.com/a/potted_plant_02",
+      "author": "Rico Cilliers",
+      "license": "CC0-1.0",
+      "colorSpace": "sRGB",
+      "usage": "24 photographed leaves assembled into original cutout spray"
+    },
+    {
+      "file": "foliage-leaf-mobile.webp",
+      "width": 256,
+      "height": 256,
+      "bytes": 20310,
+      "sha256": "44989e116a34d4d4346a4b853f4909c36f8893c5c5b46006c3bf69560d3d2762",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/potted_plant_02/potted_plant_02_leaves_diff_1k.jpg",
+      "sourceMD5": "e8a026bd7bfa6497729d855c59da03ce",
+      "alphaSource": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/potted_plant_02/potted_plant_02_leaves_alpha_1k.jpg",
+      "alphaSourceMD5": "f7a94b00b6094b55c59712c2145c6c97",
+      "crop": {
+        "left": 27,
+        "top": 0,
+        "width": 421,
+        "height": 642
+      },
+      "asset": "https://polyhaven.com/a/potted_plant_02",
+      "author": "Rico Cilliers",
+      "license": "CC0-1.0",
+      "colorSpace": "sRGB",
+      "usage": "24 photographed leaves assembled into original cutout spray"
     }
   ]
 }

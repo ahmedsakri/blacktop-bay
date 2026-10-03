@@ -40,7 +40,7 @@ test('shipping recordings preserve explicit provenance, exact asset hashes and b
   assert.equal(createHash('sha256').update(bytes).digest('hex'),entry.sha256);
   assert.equal(bytes.length,entry.bytes);assert.ok(bytes.length<=RECORDING_BUDGET.downloadBytes);total+=bytes.length;
   assert.equal(bytes.toString('ascii',0,4),'RIFF');assert.equal(bytes.readUInt16LE(22),1);assert.equal(bytes.readUInt16LE(34),16);assert.equal(bytes.readUInt32LE(24),24000);
-  assert.ok(['CC0-1.0','CC-BY-3.0','CC-BY-4.0'].includes(source.license));assert.ok(source.author&&source.title&&source.sourceVehicle);assert.match(source.sourceUrl,/^https:\/\/(freesound.org|bigsoundbank.com|commons.wikimedia.org)\//);assert.match(source.use,/proxy/);
+  assert.ok(['CC0-1.0','CC-BY-3.0','CC-BY-4.0','Sonniss-GDC-2026-v2'].includes(source.license));assert.ok(source.author&&source.title&&source.sourceVehicle);assert.match(source.sourceUrl,/^https:\/\/(freesound.org|bigsoundbank.com|commons.wikimedia.org|sonniss.com)\//);assert.match(source.use,/proxy/);
   for(const layer of entry.layers){
    const start=Math.round(layer.start*24000),end=Math.round(layer.end*24000);let power=0,peak=0;
    for(let i=start;i<end;i++){const value=bytes.readInt16LE(44+i*2)/32768;power+=value*value;peak=Math.max(peak,Math.abs(value));}
@@ -48,7 +48,7 @@ test('shipping recordings preserve explicit provenance, exact asset hashes and b
    assert.ok(Math.abs(bytes.readInt16LE(44+start*2)-bytes.readInt16LE(44+(end-1)*2))<=1,'loop endpoint is continuous');
   }
  }
- assert.equal(total,2553584);assert.equal(total,data.totalBytes);
+ assert.equal(total,3813892);assert.equal(total,data.totalBytes);
  assert.deepEqual(Object.keys(RECORDING_CARS).sort(),MANUFACTURER_VEHICLES.map(vehicle=>vehicle.id).sort());
  assert.deepEqual(Object.keys(RECORDING_MIXES).sort(),Object.keys(RECORDING_CARS).sort());
  for(const [id,recording] of Object.entries(RECORDING_CARS)){
@@ -57,13 +57,13 @@ test('shipping recordings preserve explicit provenance, exact asset hashes and b
   const source=data.recordings.find(entry=>entry.id===recording);assert.ok(source.cars.includes(id));
   assert.ok(RECORDING_MIXES[id][2]>0&&RECORDING_MIXES[id][2]<=1);
  }
- assert.equal(Object.keys(ENGINE_RECORDINGS).length,16);
- assert.equal(new Set(data.recordings.map(entry=>entry.sha256)).size,16,'families use genuinely different recordings');
- assert.equal(new Set(data.recordings.map(entry=>entry.sourceSha256)).size,16);
- assert.equal(new Set(Object.values(RECORDING_CARS)).size,15);
- assert.equal(data.activeBanks,15);
+ assert.equal(Object.keys(ENGINE_RECORDINGS).length,23);
+ assert.equal(new Set(data.recordings.map(entry=>entry.sha256)).size,23,'families use genuinely different recordings');
+ assert.equal(new Set(data.recordings.map(entry=>entry.sourceSha256)).size,23);
+ assert.equal(new Set(Object.values(RECORDING_CARS)).size,20);
+ assert.equal(data.activeBanks,20);
  assert.equal(recordingForVehicle({id:'unsupported-car'}),null);
- assert.equal(recordingForVehicle({id:'mclaren-p1-gtr',powertrain:'electric'}),null,'never play combustion loops on an electric vehicle');
+ assert.equal(recordingForVehicle({id:'bmw-f22-eurofighter',powertrain:'electric'}),null,'never play combustion loops on an electric vehicle');
  const diesel=data.recordings.find(entry=>entry.id==='bmw-diesel');assert.equal(diesel.additionalSources.length,2);
  for(const extra of diesel.additionalSources){assert.equal(extra.license,'CC0-1.0');assert.match(extra.sourceSha256,/^[a-f0-9]{64}$/);assert.ok(diesel.layers.some(layer=>layer.sourceFile===extra.sourceFile));}
  assert.equal(data.recordings.find(entry=>entry.id==='tesla-electric').sourceFamily,'electric');
@@ -71,10 +71,10 @@ test('shipping recordings preserve explicit provenance, exact asset hashes and b
 
 test('GranTurismo and AMG use documented family recordings with three real source bands, not the unrelated idle proxy',async()=>{
  const data=JSON.parse(await readFile(new URL('../public/assets/audio/ENGINE-SOURCES.json',import.meta.url)));
- for(const [id,bankId,model] of [['maserati-mc-stradale','maserati-granturismo-v8','GranTurismo S'],['mercedes-amg-gt','mercedes-amg-v8','S63 AMG']]){
+ for(const [id,bankId,model] of [['maserati-mc-stradale','maserati-granturismo-v8','GranTurismo S'],['mercedes-amg-gt','mercedes-amg-gtr-2018','AMG GT R']]){
   const selected=recordingForVehicle(car(id)),source=data.recordings.find(entry=>entry.id===bankId);
   assert.equal(selected.id,bankId);assert.equal(selected.layers.length,3);
-  assert.ok(source.sourceVehicle.includes(model));assert.match(source.use,/not an? /);
+  assert.ok(source.sourceVehicle.includes(model));assert.match(source.use,/proxy/);
   assert.deepEqual(source.cars,[id]);assert.match(source.sourceSha256,/^[a-f0-9]{64}$/);
   assert.ok(new Set(selected.layers.map(layer=>layer.sourceStart)).size===3);
   assert.ok(selected.layers.every(layer=>layer.sourceDuration>=.8));
@@ -83,7 +83,7 @@ test('GranTurismo and AMG use documented family recordings with three real sourc
  }
  assert.deepEqual(data.recordings.find(entry=>entry.id==='mustang-idle').cars,[],'legacy bank is retained but not selected');
  assert.equal(RECORDING_CARS['bugatti-veyron'],'murcielago-v12','unverified alternatives must not silently become W16 claims');
- assert.equal(RECORDING_CARS['ferrari-testarossa'],'ferrari-classic-v12');
+ assert.equal(RECORDING_CARS['ferrari-testarossa'],'testarossa-1990');
  assert.equal(RECORDING_CARS['rimac-nevera'],'tesla-electric');
 });
 
@@ -96,10 +96,10 @@ test('adjacent rev bands crossfade at constant power, bounded pitch, and load/im
 
 test('recordings are lazy, selected-car only, bounded to three voices and reused across normal updates',async()=>{
  const {context,engine}=setup();
- engine.update(car('mclaren-p1-gtr'),motion);assert.equal(context.sources.length,0);assert.equal(engine.status().fetches,0);
- engine.setAudible(true);engine.update(car('mclaren-p1-gtr'),motion);await settled(engine);
+ engine.update(car('bmw-f22-eurofighter'),motion);assert.equal(context.sources.length,0);assert.equal(engine.status().fetches,0);
+ engine.setAudible(true);engine.update(car('bmw-f22-eurofighter'),motion);await settled(engine);
  assert.equal(engine.status().active,'ferrari-355');assert.equal(engine.status().voices,3);assert.equal(context.decodes,1);
- for(let i=0;i<600;i++)engine.update(car('ferrari-458-italia'),{...motion,rev:(i%100)/100});
+ for(let i=0;i<600;i++)engine.update(car('koenigsegg-one-1'),{...motion,rev:(i%100)/100});
  assert.equal(engine.status().fetches,1);assert.equal(context.sources.length,3);assert.ok(engine.status().blend>.99);
  engine.setAudible(false);assert.equal(context.nodes.find(node=>node.connections.includes(context.destination)).gain.value,0);
  engine.dispose();engine.dispose();assert.ok(context.sources.every(source=>source.stopped===1));assert.ok(context.nodes.every(node=>node.disconnected>0));assert.equal(engine.status().decodedBytes,0);
@@ -107,7 +107,7 @@ test('recordings are lazy, selected-car only, bounded to three voices and reused
 
 test('four bank switches retain only the bounded LRU and stop old voices before starting replacements',async()=>{
  const {context,engine}=setup();engine.setAudible(true);
- for(const id of ['mclaren-p1-gtr','porsche-930-turbo','mercedes-amg-gt','aston-martin-one-77']){
+ for(const id of ['bmw-f22-eurofighter','porsche-930-turbo','mercedes-amg-gt','aston-martin-one-77']){
   engine.update(car(id),motion);await settled(engine);assert.ok(engine.status().voices<=3);assert.ok(engine.status().cacheBanks<=3);assert.ok(engine.status().decodedBytes<=RECORDING_BUDGET.decodedBytes);
   assert.ok(context.sources.filter(source=>source.started&&!source.stopped).length<=3);
  }
@@ -117,8 +117,8 @@ test('four bank switches retain only the bounded LRU and stop old voices before 
 
 test('failed or oversized recordings keep a stable procedural fallback without repeated requests',async()=>{
  for(const fetchImpl of [async()=>{throw new Error('offline');},async()=>new Response(new Uint8Array(bank.bytes+1)),async()=>new Response('bad wav')]){
-  const {context,engine}=setup({fetchImpl});engine.setAudible(true);engine.update(car('mclaren-p1-gtr'),motion);await settled(engine);
-  for(let i=0;i<300;i++)assert.equal(engine.update(car('mclaren-p1-gtr'),motion),0);
+  const {context,engine}=setup({fetchImpl});engine.setAudible(true);engine.update(car('bmw-f22-eurofighter'),motion);await settled(engine);
+  for(let i=0;i<300;i++)assert.equal(engine.update(car('bmw-f22-eurofighter'),motion),0);
   assert.equal(engine.status().fetches,1);assert.deepEqual(engine.status().failed,['ferrari-355']);assert.equal(context.sources.length,0);engine.dispose();
  }
 });
@@ -130,7 +130,7 @@ test('rapid selection aborts stale requests, never poisons that bank, and create
   inFlight++;peak=Math.max(peak,inFlight);const done=fn=>value=>{inFlight--;fn(value);};
   signal.addEventListener('abort',()=>done(reject)(new Error('aborted')),{once:true});pending.push({url,resolve:done(resolve)});
  })});
- engine.setAudible(true);engine.update(car('mclaren-p1-gtr'),motion);engine.update(car('porsche-930-turbo'),motion);await tick();
+ engine.setAudible(true);engine.update(car('bmw-f22-eurofighter'),motion);engine.update(car('porsche-930-turbo'),motion);await tick();
  assert.equal(pending.length,2);assert.equal(engine.status().voices,0);assert.deepEqual(engine.status().failed,[]);
  pending[1].resolve(await diskFetch(pending[1].url));await settled(engine);
  assert.equal(engine.status().active,'porsche-911');assert.equal(peak,1);engine.dispose();
@@ -139,7 +139,7 @@ test('rapid selection aborts stale requests, never poisons that bank, and create
 test('decode completing after pause or disposal cannot resurrect audio or retain buffers',async()=>{
  for(const action of ['pause','dispose']){
   const late=deferred(),{context,engine}=setup();context.decodeAudioData=()=>late.promise;
-  engine.setAudible(true);engine.update(car('mclaren-p1-gtr'),motion);
+  engine.setAudible(true);engine.update(car('bmw-f22-eurofighter'),motion);
   await new Promise(resolve=>setTimeout(resolve,10));
   if(action==='pause')engine.setAudible(false);else engine.dispose();
   late.resolve({numberOfChannels:1,duration:bank.duration,length:bank.duration*48000});await settled(engine);
@@ -150,7 +150,7 @@ test('decode completing after pause or disposal cannot resurrect audio or retain
 test('a stalled fetch/decode has an eight-second ceiling and cannot activate on late completion',async()=>{
  const timers=new Map();let next=0;const late=deferred();
  const {engine}=setup({fetchImpl:()=>late.promise,schedule(fn,ms){assert.equal(ms,8000);const id=++next;timers.set(id,fn);return id;},cancel:id=>timers.delete(id)});
- engine.setAudible(true);engine.update(car('mclaren-p1-gtr'),motion);[...timers.values()][0]();await settled(engine);
+ engine.setAudible(true);engine.update(car('bmw-f22-eurofighter'),motion);[...timers.values()][0]();await settled(engine);
  assert.equal(engine.status().voices,0);assert.deepEqual(engine.status().failed,['ferrari-355']);assert.equal(timers.size,0);
  late.resolve(await diskFetch(bank.url));await tick();await tick();assert.equal(engine.status().cacheBanks,0);engine.dispose();
 });
@@ -158,7 +158,7 @@ test('a stalled fetch/decode has an eight-second ceiling and cannot activate on 
 test('actual createAudio preserves gesture/mixer/page gates and drops engine masking for fresh impacts',async()=>{
  let fetches=0;const context=new Context();context.state='suspended';
  const audio=createAudio({contextFactory:()=>context,recordedEngineOptions:{fetchImpl:async url=>{fetches++;return diskFetch(url);}}});
- const state={running:true,vehicle:'mclaren-p1-gtr',speed:28,throttle:1,raceId:44};
+ const state={running:true,vehicle:'bmw-f22-eurofighter',speed:28,throttle:1,raceId:44};
  audio.update(state);assert.equal(context.nodes.length,0);assert.equal(fetches,0);
  await audio.unlock();audio.update({lobby:true,vehicle:state.vehicle});assert.equal(fetches,0);
  audio.update(state);for(let i=0;i<100&&audio.recordingStatus().pending;i++)await new Promise(resolve=>setTimeout(resolve,2));
@@ -249,5 +249,37 @@ test('actual recording mix suppresses procedural buzz and unducked turbine tones
   assert.ok(frame.layers.every(layer=>layer.rate>=.90&&layer.rate<=1.20),'recordings avoid extreme tape-speed pitch shifts');
   assert.ok(frame.cutoff<=3300,'recorded highs stay below the former bright 4–5 kHz band');
   assert.ok(frame.gain<=.420001,'the source gain ceiling was not raised to overpower synthesis');
+ }
+});
+
+
+test('33-car source audit separates model matches from unresolved years, variants, builds and layouts',async()=>{
+ const sources=JSON.parse(await readFile(new URL('../public/assets/audio/ENGINE-SOURCES.json',import.meta.url)));
+ const coverage=JSON.parse(await readFile(new URL('../public/assets/audio/ENGINE-COVERAGE.json',import.meta.url)));
+ const candidates=JSON.parse(await readFile(new URL('../public/assets/audio/ENGINE-CANDIDATES.json',import.meta.url)));
+ assert.deepEqual(coverage.cars.map(row=>row.carId).sort(),MANUFACTURER_VEHICLES.map(car=>car.id).sort());
+ assert.equal(new Set(coverage.cars.map(row=>row.carId)).size,33);
+ for(const row of coverage.cars){
+  const source=sources.recordings.find(source=>source.id===RECORDING_CARS[row.carId]);
+  assert.equal(row.bank,source.id);assert.equal(row.recordedVehicle,source.sourceVehicle);assert.equal(row.sourceLicense,source.license);
+  assert.ok(row.identityGap.length>35);assert.match(row.visualSource,/^https:\/\//);
+  assert.ok(row.candidateIds.every(id=>candidates.candidates.some(candidate=>candidate.id===id)),row.carId);
+ }
+ const byId=Object.fromEntries(coverage.cars.map(row=>[row.carId,row]));
+ assert.equal(coverage.modelMatches,3);assert.equal(coverage.improvedAssignments,11);
+ assert.equal(coverage.fullyVerifiedExactSpecifications,0,'unspecified target years/builds cannot become a100%exact claim');
+ for(const id of ['bugatti-veyron','bmw-i8','audi-r18','porsche-919-hybrid'])assert.equal(byId[id].fidelity,'wrong-architecture-proxy');
+ assert.match(byId['ferrari-458-italia'].identityGap,/Spider/);assert.equal(byId['ferrari-458-italia'].exactModelVariant,false);
+ assert.match(byId['nissan-gt-r-2018'].identityGap,/2012.*modified.*2018/);
+ const oldSource=Object.fromEntries(sources.recordings.map(source=>[source.id,source]));
+ assert.doesNotMatch(oldSource['huracan-v10'].use,/Audi|R8/);
+ assert.doesNotMatch(oldSource['murcielago-v12'].use,/Aventador/);
+ assert.doesNotMatch(oldSource['ferrari-classic-v12'].use,/Testarossa/);
+ const studio=sources.recordings.filter(source=>source.license==='Sonniss-GDC-2026-v2');assert.equal(studio.length,7);
+ for(const source of studio){
+  assert.equal(source.sampleRate,24000);assert.equal(source.layers.length,3);assert.equal(source.bytes,180044);
+  assert.ok(source.sourceBytes>source.bytes);assert.match(source.sourceSha256,/^[a-f0-9]{64}$/);
+  assert.match(source.bundleTracklistUrl,/^https:\/\/docs.google.com\/spreadsheets\//);
+  assert.match(source.rights,/not licensed for redistribution/);assert.match(source.licenseUrl,/sonniss.com\/gdc-bundle-license/);
  }
 });

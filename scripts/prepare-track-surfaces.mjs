@@ -4,6 +4,7 @@
 import {readFile,writeFile} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 import {pathToFileURL} from 'node:url';
+import {foliageDerivative} from './foliage-derivative.mjs';
 const root=new URL('../public/assets/environments/surfaces/',import.meta.url);
 const manifest=JSON.parse(await readFile(new URL('provenance.json',root),'utf8'));
 const force=process.argv.includes('--force'),sourceCache=new Map();let sharp;
@@ -16,7 +17,12 @@ for(const entry of manifest.maps){
   if(!source){const response=await fetch(entry.source);if(!response.ok)throw new Error('Source download failed: '+response.status);source=Buffer.from(await response.arrayBuffer());
     if(createHash('md5').update(source).digest('hex')!==entry.sourceMD5)throw new Error('Upstream source changed: '+entry.file);sourceCache.set(entry.source,source);
   }
-  const buffer=await sharp(source).resize(entry.width,entry.height).webp({quality:entry.colorSpace==='sRGB'?86:94,effort:6}).toBuffer();
+  let buffer;
+  if(entry.alphaSource){
+    let alpha=sourceCache.get(entry.alphaSource);
+    if(!alpha){const response=await fetch(entry.alphaSource);if(!response.ok)throw new Error('Alpha source unavailable');alpha=Buffer.from(await response.arrayBuffer());if(createHash('md5').update(alpha).digest('hex')!==entry.alphaSourceMD5)throw new Error('Alpha source changed');sourceCache.set(entry.alphaSource,alpha);}
+    buffer=await foliageDerivative(sharp,source,alpha,entry.crop,entry.width);
+  }else buffer=await sharp(source).resize(entry.width,entry.height).webp({quality:entry.colorSpace==='sRGB'?86:94,effort:6}).toBuffer();
   // A codec version may change bytes; do not silently replace reviewed assets.
   if(createHash('sha256').update(buffer).digest('hex')!==entry.sha256)throw new Error('Output differs from reviewed hash; inspect and update provenance explicitly: '+entry.file);
   await writeFile(destination,buffer);console.log('Prepared',entry.file,buffer.length);

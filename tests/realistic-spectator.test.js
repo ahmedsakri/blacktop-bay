@@ -48,6 +48,19 @@ test('actual imported bones and vertices remain finite and human-sized through e
  }
 });
 
+test('palms ease through gesture activation while weight shifts keep feet planted',()=>{
+ const character=createTexturedSpectator(sources[0]);
+ const person={...spectatorProfile(0,0,0,0,false,()=>.5),height:1,width:1};
+ const orientation=name=>character.mesh.getObjectByName(name).getWorldQuaternion(new THREE.Quaternion());
+ for(let gesture=0;gesture<5;gesture++){
+  person.gesture=gesture;character.update(person,spectatorPose(person,1,.249));const before=orientation('hand_l');
+  character.update(person,spectatorPose(person,1,.251));assert.ok(before.angleTo(orientation('hand_l'))<.03,'a wrist must not flip when a celebration starts');
+ }
+ person.gesture=0;character.update(person,spectatorPose(person,.1,.8));const foot=character.mesh.getObjectByName('foot_l').getWorldPosition(new THREE.Vector3());
+ character.update(person,spectatorPose(person,3.7,.8));assert.ok(foot.distanceTo(character.mesh.getObjectByName('foot_l').getWorldPosition(new THREE.Vector3()))<.015,'pelvis shifts should not slide the planted foot');
+ character.dispose();
+});
+
 test('asset library deduplicates loads, caps decodes and disposes late responses without reviving a race',async()=>{
  const pending=[],loaded=[];let active=0,max=0;
  const library=createSpectatorLibrary({enabled:true,load:url=>new Promise(resolve=>{active++;max=Math.max(max,active);pending.push(()=>{active--;const scene=new THREE.Group();const geometry=new THREE.BoxGeometry();const material=new THREE.MeshStandardMaterial();scene.add(new THREE.Mesh(geometry,material));let disposed=0;geometry.addEventListener('dispose',()=>disposed++);loaded.push(()=>disposed);resolve({scene});});})});

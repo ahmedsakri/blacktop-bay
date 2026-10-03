@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import {TRACKS} from '../src/track.js';
+import {TRACK_SURFACE_MAPS} from '../src/track-surface-materials.js';
 
 function dimensions(bytes){
  assert.equal(bytes.toString('ascii',0,4),'RIFF');assert.equal(bytes.toString('ascii',8,12),'WEBP');
@@ -31,8 +32,8 @@ test('all 38 circuit previews are distinct actual-world WebP captures with verif
   assert.ok(entry.sector>=0&&entry.sector<1);assert.equal(entry.camera.position.length,3);assert.equal(entry.camera.quaternion.length,4);
   assert.ok([...entry.camera.position,...entry.camera.quaternion].every(Number.isFinite));
   assert.ok(entry.camera.fov>20&&entry.camera.fov<100);assert.ok(entry.draws>0&&entry.triangles>0);
-  assert.equal(entry.surfaces.loaded,6,entry.id+' actual surface maps finished loading');
-  assert.equal(entry.textureProof.length,6);assert.ok(entry.textureProof.every(p=>p.gpuRedStdDev>0),entry.id+' maps were sampled on the GPU');
+  assert.equal(entry.surfaces.loaded,Object.keys(TRACK_SURFACE_MAPS).length,entry.id+' actual surface maps finished loading');
+  assert.equal(entry.textureProof.length,Object.keys(TRACK_SURFACE_MAPS).length);assert.ok(entry.textureProof.every(p=>p.gpuRedStdDev>0),entry.id+' maps were sampled on the GPU');
  }
  assert.equal(total,manifest.totalBytes);assert.ok(total<4*1024*1024,'whole catalogue preview transfer stays below 4 MiB');
 });

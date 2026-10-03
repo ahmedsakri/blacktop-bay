@@ -42,7 +42,7 @@ The 38-course collection combines thirteen original Camber Reign circuits, compa
 
 Current-calendar adaptations: Albert Park, Shanghai, Suzuka, Miami, Gilles Villeneuve, Monaco, Barcelona-Catalunya, Red Bull Ring, Silverstone, Spa-Francorchamps, Hungaroring, Zandvoort, Monza, Madring, Baku City, Sepang, Marina Bay, Circuit of the Americas, Hermanos Rodríguez, Interlagos, Las Vegas Strip, Lusail, Yas Marina.
 Original-calendar bonus adaptations: Bahrain International, Jeddah Corniche.
-Venue outline data: Tomislav Bacinger / f1-circuits, MIT, with compact arcade modifications. Sources and notices: https://camber-reign.web.app/credits/#circuit-data
+Venue outline data: Tomislav Bacinger / f1-circuits, MIT, with compact arcade modifications. Sources and notices: https://camber-reign.web.app/licenses/#circuit-data
 
 ## Race cars
 
@@ -82,7 +82,7 @@ After a valid lap, a short notice shows the last lap time and the next lap numbe
 - Car collection: https://camber-reign.web.app/cars/
 - Circuit collection: https://camber-reign.web.app/circuits/
 - Guide (controls, cars, circuits, upgrades, FAQ): https://camber-reign.web.app/guide/
-- Credits & licenses: https://camber-reign.web.app/credits/
+- Licenses: https://camber-reign.web.app/licenses/
 - Privacy notice: https://camber-reign.web.app/privacy/
 - Publisher (AppsOverFlow): https://appsoverflow.web.app/
 

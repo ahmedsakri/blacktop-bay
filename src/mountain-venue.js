@@ -4,23 +4,24 @@ import { sampleTrack, projectOnTrack } from './track.js';
 import { getTrackObstacles } from './track-obstacles.js';
 import {coastalGroundingLayout} from './coastal-foundations.js';
 import { broadleafCrownGeometry } from './vegetation-geometry.js';
-import {setWorldSurfaceUV} from './track-surface-materials.js';
+import {coastalDistrictHeight} from './venue-groundworks.js';
+import {setWorldSurfaceUV,foliageSurfaceMaterial} from './track-surface-materials.js';
 
 export const DESTINATION_PROFILES = Object.freeze({
   'fuji-skyline': {background:'#8daebf',fog:'#aebdc0',fogDensity:.00065,sky:'#d6e7ef',sun:'#fff1d9',sunlight:1.5,ground:'#546749',vegetation:'woodland',towers:0},
   'singapore-afterdark': {background:'#111c35',fog:'#1d3049',fogDensity:.001,sky:'#789dbc',sun:'#a5b6d2',sunlight:.75,ground:'#283c40',vegetation:'street-trees',towers:55},
   'norway-fjord': {background:'#7895a4',fog:'#9daeb2',fogDensity:.00085,sky:'#d0e2e9',sun:'#e4e5d5',sunlight:1.15,ground:'#435647',vegetation:'conifers',towers:0},
-  'san-francisco-hills': {background:'#62778e',fog:'#a9aaad',fogDensity:.00075,sky:'#b8cee4',sun:'#ffcca2',sunlight:1.5,ground:'#576459',vegetation:'street-trees',towers:24},
+  'san-francisco-hills': {background:'#62778e',fog:'#a9aaad',fogDensity:.00075,sky:'#b8cee4',sun:'#ffcca2',sunlight:1.5,ground:'#576459',vegetation:'street-trees',towers:0},
 });
 
 /** Original mesh scenery, including load-bearing viaduct piers and real ramps. */
-export function createMountainVenue(scene, track, {low=false,landmarks=[],surfaces}={}) {
+export function createMountainVenue(scene, track, {low=false,landmarks=[],surfaces,groundHeight}={}) {
   if (!track.elevationProfile) return;
   const group=new THREE.Group();group.name=`destination-${track.id}`;scene.add(group);
   const concrete=new THREE.MeshStandardMaterial({color:'#8f9690',roughness:.85,map:surfaces?.concreteColor||null,normalMap:surfaces?.concreteNormal||null,normalScale:new THREE.Vector2(.18,.18)});
   const stone=new THREE.MeshStandardMaterial({color:'#596967',roughness:1});
   const snow=new THREE.MeshStandardMaterial({color:'#e9efeb',roughness:.82});
-  const cherry=new THREE.MeshStandardMaterial({color:'#deb1ba',vertexColors:true,roughness:1});
+  const cherry=foliageSurfaceMaterial(surfaces?.foliageLeaf,{color:'#deb1ba'});
   const trunk=new THREE.MeshStandardMaterial({color:'#55463f',roughness:1});
   const mesh=(geo,mat,x,y,z)=>{const m=new THREE.Mesh(geo,mat);m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;group.add(m);return m;};
   for(let s=0;s<track.length;s+=24){const p=sampleTrack(s,track);if(p.y<2)continue;
@@ -35,7 +36,7 @@ export function createMountainVenue(scene, track, {low=false,landmarks=[],surfac
   }
   // Raised road follows hillside embankments except at the authored bridge
   // sectors. Keep a conservative footprint clear of every other road segment.
-  const hills = track.id==='fuji-skyline'?[[.16,.32],[.61,.85]]:track.id==='norway-fjord'?[[.16,.25],[.50,.68]]:track.id==='san-francisco-hills'?[[.16,.25],[.34,.46],[.73,.9]]:[];
+  const hills = track.id==='fuji-skyline'?[[.16,.32],[.61,.85]]:track.id==='norway-fjord'?[[.16,.25],[.50,.68]]:track.id==='san-francisco-hills'?[]:[];
   const bankPositions=[];
   for(const [from,to] of hills)for(let d=track.length*from;d<track.length*to;d+=9){
     const a=sampleTrack(d,track),b=sampleTrack(d+9,track);
@@ -100,12 +101,14 @@ export function createMountainVenue(scene, track, {low=false,landmarks=[],surfac
     // Bay houses sit on submerged shoreline shelves and concrete footings.
     // Compact bay houses use distinct roof silhouettes and tall narrow windows.
     for(let i=0;i<22;i++){const p=sampleTrack(track.length*(.2+i*.015),track),side=i%2?1:-1;
+      if(p.s/track.length>.245&&p.s/track.length<.325)continue;
       const x=p.x+p.nx*side*25,z=p.z+p.nz*side*25;if(projectOnTrack(x,z,0,track).distance<track.width/2+10||landmarks.some(site=>Math.hypot(x-site.x,z-site.z)<site.radius+10))continue;
       const support=coastalGroundingLayout(track,[{x,z,radius:6.6}],{padding:3,margin:1.5})[0];
-      const shore=mesh(new THREE.CylinderGeometry(1,1.12,1,10),stone,x,-1.5,z);shore.scale.set(support.radius,3,support.radius);
-      group.userData.houseFoundations.push({...support,width:12,depth:14});
-      const house=new THREE.Group();house.position.set(x,0,z);house.rotation.y=Math.atan2(-p.nx*side,-p.nz*side);group.add(house);
-      const footing=new THREE.Mesh(new THREE.BoxGeometry(12,2.8,14),concrete);footing.position.y=-1.6;house.add(footing);
+      // Continuous district terrain replaces the former isolated circular shelf.
+      const houseGround=Math.max(0,groundHeight?groundHeight(x,z):coastalDistrictHeight(track,x,z));
+      group.userData.houseFoundations.push({...support,top:houseGround,width:12,depth:14});
+      const house=new THREE.Group();house.position.set(x,houseGround,z);house.rotation.y=Math.atan2(-p.nx*side,-p.nz*side);group.add(house);
+      const footing=new THREE.Mesh(new THREE.BoxGeometry(12,houseGround+2.8,14),concrete);footing.position.y=-1.6-houseGround/2;house.add(footing);
       const coping=new THREE.Mesh(new THREE.BoxGeometry(12,.2,14),concrete);coping.position.y=-.1;house.add(coping);
       const wall=new THREE.Mesh(new THREE.BoxGeometry(8,10+(i%3)*2,10),houseMaterials[i%4]);wall.position.y=(10+(i%3)*2)/2;house.add(wall);
       const roof=new THREE.Mesh(new THREE.ConeGeometry(7,4,4),steel);roof.position.y=12+(i%3)*2;roof.rotation.y=Math.PI/4;house.add(roof);
@@ -121,6 +124,21 @@ export function createMountainVenue(scene, track, {low=false,landmarks=[],surfac
       }
       detail(1.36,2.6,.10,0,1.43,5.06,windowMat,low);detail(2.5,.18,1.35,0,2.9,5.43,steel);
       for(const x of [-1.1,1.1])detail(.10,2.85,.10,x,1.42,5.93,steel);
+      // Readable windows on every approach: side pairs and rear bedrooms use
+      // shallow glazing/sills instead of leaving three completely blank walls.
+      // The phone version is 918 extra triangles across all 17 houses, including
+      // the chimneys, and all parts remain inside the existing 12-by-14 lot.
+      const facadeWindow=(x,y,z,yaw,width=1.35,paired=false)=>{
+        const pane=detail(width,1.85,.075,x,y,z,windowMat,low);pane.rotation.y=yaw;
+        const sill=detail(width+.25,.13,.28,x+Math.sin(yaw)*.035,y-.98,z+Math.cos(yaw)*.035,concrete,low);sill.rotation.y=yaw;
+        if(paired){const mullion=detail(.075,1.85,.08,x+Math.sin(yaw)*.015,y,z+Math.cos(yaw)*.015,concrete,low);mullion.rotation.y=yaw;}
+      };
+      for(const side of [-1,1])for(const y of [3,7])facadeWindow(side*4.19,y,0,side*Math.PI/2,2.4,true);
+      for(const dx of [-2,2])for(const y of [3,7])facadeWindow(dx,y,-5.19,Math.PI);
+      const chimneyX=i%2?2.05:-2.05,wallHeight=10+(i%3)*2;
+      detail(.65,2.35,.7,chimneyX,wallHeight+2.28,-1.9,houseMaterials[i%4]);
+      const chimneyCap=detail(.89,low?.94:.16,low?.16:.94,chimneyX,wallHeight+3.49,-1.9,steel,low);
+      if(low)chimneyCap.rotation.x=-Math.PI/2;
       for(let y=3.95;y<10+(i%3)*2;y+=3.3)detail(8.35,.16,10.3,0,y,0);
       detail(8.6,.22,10.65,0,10+(i%3)*2,0);
     }
@@ -161,6 +179,11 @@ export function createMountainVenue(scene, track, {low=false,landmarks=[],surfac
     const pos=[];for(const end of [a,b])for(const side of [-1,1])pos.push(end.x+end.nx*(ramp.lane+side*ramp.width/2),end.y+(end===a?.035:ramp.height),end.z+end.nz*(ramp.lane+side*ramp.width/2));
     const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));geo.setIndex([0,2,1,1,2,3]);geo.computeVertexNormals();
     const surface=new THREE.Mesh(geo,rampMat);surface.name=`launch-ramp-${ramp.id}`;group.add(surface);
+    // The launch surface is a solid wedge down to the existing road. Its
+    // sidewall and underside stay inside the original ramp footprint.
+    const wedge=[...pos];for(const end of [a,b])for(const side of [-1,1])wedge.push(end.x+end.nx*(ramp.lane+side*ramp.width/2),end.y+.012,end.z+end.nz*(ramp.lane+side*ramp.width/2));
+    const support=new THREE.BufferGeometry();support.setAttribute('position',new THREE.Float32BufferAttribute(wedge,3));support.setIndex([0,4,2,2,4,6,1,3,5,3,7,5,2,6,3,3,6,7,0,1,4,1,5,4,4,5,6,5,7,6]);support.computeVertexNormals();
+    const body=new THREE.Mesh(support,rampMat);body.name=`launch-ramp-foundation-${ramp.id}`;group.add(body);
     for(let i=0;i<5;i++){const f=(i+.4)/5,p=sampleTrack(ramp.s+ramp.length*f,track);
       const stripe=mesh(new THREE.BoxGeometry(ramp.width*.85,.045,.36),rampPaint[ramp.type]||rampPaint.straight,p.x+p.nx*ramp.lane,p.y+ramp.height*f+.065,p.z+p.nz*ramp.lane);
       stripe.rotation.set(-Math.atan2(ramp.height,ramp.length),Math.atan2(p.tx,p.tz),0,'YXZ');

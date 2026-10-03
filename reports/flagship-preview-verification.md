@@ -1,4 +1,6 @@
-# Flagship sites and actual circuit previews
+# Previous-pass flagship sites and actual circuit previews
+
+This records the earlier released pass. Current environment changes and nine-map recapture evidence are tracked in [the 3 October review](environment-realism-2026-10-03.md); old six-map figures below are historical.
 
 Final focused verification: **46/46 passing** across circuit previews, atlas behavior, lobby presentation, world lighting/profiles, track-world detail, showcase venues, destination layout/scenery and coastal foundations. No commits or deployment were performed by this workstream.
 

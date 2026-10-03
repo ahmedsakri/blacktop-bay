@@ -12,9 +12,18 @@ Concrete Wall 003 — Dimitrios Savva (photography), Rico Cilliers (processing)
 https://polyhaven.com/a/concrete_wall_003
 Used for concrete-color and concrete-normal.
 
+Pavement 02 — Charlotte Baglioni (photography), Dario Barresi (processing)
+https://polyhaven.com/a/pavement_02
+Used for paving-color and paving-normal; source coverage 2.12 metres.
+
 Rocky Terrain 02 — Amal Kumar
 https://polyhaven.com/a/rocky_terrain_02
 Used for terrain-color.
+
+Potted Plant 02 — Rico Cilliers
+https://polyhaven.com/a/potted_plant_02
+Photographed leaves diffuse and alpha maps are cropped and assembled into
+a foliage spray for original modeled trees; used for foliage-leaf.
 
 Changes: resized from reviewed 1K JPEG source maps and encoded as WebP,
 with smaller mobile derivatives. No branding or other game's artwork is used.

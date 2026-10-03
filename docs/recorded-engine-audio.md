@@ -1,12 +1,14 @@
 # Recorded engine layer — all 33 cars
 
-Every catalogue car now blends a real, licensed recording with its authored synthesis: **33 cars, 15 actively assigned banks, 16 bundled banks, 2,553,584 bytes total**. The original four banks are retained byte-for-byte. The Mustang idle bank is now an unassigned legacy asset; the GranTurismo and AMG use the two more specific sources added on 3 October 2026. Only the selected bank is requested after the existing audio unlock, so extending the catalogue does not download every engine. The largest bank remains **199,244 bytes**.
+Every catalogue car blends a real licensed recording with authored synthesis: **33 cars, 20 active banks, 23 bundled banks, 3,813,892 bytes total**. Seven studio sources now improve eleven car assignments. Only the selected bank downloads after audio unlock; each new bank is **180,044 bytes**, below the unchanged largest bank of **199,244 bytes**. Three legacy banks remain unassigned for reproduction of earlier mixes.
 
-These are **documented family/model adaptations**, not 33 manufacturer-authentic recording sessions. The Huracán source is an EVO Spyder; other Huracán/R8 variants are adaptations. Both Rimacs use an actual Tesla electric-car acceleration recording. The Veyron W16, Testarossa flat-12, i8 three-cylinder hybrid, R18 race diesel and 919 V4 hybrid have explicit proxy limits below. The catalogue has no rotary car. Liquid Lines remains the only lobby soundtrack.
+There are **three identified base-model matches**: 570S Coupé, Aventador and Testarossa. Their target visual sources do not specify the complete year/trim/build, so this is **not 100% exact specification coverage**. The 458 source does not certify Spider; AMG GT uses GT R; GT-R 2018 uses a modified 2012 R35; R8 LMS uses a road R8. Other McLarens now use a related 570S recording. Rimacs still use Tesla, and Veyron/i8/R18/919 retain explicit engine-layout mismatches. [The complete 33-car inventory](../public/assets/audio/ENGINE-COVERAGE.json) and [checked source decisions](../public/assets/audio/ENGINE-CANDIDATES.json) make these limits machine-readable.
+
+The approved softer mix is unchanged: no changes to `audio.js`, `driving-sound.js`, `recorded-engine.js` or per-car pitch/tone/gain settings in this source upgrade. Liquid Lines remains the sole lobby soundtrack.
 
 ## Sources and attribution
 
-The original sources were checked on their primary publication pages on 2 October 2026; the GranTurismo and AMG additions were checked on 3 October 2026. CC BY sources permit commercial redistribution with attribution and modification disclosure; CC0 sources are also credited. No noncommercial-only, paid, account-only or unknown-license asset is shipped. The “Bugatti” search result by mellonius was excluded because its description identifies a motorcycle-inspired vocal emission, not a Bugatti recording. A noncommercial Gallardo take and Volvo S60 take were also excluded.
+The original sources were checked on their primary publication pages on 2 October 2026; the GranTurismo and AMG additions were checked on 3 October 2026. CC BY sources permit commercial redistribution with attribution and modification disclosure; CC0 sources are also credited. No noncommercial-only, purchased, account-only or unknown-license asset is shipped. Seven free studio recordings additionally use the Sonniss GDC v2 license, which permits incorporation in this game and has separate redistribution restrictions; see the notice below. The “Bugatti” search result by mellonius was excluded because its description identifies a motorcycle-inspired vocal emission, not a Bugatti recording. A noncommercial Gallardo take and Volvo S60 take were also excluded.
 
 | Bank | Actual source and author | License | Recording scope |
 | --- | --- | --- | --- |
@@ -27,51 +29,59 @@ The original sources were checked on their primary publication pages on 2 Octobe
 | `maserati-granturismo-v8` | [Maserati GranTurismo S](https://freesound.org/people/lmartins/sounds/465453/) — lmartins | [CC-BY-4.0](https://creativecommons.org/licenses/by/4.0/) | GranTurismo S V8 stationary start, idle and revs; not MC Stradale |
 | `mercedes-amg-v8` | [S63 AMG V8 Engine Revs](https://freesound.org/people/marcelweiss/sounds/505321/) — marcelweiss | [CC0-1.0](https://creativecommons.org/publicdomain/zero/1.0/) | S63 AMG Coupé bi-turbo V8 stationary revs; year/engine code unspecified, not AMG GT |
 
+| `mclaren-570s-2016` | [2016 McLaren 570S Coupé V8 biturbo](https://pole.se/product/mclaren-570s-2016/) — Pole Position Production | [Sonniss GDC v2](https://sonniss.com/gdc-bundle-license/) | Sonniss GDC 2020; original onboard studio WAV, documented limits in the inventory |
+| `aventador-2014` | [2014 Lamborghini Aventador V12](https://pole.se/product/lamborghini-aventador-2014/) — Pole Position Production | [Sonniss GDC v2](https://sonniss.com/gdc-bundle-license/) | Sonniss GDC 2020; original onboard studio WAV, documented limits in the inventory |
+| `ferrari-458-2013` | [2013 Ferrari 458 V8 (body variant not verified)](https://sonniss.com/sound-effects/ferrari-458-2013/) — Pole Position Production | [Sonniss GDC v2](https://sonniss.com/gdc-bundle-license/) | Sonniss GDC 2020; original onboard studio WAV, documented limits in the inventory |
+| `audi-r8-2017` | [2017 Audi R8 FSI 5.2 V10](https://pole.se/product/audi-r8-2017/) — Pole Position Production | [Sonniss GDC v2](https://sonniss.com/gdc-bundle-license/) | Sonniss GDC 2020; original onboard studio WAV, documented limits in the inventory |
+| `nissan-gtr-2012` | [2012 Nissan GT-R R35 turbo V6, modified performance exhaust](https://pole.se/product/nissan-gt-r-r35-2012/) — Pole Position Production | [Sonniss GDC v2](https://sonniss.com/gdc-bundle-license/) | Sonniss GDC 2020; original onboard studio WAV, documented limits in the inventory |
+| `mercedes-amg-gtr-2018` | [2018 Mercedes-AMG GT R twin-turbo V8](https://pole.se/product/mercedes-amg-gt-r-2018/) — Pole Position Production | [Sonniss GDC v2](https://sonniss.com/gdc-bundle-license/) | Sonniss GDC 2019; original onboard studio WAV, documented limits in the inventory |
+| `testarossa-1990` | [1990 Ferrari Testarossa flat-12](https://pole.se/product/ferrari-testarossa-1990/) — Pole Position Production | [Sonniss GDC v2](https://sonniss.com/gdc-bundle-license/) | Sonniss GDC 2023; original onboard studio WAV, documented limits in the inventory |
+
 The BMW diesel bank also includes GiocoSound’s [medium-RPM take](https://freesound.org/people/GiocoSound/sounds/401547/) and [high-RPM take](https://freesound.org/people/GiocoSound/sounds/401549/), both CC0. Enginemusic’s Ferrari 355 credit retains the recorder’s stated 1997 copyright. The Ferrari 340 source dates the session to around 1997. BigSoundBank’s [permissions](https://bigsoundbank.com/licenses.html) permit redistribution and modification.
 
-`public/assets/audio/LICENSES.txt` supplies the full redistribution credit, including who modified each bank. `public/assets/audio/ENGINE-SOURCES.json` records every source/download URL, source and derivative SHA-256, author/license, selected interval, processing step, additional diesel take and car assignment. Public-facing credits are maintained at `/credits/#recorded-engine-audio`. License coverage does not imply manufacturer or recorder endorsement.
+`public/assets/audio/LICENSES.txt` supplies the full redistribution credit, including who modified each bank. `public/assets/audio/ENGINE-SOURCES.json` records every source/download URL, source and derivative SHA-256, author/license, selected interval, processing step, additional diesel take and car assignment. Public-facing credits are maintained at `/licenses/#recorded-engine-audio`. License coverage does not imply manufacturer or recorder endorsement.
 
 ## Complete assignment and limits
 
-| Game car | Recorded bank | Adaptation |
+| Game car | Recorded vehicle | Fidelity and remaining limit |
 | --- | --- | --- |
-| McLaren 570S Coupé | `ferrari-355` | Ferrari 355 V8 family texture; game model differs. |
-| McLaren Senna | `ferrari-355` | Ferrari 355 V8 family texture; game model differs. |
-| McLaren P1 GTR | `ferrari-355` | Ferrari 355 V8 family texture; game model differs. |
-| Ferrari 458 Spider | `ferrari-355` | Ferrari 355 V8 family texture; game model differs. |
-| Lamborghini Aventador | `murcielago-v12` | Murciélago LP 670 V12 family adaptation. |
-| Koenigsegg One:1 | `ferrari-355` | Ferrari 355 V8 family texture; game model differs. |
-| Pagani Zonda C12 | `murcielago-v12` | Murciélago LP 670 V12 family adaptation. |
-| Bugatti Veyron | `murcielago-v12` | Lower/darker Murciélago twelve-cylinder adaptation; **not a W16 recording**. |
-| Maserati GranTurismo MC Stradale | `maserati-granturismo-v8` | GranTurismo S V8 family recording; not the MC Stradale variant. Three authored idle/rev bands. |
-| Lotus Elise | `honda-na-i4` | Honda F20C naturally aspirated four-cylinder proxy. |
-| Audi R8 Custom | `huracan-v10` | Huracán EVO Spyder V10 family adaptation; game variant/model differs or is unspecified. |
-| Rimac Concept One | `tesla-electric` | Tesla Plaid electric motor/road acceleration proxy, not a Rimac motor or isolated AVAS stem. |
-| Porsche 911 (930) Turbo | `porsche-911` | 911 family recording; recorded year/variant unspecified. |
-| GMA T.50 Custom | `murcielago-v12` | Murciélago LP 670 V12 family adaptation. |
-| Aston Martin One-77 | `aston-acceleration` | Aston Martin acceleration; recorded model/engine unspecified. |
-| Rimac Nevera | `tesla-electric` | Tesla Plaid electric motor/road acceleration proxy, not a Rimac motor or isolated AVAS stem. |
-| Porsche 911 GT3 | `porsche-911` | 911 family recording; recorded year/variant unspecified. |
-| Lamborghini Gallardo 2004 | `huracan-v10` | Huracán EVO Spyder V10 family adaptation; game variant/model differs or is unspecified. |
-| Lamborghini Huracán | `huracan-v10` | Huracán EVO Spyder V10 family adaptation; game variant/model differs or is unspecified. |
-| BMW i8 | `audi-turbo-i4` | Audi turbo inline-four texture; **not the i8 turbo inline-three**. Hybrid synthesis remains. |
-| BMW F22 Eurofighter | `ferrari-355` | Ferrari V8 texture for an authored drift-build proxy; visual asset does not document the exact engine build. |
-| Audi R8 LMS GT3 | `huracan-v10` | Huracán EVO Spyder V10 family adaptation; game variant/model differs or is unspecified. |
-| Audi R18 | `bmw-diesel` | BMW 120d road diesel inline-four proxy, not the R18 V6 race engine. |
-| Ferrari 250 GTO | `ferrari-classic-v12` | Ferrari 340 America classic V12 family adaptation. |
-| Ferrari Testarossa | `ferrari-classic-v12` | Classic twelve-cylinder texture from Ferrari 340; **not a flat-12 recording**. |
-| Mercedes-AMG GT | `mercedes-amg-v8` | S63 AMG Coupé bi-turbo V8 family adaptation; not the GT or a verified identical engine code. Three authored idle/rev bands. |
-| Nissan GT-R 2018 | `chevrolet-v6` | Chevrolet Traverse V6 cabin proxy, not Nissan turbo/exhaust audio. |
-| McLaren 650S GT3 | `ferrari-355` | Ferrari 355 V8 family texture; game model differs. |
-| BMW M3 E46 Coupé | `mercedes-i6` | Mercedes E320 inline-six pass-by proxy; road/motion texture fades at rest. |
-| Audi Quattro Rally | `volvo-turbo-i5` | Volvo turbo inline-five underhood proxy, not an Audi rally take. |
-| Lamborghini Countach LP500S | `ferrari-classic-v12` | Ferrari 340 America classic V12 family adaptation. |
-| Ferrari Enzo | `murcielago-v12` | Murciélago LP 670 V12 family adaptation. |
-| Porsche 919 Hybrid | `audi-turbo-i4` | Audi turbo inline-four texture; **not the 919 turbo V4**. Hybrid synthesis remains. |
+| McLaren 570S Coupé | 2016 McLaren 570S Coupé V8 biturbo | The recording is a 2016 570S Coupé, matching the represented model/body. Visual source does not state model year; exact year/exhaust specification is not certified. |
+| McLaren Senna | 2016 McLaren 570S Coupé V8 biturbo | Source is 570S V8 biturbo, not Senna 4.0 V8. More appropriate McLaren recording replaces the naturally aspirated Ferrari 355 substitute. |
+| McLaren P1 GTR | 2016 McLaren 570S Coupé V8 biturbo | Source is 570S V8 biturbo, not P1 GTR or its hybrid system. |
+| Ferrari 458 Spider | 2013 Ferrari 458 V8 (body variant not verified) | Historical game ID says Italia, but visible asset is 458 Spider. Source says 2013 Ferrari458 without certifying Spider; embedded library artwork depicts coupe. This is not the separately advertised straight-pipes session. |
+| Lamborghini Aventador | 2014 Lamborghini Aventador V12 | Source is a 2014 Aventador. Visual source does not specify year or trim; do not infer LP700-4/S/SV/SVJ identity from the generic label. |
+| Koenigsegg One:1 | Ferrari 355 Spider | Ferrari 355 is not the One:1 twin-turbo V8. Generic Koenigsegg tags do not identify One:1. |
+| Pagani Zonda C12 | Lamborghini Murciélago LP 670 SuperVeloce V12 | Murcielago V12 is not the Mercedes-derived Zonda C12 engine. Zonda F and R are different variants. |
+| Bugatti Veyron | Lamborghini Murciélago LP 670 SuperVeloce V12 | Murcielago V12 is not a Veyron W16. Pitching it down does not change its identity. |
+| Maserati GranTurismo MC Stradale | Maserati GranTurismo S V8 | GranTurismo S recording is not the MC Stradale variant. |
+| Lotus Elise | 2002 Honda F20C naturally aspirated inline-four | Honda F20C is not a documented Elise engine; game Elise generation and engine build are unspecified. |
+| Audi R8 · Custom | 2017 Audi R8 FSI 5.2 V10 | Source is 2017 road R8 5.2 FSI V10. The custom mesh source does not establish generation or engine build, so exactness remains unverified. |
+| Rimac Concept One | Tesla Model S Plaid electric | Tesla Model S Plaid acceleration is not a Rimac Concept One recording. |
+| Porsche 911 (930) Turbo · 1975 | Porsche 911 (year/variant unspecified) | Source only says Porsche 911; no proof it is the 1975 930 Turbo. |
+| Gordon Murray Automotive T.50 · Custom | Lamborghini Murciélago LP 670 SuperVeloce V12 | Murcielago V12 is not the Cosworth T.50 engine; game model is an artist custom interpretation. |
+| Aston Martin One-77 | Aston Martin (model unspecified) | BigSoundBank source names Aston Martin but not One-77 or an engine configuration. |
+| Rimac Nevera | Tesla Model S Plaid electric | Tesla Model S Plaid acceleration is not a Rimac Nevera recording. |
+| Porsche 911 GT3 | Porsche 911 (year/variant unspecified) | Generic 911 source does not establish GT3. Game asset generation must be established before selecting 996, 997, 991 or 992. |
+| Lamborghini Gallardo · 2004 | Lamborghini Huracán EVO Spyder V10 | Huracan EVO Spyder is not a 2004 Gallardo. Later 5.2-litre Gallardo recordings do not establish the 2004 car. |
+| Lamborghini Huracán | Lamborghini Huracán EVO Spyder V10 | Source is Huracan EVO Spyder; game asset says Huracan without a documented variant. |
+| BMW i8 | Audi A4 Allroad 2.0 TFSI turbo inline-four | Audi A4 inline-four is not the i8 three-cylinder hybrid powertrain. |
+| BMW F22 Eurofighter | Ferrari 355 Spider | Ferrari V8 is an authored drift proxy. The visual asset does not establish the exact engine build of this custom F22. |
+| Audi R8 LMS GT3 · 2019 | 2017 Audi R8 FSI 5.2 V10 | Source is 2017 road R8 V10, not the represented 2019 R8 LMS GT3 race car. |
+| Audi R18 | BMW 120d diesel inline-four | BMW 120d inline-four diesel is not the R18 V6 diesel racing hybrid. |
+| Ferrari 250 GTO · 1964 | Ferrari 340 America 4-litre V12 | Ferrari 340 America V12 is not the 1964 250 GTO. |
+| Ferrari Testarossa | 1990 Ferrari Testarossa flat-12 | Source is a 1990 Testarossa flat-12, correcting the former V12-layout substitute. Visual source does not state year, so same-year or same individual-car identity is not asserted. |
+| Mercedes-Benz AMG GT | 2018 Mercedes-AMG GT R twin-turbo V8 | Source is 2018 AMG GT R, not the GT trim named by the game. Closer model-family source than previous S63, without an exact-variant claim. |
+| Nissan GT-R · 2018 | 2012 Nissan GT-R R35 turbo V6, modified performance exhaust | Source is 2012 R35 with modified performance exhaust; target is 2018 R35. Correct model/generation, not exact year or factory exhaust. |
+| McLaren 650S GT3 | 2016 McLaren 570S Coupé V8 biturbo | Source is 570S road V8 biturbo, not 650S GT3 race recording. |
+| BMW M3 E46 Coupé | 1995 Mercedes E320 inline-six | Mercedes E320 inline-six is not the E46 M3 S54. Generic M3 and E46 3-Series recordings do not establish this engine. |
+| Audi Quattro Rally | Volvo 2.4 turbo inline-five | Volvo turbo inline-five is not a documented Audi Quattro rally build. The game asset does not specify year/variant. |
+| Lamborghini Countach LP500S | Ferrari 340 America 4-litre V12 | Ferrari 340 America V12 is not Countach LP500S. LP5000 QV is a different engine/variant. |
+| Ferrari Enzo | Lamborghini Murciélago LP 670 SuperVeloce V12 | Murcielago V12 is not the Ferrari Enzo engine. |
+| Porsche 919 Hybrid · 2017 | Audi A4 Allroad 2.0 TFSI turbo inline-four | Audi A4 inline-four is not the 2017 919 V4 hybrid racing powertrain. |
 
 ## Processing and mix
 
-`scripts/prepare-engine-recordings.py --sources <directory> --output <directory>` reproduces all 16 WAV banks with FFmpeg and Python’s standard library. Downloads remain a deliberate separate provenance check. Input is the public HQ MP3 preview except the Aston source WAV and Honda source Ogg. Raw source takes and source-page HTML are not in the production bundle.
+`scripts/prepare-engine-recordings.py --sources <directory> --output <directory>` reproduces all 23 WAV banks with FFmpeg and Python’s standard library. The manifest is the sole interval specification. Before any output is written, every selected source must match its reviewed SHA-256; extra diesel takes are checked too. `--only` restricts work to named banks and `--manifest` permits a reviewed alternate manifest. Downloads remain a deliberate separate provenance check. Input is the public HQ MP3 preview for Freesound banks, original Aston WAV/Honda Ogg, and original96 kHz/24-bit Sonniss studio WAVs. Raw source takes and source-page HTML are not in the production bundle.
 
 Processing uses mono 24 kHz PCM16, 65 Hz high-pass and 5.8 kHz low-pass filtering, DC removal, cosine overlap, exact endpoint correction and RMS/peak normalization. Each source interval is checked against decoded length. Every bank remains below 256 KiB; loop peaks are at most 0.66. We exclude startup/door transients and silence separators from the selected driving loops, and avoid the Murciélago take’s final loud rev. Source compression and background/road texture are not magically removed; these are compact arcade layers, not studio-isolated stems.
 
@@ -94,7 +104,7 @@ Electric recordings have a lower gain ceiling, no exhaust shelf boost and smooth
 
 The original 2 October focused audio run passed **50/50 tests**: asset/provenance/hash/PCM/loop-seam checks; all 33 mappings and actual decoded files; distinct source hashes; selected-only requests; three-voice reuse and LRU; timeout, failure, oversize, cancellation and late-decode behavior; real createAudio gesture/mixer/page gates; EV standstill/no-exhaust behavior; all-car gain/pitch bounds; and existing music/Nitro/spatial/lifecycle regressions.
 
-`reports/recorded-audio-review.html` is a local-only fixture excluded from production inputs. “Render all 33 cars” renders each actual audio graph and WAV bank with a real OfflineAudioContext, plus an optional synthesis-only comparison. It reports finite output, peak below 0.98, RMS ratio no greater than 1.25, exact active bank, one fetch/bank, at most three voices and pause-tail silence. A 15-active-family button shortens manual review, and a two-upgrade button isolates GranTurismo/AMG. The unassigned legacy Mustang is excluded from car-based review. Every output has an explicit Play control and WAV download; nothing autoplays. Synthesis-only comparisons now also have a player. Each result names the actual recorded vehicle, links its primary source/license, states adaptation limits, lists automatic gear-change times, and reports acceleration/lift/Nitro/impact RMS and peaks separately. The 13-second sequence covers acceleration, lift, braking, normal/Perfect Nitro, impact and pause.
+`reports/recorded-audio-review.html` is a local-only fixture excluded from production inputs. “Render all 33 cars” renders each actual audio graph and WAV bank with a real OfflineAudioContext, plus an optional synthesis-only comparison. It reports finite output, peak below 0.98, RMS ratio no greater than 1.25, exact active bank, one fetch/bank, at most three voices and pause-tail silence. The active-family button derives its count from the current mappings. A seven-source button isolates the new studio banks. Unassigned legacy banks are excluded from car-based review. Every output has an explicit Play control and WAV download; nothing autoplays. Synthesis-only comparisons now also have a player. Each result names the actual recorded vehicle, links its primary source/license, states adaptation limits, lists automatic gear-change times, and reports acceleration/lift/Nitro/impact RMS and peaks separately. The 13-second sequence covers acceleration, lift, braking, normal/Perfect Nitro, impact and pause.
 
 On 2 October 2026 the integrated browser run at the stable local review server passed **33 cars / 14 banks**, with **0 failures**: all output finite, every selected bank matched, one fetch/bank per render, at most three recorded voices, every synthesis-only RMS comparison within 1.25, and silent pause tails. The maximum rendered peak was **0.604216814**, below the 0.98 review ceiling. All 14 WAV derivatives also reproduced byte-for-byte from the documented source files and preparation script. A separate 96 kHz cache transition across the two largest banks retained the active bank, evicted the old bank and did not fetch again on the next update.
 
@@ -115,3 +125,17 @@ The user listened to both upgraded-car samples and reported that they were still
 Sound-only shift response now uses a 220 ms, 12% torque dip, slower pitch automation and smoother amplitude automation. This changes audio envelopes, not physics, shift thresholds, gear counts, user input or handling. Nitro's pitched core is one-quarter its former gain, its low sine weight is halved, and pressure air/release filters and envelopes are softer. A boost-local high-pass removes very low noise; the shared noise source and lobby/tyre/soundscape branches are unchanged. No oscillator, recording voice or noise buffer was added.
 
 The expanded five-suite run passes **53/53 tests**. New checks cover upper harmonic power, per-frame shift torque continuity, actual recording-versus-failure graph gains across the two upgraded cars plus hybrid/EV, turbine attenuation, unchanged fallback availability, no new driving allocations, the existing 0.42 source-gain ceiling, narrower recording pitch, and pause behavior. Final browser renders passed for all 33 cars, and the user subsequently approved the two revised samples: “Yes, this sounds better.” The listening verdict comes from that explicit reply, not from numeric tests; broad physical-device/speaker coverage remains unverified.
+
+## Complete source audit — 3 October 2026
+
+Seven independently identified studio banks now replace source assignments for eleven cars. Names, years, microphone perspectives and copyrights were cross-checked against the official Sonniss bundle tracklists, creator product pages and embedded original-WAV metadata. Testarossa now uses a flat-12 recording of the actual model. The current source and derivative hashes, selected intervals and download locations are in `ENGINE-SOURCES.json`. Source archives, long takes and embedded photos remain outside the repository.
+
+The Sonniss grant permits synchronized use in games, including commercial projects. These loops retain separate rights and are supplied as incorporated game assets, not a reusable audio library, project template or SDK. The public source-code repository does not confer a standalone sound license. [The current governing terms](https://sonniss.com/gdc-bundle-license/) apply to these new downloads; an older license copy inside an archive does not replace them. Required existing CC BY attribution remains at `/licenses/#recorded-engine-audio` and in `LICENSES.txt`.
+
+Selection used source metadata plus waveform/spectral stationarity to avoid starters, doors, horns and isolated transients. The Testarossa take contains steady engine plateaus. Other driving takes retain limited pitch movement/road sound; all bands and transitions remain authored arcade adaptations. None of this proves perceptual quality. Browser numeric rendering and the user's prior approval of the softer mix are distinct evidence; the seven new sources still need listening feedback on real speakers/headphones.
+
+See [the full audit report](../reports/recorded-engine-authenticity-2026-10-03.md) for accepted, rejected, conditional and paid candidates. No recordings were purchased and no copyrighted video audio was extracted.
+
+The final focused source-audit run passes **54/54 tests**. All **23 banks reproduce byte-for-byte** from the reviewed original files; changed-source hashes and unknown bank IDs fail before output creation. The latest browser render results are recorded by the root integration review.
+
+Final integrated browser review passed for **all 33 cars / 20 active banks** using the actual Offline Web Audio graph: maximum peak **0.5562003**, maximum recorded-to-synthesis RMS ratio **0.9591368**, correct selected bank and one fetch per render, no more than three voices, bounded caches and silent pause tails. Evidence: `reports/polish-authentic-audio-33.json`; Testarossa mixed listening artifact: `reports/polish-testarossa-mix.wav`. These are numeric render results, not new subjective listening approval.

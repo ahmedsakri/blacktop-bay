@@ -3,7 +3,7 @@ import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {sampleTrack,projectOnTrack,TRACKS} from './track.js';
 import {VENUE_REGIONS} from './showcase-lighting.js';
 import {originalLandmarkLayout} from './original-venues.js';
-import {setWorldSurfaceUV} from './track-surface-materials.js';
+import {setWorldSurfaceUV,pavingSurfaceMaterial} from './track-surface-materials.js';
 import {addFlagshipSectorArt} from './flagship-sector-art.js';
 
 // These are authored sectors on the game's original arcade routes. Fractions
@@ -119,7 +119,7 @@ export function createShowcaseVenue(scene,track,{low=false,stands=[],crowd,rng=M
  const sites=showcaseLayout(track,{stands});if(!sites.length)return null;
  const root=new THREE.Group();root.name='showcase-authored-sectors';scene.add(root);
  const mats={steel:new THREE.MeshStandardMaterial({color:'#405264',metalness:.65,roughness:.43}),
-  concrete:new THREE.MeshStandardMaterial({color:'#a7aaa1',roughness:.91,map:surfaces?.concreteColor||null,normalMap:surfaces?.concreteNormal||null,normalScale:new THREE.Vector2(.18,.18)}),
+  concrete:pavingSurfaceMaterial(surfaces||{},{color:'#b9b9ae'}),
   timber:new THREE.MeshStandardMaterial({color:'#705344',roughness:.87}),
   roof:new THREE.MeshStandardMaterial({color:'#34474d',roughness:.68}),
   red:new THREE.MeshStandardMaterial({color:track.id==='fuji-skyline'?'#c18f9b':'#a95643',roughness:.72}),
@@ -127,6 +127,7 @@ export function createShowcaseVenue(scene,track,{low=false,stands=[],crowd,rng=M
   glass:new THREE.MeshStandardMaterial({color:'#233f50',metalness:.53,roughness:.25}),
   warm:new THREE.MeshBasicMaterial({color:'#ffd7a3',toneMapped:false}),
   accent:new THREE.MeshBasicMaterial({color:'#9246ff',toneMapped:false})};
+ mats.paving=mats.concrete; // Terrace masonry and paving share one batch.
  const box=new THREE.BoxGeometry(1,1,1),cylinder=new THREE.CylinderGeometry(1,1,1,8),parts=[];
  const piece=(site,geometry,material,x,y,z,sx,sy,sz,rotation=0)=>{
   const m=new THREE.Mesh(geometry,material),c=Math.cos(site.yaw),s=Math.sin(site.yaw);
@@ -139,7 +140,7 @@ export function createShowcaseVenue(scene,track,{low=false,stands=[],crowd,rng=M
  };
  for(const site of sites){
   // Terrace foundations meet the road elevation instead of floating at crests.
-  piece(site,box,mats.concrete,0,-.3,0,15,.6,15);
+  piece(site,box,mats.paving,0,-.3,0,15,.6,15);
   if(site.kind==='bay-shelter'){
    // The old pedestal stopped at -0.30m above the -0.65m sea. A submerged
    // quay and six visible piers now connect every terrace to solid support.
@@ -237,7 +238,7 @@ export function createShowcaseVenue(scene,track,{low=false,stands=[],crowd,rng=M
   const approach=showcaseApproachLayout(track,site);
   if(approach){
    const railMaterial=track.id==='fuji-skyline'?mats.timber:track.id==='san-francisco-hills'?mats.red:mats.steel;
-   piece(site,box,mats.concrete,approach.center,-.21,0,approach.length,.34,approach.width);
+   piece(site,box,mats.paving,approach.center,-.21,0,approach.length,.34,approach.width);
    for(const z of [-.99,.99]){
     piece(site,box,railMaterial,approach.center,1.02,z,approach.length,.075,.075);
     for(let j=0;j<=4;j++){const x=approach.start+(approach.end-approach.start)*j/4;piece(site,box,railMaterial,x,.51,z,.075,1.02,.075);}
@@ -264,7 +265,7 @@ export function createShowcaseVenue(scene,track,{low=false,stands=[],crowd,rng=M
  const batches=new Map();root.updateMatrixWorld(true);
  const geometryStats={sourceTriangles:parts.reduce((sum,p)=>sum+(p.geometry.index?.count??p.geometry.attributes.position.count)/3,0),batchedTriangles:0,fallbackBatches:0};
  for(const part of parts){const siteKey=String(part.userData.sector),key=siteKey+part.material.uuid+':'+Object.keys(part.geometry.attributes).sort().join(',');
-  const g=part.geometry.index?part.geometry.toNonIndexed():part.geometry.clone();g.applyMatrix4(part.matrixWorld);if(surfaces&&part.material===mats.concrete)setWorldSurfaceUV(g,3);
+  const g=part.geometry.index?part.geometry.toNonIndexed():part.geometry.clone();g.applyMatrix4(part.matrixWorld);if(surfaces&&part.material===mats.concrete)setWorldSurfaceUV(g,3);if(part.material===mats.paving)setWorldSurfaceUV(g,2.12);
   if(!batches.has(key))batches.set(key,{material:part.material,geometries:[]});batches.get(key).geometries.push(g);part.removeFromParent();
  }
  for(const {material,geometries}of batches.values()){

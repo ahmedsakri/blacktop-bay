@@ -3,14 +3,17 @@ Provenance and exact source intervals: ENGINE-SOURCES.json
 Derivative loop banks: engines/*.wav
 Original sources checked 2 October 2026. GranTurismo and AMG sources checked 3 October 2026.
 
-All sources below permit redistribution and adaptation under CC0 or CC BY.
+The CC0 and CC BY entries below permit redistribution and adaptation under their
+listed terms. The separately marked Sonniss GDC entries are licensed for
+incorporation in this game and retain additional distribution restrictions.
 Each bank was modified by AppsOverFlow: selected source intervals, mono
 24 kHz PCM16 conversion, 65 Hz high-pass / 5.8 kHz low-pass filtering,
 DC removal, cosine loop overlap, endpoint correction and amplitude
 normalization. Runtime pitch, rev bands, gain and load EQ are authored.
 Retain the relevant title, author, source, license and modification notice
 when redistributing a CC BY derivative. No recorder or manufacturer
-endorsement is implied. Source previews are not original recording masters.
+endorsement is implied. Freesound source previews are not original masters; Sonniss sources are the
+original studio WAVs. Raw studio takes and attached images are not shipped.
 
 ferrari-355-v1.wav
 Adapted from “ferrari355underhood4.mp3” by enginemusic.
@@ -48,14 +51,14 @@ https://freesound.org/people/JaimeLopes/sounds/564375/
 CC-BY-4.0: https://creativecommons.org/licenses/by/4.0/
 https://creativecommons.org/licenses/by/4.0/legalcode
 Recorded on Tascam DR-07 internal microphones while entering, starting and driving a Huracán EVO Spyder. Door/start transients are omitted; public HQ MP3 preview.
-Family proxy for the game Huracán (variant unspecified), 2004 Gallardo and Audi R8/R8 LMS. No claim that the custom R8 uses this exact engine.
+Family proxy for the game Huracán (variant unspecified) and 2004 Gallardo. Source is an EVO Spyder; no same-year or same-variant claim.
 
 murcielago-v12-v1.wav
 Adapted from “Lambo idle and rev.mp3” by cheesepuff.
 https://freesound.org/people/cheesepuff/sounds/112075/
 CC0-1.0: https://creativecommons.org/publicdomain/zero/1.0/
 Author identifies their own Lamborghini-dealer video; tags identify Murciélago LP-670 SuperVeloce and V12. Public HQ MP3 preview. Final loud rev around 60 seconds excluded.
-Modern V12 family proxy for Aventador, Zonda, GMA T.50 and Enzo. Veyron uses a deliberately lower, darker multi-cylinder proxy; this is not a W16 recording.
+Modern V12 family proxy for Zonda C12, GMA T.50 and Enzo. Veyron uses a deliberately lower, darker multi-cylinder proxy; this is not a W16 recording.
 
 ferrari-classic-v12-v1.wav
 Adapted from “ferrari340america2.mp3” by enginemusic.
@@ -63,7 +66,7 @@ https://freesound.org/people/enginemusic/sounds/43483/
 CC-BY-3.0: https://creativecommons.org/licenses/by/3.0/
 https://creativecommons.org/licenses/by/3.0/legalcode
 Recorded around 1997 at RPM Motorsports in Vergennes, Vermont; Sony D8 DAT and Audio-Technica ATM10. Public HQ MP3 preview, not original master.
-Classic V12 family proxy for Ferrari 250 GTO and Countach. The Testarossa uses a classic twelve-cylinder texture adaptation; not a recording of its flat-12.
+Classic V12 family proxy for Ferrari 250 GTO and Countach LP500S. Neither represented model was recorded in this source session.
 
 honda-na-i4-v1.wav
 Adapted from “2002-Honda-F20C.ogg” by Tyler Riddle.
@@ -102,7 +105,7 @@ https://freesound.org/people/CLaforet/sounds/351962/
 CC-BY-4.0: https://creativecommons.org/licenses/by/4.0/
 https://creativecommons.org/licenses/by/4.0/legalcode
 Recorded in the cabin with a Tascam DR-40 during hard acceleration. Public HQ MP3 preview. Silence separators between takes are excluded.
-V6 family proxy for Nissan GT-R; not its turbocharged VR38 or exhaust recording. Existing authored induction layer supplies the turbo character.
+Unassigned legacy V6 proxy retained for reproducing earlier mixes. Previously assigned to Nissan GT-R; the current GT-R uses a documented 2012 R35 recording.
 
 bmw-diesel-v1.wav
 Adapted from “SFX_Car_Engine_Inside_Idle.wav” by GiocoSound.
@@ -147,5 +150,82 @@ Adapted from “S63 AMG V8 Engine Revs” by marcelweiss.
 https://freesound.org/people/marcelweiss/sounds/505321/
 CC0-1.0: https://creativecommons.org/publicdomain/zero/1.0/
 Author identifies a stationary Mercedes-Benz S63 AMG Coupe revving its V8 BiTurbo in a Munich car park. Public HQ MP3 preview. Selected intervals avoid the wideband rev transients; source year and engine code are unspecified.
-AMG bi-turbo V8 family proxy: the source is an S63 AMG Coupe, not an AMG GT recording or a verified identical engine code. Three authored rev bands replace the unrelated 1985 Mustang idle-only texture. No measured source RPM is asserted.
+Unassigned legacy AMG bi-turbo V8 proxy retained for reproducing earlier mixes. Source is S63 AMG Coupé; the current AMG GT uses a documented GT R recording. This was the earlier replacement for Mustang idle.
 Modified by AppsOverFlow as described above. No author or manufacturer endorsement.
+
+Sonniss GDC studio recordings — game-incorporated use only
+=======================================================
+Seven derivatives below use recordings by Pole Position Production from the
+Sonniss GDC 2019/2020/2023 free bundles. Current governing license (downloaded
+3 October 2026): https://sonniss.com/gdc-bundle-license/ — version 2.0,
+effective27 August 2026. Commercial game synchronization and modifications
+are permitted. Do not distribute these recordings or edited loops as a
+standalone sound-effect library, asset pack, project template or SDK.
+No AI training. Attribution is not required; this notice preserves provenance
+and separate asset rights. The game source-code license does not relicense
+these sounds. Obtain the source bundle independently for other projects.
+Official bundle: https://sonniss.com/gameaudiogdc/
+Modifications: AppsOverFlow, processing described at the top of this file.
+
+mclaren-570s-2016-v1.wav
+Recorded vehicle: 2016 McLaren 570S Coupé V8 biturbo
+Original take: McLaren_570S_t10_Onbrd_Fast_Various_Exhaust_Right_DPA4062.wav
+Pole Position Production — Sonniss GDC 2020
+https://pole.se/product/mclaren-570s-2016/
+https://docs.google.com/spreadsheets/d/1QqIcxJ7y0Acq3HAj9qQvFgvyeBjJ_7JvX8-GguUHIVk/edit
+Sonniss GDC v2: https://sonniss.com/gdc-bundle-license/
+Model and Coupé match for the 570S; visual source does not state model year. Related McLaren twin-turbo V8 proxy for Senna, P1 GTR and 650S GT3, not recordings of those models or the P1 hybrid system. Rev bands are authored, not measured RPM.
+
+aventador-2014-v1.wav
+Recorded vehicle: 2014 Lamborghini Aventador V12
+Original take: lamborghini_aventador_t14_onbrd_start_drive_ramps_stop_off_exhaust_right_DPA4062.wav
+Pole Position Production — Sonniss GDC 2020
+https://pole.se/product/lamborghini-aventador-2014/
+https://docs.google.com/spreadsheets/d/1QqIcxJ7y0Acq3HAj9qQvFgvyeBjJ_7JvX8-GguUHIVk/edit
+Sonniss GDC v2: https://sonniss.com/gdc-bundle-license/
+Aventador model recording replaces Murciélago proxy. The game visual source does not specify year/trim; exact year/variant remains unverified. Rev bands are authored, not measured RPM.
+
+ferrari-458-2013-v1.wav
+Recorded vehicle: 2013 Ferrari 458 V8 (body variant not verified)
+Original take: ferrari_458_t8_onbrd_drive_ramps_stop_off_intake_left_DPA4062.wav
+Pole Position Production — Sonniss GDC 2020
+https://sonniss.com/sound-effects/ferrari-458-2013/
+https://docs.google.com/spreadsheets/d/1QqIcxJ7y0Acq3HAj9qQvFgvyeBjJ_7JvX8-GguUHIVk/edit
+Sonniss GDC v2: https://sonniss.com/gdc-bundle-license/
+458 model-family recording replaces the 355 proxy. Game asset is a 458 Spider; the recording identifies 458 without certifying Spider, and embedded artwork depicts a coupé. Do not claim exact Spider or conflate this original take with the separately sold straight-pipes session.
+
+audi-r8-2017-v1.wav
+Recorded vehicle: 2017 Audi R8 FSI 5.2 V10
+Original take: Audi, R8, t3, Onbrd, Start, Fast, Drive, Stop, Reverse, Stop, Drive, Engine, Right, DPA4061.wav
+Pole Position Production — Sonniss GDC 2020
+https://pole.se/product/audi-r8-2017/
+https://docs.google.com/spreadsheets/d/1QqIcxJ7y0Acq3HAj9qQvFgvyeBjJ_7JvX8-GguUHIVk/edit
+Sonniss GDC v2: https://sonniss.com/gdc-bundle-license/
+R8 road-model recording replaces Huracán proxy for R8 Custom; custom build/generation remains undocumented. Related road R8 variant proxy for the 2019 R8 LMS GT3, not the race-car recording.
+
+nissan-gtr-2012-v1.wav
+Recorded vehicle: 2012 Nissan GT-R R35 turbo V6, modified performance exhaust
+Original take: Nissan_GTR_t6_Onbrd_Drive_Ramps_Engine_Left_Valve_DPA4062.wav
+Pole Position Production — Sonniss GDC 2020
+https://pole.se/product/nissan-gt-r-r35-2012/
+https://docs.google.com/spreadsheets/d/1QqIcxJ7y0Acq3HAj9qQvFgvyeBjJ_7JvX8-GguUHIVk/edit
+Sonniss GDC v2: https://sonniss.com/gdc-bundle-license/
+R35 model/generation recording replaces Chevrolet Traverse proxy; source is 2012, not the represented 2018 model year. Rev bands are authored, not measured RPM. The source vehicle has a modified performance exhaust, not a verified factory 2018 exhaust.
+
+mercedes-amg-gtr-2018-v1.wav
+Recorded vehicle: 2018 Mercedes-AMG GT R twin-turbo V8
+Original take: mercedes_amg_gtr_t13_onbrd_start_fast_drive_stop_off_interior_DPA4021.wav
+Pole Position Production — Sonniss GDC 2019
+https://pole.se/product/mercedes-amg-gt-r-2018/
+https://docs.google.com/spreadsheets/d/1-McgwdktLVmctBrI4OGbgIBxeCp0A4KyKJzxOOTP6FY/edit
+Sonniss GDC v2: https://sonniss.com/gdc-bundle-license/
+AMG GT R variant recording replaces the S63 AMG proxy. The game represents AMG GT without the R trim; this remains a documented variant proxy. Cabin/road texture remains; rev bands are authored, not measured RPM.
+
+testarossa-1990-v1.wav
+Recorded vehicle: 1990 Ferrari Testarossa flat-12
+Original take: Ferrari, Testarossa, t6, Onbrd, Start, Drive, Steady RPMs, Engine, Mix.wav
+Pole Position Production — Sonniss GDC 2023
+https://pole.se/product/ferrari-testarossa-1990/
+https://docs.google.com/spreadsheets/d/1HAJdNA-QIug2IZjUV-DwCo1IZ-XJ4Vv9gWIaumNScfc/edit
+Sonniss GDC v2: https://sonniss.com/gdc-bundle-license/
+Testarossa model and flat-12 recording replaces the unrelated Ferrari 340 America V12 proxy. Source car is 1990; represented visual source does not state its year. Three steady source sections, authored rev-band labels and transitions, not measured RPM calibration.

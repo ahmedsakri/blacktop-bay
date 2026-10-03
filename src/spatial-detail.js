@@ -8,10 +8,10 @@ export function partitionInstances(list,cellSize=120){
  for(const item of list){const key=`${Math.floor(item.x/cellSize)}:${Math.floor(item.z/cellSize)}`;if(!buckets.has(key))buckets.set(key,[]);buckets.get(key).push(item);}
  return [...buckets.values()];
 }
-export function createSpatialInstances(parent,geometry,material,list,{cellSize=120,distance=410}={}){
+export function createSpatialInstances(parent,geometry,material,list,{cellSize=120,distance=410,partitionThreshold=48}={}){
  const root=new THREE.Group();root.name='spatial-scenery';parent.add(root);
  const dummy=new THREE.Object3D(),color=new THREE.Color();
- const buckets=list.length>=48?partitionInstances(list,cellSize):[list];
+ const buckets=list.length>=partitionThreshold?partitionInstances(list,cellSize):[list];
  for(const items of buckets){
   if(!items.length)continue;
   const mesh=new THREE.InstancedMesh(geometry,material,items.length);

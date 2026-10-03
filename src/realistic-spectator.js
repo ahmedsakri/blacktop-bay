@@ -46,7 +46,7 @@ export function createSpectatorLibrary({load,enabled=typeof window!=='undefined'
    };
    job.cancel=()=>{controller.abort();finish(null);};
    job.timer=setTimeout(job.cancel,Math.max(1,timeoutMs));job.timer.unref?.();
-   Promise.resolve().then(()=>loader(`/assets/crowd/${SPECTATOR_ASSETS[job.index].id}.glb`,{signal:controller.signal})).then(result=>{
+   Promise.resolve().then(()=>loader(`/assets/crowd/${SPECTATOR_ASSETS[job.index].id}${job.medium?'-crowd':''}.glb`,{signal:controller.signal})).then(result=>{
     const root=result.scene||result;
     if(disposed||job.done){finish(root);return;}
     root.traverse(object=>{if(!object.isMesh)return;object.castShadow=false;object.receiveShadow=false;object.frustumCulled=false;
@@ -62,13 +62,15 @@ export function createSpectatorLibrary({load,enabled=typeof window!=='undefined'
    }).catch(()=>finish(null));
   }
  };
- return {
-  get(index){
+ function request(index,medium=false){
    if(!enabled||disposed)return Promise.resolve(null);
    index=((index%SPECTATOR_ASSETS.length)+SPECTATOR_ASSETS.length)%SPECTATOR_ASSETS.length;
-   if(!requests.has(index))requests.set(index,new Promise(resolve=>{queue.push({index,resolve});pump();}));
-   return requests.get(index);
-  },
+   const key=`${index}:${medium?'medium':'near'}`;
+   if(!requests.has(key))requests.set(key,new Promise(resolve=>{queue.push({index,medium,resolve});pump();}));
+   return requests.get(key);
+ }
+ return {
+  get:index=>request(index),getMedium:index=>request(index,true),
   dispose(){if(disposed)return;disposed=true;for(const job of queue.splice(0))job.resolve(null);for(const job of [...activeJobs])job.cancel();for(const root of sources)releaseSource(root);sources.clear();requests.clear();},
   get status(){return {requested:requests.size,loaded:sources.size,active,queued:queue.length,disposed};},
  };
@@ -112,6 +114,29 @@ export function createTexturedSpectator(source) {
   const bone=bones.get(name);bone.quaternion.copy(bone.parent.getWorldQuaternion(new THREE.Quaternion()).invert().multiply(quaternion));bone.updateMatrixWorld(true);
  }
  const pelvisHeight=rest.get('pelvis').worldPosition.y;
+ const handFrames=new Map();
+ for(const suffix of ['l','r']){
+  const hand=rest.get(`hand_${suffix}`).worldPosition;
+  const finger=rest.get(`middle_01_${suffix}`).worldPosition.clone().sub(hand).normalize();
+  const across=rest.get(`index_01_${suffix}`).worldPosition.clone().sub(rest.get(`pinky_01_${suffix}`).worldPosition).normalize();
+  const normal=new THREE.Vector3().crossVectors(across,finger).normalize();
+  if(normal.z<0)normal.negate();
+  handFrames.set(suffix,{finger,normal});
+ }
+ function orientHand(suffix,side,gesture,amount){
+  const frame=handFrames.get(suffix),raised=gesture===4||(gesture===0&&side>0)||(gesture===2&&side<0);
+  const finger=new THREE.Vector3(raised?side*.09:0,raised||gesture===3||gesture===1?1:-1,gesture===1?.22:.06).normalize();
+  const normal=new THREE.Vector3(gesture===1?-side:0,0,gesture===1?.08:1);
+  const orientation=(direction,palm)=>{
+   palm.addScaledVector(direction,-palm.dot(direction)).normalize();
+   const rotation=new THREE.Quaternion().setFromUnitVectors(frame.finger,direction);
+   const turned=frame.normal.clone().applyQuaternion(rotation);turned.addScaledVector(direction,-turned.dot(direction)).normalize();
+   const twist=Math.atan2(new THREE.Vector3().crossVectors(turned,palm).dot(direction),turned.dot(palm));
+   return rotation.premultiply(new THREE.Quaternion().setFromAxisAngle(direction,twist)).multiply(rest.get(`hand_${suffix}`).worldQuaternion);
+  };
+  const relaxed=orientation(new THREE.Vector3(0,-1,.06).normalize(),new THREE.Vector3(0,0,1));
+  setWorldOrientation(`hand_${suffix}`,relaxed.slerp(orientation(finger,normal),gesture===3?1:amount));
+ }
  let disposed=false;
  return {
   mesh,kind:'textured',get drawCalls(){return draws+Number(phone.visible);},
@@ -124,7 +149,8 @@ export function createTexturedSpectator(source) {
    mesh.updateMatrixWorld(true);
    const pelvis=bones.get('pelvis'),pelvisDelta=new THREE.Vector3(pose.sway,pose.hip-pelvisHeight,pose.lean);
    pelvisDelta.applyQuaternion(pelvis.parent.getWorldQuaternion(new THREE.Quaternion()).invert());pelvis.position.add(pelvisDelta);pelvis.updateMatrixWorld(true);
-   for(const name of ['spine_02','spine_03'])bones.get(name).rotateX(pose.torsoTilt*.35);
+   for(const name of ['spine_02','spine_03']){bones.get(name).rotateX(pose.torsoTilt*.35);bones.get(name).rotateY((pose.torsoYaw||0)*.5);bones.get(name).rotateZ((pose.torsoRoll||0)*.5);}
+   bones.get('neck_01')?.rotateY(pose.headYaw*.2);
    const head=bones.get('head');head.rotateY(pose.headYaw);head.rotateX(pose.headPitch);head.rotateZ(pose.headRoll);
    mesh.updateMatrixWorld(true);
    for(const arm of pose.arms){
@@ -136,13 +162,18 @@ export function createTexturedSpectator(source) {
     aim(upper,lower,solved.joint);aim(lower,hand,solved.end);
     // Fingertips curl around a phone or into a cheering fist, while waves and
     // claps retain the imported human hand silhouette.
-    const curl=person.gesture===3?.55:person.gesture===2?.80:person.gesture===1?.13:.08;
+    const amount=THREE.MathUtils.smoothstep(pose.energy??1,.10,.65);
+    orientHand(suffix,arm.side,person.gesture,amount);
+    const raised=person.gesture===4||(person.gesture===0&&arm.side>0);
+    const targetCurl=person.gesture===2&&arm.side<0?.80:person.gesture===1?.10:raised?.035:.26;
+    const curl=person.gesture===3?.55:THREE.MathUtils.lerp(.26,targetCurl,amount);
     for(const finger of ['index','middle','ring','pinky'])for(const part of ['01','02','03'])bones.get(`${finger}_${part}_${suffix}`)?.rotateX(curl);
+    bones.get(`thumb_02_${suffix}`)?.rotateX(curl*.55);
    }
    for(const suffix of ['l','r']){
     const side=suffix==='l'?1:-1,upper=`thigh_${suffix}`,lower=`calf_${suffix}`,foot=`foot_${suffix}`;
     const start=worldPosition(upper),target=rest.get(foot).worldPosition.clone();
-    if(person.seated)target.set(side*.14,.075,.37);else target.z+=side*.022;
+    if(person.seated)target.set(side*.14,.075,.37);else {target.x+=side*.012;target.z+=side*.032;}
     const hint=new THREE.Vector3(side*.16,person.seated?.43:.43,person.seated?.43:.06);
     const solved=jointBetween(start,target,hint,rest.get(upper).worldPosition.distanceTo(rest.get(lower).worldPosition),rest.get(lower).worldPosition.distanceTo(rest.get(foot).worldPosition));
     aim(upper,lower,solved.joint);aim(lower,foot,solved.end);setWorldOrientation(foot,rest.get(foot).worldQuaternion);

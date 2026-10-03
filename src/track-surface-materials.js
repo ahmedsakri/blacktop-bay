@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-// Six shared maps, resident once per world. Mobile uses half-resolution files;
+// Nine shared maps, resident once per world. Mobile uses half-resolution files;
 // colour maps are sRGB, while normal/roughness data remains linear.
 export const TRACK_SURFACE_MAPS = Object.freeze({
   asphaltColor: {file:'asphalt-color',size:1024,color:true,fallback:'#575958'},
@@ -8,6 +8,9 @@ export const TRACK_SURFACE_MAPS = Object.freeze({
   asphaltRoughness: {file:'asphalt-roughness',size:512,fallback:'#d4d4d4'},
   concreteColor: {file:'concrete-color',size:512,color:true,fallback:'#cfcec4'},
   concreteNormal: {file:'concrete-normal',size:512,fallback:'#8080ff'},
+  pavingColor: {file:'paving-color',size:512,color:true,fallback:'#a6a49d'},
+  pavingNormal: {file:'paving-normal',size:512,fallback:'#8080ff'},
+  foliageLeaf: {file:'foliage-leaf',size:512,color:true,fallback:'#91a17a'},
   terrainColor: {file:'terrain-color',size:1024,color:true,fallback:'#8a8777'},
 });
 
@@ -22,7 +25,7 @@ function browserImage(url) {
 
 export function createTrackSurfaceLibrary({low=false,anisotropy=4,loadImage=browserImage,placeholder}={}) {
   let disposed=false;
-  const maps={},status={loaded:0,failed:0,files:6,estimatedBytes:0},tasks=[];
+  const maps={},status={loaded:0,failed:0,files:Object.keys(TRACK_SURFACE_MAPS).length,estimatedBytes:0},tasks=[];
   for(const [key,definition] of Object.entries(TRACK_SURFACE_MAPS)) {
     const size=definition.size/(low?2:1);
     // WebGL2 texStorage is immutable: swapping a decoded 512px image into a
@@ -30,7 +33,13 @@ export function createTrackSurfaceLibrary({low=false,anisotropy=4,loadImage=brow
     // storage. Reserve the final dimensions before the first rendered frame.
     const canvas=placeholder?.(definition.fallback,size)||document.createElement('canvas');
     canvas.width=canvas.height=size;
-    if(!placeholder){const c=canvas.getContext('2d');c.fillStyle=definition.fallback;c.fillRect(0,0,size,size);}
+    if(!placeholder){const c=canvas.getContext('2d');c.fillStyle=definition.fallback;
+      if(key==='foliageLeaf'){
+        // A failed leaf request retains a soft cutout spray, never an opaque
+        // rectangular card. It is replaced by the verified photograph on load.
+        for(let i=0;i<24;i++){const a=i*2.399963,r=size*(.09+Math.sqrt((i+.5)/24)*.27);c.beginPath();c.ellipse(size/2+Math.cos(a)*r,size/2+Math.sin(a)*r*.88,size*.047,size*.081,a,0,Math.PI*2);c.fill();}
+      }else c.fillRect(0,0,size,size);
+    }
     const texture=new THREE.Texture(canvas);texture.needsUpdate=true;
     texture.name=definition.file;texture.colorSpace=definition.color?THREE.SRGBColorSpace:THREE.NoColorSpace;
     texture.wrapS=texture.wrapT=THREE.RepeatWrapping;texture.anisotropy=Math.min(8,Math.max(1,anisotropy));maps[key]=texture;
@@ -51,8 +60,15 @@ export function roadSurfaceMaterial(maps) {
 }
 
 export function concreteSurfaceMaterial(maps,{color='#a9afb0',roughness=.91}={}) {
-  return new THREE.MeshStandardMaterial({color,map:maps.concreteColor,normalMap:maps.concreteNormal,
-    normalScale:new THREE.Vector2(.22,.22),roughness,metalness:0});
+  const material=new THREE.MeshStandardMaterial({color,map:maps.concreteColor,normalMap:maps.concreteNormal,
+    normalScale:new THREE.Vector2(.13,.13),roughness,metalness:0});
+  material.onBeforeCompile=shader=>{shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>','#include <map_fragment>\ndiffuseColor.rgb=mix(diffuse,diffuseColor.rgb,0.24);');};
+  material.customProgramCacheKey=()=> 'restrained-concrete-v1';material.userData.surfaceVariation=.24;return material;
+}
+
+// Dedicated CC0 paving at 2.12m, rather than weathered wall imagery on floors.
+export function pavingSurfaceMaterial(maps,{color='#cbc8bd'}={}){
+ return new THREE.MeshStandardMaterial({color,map:maps.pavingColor||null,normalMap:maps.pavingNormal||null,normalScale:new THREE.Vector2(.28,.28),roughness:.9,metalness:0});
 }
 
 // Static scenery is already transformed into world coordinates when batched.
@@ -113,4 +129,15 @@ export function architecturalFacadeMaterial({night=false}={}) {
     `);
   };
   material.customProgramCacheKey=()=>`camber-authored-facades-v3-${night?'night':'day'}`;return material;
+}
+
+// One alpha-tested photographed spray per crown leaf cluster. Colour is used
+// as luminance detail so the same map supports green and blossom canopies.
+export function foliageSurfaceMaterial(map,{color='white'}={}){
+ const material=new THREE.MeshStandardMaterial({color,map:map||null,vertexColors:true,roughness:1,side:THREE.DoubleSide,alphaTest:.46});
+ if(map){material.onBeforeCompile=shader=>{shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>',`#include <map_fragment>
+ #ifdef USE_MAP
+ diffuseColor.rgb=diffuse*clamp(dot(sampledDiffuseColor.rgb,vec3(.299,.587,.114))*2.5,.18,1.);
+ #endif`);};material.customProgramCacheKey=()=> 'photographed-foliage-spray-v1';}
+ return material;
 }

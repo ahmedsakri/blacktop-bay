@@ -50,6 +50,18 @@
     "predeploy": [
       "npm test",
       "npm run build"
+    ],
+    "redirects": [
+      {
+        "source": "/credits",
+        "destination": "/licenses/",
+        "type": 301
+      },
+      {
+        "source": "/credits/",
+        "destination": "/licenses/",
+        "type": 301
+      }
     ]
   }
 }

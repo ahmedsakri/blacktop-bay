@@ -1,0 +1,480 @@
+{
+  "version": 1,
+  "checked": "2026-10-03",
+  "scope": "Official Sonniss GDC2016/2017/2018/2019/2020/2023 tracklists (2024 archive links2023 list), identified Freesound source pages/searches, Wikimedia vehicle-audio categories, creator/vendor libraries. Some search requests timed out or rate-limited. No purchases, new accounts or copyrighted-video extraction.",
+  "candidates": [
+    {
+      "id": "sonniss-570s",
+      "decision": "adopted-game-only",
+      "vehicle": "2016 McLaren 570S Coupé",
+      "primaryUrls": [
+        "https://sonniss.com/gameaudiogdc/",
+        "https://pole.se/product/mclaren-570s-2016/",
+        "https://sonniss.com/gdc-bundle-license/"
+      ],
+      "reason": "Original onboard exhaust file matched to the official GDC2020 tracklist and embedded studio metadata. Correct 570S coupe; other McLarens remain related-model proxies.",
+      "license": "Sonniss GDC v2 (2026-08-27)",
+      "costUSD": 0,
+      "readiness": "Prepared bounded game loops; originals outside repository; not an asset pack or template license."
+    },
+    {
+      "id": "sonniss-aventador",
+      "decision": "adopted-game-only",
+      "vehicle": "2014 Lamborghini Aventador",
+      "primaryUrls": [
+        "https://sonniss.com/gameaudiogdc/",
+        "https://pole.se/product/lamborghini-aventador-2014/",
+        "https://sonniss.com/gdc-bundle-license/"
+      ],
+      "reason": "Original onboard exhaust file matched to GDC2020 and metadata. Target year/trim unspecified.",
+      "license": "Sonniss GDC v2 (2026-08-27)",
+      "costUSD": 0,
+      "readiness": "Prepared bounded game loops; originals outside repository; not an asset pack or template license."
+    },
+    {
+      "id": "sonniss-458",
+      "decision": "adopted-game-only",
+      "vehicle": "2013 Ferrari 458",
+      "primaryUrls": [
+        "https://sonniss.com/gameaudiogdc/",
+        "https://sonniss.com/sound-effects/ferrari-458-2013/",
+        "https://sonniss.com/gdc-bundle-license/"
+      ],
+      "reason": "Original intake file, GDC2020 and metadata. Source does not certify Spider; embedded artwork depicts coupe. Separate straight-pipes listing is not evidence for this take.",
+      "license": "Sonniss GDC v2 (2026-08-27)",
+      "costUSD": 0,
+      "readiness": "Prepared bounded game loops; originals outside repository; not an asset pack or template license."
+    },
+    {
+      "id": "sonniss-r8",
+      "decision": "adopted-game-only",
+      "vehicle": "2017 Audi R8 FSI 5.2 V10",
+      "primaryUrls": [
+        "https://sonniss.com/gameaudiogdc/",
+        "https://pole.se/product/audi-r8-2017/",
+        "https://sonniss.com/gdc-bundle-license/"
+      ],
+      "reason": "Original engine file, GDC2020 and metadata. R8 Custom engine build unknown; 2019 LMS is a different race variant.",
+      "license": "Sonniss GDC v2 (2026-08-27)",
+      "costUSD": 0,
+      "readiness": "Prepared bounded game loops; originals outside repository; not an asset pack or template license."
+    },
+    {
+      "id": "sonniss-gtr",
+      "decision": "adopted-game-only",
+      "vehicle": "2012 Nissan GT-R R35",
+      "primaryUrls": [
+        "https://sonniss.com/gameaudiogdc/",
+        "https://pole.se/product/nissan-gt-r-r35-2012/",
+        "https://sonniss.com/gdc-bundle-license/"
+      ],
+      "reason": "Original engine file, GDC2020 and metadata. Modified performance exhaust and different year from game2018 are retained in the label.",
+      "license": "Sonniss GDC v2 (2026-08-27)",
+      "costUSD": 0,
+      "readiness": "Prepared bounded game loops; originals outside repository; not an asset pack or template license."
+    },
+    {
+      "id": "sonniss-amg-gtr",
+      "decision": "adopted-game-only",
+      "vehicle": "2018 Mercedes-AMG GT R",
+      "primaryUrls": [
+        "https://sonniss.com/gameaudiogdc/",
+        "https://pole.se/product/mercedes-amg-gt-r-2018/",
+        "https://sonniss.com/gdc-bundle-license/"
+      ],
+      "reason": "Original interior file, GDC2019 and metadata. GT R variant proxy for GT, more specific than S63.",
+      "license": "Sonniss GDC v2 (2026-08-27)",
+      "costUSD": 0,
+      "readiness": "Prepared bounded game loops; originals outside repository; not an asset pack or template license."
+    },
+    {
+      "id": "sonniss-testarossa",
+      "decision": "adopted-game-only",
+      "vehicle": "1990 Ferrari Testarossa",
+      "primaryUrls": [
+        "https://sonniss.com/gameaudiogdc/",
+        "https://pole.se/product/ferrari-testarossa-1990/",
+        "https://sonniss.com/gdc-bundle-license/"
+      ],
+      "reason": "Original onboard engine-mix file matched to GDC2023 official tracklist and embedded Pole Position vehicle/copyright metadata. Replaces wrong-layout Ferrari340 V12 with Testarossa flat12.",
+      "license": "Sonniss GDC v2 (2026-08-27)",
+      "costUSD": 0,
+      "readiness": "Prepared bounded game loops; originals outside repository; not an asset pack or template license."
+    },
+    {
+      "id": "sonniss-huracan",
+      "decision": "reviewed-not-selected",
+      "vehicle": "2014 Lamborghini Huracán LP610-4",
+      "primaryUrls": [
+        "https://sonniss.com/gameaudiogdc/",
+        "https://pole.se/product/lamborghini-huracan-2014/",
+        "https://sonniss.com/gdc-bundle-license/"
+      ],
+      "reason": "Downloaded original GDC2019 exterior start/blips take. Does not establish exact target variant; short blips supply less steady high-load material than current driving source. Kept current approved EVO Spyder proxy."
+    },
+    {
+      "id": "sonniss-gt3",
+      "decision": "reviewed-not-selected",
+      "vehicle": "2008 Porsche 997.1 GT3 RS",
+      "primaryUrls": [
+        "https://sonniss.com/gameaudiogdc/",
+        "https://pole.se/product/porsche-997-gt3-rs-2008/",
+        "https://sonniss.com/gdc-bundle-license/"
+      ],
+      "reason": "Downloaded GDC2020 slow-driving interior take. RS differs from target GT3; target generation unstated; library describes a 4.0L2008 car without explaining its build. Do not infer factory specification from that inconsistent combination. Current911 recording remains explicitly unverified variant."
+    },
+    {
+      "id": "sonniss-e46",
+      "decision": "rejected-identity",
+      "vehicle": "BMW3Series E46",
+      "primaryUrls": [
+        "https://sonniss.com/gameaudiogdc/",
+        "https://sonniss.com/sound-effects/bmw-3-series-e46/"
+      ],
+      "reason": "3Series is not evidence for M3 or S54 engine; model/build missing."
+    },
+    {
+      "id": "sweet-senna",
+      "decision": "purchase-and-embedding-review-required",
+      "vehicle": "2018 McLaren Senna",
+      "primaryUrls": [
+        "https://sound-ideas.com/products/mclaren-senna-by-sounding-sweet",
+        "https://www.sweetsfx.com/product/mclaren-senna/",
+        "https://sound-ideas.com/pages/faq"
+      ],
+      "reason": "Identified stock2018 Senna,231takes; useful exact-model candidate. SoundIdeas game permission requires embedded sound not accessible for standalone download. Current public WAV game architecture requires vendor confirmation or a compliant distribution design before purchase/use.",
+      "priceUSD": 349,
+      "priceChecked": "2026-10-03",
+      "license": "Vendor royalty-free EULA, conditional game embedding"
+    },
+    {
+      "id": "soundideas-testarossa",
+      "decision": "not-needed-free-source-adopted",
+      "vehicle": "Ferrari Testarossa",
+      "primaryUrls": [
+        "https://sound-ideas.com/products/ferrari-testarossa-car-sound-effects",
+        "https://sound-ideas.com/pages/faq"
+      ],
+      "reason": "116takes; paid alternative, not acquired. Free identified Pole Position1990 recording was adopted. Same SoundIdeas download/extraction condition applies.",
+      "priceUSD": 75,
+      "priceChecked": "2026-10-03"
+    },
+    {
+      "id": "pole-gallardo",
+      "decision": "purchase-and-year-review-required",
+      "vehicle": "Lamborghini Gallardo",
+      "primaryUrls": [
+        "https://pole.se/product/lamborghini-gallardo/",
+        "https://pole.se/eula/"
+      ],
+      "reason": "Advertised14m13s10channel library. Year/variant must be established against target2004 before buying; not an exact-year claim.",
+      "priceUSD": 119,
+      "priceChecked": "2026-10-03"
+    },
+    {
+      "id": "watson-countach",
+      "decision": "rejected-variant",
+      "vehicle": "1988 Lamborghini Countach LP5000QV",
+      "primaryUrls": [
+        "https://www.watsonwu.com/vehicles/lamborghini-countach-sound-fx-library"
+      ],
+      "reason": "Advertised139files; LP5000QV is not target LP500S. Not an exact replacement despite model-family title.",
+      "priceUSD": 249,
+      "priceChecked": "2026-10-03"
+    },
+    {
+      "id": "sweet-zonda-f",
+      "decision": "rejected-variant",
+      "vehicle": "Pagani Zonda F",
+      "primaryUrls": [
+        "https://sound-ideas.com/products/pagani-zonda-f-by-sounding-sweet",
+        "https://www.sweetsfx.com/product/pagani-zonda-f/"
+      ],
+      "reason": "239clips of Zonda F7.3V12, not ZondaC12; buying this does not complete exact coverage.",
+      "priceUSD": 399,
+      "priceChecked": "2026-10-03"
+    },
+    {
+      "id": "p1-marketplace",
+      "decision": "rejected-unverified-provenance",
+      "vehicle": "McLaren P1 model with engine sounds",
+      "primaryUrls": [
+        "https://www.artstation.com/marketplace/p/Lwa9L/mclaren-p1-with-engine-sounds"
+      ],
+      "reason": "Model-pack title is not recording provenance; P1 is also not P1GTR. No verified original recorder or usable sound-specific chain of rights established.",
+      "priceUSD": 19.99,
+      "priceChecked": "2026-10-03"
+    },
+    {
+      "id": "freesound-r8",
+      "decision": "rejected-or-less-specific",
+      "vehicle": "Audi R8",
+      "primaryUrls": [
+        "https://freesound.org/people/Jonas_Jocys/sounds/457733/"
+      ],
+      "reason": "CCBY4 own recording and recorder chain; year/variant absent, clipping discussed by listeners. More fully identified professional2017source adopted instead."
+    },
+    {
+      "id": "freesound-granturismo-2018",
+      "decision": "rejected-or-less-specific",
+      "vehicle": "2018 Maserati GranTurismo",
+      "primaryUrls": [
+        "https://freesound.org/people/myeclecticself/sounds/585215/"
+      ],
+      "reason": "CC0 idle/sport launch; not MCStradale, therefore not an exact improvement over documented GranTurismoS."
+    },
+    {
+      "id": "freesound-koenigsegg",
+      "decision": "rejected-or-less-specific",
+      "vehicle": "Koenigsegg unspecified",
+      "primaryUrls": [
+        "https://freesound.org/people/FFKoenigsegg20012017/sounds/339136/"
+      ],
+      "reason": "CC0 short flyby tagged Koenigsegg, no One:1 identity proof."
+    },
+    {
+      "id": "freesound-m3",
+      "decision": "rejected-or-less-specific",
+      "vehicle": "BMW M3 unspecified generation",
+      "primaryUrls": [
+        "https://freesound.org/people/ccdff2/sounds/343369/"
+      ],
+      "reason": "CC BY3 M3 recording by ccdff2; the description does not identify E46 generation or engine. A generic M3 label is insufficient to replace the explicitly documented inline-six proxy as an exact E46 take."
+    },
+    {
+      "id": "freesound-gallardo",
+      "decision": "rejected-or-less-specific",
+      "vehicle": "2013 Lamborghini Gallardo",
+      "primaryUrls": [
+        "https://freesound.org/people/beansqueso31/sounds/222607/"
+      ],
+      "reason": "CCBYNC3 unsuitable for commercial game;2013differsfrom2004 and source comments report overload."
+    },
+    {
+      "id": "freesound-gt3",
+      "decision": "rejected-or-less-specific",
+      "vehicle": "Porsche GT3 Cup",
+      "primaryUrls": [
+        "https://freesound.org/people/FritzSounds/sounds/570254/"
+      ],
+      "reason": "CCBYNC4 unsuitable for commercial game; Cup race car differs from roadGT3 and year unstated."
+    },
+    {
+      "id": "moscow-gt",
+      "decision": "not-isolated",
+      "vehicle": "Mixed GT3 race field",
+      "primaryUrls": [
+        "https://freesound.org/people/Walking.With.Microphones/sounds/556039/"
+      ],
+      "reason": "CC0 own ZoomH6 race-pass recording lists17cars including650SGT3 andR8LMSUltra. No timestamp-isolated, uncontaminated bank established; multiple vehicles/track ambience overlap. Do not relabel the whole field as650S."
+    },
+    {
+      "id": "skyline-rip",
+      "decision": "rejected-origin",
+      "vehicle": "Nissan Skyline R34",
+      "primaryUrls": [
+        "https://freesound.org/people/SubwaySandwitch420/sounds/540019/"
+      ],
+      "reason": "Uploader says the CC0-labeled sound was taken from a third-party YouTube video; no original-owner grant verified. Also wrong R34 vs R35."
+    },
+    {
+      "id": "pixabay-veyron",
+      "decision": "rejected-unverified-provenance",
+      "vehicle": "Bugatti Veyron",
+      "primaryUrls": [
+        "https://pixabay.com/sound-effects/bugatti-veyron-361741/"
+      ],
+      "reason": "Title-only upload; primary recording ownership/model origin not established. No audio copied."
+    },
+    {
+      "id": "pixabay-i8",
+      "decision": "rejected-unverified-provenance",
+      "vehicle": "BMW i8",
+      "primaryUrls": [
+        "https://pixabay.com/sound-effects/bmw-i8-engine-sound-252644/"
+      ],
+      "reason": "Title-only clip; source chain not established. No audio copied."
+    },
+    {
+      "id": "ev-engine-458",
+      "decision": "rejected-no-reuse-grant",
+      "vehicle": "Ferrari458 sample player",
+      "primaryUrls": [
+        "https://ev-engine.com/"
+      ],
+      "reason": "Audible web demos are not an asset redistribution/derivative grant; no recording copied."
+    },
+    {
+      "id": "commons-veyron",
+      "decision": "conditional-sharealike-review",
+      "vehicle": "Bugatti Veyron PurSang",
+      "primaryUrls": [
+        "https://commons.wikimedia.org/wiki/File:Bugatti_Veyron_Pur_Sang.ogg",
+        "https://creativecommons.org/licenses/by-sa/3.0/legalcode"
+      ],
+      "reason": "Own-work author first revision26854616 expressly grants CCBYSA3; older NC embedded tag does not erase this later grant. PurSang trim and short exterior pass remain limits. CCBYSA3 synchronization/adaptation obligations require a project-specific compatibility decision; not treated as permissiveCCBY/CC0 or silently included.",
+      "license": "CC-BY-SA-3.0"
+    },
+    {
+      "id": "commons-aventador",
+      "decision": "conditional-sharealike-review",
+      "vehicle": "2011 Aventador LP700-4",
+      "primaryUrls": [
+        "https://commons.wikimedia.org/wiki/File:Lamborghini_Aventador_LP700-4_(2011).ogg",
+        "https://creativecommons.org/licenses/by-sa/3.0/legalcode"
+      ],
+      "reason": "Identified exterior take; target variant unspecified. Free Sonniss studio source selected instead. CCBYSA3 synchronization/adaptation obligations require a project-specific compatibility decision; not treated as permissiveCCBY/CC0 or silently included.",
+      "license": "CC-BY-SA-3.0"
+    },
+    {
+      "id": "commons-quattro",
+      "decision": "conditional-sharealike-review",
+      "vehicle": "1985 Audi Sport Quattro S1",
+      "primaryUrls": [
+        "https://commons.wikimedia.org/wiki/File:Audi_Sport_Quattro_S1_(1985).ogg",
+        "https://creativecommons.org/licenses/by-sa/3.0/legalcode"
+      ],
+      "reason": "SportQuattroS1 year/build need match with unspecified QuattroRally mesh. CCBYSA3 synchronization/adaptation obligations require a project-specific compatibility decision; not treated as permissiveCCBY/CC0 or silently included.",
+      "license": "CC-BY-SA-3.0"
+    },
+    {
+      "id": "commons-r8-lms",
+      "decision": "conditional-sharealike-review",
+      "vehicle": "2010 Audi R8 LMS",
+      "primaryUrls": [
+        "https://commons.wikimedia.org/wiki/File:Audi_R8_LMS_(2010).ogg",
+        "https://creativecommons.org/licenses/by-sa/3.0/legalcode"
+      ],
+      "reason": "Wrong2010generation vs2019LMSGT3. CCBYSA3 synchronization/adaptation obligations require a project-specific compatibility decision; not treated as permissiveCCBY/CC0 or silently included.",
+      "license": "CC-BY-SA-3.0"
+    },
+    {
+      "id": "commons-zonda",
+      "decision": "conditional-sharealike-review",
+      "vehicle": "Pagani Zonda R",
+      "primaryUrls": [
+        "https://commons.wikimedia.org/wiki/File:Pagani_Zonda_R.ogg",
+        "https://creativecommons.org/licenses/by-sa/3.0/legalcode"
+      ],
+      "reason": "R and RoadsterF sources are not C12. CCBYSA3 synchronization/adaptation obligations require a project-specific compatibility decision; not treated as permissiveCCBY/CC0 or silently included.",
+      "license": "CC-BY-SA-3.0"
+    },
+    {
+      "id": "classic-gt-elise",
+      "decision": "not-isolated",
+      "vehicle": "Lotus Elise among classicGT field",
+      "primaryUrls": [
+        "https://sonniss.com/sound-effects/binaural-stereo-classic-gt-series-pass-by/"
+      ],
+      "reason": "Mixed-car pass-by library names Elise without target generation/isolated matching take. No exact usable bank established."
+    },
+    {
+      "id": "250-gto-research",
+      "decision": "no-ready-exact-source-in-checked-catalogues",
+      "vehicle": "1964 Ferrari250GTO",
+      "primaryUrls": [
+        "https://sonniss.com/gameaudiogdc/",
+        "https://freesound.org/",
+        "https://commons.wikimedia.org/wiki/Category:Sounds_of_automobiles",
+        "https://pole.se/shop/car-sound-libraries/"
+      ],
+      "reason": "Ferrari275GTB1965 in GDC2016 is a different model; no validated downloadable exact250GTO bank found. This is a bounded search result, not a claim that no recording exists anywhere."
+    },
+    {
+      "id": "919-research",
+      "decision": "no-ready-exact-source-in-checked-catalogues",
+      "vehicle": "2017 Porsche919Hybrid",
+      "primaryUrls": [
+        "https://sonniss.com/gameaudiogdc/",
+        "https://freesound.org/",
+        "https://commons.wikimedia.org/wiki/Category:Sounds_of_automobiles",
+        "https://pole.se/shop/car-sound-libraries/"
+      ],
+      "reason": "No validated exactV4hybrid bank found; AudiI4 substitute remains wrong-layout. This is a bounded search result, not a claim that no recording exists anywhere."
+    },
+    {
+      "id": "enzo-research",
+      "decision": "no-ready-exact-source-in-checked-catalogues",
+      "vehicle": "FerrariEnzo",
+      "primaryUrls": [
+        "https://sonniss.com/gameaudiogdc/",
+        "https://freesound.org/",
+        "https://commons.wikimedia.org/wiki/Category:Sounds_of_automobiles",
+        "https://pole.se/shop/car-sound-libraries/"
+      ],
+      "reason": "FerrariF12/812 studio bundles are different models; no validated exactEnzo bank found. This is a bounded search result, not a claim that no recording exists anywhere."
+    },
+    {
+      "id": "eurofighter-research",
+      "decision": "no-ready-exact-source-in-checked-catalogues",
+      "vehicle": "BMWF22Eurofighter",
+      "primaryUrls": [
+        "https://sonniss.com/gameaudiogdc/",
+        "https://freesound.org/",
+        "https://commons.wikimedia.org/wiki/Category:Sounds_of_automobiles",
+        "https://pole.se/shop/car-sound-libraries/"
+      ],
+      "reason": "Visual artist asset does not document exact engine build, blocking any exact-recording claim even if a BMW-branded clip exists. This is a bounded search result, not a claim that no recording exists anywhere."
+    },
+    {
+      "id": "one77-research",
+      "decision": "no-ready-exact-source-in-checked-catalogues",
+      "vehicle": "2011 AstonMartinOne77",
+      "primaryUrls": [
+        "https://sonniss.com/gameaudiogdc/",
+        "https://freesound.org/",
+        "https://commons.wikimedia.org/wiki/Category:Sounds_of_automobiles",
+        "https://pole.se/shop/car-sound-libraries/"
+      ],
+      "reason": "DB9/Rapide studio bundles are different models; current unspecifiedAston clip cannot establishOne77. This is a bounded search result, not a claim that no recording exists anywhere."
+    },
+    {
+      "id": "porsche-research",
+      "decision": "no-ready-exact-source-in-checked-catalogues",
+      "vehicle": "1975 Porsche930Turbo",
+      "primaryUrls": [
+        "https://sonniss.com/gameaudiogdc/",
+        "https://freesound.org/",
+        "https://commons.wikimedia.org/wiki/Category:Sounds_of_automobiles",
+        "https://pole.se/shop/car-sound-libraries/"
+      ],
+      "reason": "911SC1981/911ST1972 are wrong year/model; generic911Freesound source lacks generation proof. This is a bounded search result, not a claim that no recording exists anywhere."
+    },
+    {
+      "id": "r18-research",
+      "decision": "no-ready-exact-source-in-checked-catalogues",
+      "vehicle": "AudiR18",
+      "primaryUrls": [
+        "https://sonniss.com/gameaudiogdc/",
+        "https://freesound.org/",
+        "https://commons.wikimedia.org/wiki/Category:Sounds_of_automobiles",
+        "https://pole.se/shop/car-sound-libraries/"
+      ],
+      "reason": "ToyotaEndurance with Audi engine library is not proof of anR18V6race-diesel recording. This is a bounded search result, not a claim that no recording exists anywhere."
+    },
+    {
+      "id": "rimac-research",
+      "decision": "no-ready-exact-source-in-checked-catalogues",
+      "vehicle": "RimacConceptOne / Nevera",
+      "primaryUrls": [
+        "https://sonniss.com/gameaudiogdc/",
+        "https://freesound.org/",
+        "https://commons.wikimedia.org/wiki/Category:Sounds_of_automobiles",
+        "https://pole.se/shop/car-sound-libraries/"
+      ],
+      "reason": "No verified freely downloadable exact motor/road/AVAS recording bank with reuse rights found; manufacturer promo playback grants no implicit reuse. This is a bounded search result, not a claim that no recording exists anywhere."
+    },
+    {
+      "id": "t50-research",
+      "decision": "no-ready-exact-source-in-checked-catalogues",
+      "vehicle": "GMA T.50Custom",
+      "primaryUrls": [
+        "https://sonniss.com/gameaudiogdc/",
+        "https://freesound.org/",
+        "https://commons.wikimedia.org/wiki/Category:Sounds_of_automobiles",
+        "https://pole.se/shop/car-sound-libraries/"
+      ],
+      "reason": "Custom visual target engine build not documented and no validated freely downloadable exactT50recording found. This is a bounded search result, not a claim that no recording exists anywhere."
+    }
+  ]
+}

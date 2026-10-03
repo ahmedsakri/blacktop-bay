@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import {CHARACTER_LIMITS} from './spectator-character.js';
 import {createNearSpectator, createSpectatorLibrary, SPECTATOR_ASSETS} from './realistic-spectator.js';
+import {createMediumCrowd,MEDIUM_CROWD_BUDGET} from './medium-spectator.js';
 
 const TAU = Math.PI * 2;
 const SHIRTS = ['#e7e4db', '#f5c444', '#9e392f', '#486e92', '#425c51', '#303d58', '#ad8171', '#826893', '#cbd2cf', '#3c3547'];
@@ -27,6 +28,7 @@ export function spectatorProfile(x, floor, z, yaw, seated, rng = Math.random) {
   shoe: pick(['#c5c3ba','#23242b','#494b48','#857866'],rng),
   garment: Math.floor(rng()*3), shorts: rng()<.19, scarf: rng()<.12, build:.89+rng()*.22,
   reactionDistance:22+rng()*13, reactionSpeed:.72+rng()*.66, blinkPhase:rng()*7,
+  stance:(rng()-.5)*.034, posturePhase:rng()*TAU, attentionSpan:5.8+rng()*4.2,
  };
 }
 
@@ -49,15 +51,23 @@ export function solveSpectatorArm(shoulder, desiredHand, elbowHint, upper=.285, 
 // distance. Never flap every spectator in synchrony or make them jump through seats.
 export function spectatorPose(person, time = 0, excitement = 0) {
  const t = time * person.tempo + person.phase, hip = person.seated ? .48 : .84;
- const breathe = Math.sin(t * .63) * .006, lean = Math.sin(t * .44) * .018 + excitement * .025;
+ // A spectator has a planted weight-bearing leg and a relaxed leg. The pelvis
+ // shifts a few centimetres; the chest counters it rather than bobbing vertically.
+ const weightShift=person.seated?0:(person.stance||0)+Math.sin(t*.43+(person.posturePhase||0))*.018;
+ const breathe = Math.sin(t * .63) * .004, lean = Math.sin(t * .44) * .012 + excitement * .018;
  const chest = hip + .33, head = hip + .74 + breathe;
- const sway = Math.sin(t * .81) * .014;
+ const sway = Math.sin(t * .81) * .008+weightShift;
+ // Individual short celebrations have recovery pauses. A whole grandstand
+ // should not hold every arm overhead for the entire time the car is nearby.
+ const cycle=(time+person.phase)/(person.attentionSpan||7.2)*TAU;
+ const burst=.45+.55*THREE.MathUtils.smoothstep(Math.sin(cycle),-.35,.5);
+ const energy=excitement*burst;
  const arms = [];
  for (const side of [-1, 1]) {
   const shoulder = [side * .202 + sway, hip + .46 + breathe, lean];
   let elbow = [side * .265 + sway, hip + .20, .085];
   let hand = [side * .14 + sway, hip + .07, person.seated ? .30 : .12];
-  const active = excitement > .001;
+  const active = energy > .001;
   const restElbow=[...elbow],restHand=[...hand];
   if (person.role === 'marshal') {
    // Staff watch the driving line; only the radio operator raises one hand.
@@ -69,7 +79,7 @@ export function spectatorPose(person, time = 0, excitement = 0) {
    }
   } else if (person.gesture === 1 && active) { // Clapping in front of the chest.
    elbow = [side * .27, hip + .36, .16];
-   hand = [side * (.033 + (Math.sin(t * 5.4) * .5 + .5) * .09), hip + .48, .30];
+   hand = [side * (.025 + (Math.sin(t * 7.8) * .5 + .5) * .095), hip + .48, .30];
   } else if (person.gesture === 2 && active) { // One fist raised; a bent arm, not a V stick.
    elbow = [side * .28, hip + (side < 0 ? .54 : .23), .03];
    hand = [side * .24, hip + (side < 0 ? .86 + Math.sin(t * 2.7) * .045 : .10), .13];
@@ -80,18 +90,19 @@ export function spectatorPose(person, time = 0, excitement = 0) {
    elbow = [side * .32, hip + .66 + Math.sin(t + side) * .025, .025];
    hand = [side * .36, hip + .98 + Math.sin(t * 2.1 + side) * .045, .10];
   }
-  const blend=person.role==='marshal'||person.gesture===3?1:Math.min(1,Math.max(0,excitement*1.45));
+  const blend=person.role==='marshal'||person.gesture===3?1:Math.min(1,Math.max(0,energy*1.45));
   const eased=blend*blend*(3-2*blend);
   elbow=mixPoint(restElbow,elbow,eased);hand=mixPoint(restHand,hand,eased);
   shoulder[0]*=person.width;elbow[0]*=person.width;hand[0]*=person.width;
   const solved=solveSpectatorArm(shoulder,hand,elbow);elbow=solved.elbow;hand=solved.hand;
   arms.push({side, shoulder, elbow, hand});
  }
- return {hip, chest, head, lean, sway, breathe, arms,
+ return {hip, chest, head, lean, sway, breathe, arms, weightShift, energy,
   headYaw:(person.lookYaw||0)+Math.sin(t*.37)*.035, headPitch:-excitement*.035+Math.sin(t*.53)*.025,
-  headRoll:Math.sin(t*.42)*.026, torsoTilt:.025+excitement*.045,
-  blink:((time+(person.blinkPhase||0))%5.7)<.115?.12:1,
-  mouth:(person.role==='marshal'?0:Math.max(0,excitement-.24))*(person.gesture===0||person.gesture===2||person.gesture===4?1:.36),
+  headRoll:Math.sin(t*.42)*.020-weightShift*.35, torsoTilt:.025+energy*.035,
+  torsoYaw:(person.lookYaw||0)*.16, torsoRoll:-weightShift*.32,
+  blink:1-.94*Math.max(0,1-Math.abs(((time+(person.blinkPhase||0))%5.7)-.095)/.095),
+  mouth:(person.role==='marshal'?0:Math.max(0,energy-.24))*(person.gesture===0||person.gesture===2||person.gesture===4?1:.24),
  };
 }
 
@@ -199,9 +210,10 @@ function spectatorShoeGeometry(low) {
 /** A shared, articulated crowd. Ten distant instanced draws plus a fixed near-mesh pool;
  * a capped foreground group animates at 30/60 Hz, the rest at 15/24 Hz.
  * Per-spectator motion stops when paused or when reduced motion is requested. */
-export function createCrowd({low = false, reducedMotion = false, spectatorLibrary} = {}) {
+export function createCrowd({low = false, reducedMotion = false, spectatorLibrary,mediumOptions} = {}) {
  const people = [], batches = new Map(), characters = [];
  const library=spectatorLibrary||createSpectatorLibrary();
+ const medium=createMediumCrowd({low,library,...mediumOptions});
  let scene, lastTime = 0, motionTime = 0, previousTick = -Infinity, previousForegroundTick=-Infinity, disposed = false;
  const detail = low ? 6 : 8;
  const sphere = new THREE.SphereGeometry(1, 6, low ? 3 : 4);
@@ -381,6 +393,8 @@ export function createCrowd({low = false, reducedMotion = false, spectatorLibrar
    for(const person of people.filter(person=>person.role!=='marshal').slice(0,low?CHARACTER_LIMITS.mobile:CHARACTER_LIMITS.desktop)){
     const character=createNearSpectator(person,{low,library,index:person.lookVariant});character.template=person;character.person=null;character.mesh.visible=false;characters.push(character);scene.add(character.mesh);
    }
+   medium.render(scene);
+   scene.userData.crowd.mediumLimit=low?MEDIUM_CROWD_BUDGET.mobile:MEDIUM_CROWD_BUDGET.desktop;
   },
   update(time,car,{paused=false,reducedMotion:reduce=reducedMotion}={}){
    if(!scene||disposed)return;
@@ -402,8 +416,10 @@ export function createCrowd({low = false, reducedMotion = false, spectatorLibrar
     if(inRange)visiblePeople++;
     if(person.nearFace!==near||person.inRange!==inRange){person.nearFace=near;person.inRange=inRange;faceLodChanged=true;}
    }
+   const wardrobeSlots=new Map();for(const character of characters)wardrobeSlots.set(character.template.lookVariant,(wardrobeSlots.get(character.template.lookVariant)||0)+1);
    const desiredCharacters=people.filter(person=>person.role!=='marshal'&&person.inRange&&person.viewDistance<(low?CHARACTER_LIMITS.mobileDistance:CHARACTER_LIMITS.desktopDistance)+(person.authoredCharacter?2:0))
-    .sort((left,right)=>(left.viewDistance-(left.authoredCharacter?2:0))-(right.viewDistance-(right.authoredCharacter?2:0))).slice(0,characters.length);
+    .sort((left,right)=>(left.viewDistance-(left.authoredCharacter?2:0))-(right.viewDistance-(right.authoredCharacter?2:0)))
+    .filter(person=>{const available=wardrobeSlots.get(person.lookVariant)||0;if(!available)return false;wardrobeSlots.set(person.lookVariant,available-1);return true;}).slice(0,characters.length);
    const desiredSet=new Set(desiredCharacters);
    for(const character of characters)if(character.person&&!desiredSet.has(character.person)){
     character.person.authoredCharacter=false;character.person=null;character.mesh.visible=false;faceLodChanged=true;
@@ -414,7 +430,11 @@ export function createCrowd({low = false, reducedMotion = false, spectatorLibrar
     character.person=person;person.authoredCharacter=true;character.mesh.visible=true;
     character.update(person,spectatorPose(person,motionTime,person.reaction||0));faceLodChanged=true;
    }
-   scene.userData.crowd.activeCharacters=desiredCharacters.length;scene.userData.crowd.drawCalls=scene.userData.crowd.baseDrawCalls+characters.filter(item=>item.person).reduce((sum,item)=>sum+item.drawCalls,0);
+   const mediumPeople=medium.select(people),mediumSet=new Set(mediumPeople);
+   for(const person of people){const selected=mediumSet.has(person);if(Boolean(person.mediumCharacter)!==selected){person.mediumCharacter=selected;faceLodChanged=true;}}
+   if(fullTick||faceLodChanged||reduce)medium.update(mediumPeople,motionTime);
+   scene.userData.crowd.activeCharacters=desiredCharacters.length;scene.userData.crowd.drawCalls=scene.userData.crowd.baseDrawCalls+medium.drawCalls+characters.filter(item=>item.person).reduce((sum,item)=>sum+item.drawCalls,0);
+   scene.userData.crowd.mediumCharacters=medium.active;scene.userData.crowd.mediumDrawCalls=medium.drawCalls;
    scene.userData.crowd.texturedCharacters=characters.filter(item=>item.person&&item.kind==='textured').length;
    scene.userData.crowd.assetLoading=library.status;
    const foregroundSet=new Set(foreground.sort((left,right)=>left.viewDistance-right.viewDistance).slice(0,low?10:20));
@@ -428,7 +448,7 @@ export function createCrowd({low = false, reducedMotion = false, spectatorLibrar
     for(const batch of batches.values()){
      if(!batch.mesh)continue;let visible=0;
      for(const entry of batch.entries){
-      entry.drawIndex=entry.person.authoredCharacter||!entry.person.inRange||((entry.faceDetail||entry.nearDetail)&&!entry.person.nearFace)?-1:visible++;
+      entry.drawIndex=entry.person.authoredCharacter||entry.person.mediumCharacter||!entry.person.inRange||((entry.faceDetail||entry.nearDetail)&&!entry.person.nearFace)?-1:visible++;
       if(entry.drawIndex>=0){write(entry);batch.mesh.setColorAt(entry.drawIndex,color.set(entry.tint));}
      }
      if(batch.mesh){batch.mesh.count=visible;batch.mesh.instanceColor.needsUpdate=true;}
@@ -453,12 +473,12 @@ export function createCrowd({low = false, reducedMotion = false, spectatorLibrar
     const spontaneous=Math.sin(motionTime*.19+person.phase)> .72?.16:0;
     const excitement=spontaneous+person.reaction*.84;
     if(person.authoredCharacter)characters.find(item=>item.person===person)?.update(person,spectatorPose(person,motionTime,excitement));
-    else compose(person,motionTime,excitement);changed=true;
+    else if(!person.mediumCharacter)compose(person,motionTime,excitement);changed=true;
    }
    if(changed)for(const batch of batches.values())if(batch.mesh)batch.mesh.instanceMatrix.needsUpdate=true;
   },
   get count(){return people.length;},
-  dispose(){if(disposed)return;disposed=true;for(const character of characters)character.dispose();library.dispose();for(const batch of batches.values()){batch.mesh?.removeFromParent();batch.geometry.dispose();}
+  dispose(){if(disposed)return;disposed=true;for(const character of characters)character.dispose();medium.dispose();library.dispose();for(const batch of batches.values()){batch.mesh?.removeFromParent();batch.geometry.dispose();}
    for(const texture of textures)texture.dispose();for(const appearance of [material,skinMaterial,shirtMaterial,trouserMaterial,hairMaterial])appearance.dispose();},
  };
 }

@@ -57,7 +57,7 @@ test('extending the sitemap preserves old URLs and includes every circuit exactl
   assert.equal(renderCircuitSitemap(result), result);
   const urls = [...result.matchAll(/<loc>([^<]+)<\/loc>/g)].map(match => match[1]);
   assert.equal(new Set(urls).size, urls.length);
-  for (const path of ['/', '/guide/', '/credits/', '/privacy/', '/circuits/', ...TRACKS.map(track => circuitPath(track.id)), '/cars/', ...VEHICLES.map(vehicle => carPath(vehicle.id))]) {
+  for (const path of ['/', '/guide/', '/licenses/', '/privacy/', '/circuits/', ...TRACKS.map(track => circuitPath(track.id)), '/cars/', ...VEHICLES.map(vehicle => carPath(vehicle.id))]) {
     assert.equal(urls.filter(url => url === origin + path).length, 1, path);
   }
 });

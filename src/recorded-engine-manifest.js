@@ -1,5 +1,5 @@
-// Licensed recording derivatives. Full provenance: public/assets/audio/ENGINE-SOURCES.json.
-// Family/model adaptations, not recordings made of every represented game car.
+// Licensed recording derivatives. Identity and usage rights: public/assets/audio/ENGINE-SOURCES.json.
+// Model matches and explicitly documented proxies; see ENGINE-COVERAGE.json for all 33 cars.
 export const ENGINE_RECORDINGS = Object.freeze({
   "ferrari-355": {
     "id": "ferrari-355",
@@ -536,25 +536,270 @@ export const ENGINE_RECORDINGS = Object.freeze({
     ],
     "url": "/assets/audio/engines/mercedes-amg-v8-v1.wav?v=b40f815871a80f1f",
     "kind": "combustion"
+  },
+  "mclaren-570s-2016": {
+    "id": "mclaren-570s-2016",
+    "file": "mclaren-570s-2016-v1.wav",
+    "bytes": 180044,
+    "sha256": "93653a343e888cde523202c5feeed5713b74f9c2ace921c6f1662c298f55fd02",
+    "duration": 3.75,
+    "sampleRate": 24000,
+    "sourceFile": "McLaren_570S_t10_Onbrd_Fast_Various_Exhaust_Right_DPA4062.wav",
+    "sourceSha256": "c87f6dfd5792a9736d1abb11136eb6d31b895e0135553f4ad36772933f28d4f8",
+    "layers": [
+      {
+        "start": 0,
+        "end": 1.25,
+        "rev": 0.1,
+        "sourceStart": 51.4,
+        "sourceDuration": 1.35
+      },
+      {
+        "start": 1.25,
+        "end": 2.5,
+        "rev": 0.55,
+        "sourceStart": 17.2,
+        "sourceDuration": 1.35
+      },
+      {
+        "start": 2.5,
+        "end": 3.75,
+        "rev": 0.95,
+        "sourceStart": 151.2,
+        "sourceDuration": 1.35
+      }
+    ],
+    "url": "/assets/audio/engines/mclaren-570s-2016-v1.wav?v=93653a343e888cde",
+    "kind": "combustion"
+  },
+  "aventador-2014": {
+    "id": "aventador-2014",
+    "file": "aventador-2014-v1.wav",
+    "bytes": 180044,
+    "sha256": "7cc45db7fe82b11a5202df7a9adcf8a9f5ae6f0eba67a5b8f4bee00d02fe6c7e",
+    "duration": 3.75,
+    "sampleRate": 24000,
+    "sourceFile": "lamborghini_aventador_t14_onbrd_start_drive_ramps_stop_off_exhaust_right_DPA4062.wav",
+    "sourceSha256": "92986d10dd09f45cda5b57cca3805387e25c7235154741234f1aed60a5355a54",
+    "layers": [
+      {
+        "start": 0,
+        "end": 1.25,
+        "rev": 0.1,
+        "sourceStart": 5.2,
+        "sourceDuration": 1.35
+      },
+      {
+        "start": 1.25,
+        "end": 2.5,
+        "rev": 0.55,
+        "sourceStart": 59.4,
+        "sourceDuration": 1.35
+      },
+      {
+        "start": 2.5,
+        "end": 3.75,
+        "rev": 0.95,
+        "sourceStart": 220.4,
+        "sourceDuration": 1.35
+      }
+    ],
+    "url": "/assets/audio/engines/aventador-2014-v1.wav?v=7cc45db7fe82b11a",
+    "kind": "combustion"
+  },
+  "ferrari-458-2013": {
+    "id": "ferrari-458-2013",
+    "file": "ferrari-458-2013-v1.wav",
+    "bytes": 180044,
+    "sha256": "ae5b664785b2f3120ce833675e7ca2e0116bf5596bb87e068e34244d98d0d184",
+    "duration": 3.75,
+    "sampleRate": 24000,
+    "sourceFile": "ferrari_458_t8_onbrd_drive_ramps_stop_off_intake_left_DPA4062.wav",
+    "sourceSha256": "e25aa4c6ff8662dd7f0b738358061893da726ecef1f4a3d53070833f598e1b52",
+    "layers": [
+      {
+        "start": 0,
+        "end": 1.25,
+        "rev": 0.1,
+        "sourceStart": 77.4,
+        "sourceDuration": 1.35
+      },
+      {
+        "start": 1.25,
+        "end": 2.5,
+        "rev": 0.55,
+        "sourceStart": 89,
+        "sourceDuration": 1.35
+      },
+      {
+        "start": 2.5,
+        "end": 3.75,
+        "rev": 0.95,
+        "sourceStart": 98.2,
+        "sourceDuration": 1.35
+      }
+    ],
+    "url": "/assets/audio/engines/ferrari-458-2013-v1.wav?v=ae5b664785b2f312",
+    "kind": "combustion"
+  },
+  "audi-r8-2017": {
+    "id": "audi-r8-2017",
+    "file": "audi-r8-2017-v1.wav",
+    "bytes": 180044,
+    "sha256": "534b2681939b366b5bdbb1db777c78c70664ad1b119750424cdbc315c38d84fa",
+    "duration": 3.75,
+    "sampleRate": 24000,
+    "sourceFile": "Audi, R8, t3, Onbrd, Start, Fast, Drive, Stop, Reverse, Stop, Drive, Engine, Right, DPA4061.wav",
+    "sourceSha256": "272bca969591b5e882fb588ab67314ce88790f80eb74f3d986975c65d434bdd6",
+    "layers": [
+      {
+        "start": 0,
+        "end": 1.25,
+        "rev": 0.1,
+        "sourceStart": 6.6,
+        "sourceDuration": 1.35
+      },
+      {
+        "start": 1.25,
+        "end": 2.5,
+        "rev": 0.55,
+        "sourceStart": 52,
+        "sourceDuration": 1.35
+      },
+      {
+        "start": 2.5,
+        "end": 3.75,
+        "rev": 0.95,
+        "sourceStart": 105.4,
+        "sourceDuration": 1.35
+      }
+    ],
+    "url": "/assets/audio/engines/audi-r8-2017-v1.wav?v=534b2681939b366b",
+    "kind": "combustion"
+  },
+  "nissan-gtr-2012": {
+    "id": "nissan-gtr-2012",
+    "file": "nissan-gtr-2012-v1.wav",
+    "bytes": 180044,
+    "sha256": "1f0a09a6e0edb23ec1f90923c9b653773b182654215a7b21a06e156533fe158d",
+    "duration": 3.75,
+    "sampleRate": 24000,
+    "sourceFile": "Nissan_GTR_t6_Onbrd_Drive_Ramps_Engine_Left_Valve_DPA4062.wav",
+    "sourceSha256": "aa06a7caaf09eeaf548ec31e72f72e2538a04c6a004305fa15d6dc68676bb6a6",
+    "layers": [
+      {
+        "start": 0,
+        "end": 1.25,
+        "rev": 0.1,
+        "sourceStart": 0.8,
+        "sourceDuration": 1.35
+      },
+      {
+        "start": 1.25,
+        "end": 2.5,
+        "rev": 0.55,
+        "sourceStart": 91.4,
+        "sourceDuration": 1.35
+      },
+      {
+        "start": 2.5,
+        "end": 3.75,
+        "rev": 0.95,
+        "sourceStart": 209,
+        "sourceDuration": 1.35
+      }
+    ],
+    "url": "/assets/audio/engines/nissan-gtr-2012-v1.wav?v=1f0a09a6e0edb23e",
+    "kind": "combustion"
+  },
+  "mercedes-amg-gtr-2018": {
+    "id": "mercedes-amg-gtr-2018",
+    "file": "mercedes-amg-gtr-2018-v1.wav",
+    "bytes": 180044,
+    "sha256": "515ce61e4bd7417caa814ae6a81f744e03062b001b8f73df6332aa7658e7d820",
+    "duration": 3.75,
+    "sampleRate": 24000,
+    "sourceFile": "mercedes_amg_gtr_t13_onbrd_start_fast_drive_stop_off_interior_DPA4021.wav",
+    "sourceSha256": "3b837d9b394d6db98272925541942acfbebe016f801a4fc5637a7a58e6219c74",
+    "layers": [
+      {
+        "start": 0,
+        "end": 1.25,
+        "rev": 0.1,
+        "sourceStart": 1.7,
+        "sourceDuration": 1.35
+      },
+      {
+        "start": 1.25,
+        "end": 2.5,
+        "rev": 0.55,
+        "sourceStart": 27.4,
+        "sourceDuration": 1.35
+      },
+      {
+        "start": 2.5,
+        "end": 3.75,
+        "rev": 0.95,
+        "sourceStart": 35.2,
+        "sourceDuration": 1.35
+      }
+    ],
+    "url": "/assets/audio/engines/mercedes-amg-gtr-2018-v1.wav?v=515ce61e4bd7417c",
+    "kind": "combustion"
+  },
+  "testarossa-1990": {
+    "id": "testarossa-1990",
+    "file": "testarossa-1990-v1.wav",
+    "bytes": 180044,
+    "sha256": "e0e5aec8e7445bfb4622e155020392247f1141dacbb2f58472344055dbaf94c0",
+    "duration": 3.75,
+    "sampleRate": 24000,
+    "sourceFile": "Ferrari, Testarossa, t6, Onbrd, Start, Drive, Steady RPMs, Engine, Mix.wav",
+    "sourceSha256": "afaaa1075fd9c86ce7d6417276c122366f380cc9f43d47c82ac845790cec20ab",
+    "layers": [
+      {
+        "start": 0,
+        "end": 1.25,
+        "rev": 0.1,
+        "sourceStart": 12,
+        "sourceDuration": 1.35
+      },
+      {
+        "start": 1.25,
+        "end": 2.5,
+        "rev": 0.55,
+        "sourceStart": 51,
+        "sourceDuration": 1.35
+      },
+      {
+        "start": 2.5,
+        "end": 3.75,
+        "rev": 0.95,
+        "sourceStart": 120,
+        "sourceDuration": 1.35
+      }
+    ],
+    "url": "/assets/audio/engines/testarossa-1990-v1.wav?v=e0e5aec8e7445bfb",
+    "kind": "combustion"
   }
 });
 export const RECORDING_CARS = Object.freeze({
-  "mclaren-570s": "ferrari-355",
-  "mclaren-senna": "ferrari-355",
-  "mclaren-p1-gtr": "ferrari-355",
-  "ferrari-458-italia": "ferrari-355",
-  "mclaren-650s-gt3": "ferrari-355",
+  "mclaren-570s": "mclaren-570s-2016",
+  "mclaren-senna": "mclaren-570s-2016",
+  "mclaren-p1-gtr": "mclaren-570s-2016",
+  "ferrari-458-italia": "ferrari-458-2013",
+  "mclaren-650s-gt3": "mclaren-570s-2016",
   "koenigsegg-one-1": "ferrari-355",
   "porsche-930-turbo": "porsche-911",
   "porsche-911-gt3": "porsche-911",
   "maserati-mc-stradale": "maserati-granturismo-v8",
-  "mercedes-amg-gt": "mercedes-amg-v8",
+  "mercedes-amg-gt": "mercedes-amg-gtr-2018",
   "aston-martin-one-77": "aston-acceleration",
-  "lamborghini-aventador": "murcielago-v12",
+  "lamborghini-aventador": "aventador-2014",
   "pagani-zonda-c12": "murcielago-v12",
   "bugatti-veyron": "murcielago-v12",
   "lotus-elise": "honda-na-i4",
-  "audi-r8": "huracan-v10",
+  "audi-r8": "audi-r8-2017",
   "rimac-concept-one": "tesla-electric",
   "gma-t50": "murcielago-v12",
   "rimac-nevera": "tesla-electric",
@@ -562,11 +807,11 @@ export const RECORDING_CARS = Object.freeze({
   "lamborghini-huracan": "huracan-v10",
   "bmw-i8": "audi-turbo-i4",
   "bmw-f22-eurofighter": "ferrari-355",
-  "audi-r8-lms-gt3": "huracan-v10",
+  "audi-r8-lms-gt3": "audi-r8-2017",
   "audi-r18": "bmw-diesel",
   "ferrari-250-gto": "ferrari-classic-v12",
-  "ferrari-testarossa": "ferrari-classic-v12",
-  "nissan-gt-r-2018": "chevrolet-v6",
+  "ferrari-testarossa": "testarossa-1990",
+  "nissan-gt-r-2018": "nissan-gtr-2012",
   "bmw-m3-e46": "mercedes-i6",
   "audi-quattro-rally": "volvo-turbo-i5",
   "lamborghini-countach-lp500s": "ferrari-classic-v12",

@@ -1,6 +1,6 @@
 {
-  "version": 3,
-  "totalBytes": 2553584,
+  "version": 4,
+  "totalBytes": 3813892,
   "recordings": [
     {
       "id": "ferrari-355",
@@ -45,11 +45,6 @@
       "checked": "2026-10-02",
       "adaptation": "Mono 24 kHz PCM, 65 Hz high-pass / 5.8 kHz low-pass, selected source intervals, cosine loop overlap, DC/seam correction and peak/RMS normalization. In-game pitch, RPM blend and load EQ are authored, not measured.",
       "cars": [
-        "mclaren-570s",
-        "mclaren-senna",
-        "mclaren-p1-gtr",
-        "ferrari-458-italia",
-        "mclaren-650s-gt3",
         "koenigsegg-one-1",
         "bmw-f22-eurofighter"
       ],
@@ -208,21 +203,19 @@
       ],
       "title": "Lamborghini Sounds",
       "author": "JaimeLopes",
-      "sourceVehicle": "Lamborghini Huracán EVO Spyder V10",
+      "sourceVehicle": "Lamborghini Hurac\u00e1n EVO Spyder V10",
       "sourceFamily": "V10",
       "license": "CC-BY-4.0",
       "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
       "sourceUrl": "https://freesound.org/people/JaimeLopes/sounds/564375/",
       "downloadUrl": "https://cdn.freesound.org/previews/564/564375_628040-hq.mp3",
-      "provenance": "Recorded on Tascam DR-07 internal microphones while entering, starting and driving a Huracán EVO Spyder. Door/start transients are omitted; public HQ MP3 preview.",
+      "provenance": "Recorded on Tascam DR-07 internal microphones while entering, starting and driving a Hurac\u00e1n EVO Spyder. Door/start transients are omitted; public HQ MP3 preview.",
       "checked": "2026-10-02",
       "adaptation": "Mono 24 kHz PCM, 65 Hz high-pass / 5.8 kHz low-pass, selected source intervals, cosine loop overlap, DC/seam correction and peak/RMS normalization. In-game pitch, RPM blend and load EQ are authored, not measured.",
-      "use": "Family proxy for the game Huracán (variant unspecified), 2004 Gallardo and Audi R8/R8 LMS. No claim that the custom R8 uses this exact engine.",
+      "use": "Family proxy for the game Hurac\u00e1n (variant unspecified) and 2004 Gallardo. Source is an EVO Spyder; no same-year or same-variant claim.",
       "cars": [
-        "audi-r8",
         "lamborghini-gallardo",
-        "lamborghini-huracan",
-        "audi-r8-lms-gt3"
+        "lamborghini-huracan"
       ]
     },
     {
@@ -259,18 +252,17 @@
       ],
       "title": "Lambo idle and rev.mp3",
       "author": "cheesepuff",
-      "sourceVehicle": "Lamborghini Murciélago LP 670 SuperVeloce V12",
+      "sourceVehicle": "Lamborghini Murci\u00e9lago LP 670 SuperVeloce V12",
       "sourceFamily": "V12",
       "license": "CC0-1.0",
       "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
       "sourceUrl": "https://freesound.org/people/cheesepuff/sounds/112075/",
       "downloadUrl": "https://cdn.freesound.org/previews/112/112075_682033-hq.mp3",
-      "provenance": "Author identifies their own Lamborghini-dealer video; tags identify Murciélago LP-670 SuperVeloce and V12. Public HQ MP3 preview. Final loud rev around 60 seconds excluded.",
+      "provenance": "Author identifies their own Lamborghini-dealer video; tags identify Murci\u00e9lago LP-670 SuperVeloce and V12. Public HQ MP3 preview. Final loud rev around 60 seconds excluded.",
       "checked": "2026-10-02",
       "adaptation": "Mono 24 kHz PCM, 65 Hz high-pass / 5.8 kHz low-pass, selected source intervals, cosine loop overlap, DC/seam correction and peak/RMS normalization. In-game pitch, RPM blend and load EQ are authored, not measured.",
-      "use": "Modern V12 family proxy for Aventador, Zonda, GMA T.50 and Enzo. Veyron uses a deliberately lower, darker multi-cylinder proxy; this is not a W16 recording.",
+      "use": "Modern V12 family proxy for Zonda C12, GMA T.50 and Enzo. Veyron uses a deliberately lower, darker multi-cylinder proxy; this is not a W16 recording.",
       "cars": [
-        "lamborghini-aventador",
         "pagani-zonda-c12",
         "bugatti-veyron",
         "gma-t50",
@@ -320,10 +312,9 @@
       "provenance": "Recorded around 1997 at RPM Motorsports in Vergennes, Vermont; Sony D8 DAT and Audio-Technica ATM10. Public HQ MP3 preview, not original master.",
       "checked": "2026-10-02",
       "adaptation": "Mono 24 kHz PCM, 65 Hz high-pass / 5.8 kHz low-pass, selected source intervals, cosine loop overlap, DC/seam correction and peak/RMS normalization. In-game pitch, RPM blend and load EQ are authored, not measured.",
-      "use": "Classic V12 family proxy for Ferrari 250 GTO and Countach. The Testarossa uses a classic twelve-cylinder texture adaptation; not a recording of its flat-12.",
+      "use": "Classic V12 family proxy for Ferrari 250 GTO and Countach LP500S. Neither represented model was recorded in this source session.",
       "cars": [
         "ferrari-250-gto",
-        "ferrari-testarossa",
         "lamborghini-countach-lp500s"
       ]
     },
@@ -556,10 +547,8 @@
       "provenance": "Recorded in the cabin with a Tascam DR-40 during hard acceleration. Public HQ MP3 preview. Silence separators between takes are excluded.",
       "checked": "2026-10-02",
       "adaptation": "Mono 24 kHz PCM, 65 Hz high-pass / 5.8 kHz low-pass, selected source intervals, cosine loop overlap, DC/seam correction and peak/RMS normalization. In-game pitch, RPM blend and load EQ are authored, not measured.",
-      "use": "V6 family proxy for Nissan GT-R; not its turbocharged VR38 or exhaust recording. Existing authored induction layer supplies the turbo character.",
-      "cars": [
-        "nissan-gt-r-2018"
-      ]
+      "use": "Unassigned legacy V6 proxy retained for reproducing earlier mixes. Previously assigned to Nissan GT-R; the current GT-R uses a documented 2012 R35 recording.",
+      "cars": []
     },
     {
       "id": "bmw-diesel",
@@ -764,20 +753,407 @@
       ],
       "title": "S63 AMG V8 Engine Revs",
       "author": "marcelweiss",
-      "sourceVehicle": "Mercedes-Benz S63 AMG Coupé V8 BiTurbo",
+      "sourceVehicle": "Mercedes-Benz S63 AMG Coup\u00e9 V8 BiTurbo",
       "license": "CC0-1.0",
       "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
       "sourceUrl": "https://freesound.org/people/marcelweiss/sounds/505321/",
       "downloadUrl": "https://cdn.freesound.org/previews/505/505321_7236652-hq.mp3",
       "provenance": "Author identifies a stationary Mercedes-Benz S63 AMG Coupe revving its V8 BiTurbo in a Munich car park. Public HQ MP3 preview. Selected intervals avoid the wideband rev transients; source year and engine code are unspecified.",
-      "cars": [
-        "mercedes-amg-gt"
-      ],
-      "use": "AMG bi-turbo V8 family proxy: the source is an S63 AMG Coupe, not an AMG GT recording or a verified identical engine code. Three authored rev bands replace the unrelated 1985 Mustang idle-only texture. No measured source RPM is asserted.",
+      "cars": [],
+      "use": "Unassigned legacy AMG bi-turbo V8 proxy retained for reproducing earlier mixes. Source is S63 AMG Coup\u00e9; the current AMG GT uses a documented GT R recording. This was the earlier replacement for Mustang idle.",
       "checked": "2026-10-03",
       "sourceFamily": "v8",
       "adaptation": "Mono 24 kHz PCM, 65 Hz high-pass / 5.8 kHz low-pass, selected source intervals, cosine loop overlap, DC/seam correction and peak/RMS normalization. In-game pitch, RPM blend and load EQ are authored, not measured."
+    },
+    {
+      "id": "mclaren-570s-2016",
+      "sourceFile": "McLaren_570S_t10_Onbrd_Fast_Various_Exhaust_Right_DPA4062.wav",
+      "sourceSha256": "c87f6dfd5792a9736d1abb11136eb6d31b895e0135553f4ad36772933f28d4f8",
+      "sourceBytes": 51465586,
+      "layers": [
+        {
+          "start": 0,
+          "end": 1.25,
+          "rev": 0.1,
+          "sourceStart": 51.4,
+          "sourceDuration": 1.35
+        },
+        {
+          "start": 1.25,
+          "end": 2.5,
+          "rev": 0.55,
+          "sourceStart": 17.2,
+          "sourceDuration": 1.35
+        },
+        {
+          "start": 2.5,
+          "end": 3.75,
+          "rev": 0.95,
+          "sourceStart": 151.2,
+          "sourceDuration": 1.35
+        }
+      ],
+      "title": "McLaren_570S_t10_Onbrd_Fast_Various_Exhaust_Right_DPA4062.wav",
+      "author": "Pole Position Production",
+      "sourceVehicle": "2016 McLaren 570S Coup\u00e9 V8 biturbo",
+      "sourceYear": 2016,
+      "sourceFamily": "turbo-V8",
+      "license": "Sonniss-GDC-2026-v2",
+      "licenseUrl": "https://sonniss.com/gdc-bundle-license/",
+      "sourceUrl": "https://sonniss.com/gameaudiogdc/",
+      "downloadUrl": "https://ftpmirror.your.org/pub/misc/sonniss2020/individual/Pole%20Position%20-%20McLaren%20570S%202016/McLaren_570S_t10_Onbrd_Fast_Various_Exhaust_Right_DPA4062.wav",
+      "productUrl": "https://pole.se/product/mclaren-570s-2016/",
+      "bundle": "Sonniss GDC 2020",
+      "bundleTracklistUrl": "https://docs.google.com/spreadsheets/d/1QqIcxJ7y0Acq3HAj9qQvFgvyeBjJ_7JvX8-GguUHIVk/edit",
+      "provenance": "Original 96 kHz/24-bit studio WAV from the individually extracted GDC bundle, matched by filename to Sonniss official 2020 tracklist and by embedded Pole Position copyright and vehicle metadata. Onboard exhaust-right DPA4062. The accompanying session photo depicts a 570S Coup\u00e9. Recorded source year is the vehicle model year from the product library, not the recording date.",
+      "checked": "2026-10-03",
+      "adaptation": "Mono 24 kHz PCM, 65 Hz high-pass / 5.8 kHz low-pass, selected source intervals, cosine loop overlap, DC/seam correction and peak/RMS normalization. In-game pitch, RPM blend and load EQ are authored, not measured.",
+      "cars": [
+        "mclaren-570s",
+        "mclaren-senna",
+        "mclaren-p1-gtr",
+        "mclaren-650s-gt3"
+      ],
+      "use": "Model and Coup\u00e9 match for the 570S; visual source does not state model year. Related McLaren twin-turbo V8 proxy for Senna, P1 GTR and 650S GT3, not recordings of those models or the P1 hybrid system. Rev bands are authored, not measured RPM.",
+      "rights": "Licensed for synchronization in this game, including commercial release; not licensed for redistribution as a sound-effect asset pack, template or SDK. Raw takes are not shipped; these modified loops retain the source license restrictions. No AI training. Attribution is optional.",
+      "kind": "combustion",
+      "file": "mclaren-570s-2016-v1.wav",
+      "bytes": 180044,
+      "sha256": "93653a343e888cde523202c5feeed5713b74f9c2ace921c6f1662c298f55fd02",
+      "duration": 3.75,
+      "sampleRate": 24000
+    },
+    {
+      "id": "aventador-2014",
+      "sourceFile": "lamborghini_aventador_t14_onbrd_start_drive_ramps_stop_off_exhaust_right_DPA4062.wav",
+      "sourceSha256": "92986d10dd09f45cda5b57cca3805387e25c7235154741234f1aed60a5355a54",
+      "sourceBytes": 153148216,
+      "layers": [
+        {
+          "start": 0,
+          "end": 1.25,
+          "rev": 0.1,
+          "sourceStart": 5.2,
+          "sourceDuration": 1.35
+        },
+        {
+          "start": 1.25,
+          "end": 2.5,
+          "rev": 0.55,
+          "sourceStart": 59.4,
+          "sourceDuration": 1.35
+        },
+        {
+          "start": 2.5,
+          "end": 3.75,
+          "rev": 0.95,
+          "sourceStart": 220.4,
+          "sourceDuration": 1.35
+        }
+      ],
+      "title": "lamborghini_aventador_t14_onbrd_start_drive_ramps_stop_off_exhaust_right_DPA4062.wav",
+      "author": "Pole Position Production",
+      "sourceVehicle": "2014 Lamborghini Aventador V12",
+      "sourceYear": 2014,
+      "sourceFamily": "V12",
+      "license": "Sonniss-GDC-2026-v2",
+      "licenseUrl": "https://sonniss.com/gdc-bundle-license/",
+      "sourceUrl": "https://sonniss.com/gameaudiogdc/",
+      "downloadUrl": "https://ftpmirror.your.org/pub/misc/sonniss2020/individual/Pole%20Position%20-%20Lamborghini%20Aventador%202014/lamborghini_aventador_t14_onbrd_start_drive_ramps_stop_off_exhaust_right_DPA4062.wav",
+      "productUrl": "https://pole.se/product/lamborghini-aventador-2014/",
+      "bundle": "Sonniss GDC 2020",
+      "bundleTracklistUrl": "https://docs.google.com/spreadsheets/d/1QqIcxJ7y0Acq3HAj9qQvFgvyeBjJ_7JvX8-GguUHIVk/edit",
+      "provenance": "Original 96 kHz/24-bit studio WAV from the individually extracted GDC bundle, matched by filename to Sonniss official 2020 tracklist and by embedded Pole Position copyright and vehicle metadata. Onboard exhaust-right DPA4062, drive ramps. Recorded source year is the vehicle model year from the product library, not the recording date.",
+      "checked": "2026-10-03",
+      "adaptation": "Mono 24 kHz PCM, 65 Hz high-pass / 5.8 kHz low-pass, selected source intervals, cosine loop overlap, DC/seam correction and peak/RMS normalization. In-game pitch, RPM blend and load EQ are authored, not measured.",
+      "cars": [
+        "lamborghini-aventador"
+      ],
+      "use": "Aventador model recording replaces Murci\u00e9lago proxy. The game visual source does not specify year/trim; exact year/variant remains unverified. Rev bands are authored, not measured RPM.",
+      "rights": "Licensed for synchronization in this game, including commercial release; not licensed for redistribution as a sound-effect asset pack, template or SDK. Raw takes are not shipped; these modified loops retain the source license restrictions. No AI training. Attribution is optional.",
+      "kind": "combustion",
+      "file": "aventador-2014-v1.wav",
+      "bytes": 180044,
+      "sha256": "7cc45db7fe82b11a5202df7a9adcf8a9f5ae6f0eba67a5b8f4bee00d02fe6c7e",
+      "duration": 3.75,
+      "sampleRate": 24000
+    },
+    {
+      "id": "ferrari-458-2013",
+      "sourceFile": "ferrari_458_t8_onbrd_drive_ramps_stop_off_intake_left_DPA4062.wav",
+      "sourceSha256": "e25aa4c6ff8662dd7f0b738358061893da726ecef1f4a3d53070833f598e1b52",
+      "sourceBytes": 105302778,
+      "layers": [
+        {
+          "start": 0,
+          "end": 1.25,
+          "rev": 0.1,
+          "sourceStart": 77.4,
+          "sourceDuration": 1.35
+        },
+        {
+          "start": 1.25,
+          "end": 2.5,
+          "rev": 0.55,
+          "sourceStart": 89,
+          "sourceDuration": 1.35
+        },
+        {
+          "start": 2.5,
+          "end": 3.75,
+          "rev": 0.95,
+          "sourceStart": 98.2,
+          "sourceDuration": 1.35
+        }
+      ],
+      "title": "ferrari_458_t8_onbrd_drive_ramps_stop_off_intake_left_DPA4062.wav",
+      "author": "Pole Position Production",
+      "sourceVehicle": "2013 Ferrari 458 V8 (body variant not verified)",
+      "sourceYear": 2013,
+      "sourceFamily": "V8",
+      "license": "Sonniss-GDC-2026-v2",
+      "licenseUrl": "https://sonniss.com/gdc-bundle-license/",
+      "sourceUrl": "https://sonniss.com/gameaudiogdc/",
+      "downloadUrl": "https://ftpmirror.your.org/pub/misc/sonniss2020/individual/Pole%20Position%20-%20Ferrari%20458%202013/ferrari_458_t8_onbrd_drive_ramps_stop_off_intake_left_DPA4062.wav",
+      "productUrl": "https://sonniss.com/sound-effects/ferrari-458-2013/",
+      "bundle": "Sonniss GDC 2020",
+      "bundleTracklistUrl": "https://docs.google.com/spreadsheets/d/1QqIcxJ7y0Acq3HAj9qQvFgvyeBjJ_7JvX8-GguUHIVk/edit",
+      "provenance": "Original 96 kHz/24-bit studio WAV from the individually extracted GDC bundle, matched by filename to Sonniss official 2020 tracklist and by embedded Pole Position copyright and vehicle metadata. Onboard intake-left DPA4062, drive ramps; original session metadata dated 2017-12-20. Recorded source year is the vehicle model year from the product library, not the recording date.",
+      "checked": "2026-10-03",
+      "adaptation": "Mono 24 kHz PCM, 65 Hz high-pass / 5.8 kHz low-pass, selected source intervals, cosine loop overlap, DC/seam correction and peak/RMS normalization. In-game pitch, RPM blend and load EQ are authored, not measured.",
+      "cars": [
+        "ferrari-458-italia"
+      ],
+      "use": "458 model-family recording replaces the 355 proxy. Game asset is a 458 Spider; the recording identifies 458 without certifying Spider, and embedded artwork depicts a coup\u00e9. Do not claim exact Spider or conflate this original take with the separately sold straight-pipes session.",
+      "rights": "Licensed for synchronization in this game, including commercial release; not licensed for redistribution as a sound-effect asset pack, template or SDK. Raw takes are not shipped; these modified loops retain the source license restrictions. No AI training. Attribution is optional.",
+      "kind": "combustion",
+      "file": "ferrari-458-2013-v1.wav",
+      "bytes": 180044,
+      "sha256": "ae5b664785b2f3120ce833675e7ca2e0116bf5596bb87e068e34244d98d0d184",
+      "duration": 3.75,
+      "sampleRate": 24000
+    },
+    {
+      "id": "audi-r8-2017",
+      "sourceFile": "Audi, R8, t3, Onbrd, Start, Fast, Drive, Stop, Reverse, Stop, Drive, Engine, Right, DPA4061.wav",
+      "sourceSha256": "272bca969591b5e882fb588ab67314ce88790f80eb74f3d986975c65d434bdd6",
+      "sourceBytes": 41431300,
+      "layers": [
+        {
+          "start": 0,
+          "end": 1.25,
+          "rev": 0.1,
+          "sourceStart": 6.6,
+          "sourceDuration": 1.35
+        },
+        {
+          "start": 1.25,
+          "end": 2.5,
+          "rev": 0.55,
+          "sourceStart": 52,
+          "sourceDuration": 1.35
+        },
+        {
+          "start": 2.5,
+          "end": 3.75,
+          "rev": 0.95,
+          "sourceStart": 105.4,
+          "sourceDuration": 1.35
+        }
+      ],
+      "title": "Audi, R8, t3, Onbrd, Start, Fast, Drive, Stop, Reverse, Stop, Drive, Engine, Right, DPA4061.wav",
+      "author": "Pole Position Production",
+      "sourceVehicle": "2017 Audi R8 FSI 5.2 V10",
+      "sourceYear": 2017,
+      "sourceFamily": "V10",
+      "license": "Sonniss-GDC-2026-v2",
+      "licenseUrl": "https://sonniss.com/gdc-bundle-license/",
+      "sourceUrl": "https://sonniss.com/gameaudiogdc/",
+      "downloadUrl": "https://ftpmirror.your.org/pub/misc/sonniss2020/individual/Pole%20Position%20-%20Audi%20R8%202017/Audi%2C%20R8%2C%20t3%2C%20Onbrd%2C%20Start%2C%20Fast%2C%20Drive%2C%20Stop%2C%20Reverse%2C%20Stop%2C%20Drive%2C%20Engine%2C%20Right%2C%20DPA4061.wav",
+      "productUrl": "https://pole.se/product/audi-r8-2017/",
+      "bundle": "Sonniss GDC 2020",
+      "bundleTracklistUrl": "https://docs.google.com/spreadsheets/d/1QqIcxJ7y0Acq3HAj9qQvFgvyeBjJ_7JvX8-GguUHIVk/edit",
+      "provenance": "Original 96 kHz/24-bit studio WAV from the individually extracted GDC bundle, matched by filename to Sonniss official 2020 tracklist and by embedded Pole Position copyright and vehicle metadata. Onboard engine-right DPA4061, start and drive; selected intervals exclude the starter. Recorded source year is the vehicle model year from the product library, not the recording date.",
+      "checked": "2026-10-03",
+      "adaptation": "Mono 24 kHz PCM, 65 Hz high-pass / 5.8 kHz low-pass, selected source intervals, cosine loop overlap, DC/seam correction and peak/RMS normalization. In-game pitch, RPM blend and load EQ are authored, not measured.",
+      "cars": [
+        "audi-r8",
+        "audi-r8-lms-gt3"
+      ],
+      "use": "R8 road-model recording replaces Hurac\u00e1n proxy for R8 Custom; custom build/generation remains undocumented. Related road R8 variant proxy for the 2019 R8 LMS GT3, not the race-car recording.",
+      "rights": "Licensed for synchronization in this game, including commercial release; not licensed for redistribution as a sound-effect asset pack, template or SDK. Raw takes are not shipped; these modified loops retain the source license restrictions. No AI training. Attribution is optional.",
+      "kind": "combustion",
+      "file": "audi-r8-2017-v1.wav",
+      "bytes": 180044,
+      "sha256": "534b2681939b366b5bdbb1db777c78c70664ad1b119750424cdbc315c38d84fa",
+      "duration": 3.75,
+      "sampleRate": 24000
+    },
+    {
+      "id": "nissan-gtr-2012",
+      "sourceFile": "Nissan_GTR_t6_Onbrd_Drive_Ramps_Engine_Left_Valve_DPA4062.wav",
+      "sourceSha256": "aa06a7caaf09eeaf548ec31e72f72e2538a04c6a004305fa15d6dc68676bb6a6",
+      "sourceBytes": 105444896,
+      "layers": [
+        {
+          "start": 0,
+          "end": 1.25,
+          "rev": 0.1,
+          "sourceStart": 0.8,
+          "sourceDuration": 1.35
+        },
+        {
+          "start": 1.25,
+          "end": 2.5,
+          "rev": 0.55,
+          "sourceStart": 91.4,
+          "sourceDuration": 1.35
+        },
+        {
+          "start": 2.5,
+          "end": 3.75,
+          "rev": 0.95,
+          "sourceStart": 209,
+          "sourceDuration": 1.35
+        }
+      ],
+      "title": "Nissan_GTR_t6_Onbrd_Drive_Ramps_Engine_Left_Valve_DPA4062.wav",
+      "author": "Pole Position Production",
+      "sourceVehicle": "2012 Nissan GT-R R35 turbo V6, modified performance exhaust",
+      "sourceYear": 2012,
+      "sourceFamily": "turbo-V6",
+      "license": "Sonniss-GDC-2026-v2",
+      "licenseUrl": "https://sonniss.com/gdc-bundle-license/",
+      "sourceUrl": "https://sonniss.com/gameaudiogdc/",
+      "downloadUrl": "https://ftpmirror.your.org/pub/misc/sonniss2020/individual/Pole%20Position%20-%20Nissan%20GT-R%20R35%202012/Nissan_GTR_t6_Onbrd_Drive_Ramps_Engine_Left_Valve_DPA4062.wav",
+      "productUrl": "https://pole.se/product/nissan-gt-r-r35-2012/",
+      "bundle": "Sonniss GDC 2020",
+      "bundleTracklistUrl": "https://docs.google.com/spreadsheets/d/1QqIcxJ7y0Acq3HAj9qQvFgvyeBjJ_7JvX8-GguUHIVk/edit",
+      "provenance": "Original 96 kHz/24-bit studio WAV from the individually extracted GDC bundle, matched by filename to Sonniss official 2020 tracklist and by embedded Pole Position copyright and vehicle metadata. Onboard engine left/valve DPA4062, drive ramps. Recorded source year is the vehicle model year from the product library, not the recording date.",
+      "checked": "2026-10-03",
+      "adaptation": "Mono 24 kHz PCM, 65 Hz high-pass / 5.8 kHz low-pass, selected source intervals, cosine loop overlap, DC/seam correction and peak/RMS normalization. In-game pitch, RPM blend and load EQ are authored, not measured.",
+      "cars": [
+        "nissan-gt-r-2018"
+      ],
+      "use": "R35 model/generation recording replaces Chevrolet Traverse proxy; source is 2012, not the represented 2018 model year. Rev bands are authored, not measured RPM. The source vehicle has a modified performance exhaust, not a verified factory 2018 exhaust.",
+      "rights": "Licensed for synchronization in this game, including commercial release; not licensed for redistribution as a sound-effect asset pack, template or SDK. Raw takes are not shipped; these modified loops retain the source license restrictions. No AI training. Attribution is optional.",
+      "kind": "combustion",
+      "file": "nissan-gtr-2012-v1.wav",
+      "bytes": 180044,
+      "sha256": "1f0a09a6e0edb23ec1f90923c9b653773b182654215a7b21a06e156533fe158d",
+      "duration": 3.75,
+      "sampleRate": 24000
+    },
+    {
+      "id": "mercedes-amg-gtr-2018",
+      "sourceFile": "mercedes_amg_gtr_t13_onbrd_start_fast_drive_stop_off_interior_DPA4021.wav",
+      "sourceSha256": "3b837d9b394d6db98272925541942acfbebe016f801a4fc5637a7a58e6219c74",
+      "sourceBytes": 46553958,
+      "layers": [
+        {
+          "start": 0,
+          "end": 1.25,
+          "rev": 0.1,
+          "sourceStart": 1.7,
+          "sourceDuration": 1.35
+        },
+        {
+          "start": 1.25,
+          "end": 2.5,
+          "rev": 0.55,
+          "sourceStart": 27.4,
+          "sourceDuration": 1.35
+        },
+        {
+          "start": 2.5,
+          "end": 3.75,
+          "rev": 0.95,
+          "sourceStart": 35.2,
+          "sourceDuration": 1.35
+        }
+      ],
+      "title": "mercedes_amg_gtr_t13_onbrd_start_fast_drive_stop_off_interior_DPA4021.wav",
+      "author": "Pole Position Production",
+      "sourceVehicle": "2018 Mercedes-AMG GT R twin-turbo V8",
+      "sourceYear": 2018,
+      "sourceFamily": "turbo-V8",
+      "license": "Sonniss-GDC-2026-v2",
+      "licenseUrl": "https://sonniss.com/gdc-bundle-license/",
+      "sourceUrl": "https://sonniss.com/gameaudiogdc/",
+      "downloadUrl": "https://ftpmirror.your.org/pub/misc/sonniss2019/individual/Pole%20Position%20-%20Mercedes%20AMG%20GT%20R%202018/mercedes_amg_gtr_t13_onbrd_start_fast_drive_stop_off_interior_DPA4021.wav",
+      "productUrl": "https://pole.se/product/mercedes-amg-gt-r-2018/",
+      "bundle": "Sonniss GDC 2019",
+      "bundleTracklistUrl": "https://docs.google.com/spreadsheets/d/1-McgwdktLVmctBrI4OGbgIBxeCp0A4KyKJzxOOTP6FY/edit",
+      "provenance": "Original 96 kHz/24-bit studio WAV from the individually extracted GDC2019 bundle, filename matched to the official Sonniss tracklist. Embedded metadata identifies Pole Position Production, Mercedes AMG GTR onboard start/fast drive/stop and interior DPA4021. Selected intervals exclude the starter and stop.",
+      "checked": "2026-10-03",
+      "adaptation": "Mono 24 kHz PCM, 65 Hz high-pass / 5.8 kHz low-pass, selected source intervals, cosine loop overlap, DC/seam correction and peak/RMS normalization. In-game pitch, RPM blend and load EQ are authored, not measured.",
+      "cars": [
+        "mercedes-amg-gt"
+      ],
+      "use": "AMG GT R variant recording replaces the S63 AMG proxy. The game represents AMG GT without the R trim; this remains a documented variant proxy. Cabin/road texture remains; rev bands are authored, not measured RPM.",
+      "rights": "Licensed for synchronization in this game, including commercial release; not licensed for redistribution as a sound-effect asset pack, template or SDK. Raw takes are not shipped; these modified loops retain the source license restrictions. No AI training. Attribution is optional.",
+      "kind": "combustion",
+      "file": "mercedes-amg-gtr-2018-v1.wav",
+      "bytes": 180044,
+      "sha256": "515ce61e4bd7417caa814ae6a81f744e03062b001b8f73df6332aa7658e7d820",
+      "duration": 3.75,
+      "sampleRate": 24000
+    },
+    {
+      "id": "testarossa-1990",
+      "sourceFile": "Ferrari, Testarossa, t6, Onbrd, Start, Drive, Steady RPMs, Engine, Mix.wav",
+      "sourceSha256": "afaaa1075fd9c86ce7d6417276c122366f380cc9f43d47c82ac845790cec20ab",
+      "sourceBytes": 119157522,
+      "layers": [
+        {
+          "start": 0,
+          "end": 1.25,
+          "rev": 0.1,
+          "sourceStart": 12,
+          "sourceDuration": 1.35
+        },
+        {
+          "start": 1.25,
+          "end": 2.5,
+          "rev": 0.55,
+          "sourceStart": 51,
+          "sourceDuration": 1.35
+        },
+        {
+          "start": 2.5,
+          "end": 3.75,
+          "rev": 0.95,
+          "sourceStart": 120,
+          "sourceDuration": 1.35
+        }
+      ],
+      "title": "Ferrari, Testarossa, t6, Onbrd, Start, Drive, Steady RPMs, Engine, Mix.wav",
+      "author": "Pole Position Production",
+      "sourceVehicle": "1990 Ferrari Testarossa flat-12",
+      "sourceYear": 1990,
+      "sourceFamily": "flat-12",
+      "license": "Sonniss-GDC-2026-v2",
+      "licenseUrl": "https://sonniss.com/gdc-bundle-license/",
+      "sourceUrl": "https://sonniss.com/gameaudiogdc/",
+      "downloadUrl": "https://scrubby.duckdns.org/Sonniss.com%20-%20GDC%202023%20-%20Game%20Audio%20Bundle/Pole%20Position%20Production%20-%20Ferrari%20Testarossa%201990/Ferrari%2C%20Testarossa%2C%20t6%2C%20Onbrd%2C%20Start%2C%20Drive%2C%20Steady%20RPMs%2C%20Engine%2C%20Mix.wav",
+      "productUrl": "https://pole.se/product/ferrari-testarossa-1990/",
+      "bundle": "Sonniss GDC 2023",
+      "bundleTracklistUrl": "https://docs.google.com/spreadsheets/d/1HAJdNA-QIug2IZjUV-DwCo1IZ-XJ4Vv9gWIaumNScfc/edit",
+      "provenance": "Original 96 kHz/24-bit stereo engine-mix WAV from extracted GDC 2023 bundle. Exact filename and Ferrari Testarossa 1990 library matched to the official Sonniss 2023 tracklist. Embedded metadata identifies the Testarossa, Pole Position Production copyright 2020, and onboard start/drive/steady RPMs engine mix. Mirror is transport only; usage rights derive from the official Sonniss bundle license.",
+      "checked": "2026-10-03",
+      "adaptation": "Mono 24 kHz PCM, 65 Hz high-pass / 5.8 kHz low-pass, selected source intervals, cosine loop overlap, DC/seam correction and peak/RMS normalization. In-game pitch, RPM blend and load EQ are authored, not measured.",
+      "cars": [
+        "ferrari-testarossa"
+      ],
+      "use": "Testarossa model and flat-12 recording replaces the unrelated Ferrari 340 America V12 proxy. Source car is 1990; represented visual source does not state its year. Three steady source sections, authored rev-band labels and transitions, not measured RPM calibration.",
+      "rights": "Licensed for synchronization in this game, including commercial release; not licensed for redistribution as a sound-effect asset pack, template or SDK. Raw takes are not shipped; these modified loops retain the source license restrictions. No AI training. Attribution is optional.",
+      "kind": "combustion",
+      "file": "testarossa-1990-v1.wav",
+      "bytes": 180044,
+      "sha256": "e0e5aec8e7445bfb4622e155020392247f1141dacbb2f58472344055dbaf94c0",
+      "duration": 3.75,
+      "sampleRate": 24000
     }
   ],
-  "activeBanks": 15
+  "activeBanks": 20
 }

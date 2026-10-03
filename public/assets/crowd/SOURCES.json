@@ -110,5 +110,109 @@
       "meshDraws": 3,
       "joints": 53
     }
-  ]
+  ],
+  "mediumDistance": {
+    "authorship": "Derived from the same CC0 MakeHuman wardrobe listed above; original Camber Reign cheering motion",
+    "geometryScript": "scripts/prepare-medium-spectators.py",
+    "motionScript": "scripts/bake-crowd-motion.mjs",
+    "texturePolicy": "No additional images; shared original near-character albedo and hair atlases",
+    "files": [
+      {
+        "file": "spectator-blue-shirt-crowd.glb",
+        "bytes": 214948,
+        "sha256": "8cd444152d85b370c899a3764961b8f1ff3a9e5bc5cc1359c97452e98b29e88d",
+        "triangles": 2449,
+        "meshDraws": 3,
+        "joints": 53
+      },
+      {
+        "file": "spectator-blue-shirt-motion.bin",
+        "bytes": 271360,
+        "sha256": "00a12b12078eca85d0a547c0873c831c5aed03625da4e6c6464907abbcb272c1",
+        "framesPerClip": 16,
+        "clips": 10,
+        "format": "RGBA16F bone matrices"
+      },
+      {
+        "file": "spectator-light-tee-crowd.glb",
+        "bytes": 183264,
+        "sha256": "61ad631f9a9ad4e02850a4cb0f99a87d51e2fd927cbc40075ed5ca91666c17ea",
+        "triangles": 2450,
+        "meshDraws": 3,
+        "joints": 53
+      },
+      {
+        "file": "spectator-light-tee-motion.bin",
+        "bytes": 271360,
+        "sha256": "89f978fcd7ab7b01cddef48961a66fab875ae437aeb13e05a0910964b14ae507",
+        "framesPerClip": 16,
+        "clips": 10,
+        "format": "RGBA16F bone matrices"
+      },
+      {
+        "file": "spectator-striped-shirt-crowd.glb",
+        "bytes": 200092,
+        "sha256": "9a305c9ec6f8b5bea9d5b5cc25520148809f48b340a0649289801adcae96f1eb",
+        "triangles": 2449,
+        "meshDraws": 3,
+        "joints": 53
+      },
+      {
+        "file": "spectator-striped-shirt-motion.bin",
+        "bytes": 271360,
+        "sha256": "755387aa3740e50fbf06b90b7e3400673e83e11289335540a7787c4f3dc287c6",
+        "framesPerClip": 16,
+        "clips": 10,
+        "format": "RGBA16F bone matrices"
+      },
+      {
+        "file": "spectator-denim-crowd.glb",
+        "bytes": 215200,
+        "sha256": "d02b4404b681c306cff92f4c461e9fce1f259b53a2eec612e0c0a901ea66e428",
+        "triangles": 2450,
+        "meshDraws": 2,
+        "joints": 53
+      },
+      {
+        "file": "spectator-denim-motion.bin",
+        "bytes": 271360,
+        "sha256": "a37633e6c5fd57821765b479fd6dfe448d807b8a30df94b37b15c9070064474d",
+        "framesPerClip": 16,
+        "clips": 10,
+        "format": "RGBA16F bone matrices"
+      },
+      {
+        "file": "spectator-summer-crowd.glb",
+        "bytes": 199372,
+        "sha256": "36c0f0af2c0a2481aba92d84ca8b8dd280af830b27a9a563b411c2c55a7ad472",
+        "triangles": 2449,
+        "meshDraws": 3,
+        "joints": 53
+      },
+      {
+        "file": "spectator-summer-motion.bin",
+        "bytes": 271360,
+        "sha256": "d185cfd498328f7a5cf87b0b24e16369cdf2e44a35aae8e3a71b5da1818e732d",
+        "framesPerClip": 16,
+        "clips": 10,
+        "format": "RGBA16F bone matrices"
+      },
+      {
+        "file": "spectator-sport-crowd.glb",
+        "bytes": 196060,
+        "sha256": "cb7e48da6bec0dc221c6694aa24539fac32f346630b8de706df52f60778f648b",
+        "triangles": 2448,
+        "meshDraws": 3,
+        "joints": 53
+      },
+      {
+        "file": "spectator-sport-motion.bin",
+        "bytes": 271360,
+        "sha256": "dd54dc7e2458067ed12ec8652c90148723196dedfe9ec6efb0e97b3a96d44e23",
+        "framesPerClip": 16,
+        "clips": 10,
+        "format": "RGBA16F bone matrices"
+      }
+    ]
+  }
 }

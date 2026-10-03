@@ -64,7 +64,7 @@ test('destination lighting and vegetation override generic venue scenery without
  assert.equal(fuji.vegetation,'woodland');assert.equal(fuji.towers,0);
  assert.equal(singapore.vegetation,'street-trees');assert.equal(singapore.towers,55);
  assert.equal(norway.vegetation,'conifers');assert.equal(norway.towers,0);
- assert.equal(sanFrancisco.vegetation,'street-trees');assert.equal(sanFrancisco.towers,24);
+ assert.equal(sanFrancisco.vegetation,'street-trees');assert.equal(sanFrancisco.towers,0,'continuous hillside homes replace detached random bay towers');
  assert.equal(new Set([fuji,singapore,norway,sanFrancisco].map(profile=>profile.background)).size,4);
 });
 

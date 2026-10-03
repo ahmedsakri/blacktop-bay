@@ -1,0 +1,22 @@
+Audio license page integration text (root owns HTML)
+
+Current coverage copy:
+33 cars use licensed recordings across20 active banks. Seven new studio banks improve eleven assignments. Three recordings match the represented base model (570S Coupé,Aventador,Testarossa), with target year/trim omissions explicit. Related models and variants remain clearly labeled; this is not33 exact vehicle sessions.
+
+New courtesy credit:
+Recorded vehicle audio by Pole Position Production, provided in the free Sonniss GDC 2019, 2020 and 2023 bundles. Adapted by AppsOverFlow into compact mono driving loops. These recordings are licensed for incorporation in this game under Sonniss GDC license v2(effective 27 August 2026); they are not redistributable as a standalone sound library, asset pack, project template or SDK. The game source-code license does not relicense them. No AI training. Attribution is optional under this license; existing CC BY credits remain required.
+
+Official bundle: https://sonniss.com/gameaudiogdc/
+License: https://sonniss.com/gdc-bundle-license/
+Complete identity/interval/hash records: /assets/audio/ENGINE-SOURCES.json
+33-car coverage: /assets/audio/ENGINE-COVERAGE.json
+Checked candidates: /assets/audio/ENGINE-CANDIDATES.json
+
+New sources:
+- 2016 McLaren 570S Coupé V8 biturbo — https://pole.se/product/mclaren-570s-2016/ — Sonniss GDC 2020
+- 2014 Lamborghini Aventador V12 — https://pole.se/product/lamborghini-aventador-2014/ — Sonniss GDC 2020
+- 2013 Ferrari 458 V8 (body variant not verified) — https://sonniss.com/sound-effects/ferrari-458-2013/ — Sonniss GDC 2020
+- 2017 Audi R8 FSI 5.2 V10 — https://pole.se/product/audi-r8-2017/ — Sonniss GDC 2020
+- 2012 Nissan GT-R R35 turbo V6, modified performance exhaust — https://pole.se/product/nissan-gt-r-r35-2012/ — Sonniss GDC 2020
+- 2018 Mercedes-AMG GT R twin-turbo V8 — https://pole.se/product/mercedes-amg-gt-r-2018/ — Sonniss GDC 2019
+- 1990 Ferrari Testarossa flat-12 — https://pole.se/product/ferrari-testarossa-1990/ — Sonniss GDC 2023

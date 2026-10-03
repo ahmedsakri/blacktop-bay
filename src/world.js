@@ -12,9 +12,9 @@ import {createSpatialInstances,createDistanceDetail} from './spatial-detail.js';
 import {applyShowcaseSurface,createShowcaseVenue,showcaseLayout,showcaseApproachLayout} from './showcase-venues.js';
 import { createCinematicBackdrop, CINEMATIC_BACKDROP_GLSL } from './cinematic-backdrop.js';
 import {venueLighting} from './showcase-lighting.js';
-import {createCoastalGrounding} from './coastal-foundations.js';
 import {createEnvironmentResource} from './environment-resource.js';
-import {createTrackSurfaceLibrary,roadSurfaceMaterial,concreteSurfaceMaterial,barrierProfileGeometry,architecturalFacadeMaterial} from './track-surface-materials.js';
+import {createTrackSurfaceLibrary,roadSurfaceMaterial,concreteSurfaceMaterial,pavingSurfaceMaterial,foliageSurfaceMaterial,barrierProfileGeometry,architecturalFacadeMaterial} from './track-surface-materials.js';
+import {createCoastalDistrict,coastalGroundAt,createDistrictParcels,createRoadVerge,createInlandRelief} from './venue-groundworks.js';
 import {createArchitecturalDetails,createTerrainRelief,createRoadEdgeDetails,streetscapeLayout,createWaterfrontGrounding,restrainedPavementMaterial,createAccessRailGeometry} from './track-world-detail.js';
 
 const TAU = Math.PI * 2;
@@ -52,6 +52,7 @@ export function venueSceneryLayout(track=TRACK,{low=false}={}) {
   const radius=kind==='building'?10+rng()*7:kind==='rock'?4+rng()*8:3+rng()*1.5;
   const offset=side*(track.width/2+radius+15+rng()*(kind==='building'?35:31));
   const x=p.x+p.nx*offset,z=p.z+p.nz*offset;
+  if(track.id==='san-francisco-hills'&&p.s/track.length>.225&&p.s/track.length<.345)continue;
   if(projectOnTrack(x,z,undefined,track).distance < track.width/2+radius+7)continue;
   if(stands.some(stand=>Math.hypot(x-stand.x,z-stand.z)<radius+14))continue;
   if(landmarks.some(item=>Math.hypot(x-item.x,z-item.z)<radius+item.radius+4))continue;
@@ -240,8 +241,8 @@ export function createWorld(renderer, { low = false, reducedMotion = false } = {
  const reflection = new Reflector(roadGeometry(TRACK.width, true), { textureWidth: low ? 512 : 1024, textureHeight: low ? 512 : 1024, color: 0x708699, multisample: low ? 0 : 2, clipBias: .003, shader: wetShader }); reflection.rotation.x = -Math.PI / 2; reflection.position.y = .026; reflection.material.transparent = true; reflection.material.depthWrite = false; reflection.renderOrder = 0; reflection.visible=!TRACK.elevationProfile&&venue.environment!=='desert'&&venue.environment!=='parkland'; scene.add(reflection);
  const white = new THREE.MeshBasicMaterial({ color: '#97a7aa' }), cyan = new THREE.MeshBasicMaterial({ color: '#34d8e9', toneMapped: false }), concrete = new THREE.MeshStandardMaterial({ color: '#596571', roughness: .82 }), metal = new THREE.MeshStandardMaterial({ color: '#15212c', metalness: .72, roughness: .35 }), warm = new THREE.MeshBasicMaterial({ color: '#ffd19a', toneMapped: false });
  warm.color.multiplyScalar(2.4); cyan.color.multiplyScalar(1.5);
- const sidewalk=concreteSurfaceMaterial(surfaces.maps,{color:venue.environment==='desert'?'#b4a384':venue.environment==='parkland'?'#929887':'#a1aaab'});
- for (const side of [-1, 1]) { scene.add(ribbon(side * (TRACK.width / 2 + 3.1), 4.6, -.02, sidewalk)); scene.add(ribbon(side * (TRACK.width / 2 - .5), .10, .049, white)); scene.add(ribbon(side * (TRACK.width / 2 + .62), .038, 1.06, cyan)); }
+ const sidewalk=pavingSurfaceMaterial(surfaces.maps,{color:venue.environment==='desert'?'#b4a384':venue.environment==='parkland'?'#929887':'#a1aaab'});
+ for (const side of [-1, 1]) { const walk=ribbon(side * (TRACK.width / 2 + 3.1),4.6,-.02,sidewalk);walk.geometry.attributes.uv.array.forEach((v,i,a)=>{a[i]=v*3/2.12;});scene.add(walk); scene.add(ribbon(side * (TRACK.width / 2 - .5), .10, .049, white)); scene.add(ribbon(side * (TRACK.width / 2 + .62), .038, 1.06, cyan)); }
  const barriers = [], rails = [], dashes = [], posts = [], bulbs = [], arms = [], chevrons = [], leftChevrons = [], straightMarkers = [], joints = [], railingUprights = [];
  const accessGaps=showcaseLayout(TRACK,{stands:grandstandLayout()}).filter(site=>showcaseApproachLayout(TRACK,site)).map(site=>({side:site.side,s:site.s,halfLength:1.4}));
  const panelTexture = canvasTexture(256, 128, c => { c.fillStyle = '#091b25'; c.fillRect(0, 0, 256, 128); c.strokeStyle = '#35e1f2'; c.lineWidth = 17; for (let x = 60; x < 200; x += 70) { c.beginPath(); c.moveTo(x, 30); c.lineTo(x + 34, 64); c.lineTo(x, 98); c.stroke(); } });
@@ -422,33 +423,40 @@ export function createWorld(renderer, { low = false, reducedMotion = false } = {
  instances(scene, box, architecturalFacadeMaterial({night:venue.night}), towers); instances(scene, box, new THREE.MeshStandardMaterial({ color: '#202e3b', roughness: .72 }), podiums); instances(scene, box, metal, roofEquipment); instances(scene, box, new THREE.MeshBasicMaterial({ color: '#527f94' }), caps); instances(scene, box, warm, shoreLights);
  frontageBuildings.push(...towers.filter(b=>projectOnTrack(b.x,b.z).distance<180&&b.y-b.sy/2<.5).slice(0,low?16:28));
  terrainOccupied.push(...towers.map(b=>({x:b.x,z:b.z,radius:Math.hypot(b.sx,b.sz)/2+4})));
- const land = new THREE.Mesh(terrainUV(new THREE.RingGeometry(venue.original?216:venue.radius+30,venue.groundRadius,100),venue.original?0:venue.centerX,venue.original?0:venue.centerZ,venue.environment==='urban'?3:90), TRACK.id==='singapore-afterdark'?restrainedPavementMaterial(surfaces.maps.concreteColor):new THREE.MeshStandardMaterial({ color:venue.environment==='urban'?'#929a9b':'#c6c9b5',map:venue.environment==='urban'?surfaces.maps.concreteColor:surfaces.maps.terrainColor, roughness: 1 })); land.rotation.x = -Math.PI / 2; land.position.set(venue.original?0:venue.centerX,-.28,venue.original?0:venue.centerZ); scene.add(land);
+ const land = new THREE.Mesh(terrainUV(new THREE.RingGeometry(venue.original?216:venue.radius+30,venue.groundRadius,100),venue.original?0:venue.centerX,venue.original?0:venue.centerZ,venue.environment==='urban'?3:90), venue.environment==='urban'?restrainedPavementMaterial(surfaces.maps.asphaltColor):new THREE.MeshStandardMaterial({ color:venue.environment==='urban'?'#929a9b':'#c6c9b5',map:venue.environment==='urban'?surfaces.maps.concreteColor:surfaces.maps.terrainColor, roughness: 1 })); land.rotation.x = -Math.PI / 2; land.position.set(venue.original?0:venue.centerX,-.28,venue.original?0:venue.centerZ); scene.add(land);
+ const coastalDistrict=createCoastalDistrict(scene,TRACK,{low,map:surfaces.maps.terrainColor});
+ const roadsideVerge=TRACK.id==='san-francisco-hills'?null:createRoadVerge(scene,TRACK,venue,{low,surfaces:surfaces.maps});
  if(!venue.original&&!venue.water){
   // Inland venues have continuous terrain under the whole route: no hidden
   // waterfront infield or yachts appearing beside a desert/permanent circuit.
-  const terrain=new THREE.Mesh(terrainUV(new THREE.CircleGeometry(venue.groundRadius,96),venue.centerX,venue.centerZ,venue.environment==='urban'?3:90),TRACK.id==='singapore-afterdark'?restrainedPavementMaterial(surfaces.maps.concreteColor):new THREE.MeshStandardMaterial({color:venue.environment==='urban'?'#929a9b':'#c6c9b5',map:venue.environment==='urban'?surfaces.maps.concreteColor:surfaces.maps.terrainColor,roughness:1}));
+  const terrain=new THREE.Mesh(terrainUV(new THREE.CircleGeometry(venue.groundRadius,96),venue.centerX,venue.centerZ,venue.environment==='urban'?3:90),venue.environment==='urban'?restrainedPavementMaterial(surfaces.maps.asphaltColor):new THREE.MeshStandardMaterial({color:venue.environment==='urban'?'#929a9b':'#c6c9b5',map:venue.environment==='urban'?surfaces.maps.concreteColor:surfaces.maps.terrainColor,roughness:1}));
   terrain.name='venue-terrain';terrain.rotation.x=-Math.PI/2;terrain.position.set(venue.centerX,-.16,venue.centerZ);terrain.receiveShadow=true;scene.add(terrain);
  }
  if(!venue.original&&(!venue.water||TRACK.scenery==='breakwater'||venue.vegetation==='street-trees')){
   const foliage=[],treeTrunks=[],rocks=[],cityBlocks=[],cityRoofs=[];
   const decorations=venueSceneryLayout(TRACK,{low});scene.userData.venueDecorationCount=decorations.length;terrainOccupied.push(...decorations);
-  if(TRACK.id==='san-francisco-hills')createCoastalGrounding(scene,TRACK,decorations);
+
   for(const item of decorations){
-   const {x,z,radius,height,yaw,shade}=item;
+   const {x,z,radius,height,yaw,shade}=item,ground=TRACK.id==='san-francisco-hills'?coastalGroundAt(coastalDistrict,x,z):0;
    if(item.kind==='building'){
     cityBlocks.push({x,z,y:height/2-.16,sx:radius*1.3,sy:height,sz:radius*.8,ry:yaw});
     cityRoofs.push({x,z,y:height+.1,sx:radius*1.34,sy:.32,sz:radius*.84,ry:yaw,color:shade>.7?'#67a8af':'#354759'});
    }else if(item.kind==='rock')rocks.push({x,z,y:height*.18-.8,sx:radius*.84,sy:height*.65,sz:radius*.71,ry:yaw,color:TRACK.scenery==='breakwater'?(shade>.5?'#4d5960':'#354047'):TRACK.scenery==='copper-canyon'?(shade>.5?'#a16c4c':'#86543d'):shade>.5?'#9a805e':'#76644e'});
    else{
-    treeTrunks.push({x,z,y:height*.29,sx:.18,sy:height*.58,sz:.18});
+    treeTrunks.push({x,z,y:ground+height*.29,sx:.18,sy:height*.58,sz:.18});
     if(venue.vegetation==='conifers'){
-     for(let layer=0;layer<3;layer++)foliage.push({x,z,y:height*(.50+layer*.17),sx:radius*(1-layer*.23),sy:height*(.35-layer*.04),sz:radius*(1-layer*.23),ry:yaw,color:shade>.66?'#405a40':shade>.33?'#304d3a':'#263e32'});
-    }else foliage.push({x,z,y:height*.72,sx:radius*.90,sy:height*.37,sz:radius*.80,ry:yaw,color:shade>.66?'#506346':shade>.33?'#3a5744':'#304b3f'});
+     for(let layer=0;layer<3;layer++)foliage.push({x,z,y:ground+height*(.50+layer*.17),sx:radius*(1-layer*.23),sy:height*(.35-layer*.04),sz:radius*(1-layer*.23),ry:yaw,color:shade>.66?'#405a40':shade>.33?'#304d3a':'#263e32'});
+    }else {
+     foliage.push({x,z,y:ground+height*.72,sx:radius*.90,sy:height*.37,sz:radius*.80,ry:yaw,color:shade>.66?'#647454':shade>.33?'#4c6449':'#405841'});
+     for(const side of [-1,1])segment(treeTrunks,[x,ground+height*.35,z],[x+Math.cos(yaw)*side*radius*.48,ground+height*.72,z+Math.sin(yaw)*side*radius*.48],.10);
+    }
    }
   }
   if(foliage.length){
-   instances(scene,new THREE.CylinderGeometry(1,1.1,1,6),new THREE.MeshStandardMaterial({color:'#594d3d',roughness:1}),treeTrunks);
-   instances(scene,venue.vegetation==='conifers'?coniferBoughGeometry({low}):broadleafCrownGeometry({low}),new THREE.MeshStandardMaterial({color:'white',vertexColors:true,roughness:1}),foliage);
+   // Three pieces per broadleaf tree must not turn a small original trunk
+   // batch into dozens of draws merely because branches were added.
+   createSpatialInstances(scene,new THREE.CylinderGeometry(1,1.1,1,6),new THREE.MeshStandardMaterial({color:'#594d3d',roughness:1}),treeTrunks,{partitionThreshold:venue.vegetation==='conifers'?48:144});
+   instances(scene,venue.vegetation==='conifers'?coniferBoughGeometry({low}):broadleafCrownGeometry({low}),venue.vegetation==='conifers'?new THREE.MeshStandardMaterial({color:'white',vertexColors:true,roughness:1}):foliageSurfaceMaterial(surfaces.maps.foliageLeaf),foliage);
   }
   if(rocks.length)instances(scene,new THREE.DodecahedronGeometry(1,1),new THREE.MeshStandardMaterial({color:'white',roughness:1}),rocks);
   if(cityBlocks.length){
@@ -473,10 +481,12 @@ export function createWorld(renderer, { low = false, reducedMotion = false } = {
  instances(scene,box,concreteSurfaceMaterial(surfaces.maps,{color:'#d2cec1'}),streetSites.map(b=>({...b,color:b.frontageTint})));
  frontageBuildings.unshift(...streetSites);terrainOccupied.push(...streetSites);
  const quay=venue.water?createWaterfrontGrounding(scene,TRACK,[...streetSites,...towers],concreteSurfaceMaterial(surfaces.maps,{color:'#7f8a88'})):null;
+ const parcels=createDistrictParcels(scene,TRACK,[...streetSites,...frontageBuildings,...towers],{low,surfaces:surfaces.maps,water:venue.water&&TRACK.id!=='san-francisco-hills'});
  const frontage=createArchitecturalDetails(scene,frontageBuildings.slice(0,low?32:52),{low,night:venue.night,concreteMap:surfaces.maps.concreteColor,concreteNormal:surfaces.maps.concreteNormal});
- const relief=createTerrainRelief(scene,TRACK,venue,{low,map:surfaces.maps.terrainColor,occupied:[...terrainOccupied,...standLayouts.map(s=>({...s,radius:16})),...(scene.userData.originalLandmarks||[]),...showcaseSites]});
+ const reliefBuilder=venue.environment==='parkland'&&!venue.water?createInlandRelief:createTerrainRelief;
+ const relief=reliefBuilder(scene,TRACK,venue,{low,map:surfaces.maps.terrainColor,occupied:[...terrainOccupied,...standLayouts.map(s=>({...s,radius:16})),...(scene.userData.originalLandmarks||[]),...showcaseSites]});
  const edgeDetails=createRoadEdgeDetails(scene,TRACK,{low});
- scene.userData.trackWorldDetail={frontages:frontage.userData,streets:streetSites,quays:quay?.userData,relief:relief.userData,edges:edgeDetails.userData};
+ scene.userData.trackWorldDetail={coastalDistrict:coastalDistrict?.userData,verge:roadsideVerge?.userData,parcels:parcels.userData,frontages:frontage.userData,streets:streetSites,quays:quay?.userData,relief:relief.userData,edges:edgeDetails.userData};
  createTracksideServices(scene,TRACK,{low,stands:standLayouts,landmarks:[...(scene.userData.originalLandmarks||[]),...showcaseSites],crowd,rng:crowdRng});
  const mountainPositions = [], mountainIndices = [];
  const ridgeSegments = 320;
@@ -591,7 +601,7 @@ export function createWorld(renderer, { low = false, reducedMotion = false } = {
   const nameboard = new THREE.Mesh(new THREE.PlaneGeometry(28, 3.5), new THREE.MeshBasicMaterial({ map: identity }));nameboard.rotation.y = Math.PI / 2;nameboard.position.set(-18.80, 6.65, 0);paddock.add(nameboard);
  }
  // Three synchronized twin-lamp columns use the existing countdown hook.
- createMountainVenue(scene, TRACK, {low,landmarks:showcaseSites,surfaces:surfaces.maps});
+ createMountainVenue(scene, TRACK, {low,landmarks:showcaseSites,surfaces:surfaces.maps,groundHeight:coastalDistrict?(x,z)=>coastalGroundAt(coastalDistrict,x,z):undefined});
  createShowcaseVenue(scene,TRACK,{low,stands:standLayouts,crowd,rng:crowdRng,surfaces:surfaces.maps});
  const lampHousing = new THREE.Mesh(new THREE.BoxGeometry(3.55, 1.13, .42), metal); lampHousing.position.set(0, 5.83, -.08); finishArch.add(lampHousing);
  const startLights = [];

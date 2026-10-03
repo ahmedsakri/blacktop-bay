@@ -1,8 +1,8 @@
 <!doctype html>
 <html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Recorded audio review — local only</title>
-<style>body{margin:0;background:#110017;color:white;font:16px system-ui;padding:24px;max-width:1080px}button{background:#FFF71E;color:#110017;border:0;min-height:48px;padding:12px 20px;font:inherit;font-weight:700}article{border:1px solid #9246FF;background:#021439;padding:16px;margin:16px 0}audio{width:100%}pre{white-space:pre-wrap;overflow-wrap:anywhere}a{color:#FFF71E}.note{color:#d3c4e1}</style>
+<style>body{margin:0;background:#110017;color:white;font:16px system-ui;padding:24px;max-width:1080px}button{background:#FFF71E;color:#110017;border:0;min-height:48px;padding:12px 20px;font:inherit;font-weight:700}article{overflow-wrap:anywhere;border:1px solid #9246FF;background:#021439;padding:16px;margin:16px 0}audio{width:100%}pre{white-space:pre-wrap;overflow-wrap:anywhere}a{color:#FFF71E}.note{color:#d3c4e1}</style>
 <h1>Recorded engine mix review</h1><p class="note">Local review fixture. Rendering uses the actual Web Audio graph and shipping WAV banks. Audio plays only when you press a player’s Play button. This is not physical phone, headphone, heat or battery validation.</p>
-<button id="render">Render all 33 cars</button> <button id="render-families">Review 15 active recording families</button> <button id="render-upgrades">Review 2 upgraded families</button> <label><input id="compare" type="checkbox" checked> Compare with synthesis-only mix</label><p id="status" role="status">Ready. No audio has started.</p><div id="results"></div><pre id="diagnostics"></pre>
+<button id="render">Render all 33 cars</button> <button id="render-families">Review active recording families</button> <button id="render-upgrades">Review 7 new recordings</button> <label><input id="compare" type="checkbox" checked> Compare with synthesis-only mix</label><p id="status" role="status">Ready. No audio has started.</p><div id="results"></div><pre id="diagnostics"></pre>
 <script type="module">
 import {createAudio} from '/src/audio.js';
 import {MANUFACTURER_VEHICLES} from '/src/manufacturer-vehicles.js';
@@ -11,6 +11,8 @@ import {createEngineSoundMotion,drivingVoice} from '/src/driving-sound.js';
 const button=document.querySelector('#render'),status=document.querySelector('#status'),results=document.querySelector('#results'),diagnostics=document.querySelector('#diagnostics');
 const choices=MANUFACTURER_VEHICLES.map(car=>[car.name,car.id]);
 const familyButton=document.querySelector('#render-families'),upgradeButton=document.querySelector('#render-upgrades');
+const newBankIds=['mclaren-570s-2016','aventador-2014','ferrari-458-2013','audi-r8-2017','nissan-gtr-2012','mercedes-amg-gtr-2018','testarossa-1990'];
+familyButton.textContent='Review '+new Set(Object.values(RECORDING_CARS)).size+' active recording families';
 const objectUrls=[];
 const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 function wav(buffer){const length=buffer.length,channels=buffer.numberOfChannels,bytes=new ArrayBuffer(44+length*channels*2),view=new DataView(bytes);const text=(offset,value)=>[...value].forEach((letter,i)=>view.setUint8(offset+i,letter.charCodeAt(0)));text(0,'RIFF');view.setUint32(4,36+length*channels*2,true);text(8,'WAVE');text(12,'fmt ');view.setUint32(16,16,true);view.setUint16(20,1,true);view.setUint16(22,channels,true);view.setUint32(24,buffer.sampleRate,true);view.setUint32(28,buffer.sampleRate*channels*2,true);view.setUint16(32,channels*2,true);view.setUint16(34,16,true);text(36,'data');view.setUint32(40,length*channels*2,true);for(let i=0;i<length;i++)for(let c=0;c<channels;c++)view.setInt16(44+(i*channels+c)*2,Math.round(Math.max(-1,Math.min(1,buffer.getChannelData(c)[i]))*32767),true);return new Blob([bytes],{type:'audio/wav'});}
@@ -66,5 +68,5 @@ async function run(selectedChoices){
 results.addEventListener('play',event=>{for(const player of results.querySelectorAll('audio'))if(player!==event.target)player.pause();},true);
 button.addEventListener('click',()=>run(choices));
 familyButton.addEventListener('click',()=>run([...new Set(Object.values(RECORDING_CARS))].map(bank=>choices.find(([,id])=>RECORDING_CARS[id]===bank))));
-upgradeButton.addEventListener('click',()=>run(choices.filter(([,id])=>['maserati-mc-stradale','mercedes-amg-gt'].includes(id))));
+upgradeButton.addEventListener('click',()=>run(newBankIds.map(bank=>choices.find(([,id])=>RECORDING_CARS[id]===bank))));
 </script></html>

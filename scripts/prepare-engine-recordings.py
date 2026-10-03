@@ -5,30 +5,33 @@ import argparse, array, hashlib, json, math, pathlib, struct, subprocess, wave
 parser = argparse.ArgumentParser()
 parser.add_argument('--sources', type=pathlib.Path, required=True)
 parser.add_argument('--output', type=pathlib.Path, required=True)
+parser.add_argument('--manifest', type=pathlib.Path, default=pathlib.Path(__file__).resolve().parents[1]/'public/assets/audio/ENGINE-SOURCES.json', help='Reviewed source identities, hashes and selected intervals.')
 parser.add_argument('--only', action='append', default=[], help='Prepare only this bank ID (repeatable); validates names before writing.')
 args = parser.parse_args()
 RATE = 24000
-specs = [
- ('ferrari-355', 'ferrari-43484.mp3', [(1.2,1.5,.10),(5.1,1.5,.55),(8.55,1.45,.95)]),
- ('porsche-911', 'porsche-55727.mp3', [(0.15,1.4,.10),(4.35,1.45,.55),(2.25,1.5,.95)]),
- ('mustang-idle', 'mustang-119449.mp3', [(4.0,2.1,.10)]),
- ('aston-acceleration', 'aston-0600.wav', [(0.2,1.1,.15),(1.4,1.1,.80)]),
- ('huracan-v10', 'huracan-564375.mp3', [(11.5,1.4,.10),(16.5,1.35,.55),(26.15,1.15,.95)]),
- ('murcielago-v12', 'murcielago-112075.mp3', [(4.0,1.4,.10),(33.0,1.3,.55),(44.6,1.3,.90)]),
- ('ferrari-classic-v12', 'ferrari-v12-43483.mp3', [(6.7,1.35,.10),(1.7,1.35,.55),(3.3,1.35,.95)]),
- ('honda-na-i4', 'honda-f20c.ogg', [(24.0,1.3,.10),(7.0,1.3,.50),(51.0,1.3,.95)]),
- ('audi-turbo-i4', 'audi-i4-425384.mp3', [(1.1,1.35,.10),(11.0,1.35,.50),(18.0,1.35,.95)]),
- ('volvo-turbo-i5', 'volvo-i5-95838.mp3', [(11.0,1.5,.10),(20.0,1.3,.80)]),
- ('mercedes-i6', 'mercedes-i6-433603.mp3', [(4.4,1.15,.15),(3.8,1.1,.55),(2.7,1.15,.95)]),
- ('chevrolet-v6', 'chevy-v6-351962.mp3', [(11.0,1.35,.10),(1.0,1.35,.50),(4.0,1.35,.95)]),
- ('bmw-diesel', 'diesel-401550.mp3', [(.3,1.3,.10),(.3,1.3,.55,'diesel-401547.mp3'),(.25,1.3,.95,'diesel-401549.mp3')]),
- ('tesla-electric', 'tesla-761685.mp3', [(.25,1.1,.10),(1.9,1.1,.55),(3.65,1.1,.95)]),
- ('maserati-granturismo-v8', 'maserati-465453.mp3', [(3.5,1.35,.10),(26.0,1.35,.55),(44.0,1.35,.95)]),
- ('mercedes-amg-v8', 'amg-505321.mp3', [(4.85,1.15,.10),(1.05,.80,.55),(2.35,1.10,.95)]),
-]
+# The reviewed provenance manifest is the sole interval/source specification.
+# Verify every selected input before creating any output: a renamed or replaced
+# recording must never inherit another vehicle's identity or license metadata.
+manifest=json.loads(args.manifest.read_text())
+entries=manifest['recordings']
+specs=[(entry['id'],entry['sourceFile'],[(layer['sourceStart'],layer['sourceDuration'],layer['rev'],layer.get('sourceFile',entry['sourceFile'])) for layer in entry['layers']]) for entry in entries]
 unknown=set(args.only)-{spec[0] for spec in specs}
 if unknown: parser.error('Unknown bank(s): '+', '.join(sorted(unknown)))
 if args.only: specs=[spec for spec in specs if spec[0] in args.only]
+selected={spec[0] for spec in specs}
+expected={}
+for entry in entries:
+ if entry['id'] not in selected: continue
+ for source in [entry,*entry.get('additionalSources',[])]:
+  filename=source['sourceFile']; digest=source['sourceSha256']
+  if filename in expected and expected[filename]!=digest: raise ValueError(f'Conflicting source hashes: {filename}')
+  expected[filename]=digest
+for _,filename,ranges in specs:
+ for name in {filename,*(span[3] for span in ranges)}:
+  if name not in expected: raise ValueError(f'Unreviewed source: {name}')
+  path=args.sources/name
+  if pathlib.Path(name).name!=name: raise ValueError(f'Source must be a filename: {name}')
+  if hashlib.sha256(path.read_bytes()).hexdigest()!=expected[name]: raise ValueError(f'Source hash mismatch: {name}')
 args.output.mkdir(parents=True,exist_ok=True)
 results=[]
 for ident,filename,ranges in specs:
