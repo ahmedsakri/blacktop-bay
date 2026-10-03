@@ -29,7 +29,7 @@ body:not(.in-race):not(.in-garage) .top-actions { display:flex; align-items:cent
 .in-race .topbar :is(#open-garage,#hq-wallet,#how),
 .in-garage .topbar :is(#open-garage,#hq-wallet,#how) { display:none; }
 #menu:before { display:none; }
-#menu .lobby-nav { grid-template-columns:repeat(4,minmax(0,1fr)); }
+#menu .lobby-nav { grid-template-columns:repeat(5,minmax(0,1fr)); }
 #menu footer { font-size:11px; }
 @media(max-width:1000px) {
   body:not(.in-race):not(.in-garage) .wordmark .brand-logo { width:190px; }

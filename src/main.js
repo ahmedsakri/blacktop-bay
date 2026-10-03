@@ -433,9 +433,10 @@ async function continueTour(){const stagedCareer=mode==='finished'?finalizeChamp
   updateRaceOptions();closeDialog();await start();
 }
 function showRaceSetup(){
-  dialog({kind:'race-setup',eyebrow:'YOUR RACE. YOUR RULES.',title:'Find your <em>challenge.</em>',html:raceSetupMarkup(preferences,career),actions:[{label:'READY TO RACE',primary:true,action:()=>{closeDialog();updateMenu();}}]});
-  for(const b of document.querySelectorAll('[data-race-mode]'))b.onclick=()=>{selectedCampaignId=null;preferences.mode=b.dataset.raceMode;saveChoices();updateRaceOptions();showRaceSetup();document.querySelector(`[data-race-mode="${preferences.mode}"]`)?.focus();};
-  $('race-difficulty').onchange=e=>{selectedCampaignId=null;preferences.difficulty=e.target.value;saveChoices();updateRaceOptions();};
+  const solo=preferences.mode==='time-attack',campaignEvent=selectedCampaignEvent();
+  dialog({kind:'race-setup',eyebrow:campaignEvent?'CAREER EVENT RULES':solo?'YOUR SOLO RUN':'RACE SETTINGS',title:solo?'Targets & <em>ghosts.</em>':'Set the <em>difficulty.</em>',html:raceSetupMarkup(preferences,career,{campaignEvent}),actions:[{label:'DONE',primary:true,action:()=>{closeDialog();updateMenu();}}]});
+  const difficulty=$('race-difficulty');
+  if(difficulty)difficulty.onchange=e=>{if(e.target.value===preferences.difficulty)return;selectedCampaignId=null;preferences.difficulty=e.target.value;saveChoices();updateRaceOptions();if(campaignEvent){showRaceSetup();$('race-difficulty')?.focus();}};
   if($('resume-tour'))$('resume-tour').onclick=continueTour;
   mountTrialSettings();
 }

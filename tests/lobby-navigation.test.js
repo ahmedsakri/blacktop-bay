@@ -48,8 +48,8 @@ function harness({savedSound,blocked=false,campaignEventId=null}={}){
 
 test('lobby mode navigation refreshes the real field, selected state and mode-specific best without starting a race',()=>{
   const h=harness(),originalRecords=[...h.values.entries()];
-  assert.deepEqual(h.buttons.map(button=>button.dataset.lobbyMode),['race','time-attack']);
-  for(const [mode,best,field] of [['time-attack',103,'01'],['race',120,'08']]){
+  assert.deepEqual(h.buttons.map(button=>button.dataset.lobbyMode),['race','time-attack','championship']);
+  for(const [mode,best,field] of [['time-attack',103,'01'],['championship',132,'08'],['race',120,'08']]){
     h.click(mode);
     assert.equal(h.preferences.mode,mode);
     assert.equal(h.$('hq-field-size').textContent,field);
@@ -77,8 +77,7 @@ test('race difficulty and fitted builds keep separate benchmarks while solo diff
   assert.equal(h.records().bestTime,null,'unplayed Pro race cannot borrow the Sport record');
   h.preferences.difficulty='street';h.click('race');assert.equal(h.records().bestTime,120);
   h.click('time-attack');assert.equal(h.records().bestTime,103);
-  // Tour remains available in Race setup, rather than a third lobby shortcut.
-  h.preferences.mode='championship';vm.runInContext('updateMenu()',h.context);
+  h.click('championship');
   assert.equal(h.records().bestTime,132);assert.equal(h.$('hq-field-size').textContent,'08');
   assert.equal(JSON.parse(h.values.get(key('time-attack','pro',{engine:1}))).bestTime,99);
   assert.equal(JSON.parse(h.values.get(key('time-attack'))).bestTime,103,'fitted result preserves the original stock record');
@@ -87,28 +86,27 @@ test('race difficulty and fitted builds keep separate benchmarks while solo diff
 test('legacy record mute is promoted to the global preference before switching lobby modes',()=>{
   const h=harness({savedSound:false});
   assert.equal(h.preferences.sound,false);
-  for(const mode of ['time-attack','race']){
+  for(const mode of ['time-attack','championship','race']){
     h.click(mode);assert.equal(h.records().sound,false);assert.equal(h.preferences.sound,false);
     assert.equal(JSON.parse(h.values.get('blacktop-bay-choices-v1')).sound,false);
   }
-  h.preferences.mode='championship';vm.runInContext('saveChoices();updateMenu()',h.context);
-  assert.equal(h.records().sound,false);assert.equal(h.preferences.sound,false);
-  assert.equal(JSON.parse(h.values.get('blacktop-bay-choices-v1')).sound,false);
 });
 
 test('a valid campaign selection displays its actual objective and free mode navigation clears only the selection',()=>{
-  const h=harness({campaignEventId:'harbor-first'}),event=getCampaignEvent('harbor-first',h.preferences.vehicle);
-  const original=JSON.stringify(vm.runInContext('campaign',h.context));
-  assert.equal(h.$('open-campaign').attributes['aria-pressed'],'true');
-  assert.ok(h.buttons.every(button=>button.attributes['aria-pressed']==='false'));
-  assert.equal(h.$('lobby-mode-title').textContent,event.name);
-  assert.equal(h.$('lobby-mode-description').textContent,event.objectives[0].label);
-  assert.equal(h.$('race-setup-label').textContent,'Event rules · Club');
-  h.click('time-attack');
-  assert.equal(h.$('open-campaign').attributes['aria-pressed'],'false');
-  assert.equal(vm.runInContext('selectedCampaignId',h.context),null);
-  assert.equal(JSON.stringify(vm.runInContext('campaign',h.context)),original);
-  assert.equal(h.$('hq-field-size').textContent,'01');
+  for(const [mode,field] of [['race','08'],['time-attack','01'],['championship','08']]){
+    const h=harness({campaignEventId:'harbor-first'}),event=getCampaignEvent('harbor-first',h.preferences.vehicle);
+    const original=JSON.stringify(vm.runInContext('campaign',h.context));
+    assert.equal(h.$('open-campaign').attributes['aria-pressed'],'true');
+    assert.ok(h.buttons.every(button=>button.attributes['aria-pressed']==='false'));
+    assert.equal(h.$('lobby-mode-title').textContent,event.name);
+    assert.equal(h.$('lobby-mode-description').textContent,event.objectives[0].label);
+    assert.equal(h.$('race-setup-label').textContent,'Event rules · Club');
+    h.click(mode);
+    assert.equal(h.$('open-campaign').attributes['aria-pressed'],'false');
+    assert.equal(vm.runInContext('selectedCampaignId',h.context),null);
+    assert.equal(JSON.stringify(vm.runInContext('campaign',h.context)),original);
+    assert.equal(h.$('hq-field-size').textContent,field);
+  }
 });
 
 test('locked or mismatched campaign intent never labels the free-race lobby as an active campaign',()=>{
@@ -123,7 +121,9 @@ test('locked or mismatched campaign intent never labels the free-race lobby as a
 
 test('blocked storage keeps navigation usable with empty records and the current in-memory selection',()=>{
   const h=harness({blocked:true});
-  assert.doesNotThrow(()=>h.click('time-attack'));
-  assert.equal(h.preferences.mode,'time-attack');assert.equal(h.$('hq-field-size').textContent,'01');
+  for(const [mode,field] of [['time-attack','01'],['championship','08']]){
+    assert.doesNotThrow(()=>h.click(mode));
+    assert.equal(h.preferences.mode,mode);assert.equal(h.$('hq-field-size').textContent,field);
+  }
   assert.equal(h.records().bestTime,null);assert.equal(h.writes.length,0);
 });
