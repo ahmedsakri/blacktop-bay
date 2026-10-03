@@ -43,6 +43,21 @@ test('late or failed surface loading cannot resurrect disposed textures or attac
   const invalid=createTrackSurfaceLibrary({placeholder:()=>({width:1,height:1}),loadImage:async()=>({width:4096,height:4096,close(){}})});await invalid.ready;assert.equal(invalid.status.failed,11);assert.equal(invalid.status.loaded,0);invalid.dispose();
 });
 
+test('optional fjord rock maps reserve the correct dimensions and share normal surface teardown without changing other venues',async()=>{
+ const rock=JSON.parse(readFileSync(new URL('../public/assets/environments/surfaces/fjord-rock-provenance.json',import.meta.url)));
+ for(const low of [true,false]){
+  const requested=[],library=createTrackSurfaceLibrary({low,rock:true,placeholder:()=>({}),loadImage:async url=>{
+   requested.push(url);const file=[...provenance.maps,...rock.maps].find(map=>url.endsWith(map.file));return {width:file.width,height:file.height};
+  }});
+  assert.equal(library.status.files,13);assert.equal(library.maps.rockColor.image.width,low?512:1024);assert.equal(library.maps.rockNormal.image.height,low?512:1024);
+  assert.equal(library.maps.rockColor.colorSpace,THREE.SRGBColorSpace);assert.equal(library.maps.rockNormal.colorSpace,THREE.NoColorSpace);
+  await library.ready;assert.equal(requested.length,13);assert.equal(library.status.loaded,13);assert.equal(library.status.failed,0);
+  let disposed=0;for(const texture of Object.values(library.maps))texture.addEventListener('dispose',()=>disposed++);library.dispose();library.dispose();assert.equal(disposed,13);
+ }
+ const normal=createTrackSurfaceLibrary({placeholder:()=>({}),loadImage:async url=>{const file=provenance.maps.find(map=>url.endsWith(map.file));return {width:file.width,height:file.height};}});
+ await normal.ready;assert.equal(normal.status.files,11);assert.equal(normal.maps.rockColor,undefined);assert.equal(normal.maps.rockNormal,undefined);normal.dispose();
+});
+
 test('tapered barriers retain the former collision envelope and upward caps',()=>{
   const g=barrierProfileGeometry();g.computeBoundingBox();const box=g.boundingBox;
   assert.deepEqual(box.min.toArray(),[-.5,-.5,-.5]);assert.deepEqual(box.max.toArray(),[.5,.5,.5]);

@@ -1,0 +1,6 @@
+Marble Cliff 05 by Amal Kumar / Poly Haven
+https://polyhaven.com/a/marble_cliff_05
+CC0-1.0 / https://polyhaven.com/license
+
+Derivative: resized diffuse and OpenGL normal maps, WebP encoded for Camber Reign.
+Original colors retained. Source hashes and delivered hashes: fjord-rock-provenance.json.

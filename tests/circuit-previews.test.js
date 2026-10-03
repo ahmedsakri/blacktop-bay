@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import {TRACKS} from '../src/track.js';
-import {TRACK_SURFACE_MAPS} from '../src/track-surface-materials.js';
+import {TRACK_SURFACE_MAPS,TRACK_ROCK_MAPS} from '../src/track-surface-materials.js';
 
 function dimensions(bytes){
  assert.equal(bytes.toString('ascii',0,4),'RIFF');assert.equal(bytes.toString('ascii',8,12),'WEBP');
@@ -38,8 +38,9 @@ test('all 38 circuit previews are distinct actual-world WebP captures with verif
   assert.ok(['ready','disabled'].includes(entry.trees.state),entry.id+' applicable scanned trees resolved before capture');
   assert.equal(entry.crowd.assets.loaded,entry.crowd.assets.requested,entry.id+' crowd assets settled before capture');
   assert.equal(entry.crowd.assets.active,0);assert.equal(entry.crowd.assets.queued,0);
-  assert.equal(entry.surfaces.loaded,Object.keys(TRACK_SURFACE_MAPS).length,entry.id+' actual surface maps finished loading');
-  assert.equal(entry.textureProof.length,Object.keys(TRACK_SURFACE_MAPS).length);assert.ok(entry.textureProof.every(p=>p.gpuRedStdDev>0),entry.id+' maps were sampled on the GPU');
+  const expectedMaps=Object.keys(TRACK_SURFACE_MAPS).length+(entry.id==='norway-fjord'?Object.keys(TRACK_ROCK_MAPS).length:0);
+  assert.equal(entry.surfaces.loaded,expectedMaps,entry.id+' actual surface maps finished loading');
+  assert.equal(entry.textureProof.length,expectedMaps);assert.ok(entry.textureProof.every(p=>p.gpuRedStdDev>0),entry.id+' maps were sampled on the GPU');
  }
  assert.equal(total,manifest.totalBytes);assert.ok(total<4*1024*1024,'whole catalogue preview transfer stays below 4 MiB');
 });

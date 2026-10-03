@@ -1,0 +1,84 @@
+{
+  "asset": "https://polyhaven.com/a/marble_cliff_05",
+  "author": "Amal Kumar",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://polyhaven.com/license",
+  "sourceApi": "https://api.polyhaven.com/files/marble_cliff_05",
+  "sourceScaleMetres": 20,
+  "changes": "Resized original photographed diffuse and OpenGL normal maps, then WebP encoded. No recoloring, generated surface detail, or green tint. A reusable cliff material, not a scan of the Norwegian game location.",
+  "encoder": {
+    "sharp": "0.35.5",
+    "colorQuality": 86,
+    "normalQuality": 94,
+    "effort": 6
+  },
+  "maps": [
+    {
+      "file": "fjord-rock-color.webp",
+      "width": 1024,
+      "height": 1024,
+      "bytes": 294688,
+      "sha256": "dd484f2456f115ae495332bee6c0d2f6ac54d9cbc99b6bb601156e9847179dde",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/marble_cliff_05/marble_cliff_05_diff_1k.jpg",
+      "sourceMD5": "84d207d6f6d8a52c41da48144b951eab",
+      "sourceSHA256": "06d39eeb7243e5dd1aa8a5e2f4acb6e62fc3457ceb066bfa73743c977336baa4",
+      "asset": "https://polyhaven.com/a/marble_cliff_05",
+      "author": "Amal Kumar",
+      "license": "CC0-1.0",
+      "colorSpace": "sRGB",
+      "metres": 20
+    },
+    {
+      "file": "fjord-rock-color-mobile.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 84902,
+      "sha256": "721d787e61ccaaac09d0875e9deea149edf24348ec6f5fcf12c434ceb3b70c7a",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/marble_cliff_05/marble_cliff_05_diff_1k.jpg",
+      "sourceMD5": "84d207d6f6d8a52c41da48144b951eab",
+      "sourceSHA256": "06d39eeb7243e5dd1aa8a5e2f4acb6e62fc3457ceb066bfa73743c977336baa4",
+      "asset": "https://polyhaven.com/a/marble_cliff_05",
+      "author": "Amal Kumar",
+      "license": "CC0-1.0",
+      "colorSpace": "sRGB",
+      "metres": 20
+    },
+    {
+      "file": "fjord-rock-normal.webp",
+      "width": 1024,
+      "height": 1024,
+      "bytes": 420238,
+      "sha256": "8c38fb7bd8fc9cc733fba62b661804faec354202a807becd98dbd731a0c9b92f",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/marble_cliff_05/marble_cliff_05_nor_gl_1k.jpg",
+      "sourceMD5": "40ef330d85d99dc57cff6a19bc70f830",
+      "sourceSHA256": "9ab8f503f45331a9ff9c25270a04cde988d2e0e2d1374f8378d915ca5af0d934",
+      "asset": "https://polyhaven.com/a/marble_cliff_05",
+      "author": "Amal Kumar",
+      "license": "CC0-1.0",
+      "colorSpace": "linear data",
+      "normalConvention": "OpenGL +Y",
+      "metres": 20
+    },
+    {
+      "file": "fjord-rock-normal-mobile.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 116598,
+      "sha256": "f37ab25a05dab72bcf7d8a33e0b3f51afa45c58d071e01358a38de908dd0e348",
+      "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/marble_cliff_05/marble_cliff_05_nor_gl_1k.jpg",
+      "sourceMD5": "40ef330d85d99dc57cff6a19bc70f830",
+      "sourceSHA256": "9ab8f503f45331a9ff9c25270a04cde988d2e0e2d1374f8378d915ca5af0d934",
+      "asset": "https://polyhaven.com/a/marble_cliff_05",
+      "author": "Amal Kumar",
+      "license": "CC0-1.0",
+      "colorSpace": "linear data",
+      "normalConvention": "OpenGL +Y",
+      "metres": 20
+    }
+  ],
+  "totalBytes": 916426,
+  "tierBytes": {
+    "desktop": 714926,
+    "mobile": 201500
+  }
+}

@@ -18,3 +18,29 @@ test('the eroded Fuji landform has one connected finite surface, drainage relief
   assert.ok(group.userData.drawBatches<=(low?20:28));assert.ok(triangles<=(low?16000:32000));
  }
 });
+
+test('Norwegian glacial ranges leave every road segment clear and stay within mobile budgets',async()=>{
+ const {fjordMassifGeometry}=await import('../src/terrain-landscape.js'),track=getTrack('norway-fjord');
+ for(const low of [true,false]){
+  const g=fjordMassifGeometry({low}),p=g.attributes.position,n=g.attributes.normal,index=g.index;
+  assert.ok(index.count/3<=(low?6500:14500));
+  for(const a of Object.values(g.attributes))assert.ok([...a.array].every(Number.isFinite));
+  let minHeight=Infinity,maxHeight=-Infinity;
+  for(let i=0;i<p.count;i++){
+   assert.ok(projectOnTrack(p.getX(i),p.getZ(i),undefined,track).distance>75,'mountains remain outside the full road and recovery envelope');
+   assert.ok(n.getY(i)>0,'all visible faces point outward/upward');
+   minHeight=Math.min(minHeight,p.getY(i));maxHeight=Math.max(maxHeight,p.getY(i));
+  }
+  assert.ok(minHeight<0&&maxHeight>200&&maxHeight<280,'buried foundations and bounded relief');
+  const verticesPerRange=p.count/2;
+  for(let i=0;i<index.count;i+=3){
+   const ids=[index.getX(i),index.getX(i+1),index.getX(i+2)];
+   assert.ok(ids.every(v=>v<verticesPerRange)||ids.every(v=>v>=verticesPerRange),'no triangles bridge across the driveable valley');
+   const x=ids.reduce((s,v)=>s+p.getX(v),0)/3,z=ids.reduce((s,v)=>s+p.getZ(v),0)/3;
+   assert.ok(projectOnTrack(x,z,undefined,track).distance>75);
+  }
+  const group=createMountainVenue(new THREE.Scene(),track,{low});let triangles=0;
+  group.traverse(o=>{if(o.isMesh)triangles+=(o.geometry.index?.count??o.geometry.attributes.position.count)/3;});
+  assert.ok(group.userData.drawBatches<=20);assert.ok(triangles<(low?16000:32000));
+ }
+});

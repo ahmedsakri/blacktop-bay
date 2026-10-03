@@ -747,6 +747,41 @@
         "https://phoneky.com/ringtones/?id=m734257"
       ],
       "reason": "Personal-use-only ringtone availability does not grant commercial game audio extraction or derivative redistribution. Original recording provenance not established. No media copied."
+    },
+    {
+      "id": "amg-gt-free-studio-pack-audit",
+      "decision": "no-qualifying-source-verified-bounded-search",
+      "vehicle": "Mercedes-AMG GT",
+      "checked": "2026-10-04",
+      "primaryUrls": [
+        "https://www.watsonwu.com/vehicles",
+        "https://www.watsonwu.com/blog/2018/1/5/amg-commercial",
+        "https://www.boomlibrary.com/shop/?pa_producttype=free-sound-effects&swoof=1",
+        "https://www.boomlibrary.com/blog/making-the-drift-sound/",
+        "https://pole.se/shop/car-sound-libraries/",
+        "https://freesound.org/people/Soundholder/"
+      ],
+      "reason": "Bounded original-studio free-pack pass found no freely licensed base-GT source. Watson Wu AMG commercial identifies E63 S; BOOM DR!FT account identifies SLS. Pole surfaces existing GT R proxy. Soundholder main site and some catalogue reads failed, so no exhaustive absence claim. Accessible creator Freesound profile/listing supplied no GT lead. See reports/amg-gt-free-source-audit-2026-10-04.md; no media acquired."
+    },
+    {
+      "id": "turboduck-amg-gt-mod",
+      "decision": "rejected-unverified-origin-and-no-reuse-grant",
+      "vehicle": "Mercedes-AMG GT claimed for stock mod audio",
+      "checked": "2026-10-04",
+      "primaryUrls": [
+        "https://turboduck.net/files/file/592-tdu-platinum-mercedes-benz-amg-gt-sound-mod-remake/"
+      ],
+      "reason": "Original uploader labels stock track AMG GT and tuned track AMG GTR, but no original recording session or open recording reuse grant is identified. Archive description also includes original game files. This does not prove the stock track is a rip; it leaves ownership/permission unresolved. No account created or audio downloaded."
+    },
+    {
+      "id": "gtainside-amg-gts-mod",
+      "decision": "rejected-variant-and-unverified-recording-rights",
+      "vehicle": "2016 Mercedes-AMG GT S",
+      "checked": "2026-10-04",
+      "primaryUrls": [
+        "https://www.gtainside.com/sanandreas/mods/122389-2016-mercedes-amg-gt-s-sounds/"
+      ],
+      "reason": "GT S is a different named variant from represented GT. Uploader says converted from real life but identifies neither the recording owner/session nor an affirmative free reuse grant. Mod availability alone does not establish those rights. No media acquired."
     }
   ],
   "acquisitionScope": "Freely licensed recordings only, per user instruction. Paid candidates below are historical research and are not approved acquisition steps; no enquiry sent and no purchase made.",

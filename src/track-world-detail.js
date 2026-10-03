@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {projectOnTrack,sampleTrack} from './track.js';
+import {setWindowInteriorUV,windowInteriorGlassMaterial} from './track-surface-materials.js';
 
 export function streetscapeLayout(track,venue,{low=false,occupied=[]}={}) {
   const sites=[],count=low?22:34;
@@ -106,7 +107,8 @@ export function createArchitecturalDetails(scene,buildings,{low=false,night=fals
   const add=(b,kind,x,y,z,sx,sy,sz,color)=>{
     const c=Math.cos(b.ry||0),s=Math.sin(b.ry||0);dummy.position.set(b.x+c*x+s*z,b.y-b.sy/2+y,b.z-s*x+c*z);
     dummy.rotation.set(0,b.ry||0,0);dummy.scale.set(sx,sy,sz);dummy.updateMatrix();
-    const g=base.clone().applyMatrix4(dummy.matrix),count=g.attributes.position.count,colors=new Float32Array(count*3),tint=new THREE.Color(color);
+    const g=base.clone();if(kind==='glass')setWindowInteriorUV(g,sx,sy,sz);g.applyMatrix4(dummy.matrix);
+    const count=g.attributes.position.count,colors=new Float32Array(count*3),tint=new THREE.Color(color);
     for(let i=0;i<count;i++)colors.set([tint.r,tint.g,tint.b],i*3);g.setAttribute('color',new THREE.BufferAttribute(colors,3));pieces[kind].push(g);
   };
   for(const b of buildings){
@@ -148,7 +150,7 @@ export function createArchitecturalDetails(scene,buildings,{low=false,night=fals
   const materials={
     stone:new THREE.MeshStandardMaterial({color:'white',vertexColors:true,map:concreteMap||null,normalMap:concreteNormal||null,normalScale:new THREE.Vector2(.12,.12),roughness:.86}),
     metal:new THREE.MeshStandardMaterial({color:'white',vertexColors:true,metalness:.62,roughness:.40}),
-    glass:new THREE.MeshStandardMaterial({color:'white',vertexColors:true,metalness:.5,roughness:.23,emissive:'#cfb07a',emissiveIntensity:night?.45:.02}),
+    glass:windowInteriorGlassMaterial({night}),
   };
   let triangles=0;
   for(const [kind,list] of Object.entries(pieces)){

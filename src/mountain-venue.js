@@ -5,7 +5,7 @@ import { getTrackObstacles } from './track-obstacles.js';
 import {coastalGroundingLayout} from './coastal-foundations.js';
 import {coastalDistrictHeight} from './venue-groundworks.js';
 import {setWorldSurfaceUV} from './track-surface-materials.js';
-import {erodedMountainGeometry} from './terrain-landscape.js';
+import {erodedMountainGeometry,fjordMassifGeometry} from './terrain-landscape.js';
 import {createWaterSurfaceMaterial} from './water-surface.js';
 
 export const DESTINATION_PROFILES = Object.freeze({
@@ -29,7 +29,6 @@ export function createMountainVenue(scene, track, {low=false,landmarks=[],surfac
   const group=new THREE.Group();group.name=`destination-${track.id}`;scene.add(group);
   const concrete=new THREE.MeshStandardMaterial({color:'#8f9690',roughness:.85,map:surfaces?.concreteColor||null,normalMap:surfaces?.concreteNormal||null,normalScale:new THREE.Vector2(.18,.18)});
   const stone=new THREE.MeshStandardMaterial({color:'#596967',roughness:1});
-  const snow=new THREE.MeshStandardMaterial({color:'#e9efeb',roughness:.82});
   const mesh=(geo,mat,x,y,z)=>{const m=new THREE.Mesh(geo,mat);m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;group.add(m);return m;};
   for(let s=0;s<track.length;s+=24){const p=sampleTrack(s,track);if(p.y<2)continue;
     for(const side of [-1,1]){
@@ -82,9 +81,14 @@ export function createMountainVenue(scene, track, {low=false,landmarks=[],surfac
     for(let i=0;i<9;i++)mesh(new THREE.BoxGeometry(3.5,2.2,3.5),windowMat,-80+i*20,135,-360);
   }
   if(track.id==='norway-fjord'){
-    for(let i=0;i<10;i++){const a=i/10*Math.PI*2,x=Math.cos(a)*610,z=Math.sin(a)*530;
-      const height=130+(i%3)*55;mesh(new THREE.ConeGeometry(120,height,7,3),stone,x,height/2-10,z);
-      if(i%2===0)mesh(new THREE.ConeGeometry(32,height*.27,7),snow,x,height*.86-10,z);}
+    const ranges=fjordMassifGeometry({low});
+    // The valley walls face inward along X. One continuous Z/Y projection
+    // avoids the visible seams from switching UV axes on curved shoulders.
+    const rockUV=ranges.attributes.uv,rockPosition=ranges.attributes.position;
+    for(let i=0;i<rockPosition.count;i++)rockUV.setXY(i,rockPosition.getZ(i)/20,rockPosition.getY(i)/20);
+    const massif=mesh(ranges,new THREE.MeshStandardMaterial({color:'white',vertexColors:true,map:surfaces?.rockColor||null,normalMap:surfaces?.rockNormal||null,normalScale:new THREE.Vector2(.65,.65),roughness:1}),0,0,0);
+    massif.name='glacial-valley-ranges';
+    group.userData.glacialRanges={...ranges.userData};
     const lake=new THREE.Mesh(new THREE.CircleGeometry(95,48),waterMaterial||createWaterSurfaceMaterial({environment:'parkland'}).material);lake.rotation.x=-Math.PI/2;lake.position.set(25,.05,25);group.add(lake);
   }
   if(track.id==='san-francisco-hills'){

@@ -9,11 +9,13 @@
     540
   ],
   "quality": 0.78,
-  "totalBytes": 1556304,
+  "totalBytes": 1553848,
   "entries": [
     {
       "id": "harbor",
       "sector": 0.13,
+      "width": 960,
+      "height": 540,
       "camera": {
         "position": [
           -6.718102161111423,
@@ -30,8 +32,6 @@
         "near": 0.1,
         "far": 1900
       },
-      "width": 960,
-      "height": 540,
       "draws": 199,
       "triangles": 388617,
       "surfaces": {
@@ -181,12 +181,14 @@
         }
       ],
       "path": "/assets/circuits/previews/harbor.webp",
-      "bytes": 46548,
-      "sha256": "8601eebfbbb61b119d310b9e00188d2e033edc86edd65560544a3fb548541b42"
+      "bytes": 46612,
+      "sha256": "269ea1cb742ef996f92e7bdb59f4327cec3dae809655a3a74af75698b12e24b2"
     },
     {
       "id": "dockyard",
       "sector": 0.13,
+      "width": 960,
+      "height": 540,
       "camera": {
         "position": [
           22.226957605718443,
@@ -203,8 +205,6 @@
         "near": 0.1,
         "far": 1900
       },
-      "width": 960,
-      "height": 540,
       "draws": 209,
       "triangles": 320039,
       "surfaces": {
@@ -354,12 +354,14 @@
         }
       ],
       "path": "/assets/circuits/previews/dockyard.webp",
-      "bytes": 52150,
-      "sha256": "16359fb82a49f54c5ac1827754e581f9d7d4285d05cfef6c1d79913179e722aa"
+      "bytes": 52340,
+      "sha256": "c76a30bc08c9d286329bbbe5c92c74d66263d5f0c36acfd399f4d1dd44e3a643"
     },
     {
       "id": "coast",
       "sector": 0.13,
+      "width": 960,
+      "height": 540,
       "camera": {
         "position": [
           -52.83299308484028,
@@ -376,8 +378,6 @@
         "near": 0.1,
         "far": 1900
       },
-      "width": 960,
-      "height": 540,
       "draws": 190,
       "triangles": 472804,
       "surfaces": {
@@ -527,12 +527,14 @@
         }
       ],
       "path": "/assets/circuits/previews/coast.webp",
-      "bytes": 48186,
-      "sha256": "5e9a495326282bfe1f715fbe292879f8f0db6409080f098504b0ad7dc306ab49"
+      "bytes": 48230,
+      "sha256": "8b6707aaf033d2173e2d1bd284b743dc012a7f452ea8969573070f8b30fb9554"
     },
     {
       "id": "summit",
       "sector": 0.13,
+      "width": 960,
+      "height": 540,
       "camera": {
         "position": [
           75.54961339784506,
@@ -549,8 +551,6 @@
         "near": 0.1,
         "far": 1900
       },
-      "width": 960,
-      "height": 540,
       "draws": 189,
       "triangles": 296869,
       "surfaces": {
@@ -700,12 +700,14 @@
         }
       ],
       "path": "/assets/circuits/previews/summit.webp",
-      "bytes": 43266,
-      "sha256": "9d42c6c85dc24b3d9f1ba854be3552dcf9280927de8a369c14447f4053f36a45"
+      "bytes": 43436,
+      "sha256": "2df03b4279298853b154cd09a8fca96a6fa3fa43607dacf4d2e5ce240b90eafb"
     },
     {
       "id": "grandprix",
       "sector": 0.13,
+      "width": 960,
+      "height": 540,
       "camera": {
         "position": [
           42.293523700969246,
@@ -722,8 +724,6 @@
         "near": 0.1,
         "far": 1900
       },
-      "width": 960,
-      "height": 540,
       "draws": 182,
       "triangles": 478668,
       "surfaces": {
@@ -873,12 +873,14 @@
         }
       ],
       "path": "/assets/circuits/previews/grandprix.webp",
-      "bytes": 39998,
-      "sha256": "0daeb09b35e7d7497d9a518ef5f4729e15987882327d5935d8df62ac96aba93b"
+      "bytes": 40016,
+      "sha256": "2f8573758b706118552ed45a184a7154951ddf951f82c7da9d8fc77f90f51eef"
     },
     {
       "id": "melbourne",
       "sector": 0.13,
+      "width": 960,
+      "height": 540,
       "camera": {
         "position": [
           -212.57524662384265,
@@ -895,8 +897,6 @@
         "near": 0.1,
         "far": 1900
       },
-      "width": 960,
-      "height": 540,
       "draws": 250,
       "triangles": 289145,
       "surfaces": {
@@ -1046,12 +1046,14 @@
         }
       ],
       "path": "/assets/circuits/previews/melbourne.webp",
-      "bytes": 47338,
-      "sha256": "0aa22bd83cc07179cda2463434763fd1e715385b481b6d2b8fd9d473bd9d24f8"
+      "bytes": 47420,
+      "sha256": "63d95b789bcbab9d866085aaf85cd508487a441cc744a4732cd41459388823f8"
     },
     {
       "id": "shanghai",
       "sector": 0.13,
+      "width": 960,
+      "height": 540,
       "camera": {
         "position": [
           285.4071361072201,
@@ -1068,8 +1070,6 @@
         "near": 0.1,
         "far": 1900
       },
-      "width": 960,
-      "height": 540,
       "draws": 99,
       "triangles": 313137,
       "surfaces": {
@@ -1225,6 +1225,8 @@
     {
       "id": "suzuka",
       "sector": 0.13,
+      "width": 960,
+      "height": 540,
       "camera": {
         "position": [
           60.74676338853624,
@@ -1241,8 +1243,6 @@
         "near": 0.1,
         "far": 1900
       },
-      "width": 960,
-      "height": 540,
       "draws": 155,
       "triangles": 334943,
       "surfaces": {
@@ -1398,6 +1398,8 @@
     {
       "id": "miami",
       "sector": 0.13,
+      "width": 960,
+      "height": 540,
       "camera": {
         "position": [
           -65.32605932242843,
@@ -1414,8 +1416,6 @@
         "near": 0.1,
         "far": 1900
       },
-      "width": 960,
-      "height": 540,
       "draws": 166,
       "triangles": 202717,
       "surfaces": {
@@ -1571,6 +1571,8 @@
     {
       "id": "montreal",
       "sector": 0.13,
+      "width": 960,
+      "height": 540,
       "camera": {
         "position": [
           148.60935316054244,
@@ -1587,8 +1589,6 @@
         "near": 0.1,
         "far": 1900
       },
-      "width": 960,
-      "height": 540,
       "draws": 242,
       "triangles": 274851,
       "surfaces": {
@@ -1738,12 +1738,14 @@
         }
       ],
       "path": "/assets/circuits/previews/montreal.webp",
-      "bytes": 48858,
-      "sha256": "62dbdb9f5cb6001f3c385a53306223e4e5027b85c1c1767d49fab9244cca639c"
+      "bytes": 48832,
+      "sha256": "87688da739ec982d8dfcfeadb6540e5bed59ebf48a95a77909cd068591ce50f4"
     },
     {
       "id": "monaco",
       "sector": 0.13,
+      "width": 960,
+      "height": 540,
       "camera": {
         "position": [
           -263.3862692912309,
@@ -1760,8 +1762,6 @@
         "near": 0.1,
         "far": 1900
       },
-      "width": 960,
-      "height": 540,
       "draws": 267,
       "triangles": 306316,
       "surfaces": {
@@ -1911,12 +1911,14 @@
         }
       ],
       "path": "/assets/circuits/previews/monaco.webp",
-      "bytes": 54492,
-      "sha256": "c5041444f2ecbdfc3750cd092e4a88462e4ead5ce94f8bd31e6d0b9d9932a90d"
+      "bytes": 54618,
+      "sha256": "8cd9695ab155aa5820d01acb9424dbb0608df2c31738dd38fefb114e0d272ac1"
     },
     {
       "id": "barcelona",
       "sector": 0.13,
+      "width": 960,
+      "height": 540,
       "camera": {
         "position": [
           62.496182310705194,
@@ -1933,8 +1935,6 @@
         "near": 0.1,
         "far": 1900
       },
-      "width": 960,
-      "height": 540,
       "draws": 170,
       "triangles": 370809,
       "surfaces": {
@@ -2090,6 +2090,8 @@
     {
       "id": "spielberg",
       "sector": 0.13,
+      "width": 960,
+      "height": 540,
       "camera": {
         "position": [
           -96.91557842161603,
@@ -2106,8 +2108,6 @@
         "near": 0.1,
         "far": 1900
       },
-      "width": 960,
-      "height": 540,
       "draws": 259,
       "triangles": 407523,
       "surfaces": {
@@ -2263,6 +2263,8 @@
     {
       "id": "silverstone",
       "sector": 0.13,
+      "width": 960,
+      "height": 540,
       "camera": {
         "position": [
           -22.7950762793185,
@@ -2279,8 +2281,6 @@
         "near": 0.1,
         "far": 1900
       },
-      "width": 960,
-      "height": 540,
       "draws": 178,
       "triangles": 350403,
       "surfaces": {
@@ -2436,6 +2436,8 @@
     {
       "id": "spa",
       "sector": 0.13,
+      "width": 960,
+      "height": 540,
       "camera": {
         "position": [
           297.1561082908124,
@@ -2452,8 +2454,6 @@
         "near": 0.1,
         "far": 1900
       },
-      "width": 960,
-      "height": 540,
       "draws": 168,
       "triangles": 355867,
       "surfaces": {
@@ -2609,6 +2609,8 @@
     {
       "id": "hungaroring",
       "sector": 0.13,
+      "width": 960,
+      "height": 540,
       "camera": {
         "position": [
           -352.57826632059187,
@@ -2625,8 +2627,6 @@
         "near": 0.1,
         "far": 1900
       },
-      "width": 960,
-      "height": 540,
       "draws": 231,
       "triangles": 415309,
       "surfaces": {
@@ -2782,6 +2782,8 @@
     {
       "id": "zandvoort",
       "sector": 0.13,
+      "width": 960,
+      "height": 540,
       "camera": {
         "position": [
           -200.62519790003049,
@@ -2798,8 +2800,6 @@
         "near": 0.1,
         "far": 1900
       },
-      "width": 960,
-      "height": 540,
       "draws": 155,
       "triangles": 219787,
       "surfaces": {
@@ -2949,12 +2949,14 @@
         }
       ],
       "path": "/assets/circuits/previews/zandvoort.webp",
-      "bytes": 46264,
-      "sha256": "da517343ad70d0c8bdab2ad5efdc6b88eb44630c8d9a22a14b50e1444a610606"
+      "bytes": 46260,
+      "sha256": "bef672cf835480f475511d9dbfc268a96788ad19161c27a6c65f23f20f12f657"
     },
     {
       "id": "monza",
       "sector": 0.13,
+      "width": 960,
+      "height": 540,
       "camera": {
         "position": [
           -205.32627319585177,
@@ -2971,8 +2973,6 @@
         "near": 0.1,
         "far": 1900
       },
-      "width": 960,
-      "height": 540,
       "draws": 165,
       "triangles": 339429,
       "surfaces": {
@@ -3128,6 +3128,8 @@
     {
       "id": "madring",
       "sector": 0.13,
+      "width": 960,
+      "height": 540,
       "camera": {
         "position": [
           -98.58803368561234,
@@ -3144,8 +3146,6 @@
         "near": 0.1,
         "far": 1900
       },
-      "width": 960,
-      "height": 540,
       "draws": 217,
       "triangles": 287088,
       "surfaces": {
@@ -3295,12 +3295,14 @@
         }
       ],
       "path": "/assets/circuits/previews/madring.webp",
-      "bytes": 30846,
-      "sha256": "39b1d676fe050f72a575a7effe35143e8f00bf93b6adcde6c2f308774ab8431c"
+      "bytes": 30778,
+      "sha256": "7d61bb755e42c12ffeda6a7c244b53b8fe1bade0d78b45c3bff0c1dfa9f4ef1d"
     },
     {
       "id": "baku",
       "sector": 0.13,
+      "width": 960,
+      "height": 540,
       "camera": {
         "position": [
           430.17178400849775,
@@ -3317,8 +3319,6 @@
         "near": 0.1,
         "far": 1900
       },
-      "width": 960,
-      "height": 540,
       "draws": 124,
       "triangles": 263412,
       "surfaces": {
@@ -3468,12 +3468,14 @@
         }
       ],
       "path": "/assets/circuits/previews/baku.webp",
-      "bytes": 32098,
-      "sha256": "cad37cb3da4543ba27307e43ac623bca6ec45efefea30e8f2dc78229aa3a80b0"
+      "bytes": 32078,
+      "sha256": "160809f2a6ac976703d2ea14768f14e0f1d3ee5c6b548ec517bc0ce30da4bc84"
     },
     {
       "id": "sepang",
       "sector": 0.13,
+      "width": 960,
+      "height": 540,
       "camera": {
         "position": [
           -294.4460416791759,
@@ -3490,8 +3492,6 @@
         "near": 0.1,
         "far": 1900
       },
-      "width": 960,
-      "height": 540,
       "draws": 203,
       "triangles": 256083,
       "surfaces": {
@@ -3641,12 +3641,14 @@
         }
       ],
       "path": "/assets/circuits/previews/sepang.webp",
-      "bytes": 50186,
-      "sha256": "9d2b1acd1a7538fa16a5a7912087b70e885d979c11d93d322fd476b3e51ce108"
+      "bytes": 50224,
+      "sha256": "d88d11e231eabb8dfb59f804dcc2263ccae0cc05fb806c479b6d73350eb9c731"
     },
     {
       "id": "singapore",
       "sector": 0.13,
+      "width": 960,
+      "height": 540,
       "camera": {
         "position": [
           338.9135806547284,
@@ -3663,8 +3665,6 @@
         "near": 0.1,
         "far": 1900
       },
-      "width": 960,
-      "height": 540,
       "draws": 256,
       "triangles": 315836,
       "surfaces": {
@@ -3814,12 +3814,14 @@
         }
       ],
       "path": "/assets/circuits/previews/singapore.webp",
-      "bytes": 38896,
-      "sha256": "6a4a6de58d69725303195d99252e585bb4a95ead56003f0ebead589f11d9ae45"
+      "bytes": 38740,
+      "sha256": "bdaadfa8a25d17b2b184d170ce18d5955329652307902010ac041c6a1daaa5f8"
     },
     {
       "id": "austin",
       "sector": 0.13,
+      "width": 960,
+      "height": 540,
       "camera": {
         "position": [
           -181.93513871374182,
@@ -3836,8 +3838,6 @@
         "near": 0.1,
         "far": 1900
       },
-      "width": 960,
-      "height": 540,
       "draws": 236,
       "triangles": 466989,
       "surfaces": {
@@ -3993,6 +3993,8 @@
     {
       "id": "mexico",
       "sector": 0.13,
+      "width": 960,
+      "height": 540,
       "camera": {
         "position": [
           27.89220214684357,
@@ -4009,8 +4011,6 @@
         "near": 0.1,
         "far": 1900
       },
-      "width": 960,
-      "height": 540,
       "draws": 220,
       "triangles": 278817,
       "surfaces": {
@@ -4160,12 +4160,14 @@
         }
       ],
       "path": "/assets/circuits/previews/mexico.webp",
-      "bytes": 45012,
-      "sha256": "61fd1f8d110abb00df513117ad18bfe9b05bebe8375d8b1fcc82ad22a5f4b747"
+      "bytes": 45026,
+      "sha256": "0abe0a6a483cc9c7a3733a0ed7da2e9feb583c2bdd29520c3c359c382535530c"
     },
     {
       "id": "interlagos",
       "sector": 0.13,
+      "width": 960,
+      "height": 540,
       "camera": {
         "position": [
           186.50061345076733,
@@ -4182,8 +4184,6 @@
         "near": 0.1,
         "far": 1900
       },
-      "width": 960,
-      "height": 540,
       "draws": 161,
       "triangles": 342729,
       "surfaces": {
@@ -4339,6 +4339,8 @@
     {
       "id": "lasvegas",
       "sector": 0.13,
+      "width": 960,
+      "height": 540,
       "camera": {
         "position": [
           144.17743945181167,
@@ -4355,10 +4357,8 @@
         "near": 0.1,
         "far": 1900
       },
-      "width": 960,
-      "height": 540,
-      "draws": 128,
-      "triangles": 282279,
+      "draws": 116,
+      "triangles": 282806,
       "surfaces": {
         "loaded": 11,
         "failed": 0,
@@ -4394,11 +4394,11 @@
       },
       "crowd": {
         "textured": 0,
-        "middle": 14,
+        "middle": 4,
         "far": 0,
         "assets": {
-          "requested": 18,
-          "loaded": 18,
+          "requested": 11,
+          "loaded": 11,
           "active": 0,
           "queued": 0,
           "disposed": false
@@ -4506,12 +4506,14 @@
         }
       ],
       "path": "/assets/circuits/previews/lasvegas.webp",
-      "bytes": 26952,
-      "sha256": "bcc70bbb544ebdd2d04f7caf2f5741a4649d60a3c6182a6d61ba1ee7aa51a812"
+      "bytes": 27072,
+      "sha256": "f52467e0a6c801ea64f23121116fcabaacdc65d1a631147bed6e7fb5b3487a35"
     },
     {
       "id": "lusail",
       "sector": 0.13,
+      "width": 960,
+      "height": 540,
       "camera": {
         "position": [
           -290.0257938913167,
@@ -4528,8 +4530,6 @@
         "near": 0.1,
         "far": 1900
       },
-      "width": 960,
-      "height": 540,
       "draws": 141,
       "triangles": 129101,
       "surfaces": {
@@ -4685,6 +4685,8 @@
     {
       "id": "yasmarina",
       "sector": 0.13,
+      "width": 960,
+      "height": 540,
       "camera": {
         "position": [
           -127.735596918444,
@@ -4701,8 +4703,6 @@
         "near": 0.1,
         "far": 1900
       },
-      "width": 960,
-      "height": 540,
       "draws": 135,
       "triangles": 244207,
       "surfaces": {
@@ -4852,12 +4852,14 @@
         }
       ],
       "path": "/assets/circuits/previews/yasmarina.webp",
-      "bytes": 45568,
-      "sha256": "c49822a7a58ad9d1f7742a5cd6a5d67a11edea4f4a988cce35391ba6751aee43"
+      "bytes": 45366,
+      "sha256": "60473f94be8f017136f533f0ac790677af218473a6759b853d8f0a35be69ff73"
     },
     {
       "id": "sakhir",
       "sector": 0.13,
+      "width": 960,
+      "height": 540,
       "camera": {
         "position": [
           -207.74191660020992,
@@ -4874,8 +4876,6 @@
         "near": 0.1,
         "far": 1900
       },
-      "width": 960,
-      "height": 540,
       "draws": 280,
       "triangles": 190393,
       "surfaces": {
@@ -5031,6 +5031,8 @@
     {
       "id": "jeddah",
       "sector": 0.13,
+      "width": 960,
+      "height": 540,
       "camera": {
         "position": [
           -33.2449548317478,
@@ -5047,8 +5049,6 @@
         "near": 0.1,
         "far": 1900
       },
-      "width": 960,
-      "height": 540,
       "draws": 156,
       "triangles": 243452,
       "surfaces": {
@@ -5204,6 +5204,8 @@
     {
       "id": "breakwater",
       "sector": 0.13,
+      "width": 960,
+      "height": 540,
       "camera": {
         "position": [
           169.8494689094458,
@@ -5220,8 +5222,6 @@
         "near": 0.1,
         "far": 1900
       },
-      "width": 960,
-      "height": 540,
       "draws": 165,
       "triangles": 133399,
       "surfaces": {
@@ -5377,6 +5377,8 @@
     {
       "id": "copper-canyon",
       "sector": 0.13,
+      "width": 960,
+      "height": 540,
       "camera": {
         "position": [
           174.65124162355576,
@@ -5393,8 +5395,6 @@
         "near": 0.1,
         "far": 1900
       },
-      "width": 960,
-      "height": 540,
       "draws": 144,
       "triangles": 155861,
       "surfaces": {
@@ -5550,6 +5550,8 @@
     {
       "id": "cedar-ridge",
       "sector": 0.13,
+      "width": 960,
+      "height": 540,
       "camera": {
         "position": [
           249.65507232210027,
@@ -5566,8 +5568,6 @@
         "near": 0.1,
         "far": 1900
       },
-      "width": 960,
-      "height": 540,
       "draws": 216,
       "triangles": 201709,
       "surfaces": {
@@ -5723,6 +5723,8 @@
     {
       "id": "neon-freight",
       "sector": 0.13,
+      "width": 960,
+      "height": 540,
       "camera": {
         "position": [
           168.2347104340941,
@@ -5739,8 +5741,6 @@
         "near": 0.1,
         "far": 1900
       },
-      "width": 960,
-      "height": 540,
       "draws": 136,
       "triangles": 275237,
       "surfaces": {
@@ -5890,12 +5890,14 @@
         }
       ],
       "path": "/assets/circuits/previews/neon-freight.webp",
-      "bytes": 41070,
-      "sha256": "2d2f1e36f70d19527d314b32cace08f3d2311fe5c53f85e8256959abe60a8535"
+      "bytes": 41224,
+      "sha256": "66d0acab6a1a3612ab1c6c5a4590e48bd31f50b0616433acd4167b36251c7f06"
     },
     {
       "id": "fuji-skyline",
       "sector": 0.13,
+      "width": 960,
+      "height": 540,
       "camera": {
         "position": [
           95.57582187240195,
@@ -5912,8 +5914,6 @@
         "near": 0.1,
         "far": 1900
       },
-      "width": 960,
-      "height": 540,
       "draws": 148,
       "triangles": 357969,
       "surfaces": {
@@ -6068,27 +6068,27 @@
     },
     {
       "id": "singapore-afterdark",
-      "sector": 0.28,
+      "sector": 0.13,
+      "width": 960,
+      "height": 540,
       "camera": {
         "position": [
-          328.75521142416414,
-          41.060449373280015,
-          16.012778336980368
+          19.434677354321536,
+          28,
+          -211.01096325821857
         ],
         "quaternion": [
-          -0.19171941139192644,
-          0.6644260443876636,
-          0.18224247847244382,
-          0.698977380088309
+          0.11428147769602635,
+          0.8697315264226455,
+          0.23855481030542766,
+          -0.41665143499367563
         ],
         "fov": 52,
         "near": 0.1,
         "far": 1900
       },
-      "width": 960,
-      "height": 540,
-      "draws": 224,
-      "triangles": 306444,
+      "draws": 200,
+      "triangles": 298465,
       "surfaces": {
         "loaded": 11,
         "failed": 0,
@@ -6110,10 +6110,10 @@
         "farCapacity": 128,
         "candidates": 36,
         "forestCandidates": 0,
-        "visible": 7,
-        "farVisible": 27,
+        "visible": 2,
+        "farVisible": 34,
         "draws": 6,
-        "triangles": 60886,
+        "triangles": 41500,
         "url": "/assets/environments/trees/tree-small-02.glb?v=87fee78dc710aed0ff008de7b4c3e9ec45bb8d10da93300c1516ceac76f05a3a",
         "farUrl": "/assets/environments/trees/tree-small-02-far.glb?v=f2d22737f142cf282abc149a23d019205b4511aeabef9badcbfe7ff1a3a5ec5a"
       },
@@ -6124,7 +6124,7 @@
       },
       "crowd": {
         "textured": 0,
-        "middle": 0,
+        "middle": 14,
         "far": 0,
         "assets": {
           "requested": 18,
@@ -6236,12 +6236,14 @@
         }
       ],
       "path": "/assets/circuits/previews/singapore-afterdark.webp",
-      "bytes": 37568,
-      "sha256": "be2fefb192235c245668f879257cbee08cee125a240c3a512d6681f14bad06af"
+      "bytes": 34568,
+      "sha256": "ad82e7865639b7c6d065e588aa63ecd446be9914af2ef2f65889856ab7575052"
     },
     {
       "id": "norway-fjord",
       "sector": 0.13,
+      "width": 960,
+      "height": 540,
       "camera": {
         "position": [
           -71.37338119370655,
@@ -6258,15 +6260,13 @@
         "near": 0.1,
         "far": 1900
       },
-      "width": 960,
-      "height": 540,
-      "draws": 157,
-      "triangles": 181351,
+      "draws": 156,
+      "triangles": 194949,
       "surfaces": {
-        "loaded": 11,
+        "loaded": 13,
         "failed": 0,
-        "files": 11,
-        "estimatedBytes": 36350634.666666664
+        "files": 13,
+        "estimatedBytes": 47535445.333333336
       },
       "sky": {
         "family": "alpine",
@@ -6406,6 +6406,24 @@
           "gpuRedMax": 161,
           "gpuRedMean": 126.01226806640625,
           "gpuRedStdDev": 8.028356019351216
+        },
+        {
+          "name": "rockColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 17,
+          "gpuRedMax": 119,
+          "gpuRedMean": 76.72802734375,
+          "gpuRedStdDev": 12.476760843571933
+        },
+        {
+          "name": "rockNormal",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 41,
+          "gpuRedMax": 200,
+          "gpuRedMean": 127.65301513671875,
+          "gpuRedStdDev": 15.7367883712953
         }
       ],
       "path": "/assets/circuits/previews/norway-fjord.webp",
@@ -6415,6 +6433,8 @@
     {
       "id": "san-francisco-hills",
       "sector": 0.13,
+      "width": 960,
+      "height": 540,
       "camera": {
         "position": [
           -12.290281953667003,
@@ -6431,8 +6451,6 @@
         "near": 0.1,
         "far": 1900
       },
-      "width": 960,
-      "height": 540,
       "draws": 211,
       "triangles": 371187,
       "surfaces": {

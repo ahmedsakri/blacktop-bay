@@ -46,3 +46,45 @@ export function appendTerrainOutskirts(vertices,indices,{nx,nz,minX,minZ,dx,dz},
  }
  return {rings:4,boundary:boundary.length,triangles:boundary.length*8,outerReach:550};
 }
+
+// Two joined glacial valley sides, kept outside the complete road envelope.
+// Broad shoulders, branching gullies and broken ridgelines replace ten isolated
+// seven-sided cones. Snow belongs to the same surface instead of floating caps.
+export function fjordMassifGeometry({low=false}={}) {
+ const across=low?20:32,along=low?80:112,positions=[],indices=[],colors=[],uv=[];
+ for(const side of [-1,1]) {
+  const offset=positions.length/3;
+  for(let row=0;row<=along;row++)for(let col=0;col<=across;col++){
+   const v=row/along,u=col/across,z=-980+1960*v;
+   const bend=22*Math.sin(z*.004+side)+12*Math.sin(z*.009);
+   const x=side*(465+u*700+bend);
+   const spine=.20+.045*Math.sin(z*.007+side);
+   const front=THREE.MathUtils.smoothstep(u,0,spine);
+   const back=1-THREE.MathUtils.smoothstep(u,spine,1);
+   const cross=u<spine?Math.pow(front,.64):Math.pow(back,.82);
+   const ends=THREE.MathUtils.smoothstep(v,0,.10)*(1-THREE.MathUtils.smoothstep(v,.9,1));
+   const crest=188+42*Math.sin(z*.007+side*.8)+24*Math.sin(z*.019+side*2)+14*Math.cos(z*.033)+6*Math.sin(z*.091);
+   const gully=Math.pow(.5+.5*Math.sin(z*.038+u*9+1.6*Math.sin(z*.008)),5);
+   const tributary=Math.pow(.5+.5*Math.sin(z*.071-u*6),7);
+   const relief=(gully*57+tributary*25)*Math.sin(Math.PI*u)+18*Math.sin(z*.029+u*24)*Math.sin(Math.PI*u);
+   const strata=4*Math.sin(u*51+z*.012)+2*Math.sin(u*93-z*.026);
+   const y=-1+ends*Math.max(0,crest*cross-relief+strata*Math.sin(Math.PI*u));
+   positions.push(x,y,z);uv.push(x/90,z/90);
+   if(row<along&&col<across){const a=offset+row*(across+1)+col,b=a+1,c=a+across+1,d=c+1;
+    if(side===1)indices.push(a,c,b,b,c,d);else indices.push(a,b,c,b,d,c);
+   }
+  }
+ }
+ const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));geometry.setIndex(indices);geometry.computeVertexNormals();
+ const p=geometry.attributes.position,n=geometry.attributes.normal;
+ const rock=new THREE.Color('#8a9392'),meadow=new THREE.Color('#6c795f'),snow=new THREE.Color('#e4e9e8'),tint=new THREE.Color();
+ for(let i=0;i<p.count;i++){
+  const y=p.getY(i),x=p.getX(i),z=p.getZ(i),slope=n.getY(i);
+  const strata=.88+.09*Math.sin(y*.16+x*.003+z*.012)+.03*Math.sin(y*.47-z*.022);
+  const grass=(1-THREE.MathUtils.smoothstep(y,45,130))*THREE.MathUtils.smoothstep(slope,.45,.85);
+  const snowCover=THREE.MathUtils.smoothstep(y+16*Math.sin(z*.035+x*.01),190,240)*THREE.MathUtils.smoothstep(slope,.32,.78);
+  tint.copy(rock).lerp(meadow,grass).multiplyScalar(strata).lerp(snow,snowCover);colors.push(tint.r,tint.g,tint.b);
+ }
+ geometry.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));geometry.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));
+ geometry.userData={across,along,triangles:indices.length/3,ranges:2,roadClearance:75,singleSurfacePerRange:true};return geometry;
+}

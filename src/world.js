@@ -157,7 +157,7 @@ export function createWorld(renderer, { low = false, reducedMotion = false } = {
  const summit = TRACK.id === 'summit', grandPrix = TRACK.id === 'grandprix', venue = getVenueProfile(TRACK);
  const rng = random(), crowdRng = random(124), crowd = createCrowd({low, reducedMotion}), scene = new THREE.Scene(); scene.background = new THREE.Color(venue.background); scene.fog = new THREE.FogExp2(venue.fog,venue.fogDensity);
  scene.userData.venueEnvironment={type:venue.environment,original:venue.original,night:venue.night,water:venue.water};
- const surfaces=createTrackSurfaceLibrary({low,anisotropy:renderer.capabilities.getMaxAnisotropy()});scene.userData.trackSurfaces=surfaces.status;
+ const surfaces=createTrackSurfaceLibrary({low,rock:TRACK.id==='norway-fjord',anisotropy:renderer.capabilities.getMaxAnisotropy()});scene.userData.trackSurfaces=surfaces.status;
  const frontageBuildings=[],terrainOccupied=[];
  scene.add(new THREE.HemisphereLight(venue.sky,venue.bounce,venue.ambient));
  const sun = new THREE.DirectionalLight(venue.sun,venue.sunlight); sun.position.set(-180,venue.sunHeight,130); sun.castShadow = true; sun.shadow.mapSize.set(low ? 1024 : 2048, low ? 1024 : 2048); Object.assign(sun.shadow.camera, { left: -20, right: 20, top: 20, bottom: -20, near: 1, far: 360 }); sun.shadow.bias = -.00065; sun.shadow.normalBias = .015; scene.add(sun, sun.target);
