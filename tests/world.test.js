@@ -2,7 +2,9 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { TRACKS, getTrack, projectOnTrack, sampleTrack } from '../src/track.js';
 import {venueLighting,VENUE_REGIONS} from '../src/showcase-lighting.js';
-import { grandstandLayout, getVenueProfile, venueSceneryLayout } from '../src/world.js';
+import { grandstandLayout, getVenueProfile, venueSceneryLayout,usesPineTrees,summitPineLayout } from '../src/world.js';
+import {forestMarginLayout} from '../src/roadside-planting.js';
+import {showcaseLayout} from '../src/showcase-venues.js';
 
 test('all circuits provide spectator stands whose full footprints clear the entire driving route', () => {
   for (const descriptor of TRACKS) {
@@ -94,4 +96,30 @@ test('every current circuit has an explicit coordinated regional lighting grade'
   assert.ok(profile.sunlight>=.8&&profile.sunlight<=2.4);
  }
  assert.equal(regions.size,8,'coherent regional treatment is richer than three special cases');
+});
+
+test('pine routing covers the three conifer populations without replacing any broadleaf forest margins',()=>{
+ const selected=TRACKS.filter(({id})=>usesPineTrees(getTrack(id))).map(t=>t.id).sort();
+ assert.deepEqual(selected,['cedar-ridge','norway-fjord','summit']);
+ for(const id of selected){const track=getTrack(id),venue=getVenueProfile(track);for(const low of [true,false])assert.deepEqual(forestMarginLayout(track,venue,{low}),[],'pine routes have no mixed broadleaf margin candidates');}
+ for(const id of ['fuji-skyline','san-francisco-hills'])assert.equal(usesPineTrees(getTrack(id)),false,'existing photographic broadleaf populations keep their own source');
+});
+
+test('Summit pine replacement tags every trunk and all three boughs, with complete footprints clear of roads and structures',()=>{
+ const track=getTrack('summit'),stands=grandstandLayout(track),landmarks=showcaseLayout(track,{stands});
+ for(const low of [true,false]){
+  const layout=summitPineLayout(track,{low,stands,landmarks});assert.deepEqual(layout,summitPineLayout(track,{low,stands,landmarks}));
+  assert.ok(layout.candidates.length>(low?100:150));assert.ok(layout.candidates.length<(low?170:250));
+  assert.equal(layout.trunks.length,layout.candidates.length);assert.equal(layout.foliage.length,layout.candidates.length*3);
+  assert.equal(new Set(layout.candidates.map(p=>p.treeId)).size,layout.candidates.length);
+  for(const p of layout.candidates){
+   assert.ok(p.treeId>=20000,'Summit IDs cannot collide with ordinary scenery or broadleaf margin IDs');
+   assert.ok(projectOnTrack(p.x,p.z,undefined,track).distance-p.radius>=track.width/2+8,'the full fitted crown stays beyond the driving margin');
+   assert.ok(stands.every(s=>Math.hypot(p.x-s.x,p.z-s.z)>=14));assert.ok(landmarks.every(s=>Math.hypot(p.x-s.x,p.z-s.z)>=s.radius+6));
+   const trunk=layout.trunks.find(t=>t.treeId===p.treeId),boughs=layout.foliage.filter(t=>t.treeId===p.treeId);
+   assert.equal(boughs.length,3);assert.equal(trunk.x,p.x);assert.equal(trunk.z,p.z);assert.ok(Math.abs(trunk.y-trunk.sy/2)<1e-12,'trunk starts at the candidate root');
+   assert.ok(boughs.every(t=>t.x===p.x&&t.z===p.z&&t.sx<=p.radius&&t.sz<=p.radius));
+   assert.ok(Math.abs(Math.max(...boughs.map(t=>t.y+t.sy/2))-p.height)<1e-12,'candidate height includes the uppermost fallback bough');
+  }
+ }
 });

@@ -782,6 +782,19 @@
         "https://www.gtainside.com/sanandreas/mods/122389-2016-mercedes-amg-gt-s-sounds/"
       ],
       "reason": "GT S is a different named variant from represented GT. Uploader says converted from real life but identifies neither the recording owner/session nor an affirmative free reuse grant. Mod availability alone does not establish those rights. No media acquired."
+    },
+    {
+      "id": "flickr-gallardo-brett-levin",
+      "decision": "adopted-model-source-year-unverified",
+      "vehicle": "Lamborghini Gallardo (year and trim unspecified)",
+      "checked": "2026-10-04",
+      "license": "CC-BY-2.0",
+      "costUSD": 0,
+      "primaryUrls": [
+        "https://www.flickr.com/photos/scubabrett22/8464649517/",
+        "https://creativecommons.org/licenses/by/2.0/"
+      ],
+      "reason": "Creator item explicitly identifies Gallardo start/revs and grants CC BY 2.0. Public Flickr transcode acquired without account; selected steady source seconds 10.20\u201311.55 through unchanged processing. User approved the supplied listening audition: Clean engine sound\u2014use it. Named base-model match; source year/trim/build unspecified, so represented 2004 is not certified. One idle layer with existing high-rev attenuation; no measured RPM claim."
     }
   ],
   "acquisitionScope": "Freely licensed recordings only, per user instruction. Paid candidates below are historical research and are not approved acquisition steps; no enquiry sent and no purchase made.",

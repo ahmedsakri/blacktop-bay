@@ -1,0 +1,225 @@
+{
+  "checked": "2026-10-04",
+  "scope": "Read-only public first-page Flickr video search. Search filters initially included CC BY 2.0, CC0 and Public Domain Mark; no PDM material selected. Current CC BY 4.0 filter was not searched. Individual candidate item grants checked separately. Counts varied between requests; these are search snapshots, not complete inventories.",
+  "searches": [
+    {
+      "query": "Gallardo",
+      "url": "https://www.flickr.com/search/?text=Gallardo&media=videos&license=4%2C9%2C10",
+      "status": 200,
+      "total": 6,
+      "photos": [
+        {
+          "id": "8464649517",
+          "title": "Lamborghini Gallardo Start Up",
+          "pathAlias": "scubabrett22",
+          "realname": "Brett Levin",
+          "ownerNsid": "51117559@N03",
+          "license": 4,
+          "mediaType": "video"
+        },
+        {
+          "id": "5030935739",
+          "title": "autos \u2665",
+          "pathAlias": "xedox",
+          "realname": "Eduardo D\u00edaz Gonz\u00e1lez",
+          "ownerNsid": "46207222@N03",
+          "license": 4,
+          "mediaType": "video"
+        },
+        {
+          "id": "8494537081",
+          "title": "Lamborghini Gallardo LP570 on CW-5 & CW-S5",
+          "pathAlias": "concavowheels",
+          "realname": "CONCAVO WHEELS",
+          "ownerNsid": "77888731@N08",
+          "license": 4,
+          "mediaType": "video"
+        },
+        {
+          "id": "51969136313",
+          "title": "Naval Health Clinic Lemoore Celebrates Women's History Month  (DOD_108881504)",
+          "pathAlias": "navymedicine",
+          "realname": "Navy Medicine",
+          "ownerNsid": "61270229@N05",
+          "license": 10,
+          "mediaType": "video"
+        },
+        {
+          "id": "8495607802",
+          "title": "Lamborghini Gallardo Yellow on CW-5 & CW-S5",
+          "pathAlias": "concavowheels",
+          "realname": "CONCAVO WHEELS",
+          "ownerNsid": "77888731@N08",
+          "license": 4,
+          "mediaType": "video"
+        },
+        {
+          "id": "3396427609",
+          "title": "Texas Mile Weekend",
+          "pathAlias": "nanpalmero",
+          "realname": "Nan Palmero",
+          "ownerNsid": "97402086@N00",
+          "license": 4,
+          "mediaType": "video"
+        }
+      ]
+    },
+    {
+      "query": "GT3",
+      "url": "https://www.flickr.com/search/?text=GT3&media=videos&license=4%2C9%2C10",
+      "status": 200,
+      "total": 3,
+      "photos": [
+        {
+          "id": "5501446078",
+          "title": "GT3 RS Acceleration Sound - Sets Off Car Alarm",
+          "pathAlias": "damianmorysfotos",
+          "realname": "Damian Morys",
+          "ownerNsid": "26977717@N02",
+          "license": 4,
+          "mediaType": "video"
+        },
+        {
+          "id": "8264631106",
+          "title": "20120831-OC-LSC-9001",
+          "pathAlias": "usdagov",
+          "realname": "U.S. Department of Agriculture",
+          "ownerNsid": "41284017@N08",
+          "license": 10,
+          "mediaType": "video"
+        },
+        {
+          "id": "41020958170",
+          "title": "Graham Davidson racing at Le Mans in Aston Marton GT3 series",
+          "pathAlias": "igcameron",
+          "realname": "Iain Cameron",
+          "ownerNsid": "67872859@N00",
+          "license": 4,
+          "mediaType": "video"
+        }
+      ]
+    },
+    {
+      "query": "BMW M3",
+      "url": "https://www.flickr.com/search/?text=BMW+M3&media=videos&license=4%2C9%2C10",
+      "status": 200,
+      "total": 7,
+      "photos": [
+        {
+          "id": "8494375886",
+          "title": "BMW M3 Coupe on CW-S5",
+          "pathAlias": "concavowheels",
+          "realname": "CONCAVO WHEELS",
+          "ownerNsid": "77888731@N08",
+          "license": 4,
+          "mediaType": "video"
+        },
+        {
+          "id": "3459203790",
+          "title": "CSL Cup cars",
+          "pathAlias": "salsaboy",
+          "realname": "andy carter",
+          "ownerNsid": "63415923@N00",
+          "license": 4,
+          "mediaType": "video"
+        },
+        {
+          "id": "30070215475",
+          "title": "BMW Performance Center One Day M School",
+          "pathAlias": "nanpalmero",
+          "realname": "Nan Palmero",
+          "ownerNsid": "97402086@N00",
+          "license": 4,
+          "mediaType": "video"
+        },
+        {
+          "id": "6060761361",
+          "title": "Practicing my panning",
+          "pathAlias": "chriswaits",
+          "realname": "Chris Waits",
+          "ownerNsid": "78341140@N00",
+          "license": 4,
+          "mediaType": "video"
+        },
+        {
+          "id": "36486578601",
+          "title": "BMW Ultimate Driving Experience",
+          "pathAlias": "dwhittle",
+          "realname": "Dustin Whittle",
+          "ownerNsid": "57716551@N00",
+          "license": 4,
+          "mediaType": "video"
+        },
+        {
+          "id": "36486565121",
+          "title": "BMW Ultimate Driving Experience",
+          "pathAlias": "dwhittle",
+          "realname": "Dustin Whittle",
+          "ownerNsid": "57716551@N00",
+          "license": 4,
+          "mediaType": "video"
+        },
+        {
+          "id": "8711423480",
+          "title": "3000 + HP In Armadale",
+          "pathAlias": "13422316@N00",
+          "realname": "Paul Wordingham",
+          "ownerNsid": "13422316@N00",
+          "license": 4,
+          "mediaType": "video"
+        }
+      ]
+    },
+    {
+      "query": "Audi R8",
+      "url": "https://www.flickr.com/search/?text=Audi+R8&media=videos&license=4%2C9%2C10",
+      "status": 200,
+      "total": 1,
+      "photos": [
+        {
+          "id": "6360190103",
+          "title": "Audi R8",
+          "pathAlias": "neu318",
+          "realname": "Jorge de la Llama",
+          "ownerNsid": "65906588@N00",
+          "license": 4,
+          "mediaType": "video"
+        }
+      ]
+    },
+    {
+      "query": "Huracan",
+      "url": "https://www.flickr.com/search/?text=Huracan&media=videos&license=4%2C9%2C10",
+      "status": 200,
+      "total": 1,
+      "photos": [
+        {
+          "id": "4755406883",
+          "title": "El Rio Santa Catarina despues del Huracan Alex",
+          "pathAlias": "jayceeloop",
+          "realname": null,
+          "ownerNsid": "24491636@N00",
+          "license": 4,
+          "mediaType": "video"
+        }
+      ]
+    },
+    {
+      "query": "Zonda",
+      "url": "https://www.flickr.com/search/?text=Zonda&media=videos&license=4%2C9%2C10",
+      "status": 200,
+      "total": 1,
+      "photos": [
+        {
+          "id": "7404758182",
+          "title": "Pagani Zonda 760 rs",
+          "pathAlias": "speedandstyle",
+          "realname": null,
+          "ownerNsid": "21771934@N07",
+          "license": 4,
+          "mediaType": "video"
+        }
+      ]
+    }
+  ]
+}

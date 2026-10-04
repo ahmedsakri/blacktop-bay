@@ -1,0 +1,152 @@
+{
+  "checked": "2026-10-04",
+  "id": "flickr-gallardo-brett-levin",
+  "status": "adopted-after-user-listening-approval",
+  "sourceTitle": "Lamborghini Gallardo Start Up",
+  "sourceUrl": "https://www.flickr.com/photos/scubabrett22/8464649517/",
+  "author": "Brett Levin / Brett Levin Photography",
+  "uploaderAccount": "scubabrett22",
+  "published": "2013-02-11",
+  "sourceDescription": "Video of a Lamborghini Gallardo starting up and revving the engine.",
+  "sourceModel": "Lamborghini Gallardo",
+  "year": null,
+  "trim": null,
+  "license": "CC-BY-2.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+  "flickrLicenseId": 4,
+  "grantEvidence": "Public item UI links CC BY 2.0; publisher embedded photo-model license 4 and license-model id 4 maps to CC BY 2.0. Publication model retained outside repository.",
+  "identityEvidence": "Publisher names Gallardo and engine start/revs. Video frames show in-car dashboard with changing tachometer. No engine/year/trim/build inference from imagery.",
+  "provenanceLimit": "Creator publication and license grant are the recording-rights evidence; no independent recording-session certificate. Download is a Flickr public transcode, not claimed camera master.",
+  "sourceFile": "gallardo-brett-levin-flickr-8464649517.mp4",
+  "sourceSha256": "dc883ea35b4b52e33117d59537cf0ddeffc33bf2826ef0512ab2aa6641237ca0",
+  "sourceBytes": 5084114,
+  "sourceDuration": 18.810458,
+  "audioFormat": "AAC stereo 44.1 kHz in 1280x720 MP4",
+  "reviewFolder": "/Users/ahmedsakri/Documents/Personal/Games/camber-reign-audio-source-review-2026-10-04/flickr-gallardo",
+  "preparation": "Existing scripts/prepare-engine-recordings.py; one layer from source seconds 10.20\u201311.55. Shipping manifest reproduces the approved review WAV byte-for-byte as gallardo-idle-v1.wav.",
+  "loopMetrics": {
+    "bytes": 60044,
+    "sha256": "dbcecd6f1bb37631c2f3b7dbb3a2d21d92b94cacca954767285ba546c3f38dcf",
+    "duration": 1.25,
+    "peak": 0.65997314453125,
+    "rms": 0.16418231804249478,
+    "endpointJump": 0.0,
+    "dcMean": -4.43115234375e-06,
+    "clippedSamples": 0
+  },
+  "qualityLimit": "Loud AAC-decoded stereo rev peaks slightly exceed full scale (maximum about 1.0097 in inspected seconds), and are excluded; this does not independently prove analog capture clipping. Spectrum supports a steady interval but cannot certify absence of speech/music. Dashboard displays radio frequency. Audio input/listening unsupported in this agent; the agent claims no auditory review. The separate human approval below supplies the acceptance decision; it is not a forensic guarantee or a broad device test.",
+  "nextDecision": "Accepted following explicit user listening approval. No additional acquisition, mixer or physics change required.",
+  "actualMixerReview": {
+    "available": true,
+    "selected": "gallardo-flickr-review",
+    "active": "gallardo-flickr-review",
+    "cacheBanks": 1,
+    "decodedBytes": 240000,
+    "voices": 1,
+    "pending": false,
+    "fetches": 1,
+    "failed": [],
+    "blend": 0,
+    "seconds": 10,
+    "sequence": "0\u20135s acceleration; 5\u20136s lift; 6\u20137s Nitro; 7\u20138s Perfect Nitro; 8\u201310s pause",
+    "peak": 0.2943345606327057,
+    "rms": 0.05096360038547238,
+    "tailPeak": 0,
+    "finite": true,
+    "withinPeakBudget": true,
+    "pauseTailSilent": true,
+    "auditoryReview": false,
+    "fixture": "Local server serves actual current game modules verbatim, except an alternate recording manifest that selects the candidate bank only for Gallardo. Shipping source files were not edited. Existing Gallardo recording mix tuple and all audio logic retained.",
+    "moduleSha256": {
+      "audio.js": "0cf4ae3dc61ce7a7fdd410ebc2311dabbf0c9cd0e2e4515fefcf59efb57ff540",
+      "audio-lifecycle.js": "cac9d2979936d77ab2b6bf298dda7f2a33fea14437470f24f9c28bef038fbe12",
+      "recorded-engine.js": "13fa2b27992e774366121d852258eba4d55e6dd334a472511fe49724c68f1172",
+      "recorded-engine-manifest.js": "c318434f41246ffbbb0dc6404dccdeeb7f36e544faeae073e983451f7eb1fd6b",
+      "driving-sound.js": "7fb264950f5e34240ff02ab2c48b6dc1c3dada424a7194eba2cc6e9218796724",
+      "race-sound.js": "ef3d9df2c2acbff98e2793f460f2e91a7456b3b85083b973f2cb53ddf4330329",
+      "lobby-music.js": "2a170fad09ce2fb99e3f8ff3f425eab68b59efa197612be0244c940dc4914375",
+      "vehicles.js": "9f0b5681f47ab8b418e084346f5b2ff4a78a7949d66504280d54dc248f0c9342",
+      "manufacturer-vehicles.js": "a37c6ed4643852634979f14161cc19d0abb512bb63e620d260b752c2705c3cdd"
+    },
+    "artifactHashes": {
+      "gallardo-idle-audition.wav": "7fe3225454fdccf9e73e1ecfd7cac06c5940f22b4c087c841e58f0bdc88d7051",
+      "gallardo-actual-mixer-acceleration-nitro-audition.wav": "4196ef3670ed43117dd58992ef51f964bc78ec539848d7f730f9eded611ed491",
+      "gallardo-source-surrounding-9-to-13s.wav": "53de398d78d1ceb38ed2103cbd24d20833962a706e5733a600f82beb34e6566e"
+    }
+  },
+  "initialReviewStatus": "Rights and named model established; agent numerical inspection did not establish aural suitability.",
+  "humanListeningApproval": {
+    "date": "2026-10-04",
+    "quote": "Clean engine sound\u2014use it",
+    "basis": "User reply after the supplied listening auditions; relayed by the root agent. No claim that numerical checks are aural review.",
+    "scope": "Use the selected single Gallardo idle layer with the previously approved soft game mix."
+  },
+  "shippingIntegration": {
+    "bank": "gallardo-idle",
+    "path": "public/assets/audio/engines/gallardo-idle-v1.wav",
+    "car": "lamborghini-gallardo",
+    "previousBank": "huracan-v10",
+    "mix": [
+      0.95,
+      0.98,
+      0.87
+    ],
+    "mixChanged": false,
+    "sourceYearSpecified": false,
+    "certified2004": false,
+    "baseModelMatches": 6,
+    "catalogueCars": 33,
+    "unresolvedBaseModelAssignments": 27,
+    "fullyVerifiedExactSpecifications": 0
+  },
+  "primaryPublicationFields": {
+    "extractedFrom": "Flickr public item embedded model registry",
+    "fullModelSha256": "eba5b6cde55c3580c98ca120a5275572a6e26ae48b90115fc872f176c85b1feb",
+    "photo": {
+      "id": "8464649517",
+      "title": "Lamborghini Gallardo Start Up",
+      "description": "Video of a Lamborghini Gallardo starting up and revving the engine.",
+      "mediaType": "video",
+      "license": 4
+    },
+    "owner": {
+      "id": "51117559@N03",
+      "pathAlias": "scubabrett22",
+      "username": "Brett Levin Photography",
+      "realname": "Brett Levin"
+    },
+    "licenseModel": {
+      "id": "4",
+      "name": "CC BY 2.0",
+      "url": "https://creativecommons.org/licenses/by/2.0/"
+    },
+    "publication": {
+      "datePosted": "1360601482",
+      "isDateTakenUnknown": true
+    }
+  },
+  "integrationChecks": {
+    "focusedSuites": [
+      "recorded-engine",
+      "audio",
+      "audio-lifecycle",
+      "driving-sound",
+      "race-sound"
+    ],
+    "passed": 55,
+    "failed": 0,
+    "sourceHashVerified": "dc883ea35b4b52e33117d59537cf0ddeffc33bf2826ef0512ab2aa6641237ca0",
+    "shippingMatchesApprovedReviewAndIndependentReproduction": true,
+    "allCarMixesUnchanged": true,
+    "onlyChangedCarMapping": "lamborghini-gallardo",
+    "audioBehaviorModulesUnchanged": [
+      "audio.js",
+      "recorded-engine.js",
+      "driving-sound.js",
+      "race-sound.js",
+      "audio-lifecycle.js"
+    ],
+    "diffWhitespaceCheck": "passed",
+    "independentReadOnlyReview": "No actionable mistakes found; reviewer did not claim listening or run tests."
+  }
+}

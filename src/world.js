@@ -6,6 +6,8 @@ import { cornerApproachMarkers } from './track-details.js';
 import { createCrowd } from './crowd.js';
 import { createTracksideServices,tracksideServiceLayout } from './trackside-services.js';
 import {createScannedTrees} from './scanned-trees.js';
+import {SCANNED_PINE_VARIANTS,SCANNED_PINE_SHAPE} from './scanned-pine-manifest.js';
+import {createSummitOutcrops} from './summit-rocks.js';
 import {createRoadsidePlanting,vergeGroundSampler,forestMarginLayout} from './roadside-planting.js';
 import {urbanBlockLayout,createUrbanBlockEdges} from './urban-district.js';
 import { broadleafCrownGeometry, coniferBoughGeometry } from './vegetation-geometry.js';
@@ -42,6 +44,27 @@ export function getVenueProfile(track = TRACK) {
  let radius=0;for(const p of track.samples)radius=Math.max(radius,Math.hypot(p.x-centerX,p.z-centerZ));
  return {...VENUE_ENVIRONMENTS[environment],...ORIGINAL_VENUE_PROFILES[track.scenery],...DESTINATION_PROFILES[track.id],...venueLighting(track),environment,original,centerX,centerZ,radius,
   horizonRadius:original?990:Math.max(990,radius+480),groundRadius:Math.max(1400,radius+650)};
+}
+
+export function usesPineTrees(track=TRACK,venue=getVenueProfile(track)){
+ return track.id==='summit'||venue.vegetation==='conifers';
+}
+
+// Pure placement data also keeps the legacy trunk and all three bough layers
+// tied to the same replacement ID. The caller supplies its existing RNG so
+// adding the asset tier does not perturb the world's procedural sequence.
+export function summitPineLayout(track,{low=false,stands=[],landmarks=[],rng=random()}={}){
+ const candidates=[],trunks=[],foliage=[];
+ for(let distance=8;distance<track.length;distance+=low?22:15)for(const side of [-1,1]){
+  const p=sampleTrack(distance,track),offset=side*(20+rng()*18),x=p.x+p.nx*offset,z=p.z+p.nz*offset;
+  if(projectOnTrack(x,z,undefined,track).distance<17)continue;
+  if(stands.some(stand=>Math.hypot(x-stand.x,z-stand.z)<14)||landmarks.some(site=>Math.hypot(x-site.x,z-site.z)<site.radius+6))continue;
+  const height=6+rng()*8,treeId=20000+candidates.length;
+  candidates.push({treeId,x,z,y:0,height:height*1.07,radius:height*.26,yaw:0});
+  trunks.push({treeId,x,z,y:height*.36,sx:.22,sy:height*.72,sz:.22});
+  for(let tier=0;tier<3;tier++){const yaw=rng()*TAU;if(!tier)candidates.at(-1).yaw=yaw;foliage.push({treeId,x,z,y:height*(.46+tier*.16),sx:height*(.26-tier*.05),sy:height*.58,sz:height*(.26-tier*.05),ry:yaw,color:tier%2?'#243c35':'#304940'});}
+ }
+ return {candidates,trunks,foliage};
 }
 
 // Every new tree/rock/building uses a conservative circular footprint tested
@@ -155,9 +178,10 @@ function palmFrondGeometry() {
 
 export function createWorld(renderer, { low = false, reducedMotion = false } = {}) {
  const summit = TRACK.id === 'summit', grandPrix = TRACK.id === 'grandprix', venue = getVenueProfile(TRACK);
+ const pineTrees=usesPineTrees(TRACK,venue);
  const rng = random(), crowdRng = random(124), crowd = createCrowd({low, reducedMotion}), scene = new THREE.Scene(); scene.background = new THREE.Color(venue.background); scene.fog = new THREE.FogExp2(venue.fog,venue.fogDensity);
  scene.userData.venueEnvironment={type:venue.environment,original:venue.original,night:venue.night,water:venue.water};
- const surfaces=createTrackSurfaceLibrary({low,rock:TRACK.id==='norway-fjord',anisotropy:renderer.capabilities.getMaxAnisotropy()});scene.userData.trackSurfaces=surfaces.status;
+ const surfaces=createTrackSurfaceLibrary({low,rock:summit||TRACK.id==='norway-fjord',anisotropy:renderer.capabilities.getMaxAnisotropy()});scene.userData.trackSurfaces=surfaces.status;
  const frontageBuildings=[],terrainOccupied=[];
  scene.add(new THREE.HemisphereLight(venue.sky,venue.bounce,venue.ambient));
  const sun = new THREE.DirectionalLight(venue.sun,venue.sunlight); sun.position.set(-180,venue.sunHeight,130); sun.castShadow = true; sun.shadow.mapSize.set(low ? 1024 : 2048, low ? 1024 : 2048); Object.assign(sun.shadow.camera, { left: -20, right: 20, top: 20, bottom: -20, near: 1, far: 360 }); sun.shadow.bias = -.00065; sun.shadow.normalBias = .015; scene.add(sun, sun.target);
@@ -436,10 +460,10 @@ export function createWorld(renderer, { low = false, reducedMotion = false } = {
    if(item.kind==='rock')rocks.push({x,z,y:height*.18-.8,sx:radius*.84,sy:height*.65,sz:radius*.71,ry:yaw,color:TRACK.scenery==='breakwater'?(shade>.5?'#4d5960':'#354047'):TRACK.scenery==='copper-canyon'?(shade>.5?'#a16c4c':'#86543d'):shade>.5?'#9a805e':'#76644e'});
    else{
     treeTrunks.push({x,z,y:ground+height*.29,sx:.18,sy:height*.58,sz:.18,treeId});
+    treeCandidates.push({x,z,y:ground,height,radius,yaw,treeId});
     if(venue.vegetation==='conifers'){
-     for(let layer=0;layer<3;layer++)foliage.push({x,z,y:ground+height*(.50+layer*.17),sx:radius*(1-layer*.23),sy:height*(.35-layer*.04),sz:radius*(1-layer*.23),ry:yaw,color:shade>.66?'#405a40':shade>.33?'#304d3a':'#263e32'});
+     for(let layer=0;layer<3;layer++)foliage.push({treeId,x,z,y:ground+height*(.50+layer*.17),sx:radius*(1-layer*.23),sy:height*(.35-layer*.04),sz:radius*(1-layer*.23),ry:yaw,color:shade>.66?'#405a40':shade>.33?'#304d3a':'#263e32'});
     }else {
-     treeCandidates.push({x,z,y:ground,height,radius,yaw,treeId});
      foliage.push({treeId,x,z,y:ground+height*.72,sx:radius*.90,sy:height*.37,sz:radius*.80,ry:yaw,color:shade>.66?'#647454':shade>.33?'#4c6449':'#405841'});
      for(const side of [-1,1]){segment(treeTrunks,[x,ground+height*.35,z],[x+Math.cos(yaw)*side*radius*.48,ground+height*.72,z+Math.sin(yaw)*side*radius*.48],.10);treeTrunks.at(-1).treeId=treeId;}
     }
@@ -466,7 +490,9 @@ export function createWorld(renderer, { low = false, reducedMotion = false } = {
  const landmarks=createOriginalLandmarks(scene,TRACK,{low,stands:standLayouts});
  terrainOccupied.push(...tracksideServiceLayout(TRACK,{low,stands:standLayouts,landmarks:[...(scene.userData.originalLandmarks||[]),...showcaseSites]}));
  const streetOccupied=[...terrainOccupied,...standLayouts.map(s=>({...s,radius:16})),...(scene.userData.originalLandmarks||[]),...showcaseSites,...destinationHouseLayout(TRACK,{landmarks:showcaseSites})];
- treeCandidates.push(...forestMarginLayout(TRACK,venue,{low,occupied:streetOccupied,groundAt:coastalDistrict?(x,z)=>coastalGroundAt(coastalDistrict,x,z):undefined}));
+ // This margin contains broadleaf trees. Pine-only routes retain their own
+ // roadside/Summit population, even if a future venue profile adds a margin.
+ if(!pineTrees)treeCandidates.push(...forestMarginLayout(TRACK,venue,{low,occupied:streetOccupied,groundAt:coastalDistrict?(x,z)=>coastalGroundAt(coastalDistrict,x,z):undefined}));
  const district=urbanBlockLayout(TRACK,venue,{low,occupied:streetOccupied});
  const streetSites=venue.environment==='urban'?district.units:streetscapeLayout(TRACK,venue,{low,occupied:streetOccupied});
  createSpatialInstances(scene,box,venue.environment==='urban'?architecturalFacadeMaterial({night:venue.night}):concreteSurfaceMaterial(surfaces.maps,{color:'#d2cec1'}),streetSites.map(b=>({...b,color:b.frontageTint})),{partitionThreshold:144,distance:520});
@@ -546,24 +572,17 @@ export function createWorld(renderer, { low = false, reducedMotion = false } = {
   ground.rotation.x = -Math.PI / 2; ground.position.y = -.13; scene.add(ground);
  }
  if (summit) {
-  const rocks = [], pines = [], pineTrunks = [];
+  const rocks = [];
   for (let i = 0; i < 66; i++) {
    const a = rng() * TAU, radius = 220 + rng() * 135, x = Math.sin(a) * radius, z = Math.cos(a) * radius;
    const width = 14 + rng() * 23, height = 12 + rng() * 40;
    if (projectOnTrack(x, z).distance < width + 22) continue;
    rocks.push({ x, z, y: height * .28 - 5, sx: width, sy: height * .65, sz: width * (.7 + rng() * .4), ry: rng() * TAU, color: i % 3 ? '#414c49' : '#59615a' });
   }
-  for (let distance = 8; distance < TRACK.length; distance += low ? 22 : 15) for (const side of [-1, 1]) {
-   const p = sampleTrack(distance), offset = side * (20 + rng() * 18), x = p.x + p.nx * offset, z = p.z + p.nz * offset;
-   if (projectOnTrack(x, z).distance < 17) continue;
-   if (standLayouts.some(stand => Math.hypot(x - stand.x, z - stand.z) < 14)||showcaseSites.some(site=>Math.hypot(x-site.x,z-site.z)<site.radius+6)) continue;
-   const height = 6 + rng() * 8;
-   pineTrunks.push({ x, z, y: height * .36, sx: .22, sy: height * .72, sz: .22 });
-   for (let tier = 0; tier < 3; tier++) pines.push({ x, z, y: height * (.46 + tier * .16), sx: height * (.26 - tier * .05), sy: height * .58, sz: height * (.26 - tier * .05), ry: rng() * TAU, color: tier % 2 ? '#243c35' : '#304940' });
-  }
-  instances(scene, new THREE.DodecahedronGeometry(1, 2), new THREE.MeshStandardMaterial({ color: 'white', roughness: .98, flatShading: true }), rocks);
-  instances(scene, new THREE.CylinderGeometry(1, 1, 1, 7), new THREE.MeshStandardMaterial({ color: '#4c4137', roughness: 1 }), pineTrunks);
-  instances(scene, coniferBoughGeometry({low}), new THREE.MeshStandardMaterial({ color: 'white', vertexColors:true, roughness: 1 }), pines);
+  const {candidates,trunks:pineTrunks,foliage:pines}=summitPineLayout(TRACK,{low,stands:standLayouts,landmarks:showcaseSites,rng});treeCandidates.push(...candidates);
+  createSummitOutcrops(scene,rocks,{low,maps:surfaces.maps});
+  treeFallbackGroups.push(instances(scene, new THREE.CylinderGeometry(1, 1, 1, 7), new THREE.MeshStandardMaterial({ color: '#4c4137', roughness: 1 }), pineTrunks));
+  treeFallbackGroups.push(instances(scene, coniferBoughGeometry({low}), new THREE.MeshStandardMaterial({ color: 'white', vertexColors:true, roughness: 1 }), pines));
  }
  if (grandPrix) {
   const p = sampleTrack(105), paddock = new THREE.Group();paddock.name = 'bay-grand-prix-paddock';paddock.position.set(p.x, 0, p.z);paddock.rotation.y = Math.atan2(p.tx, p.tz);scene.add(paddock);
@@ -608,7 +627,7 @@ export function createWorld(renderer, { low = false, reducedMotion = false } = {
  }
  crowd.render(scene);
  scene.userData.groundDetail=addWorldGroundDetail(scene,surfaces.maps);
- const trees=createScannedTrees(scene,treeCandidates,treeFallbackGroups,{low,groundAt:coastalDistrict?(x,z)=>coastalGroundAt(coastalDistrict,x,z):relief.userData.grid?(x,z)=>coastalGroundAt(relief,x,z):()=>-.16});scene.userData.scannedTrees=trees.status;
+ const trees=createScannedTrees(scene,treeCandidates,treeFallbackGroups,{low,...(pineTrees?{variants:SCANNED_PINE_VARIANTS,shape:SCANNED_PINE_SHAPE}:{}),groundAt:summit?()=>-.13:coastalDistrict?(x,z)=>coastalGroundAt(coastalDistrict,x,z):relief.userData.grid?(x,z)=>coastalGroundAt(relief,x,z):()=>-.16});scene.userData.scannedTrees=trees.status;
  const detail=createDistanceDetail(scene,{low});scene.userData.distanceDetail=detail.stats;
  let motionTime=0,lastWorldTime=null;
  return { scene, reflection, sun, startLights, backdrop, surfaces,trees,disposeCrowd:()=>crowd.dispose?.(),disposeSurfaceTextures:()=>{surfaces.dispose();trees.dispose();planting.dispose();},rebuildEnvironment:environment.rebuild,disposeEnvironment:environment.dispose, setQuality:settings=>detail.setQuality(settings), update(time, car, motion = {}) {

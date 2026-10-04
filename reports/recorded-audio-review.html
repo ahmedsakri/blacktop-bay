@@ -11,7 +11,7 @@ import {createEngineSoundMotion,drivingVoice} from '/src/driving-sound.js';
 const button=document.querySelector('#render'),status=document.querySelector('#status'),results=document.querySelector('#results'),diagnostics=document.querySelector('#diagnostics');
 const choices=MANUFACTURER_VEHICLES.map(car=>[car.name,car.id]);
 const familyButton=document.querySelector('#render-families'),upgradeButton=document.querySelector('#render-upgrades');
-const newBankIds=['mclaren-570s-2016','aventador-2014','ferrari-458-2013','audi-r8-2017','nissan-gtr-2012','mercedes-amg-gtr-2018','testarossa-1990','lotus-elise','ferrari-250-gto'];
+const newBankIds=['mclaren-570s-2016','aventador-2014','ferrari-458-2013','audi-r8-2017','nissan-gtr-2012','mercedes-amg-gtr-2018','testarossa-1990','lotus-elise','ferrari-250-gto','gallardo-idle'];
 upgradeButton.textContent=`Review ${newBankIds.length} new recordings`;
 familyButton.textContent='Review '+new Set(Object.values(RECORDING_CARS)).size+' active recording families';
 const objectUrls=[];

@@ -1,6 +1,6 @@
 {
   "version": 6,
-  "totalBytes": 4173980,
+  "totalBytes": 4234024,
   "recordings": [
     {
       "id": "ferrari-355",
@@ -212,9 +212,8 @@
       "provenance": "Recorded on Tascam DR-07 internal microphones while entering, starting and driving a Huracán EVO Spyder. Door/start transients are omitted; public HQ MP3 preview.",
       "checked": "2026-10-02",
       "adaptation": "Mono 24 kHz PCM, 65 Hz high-pass / 5.8 kHz low-pass, selected source intervals, cosine loop overlap, DC/seam correction and peak/RMS normalization. In-game pitch, RPM blend and load EQ are authored, not measured.",
-      "use": "Family proxy for the game Huracán (variant unspecified) and 2004 Gallardo. Source is an EVO Spyder; no same-year or same-variant claim.",
+      "use": "Variant proxy for the game Huracan (variant unspecified). Source is an EVO Spyder; no same-year or same-variant claim.",
       "cars": [
-        "lamborghini-gallardo",
         "lamborghini-huracan"
       ]
     },
@@ -1248,7 +1247,44 @@
       "sha256": "c57d4798ac7b909015dacea8e7c756a168bed2b8e6acb785a95cb4ca43734f4f",
       "duration": 3.75,
       "sampleRate": 24000
+    },
+    {
+      "id": "gallardo-idle",
+      "file": "gallardo-idle-v1.wav",
+      "bytes": 60044,
+      "sha256": "dbcecd6f1bb37631c2f3b7dbb3a2d21d92b94cacca954767285ba546c3f38dcf",
+      "duration": 1.25,
+      "sampleRate": 24000,
+      "sourceFile": "gallardo-brett-levin-flickr-8464649517.mp4",
+      "sourceSha256": "dc883ea35b4b52e33117d59537cf0ddeffc33bf2826ef0512ab2aa6641237ca0",
+      "layers": [
+        {
+          "start": 0.0,
+          "end": 1.25,
+          "rev": 0.22,
+          "sourceStart": 10.2,
+          "sourceDuration": 1.35
+        }
+      ],
+      "sourceBytes": 5084114,
+      "title": "Lamborghini Gallardo Start Up",
+      "author": "Brett Levin / Brett Levin Photography",
+      "sourceVehicle": "Lamborghini Gallardo (year and trim unspecified)",
+      "sourceFamily": "V10",
+      "license": "CC-BY-2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+      "sourceUrl": "https://www.flickr.com/photos/scubabrett22/8464649517/",
+      "downloadUrl": "https://www.flickr.com/photos/scubabrett22/8464649517/",
+      "downloadUrlIsLandingPage": true,
+      "downloadMethod": "Resolve the public video element from the source page for its signed Flickr appletv.mp4 transcode URL; the signature expires. No account or original-master access used.",
+      "provenance": "Brett Levin Photography published the named Gallardo starting/revving video on Flickr on 11 February 2013. The item UI and primary metadata grant CC BY 2.0 (Flickr license id 4). Public 1280x720 MP4 transcode contains stereo 44.1 kHz AAC, duration 18.810458 seconds; not claimed as the camera original. Creator publication and grant support provenance without independent session corroboration. Source year, trim, microphone and engine/exhaust build are unspecified.",
+      "checked": "2026-10-04",
+      "adaptation": "Mono 24 kHz PCM16, 65 Hz high-pass / 5.8 kHz low-pass, source seconds 10.20–11.55, cosine loop overlap, DC/seam correction and peak/RMS normalization. Single idle layer; existing authored pitch/load response and high-rev attenuation retained.",
+      "use": "Named Gallardo idle replaces the Huracan EVO Spyder proxy only for the Gallardo. Source year/trim/build unspecified; not certified as the represented 2004 specification. One steady idle excerpt, with the existing single-layer fade at high revs and authored synthesis providing dynamic engine response. User approved the supplied listening audition on 4 October 2026: Clean engine sound—use it.",
+      "cars": [
+        "lamborghini-gallardo"
+      ]
     }
   ],
-  "activeBanks": 21
+  "activeBanks": 22
 }

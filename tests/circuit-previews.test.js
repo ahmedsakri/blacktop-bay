@@ -38,7 +38,7 @@ test('all 38 circuit previews are distinct actual-world WebP captures with verif
   assert.ok(['ready','disabled'].includes(entry.trees.state),entry.id+' applicable scanned trees resolved before capture');
   assert.equal(entry.crowd.assets.loaded,entry.crowd.assets.requested,entry.id+' crowd assets settled before capture');
   assert.equal(entry.crowd.assets.active,0);assert.equal(entry.crowd.assets.queued,0);
-  const expectedMaps=Object.keys(TRACK_SURFACE_MAPS).length+(entry.id==='norway-fjord'?Object.keys(TRACK_ROCK_MAPS).length:0);
+  const expectedMaps=Object.keys(TRACK_SURFACE_MAPS).length+(['norway-fjord','summit'].includes(entry.id)?Object.keys(TRACK_ROCK_MAPS).length:0);
   assert.equal(entry.surfaces.loaded,expectedMaps,entry.id+' actual surface maps finished loading');
   assert.equal(entry.textureProof.length,expectedMaps);assert.ok(entry.textureProof.every(p=>p.gpuRedStdDev>0),entry.id+' maps were sampled on the GPU');
  }

@@ -1,0 +1,45 @@
+# Flickr creator video channel — 4 October 2026
+
+This bounded new source channel found a named **Lamborghini Gallardo** start/rev recording with an affirmative **CC BY 2.0** grant. After listening, the user approved it: **“Clean engine sound—use it.”** The selected idle loop is now integrated as `gallardo-idle` for Gallardo only. Coverage is **6 named base-model matches of 33**, with **27 unresolved assignments** and **0 fully verified exact specifications**. The prior soft pitch/tone/gain mix is unchanged. No account, purchase, outreach, mixer/physics change, commit or deployment was made by this acquisition task.
+
+## Adopted Gallardo recording
+
+[Lamborghini Gallardo Start Up](https://www.flickr.com/photos/scubabrett22/8464649517/) was published by **Brett Levin / Brett Levin Photography**, account `scubabrett22`, on 11 February 2013. The original item names Gallardo and describes starting/revving its engine. Both the visible item and its primary embedded metadata identify CC BY 2.0: Flickr license ID 4 maps to that license. [CC BY 2.0](https://creativecommons.org/licenses/by/2.0/) permits commercial redistribution and adaptation with attribution, license reference and derivative-change disclosure, supporting incorporation in the game and redistribution of its credited audio in the public repository. No ShareAlike or noncommercial restriction applies to this grant.
+
+The evidence is the creator's publication and grant, without independent recording-session corroboration. The 18.810458-second public Flickr transcode contains 1280×720 video and stereo 44.1 kHz AAC audio. It is not described as the camera original. File size is **5,084,114 bytes**; SHA-256 is `dc883ea35b4b52e33117d59537cf0ddeffc33bf2826ef0512ab2aa6641237ca0`. The page, model/license metadata and a frame contact sheet are retained outside the repository. [A compact evidence record](source-audit-2026-10-04/flickr-creator-channel/gallardo-candidate.json) preserves the decision and exact local locations.
+
+Frames show an interior dashboard and changing tachometer while stationary. They support the published start/rev description. The source does not name year, trim, engine or exhaust build; it is a named **Gallardo** candidate, without a certified **2004** claim. The absent source year is not treated as a blocker to a base-model match.
+
+Some loud AAC-decoded stereo rev peaks slightly exceed full scale (about 1.0097 at the highest inspected interval) and were excluded from preparation. This does not independently prove analog capture clipping. Spectrum and amplitude inspection identified a comparatively steady interval at **10.20–11.55 seconds**. The existing preparation pipeline produced one approved layer, with no invented measured RPM: **1.25 seconds, 60,044 bytes, mono 24 kHz PCM16**, peak **0.659973**, RMS **0.164182**, zero clipped output samples and zero endpoint jump. Derivative SHA-256: `dbcecd6f1bb37631c2f3b7dbb3a2d21d92b94cacca954767285ba546c3f38dcf`.
+
+These numeric results do **not** certify listening quality or absence of voices/music. The dashboard displays a radio frequency; it does not establish whether radio audio is audible. This agent's tool environment explicitly does not support audio input, so no auditory review is claimed. The subsequent human reply **“Clean engine sound—use it”** supplies the listening acceptance. It does not turn spectral analysis into a forensic guarantee. The selected span and the game mix remain exactly those supplied for review.
+
+Review media is outside the game repository:
+
+- Source and publication evidence: `../camber-reign-audio-source-review-2026-10-04/flickr-gallardo/`.
+- Extracted full audio: `source-audio.wav` in that folder.
+- Prepared repeated audition, 7.5 seconds: `prepared/gallardo-idle-audition.wav`.
+- Actual game-mixer audition, 10 seconds: `prepared/gallardo-actual-mixer-acceleration-nitro-audition.wav`.
+- Unfiltered source seconds 9–13, decoded to stereo float32 WAV to preserve source peak values: `prepared/gallardo-source-surrounding-9-to-13s.wav`.
+- Alternate manifest, numeric metrics, source contact sheet, spectrum and attribution are in the same review folder.
+
+The actual `createAudio` graph rendered a separate 10-second offline audition: 0–5 seconds acceleration, 5–6 lift, 6–7 Nitro, 7–8 Perfect Nitro, and 8–10 pause. A local-only server supplied a candidate recording manifest while serving the existing game modules verbatim and retaining the existing Gallardo pitch/tone/gain settings. Output was finite, peak **0.294335**, RMS **0.050964**, with a silent pause tail, one voice, one bank fetch, one cached bank and no load failures. Module and audition hashes are retained in the evidence record. These are numerical checks, separate from the subsequent user listening approval, and are not a browser-driving test.
+
+## Other checked results and bounded limits
+
+| Primary result | Finding and decision |
+| --- | --- |
+| [Bugatti Veyron — Mitch Bennett](https://www.flickr.com/photos/mitchell3417/5406289118/) | Item grants CC BY 2.0 and its public 19.1-second MP4 was retrieved. Frames show a stationary open-top Veyron on an indoor motor-show display. No running-engine recording established; rejected for this purpose. It is not substituted for the previously reviewed Commons departures. |
+| [GT3 RS Acceleration Sound — Damian Morys](https://www.flickr.com/photos/damianmorysfotos/5501446078/) | Search metadata names **GT3 RS**, a different named variant from the road GT3 target. No audio acquired. |
+| [Pagani Zonda 760 rs](https://www.flickr.com/photos/speedandstyle/7404758182/) | Search metadata names **760 RS**, not C12. No audio acquired. |
+| [Gallardo LP570 on CW-5 & CW-S5](https://www.flickr.com/photos/concavowheels/8494537081/) | Search metadata explicitly names LP570. Not relabelled as the 2004 target. No audio acquired. |
+| [Audi R8 — Jorge de la Llama](https://www.flickr.com/photos/neu318/6360190103/) | A new search lead under CC BY 2.0; item extraction in the web search tool failed. Media/content was not inspected before the stronger Gallardo candidate was selected. This is an incomplete check, not a rejection. |
+| [BMWM3_02.wav](https://freesound.org/people/ikbenraar/sounds/415275/) and [BMWM3_01.wav](https://freesound.org/people/ikbenraar/sounds/415276/) — ikbenraar | New creator leads identify M3 racing on an airstrip; the accessible publication does not establish **E46**, which is explicitly part of the represented model. No recording copied. This generation gap is separate from an unspecified model-year gap. |
+
+The Flickr pass queried video results for Veyron, Gallardo, GT3, Audi R8, BMW M3, Huracan, Zonda and Audi Quattro; an initial Ferrari Enzo query returned no matching entries. The first-page filter initially included CC BY 2.0, CC0 and Public Domain Mark. No Public Domain Mark material was adopted; each selected item's actual grant was verified. The site's newer CC BY 4.0 filter was not searched. Counts changed between requests, so these snapshots are not a complete catalogue inventory. [Flickr query evidence](source-audit-2026-10-04/flickr-creator-channel/flickr-bounded-search.json) retains exact URLs and returned lead identities.
+
+A direct public Freesound search pass is also retained in [its evidence file](source-audit-2026-10-04/flickr-creator-channel/freesound-bounded-search.json). GT3, Gallardo, Senna and Nevera requests returned HTTP 429; they remain **incomplete**, and the pass stopped without retrying around the rate limit. Other short model tokens returned unrelated results, while Countach and Zonda returned no first-page entries. Search tokenization, incomplete requests and first-page scope prevent an exhaustive absence claim. No old failed source was acquired again.
+
+The accepted bank is one authentic compact idle layer. It retains the existing single-layer attenuation at high revs and synthesized dynamics; no full-RPM recording session or exact 2004 specification is asserted. Both public license notices retain the title, creator, source, CC BY 2.0 link and modification notes. The shipping source manifest reproduces the approved WAV exactly.
+
+Verification after integration: **55/55 tests pass** across the five focused recorded-engine, audio, audio-lifecycle, driving-sound and race-sound suites. Checks include all 33 bank selections and actual asset file loads with the test decoder, all 26 bundled hashes, one-layer attenuation, voice/cache bounds and pause/mute/fallback behavior. A second preparation from the shipping source manifest reproduces the 60,044-byte WAV exactly; it also matches the approved audition loop. All per-car mix tuples and audio behavior modules are unchanged, and Gallardo is the only changed car mapping. Independent read-only review found no actionable issues. No additional browser gameplay or device listening claim is made.

@@ -1,10 +1,10 @@
 {
   "version": 1,
-  "checked": "2026-10-03",
+  "checked": "2026-10-04",
   "criteria": "Model-match identifies the represented base model, with target year/trim omissions explicit. exactModelVariant requires affirmative evidence for target model, generation/year and named variant/build; none is inferred from visual appearance, pitch, EQ or engine layout. All loops and transitions are authored adaptations, not measured engine telemetry.",
   "summary": {
     "model-match-target-year-unspecified": 2,
-    "related-model-proxy": 4,
+    "related-model-proxy": 3,
     "unverified-variant-proxy": 4,
     "model-match-target-variant-unspecified": 1,
     "unrelated-model-proxy": 9,
@@ -12,7 +12,7 @@
     "variant-proxy": 4,
     "model-match-generation-unverified": 1,
     "unverified-model-proxy": 2,
-    "model-match-source-year-unverified": 1,
+    "model-match-source-year-unverified": 2,
     "year-and-exhaust-proxy": 1
   },
   "cars": [
@@ -343,21 +343,22 @@
       "carId": "lamborghini-gallardo",
       "representedModel": "Lamborghini Gallardo \u00b7 2004",
       "visualSource": "https://sketchfab.com/3d-models/free-lamborghini-gallardo-2004-e6a7d7e98f4c46ca841eb930184b0f09",
-      "bank": "huracan-v10",
-      "recordedVehicle": "Lamborghini Hurac\u00e1n EVO Spyder V10",
-      "fidelity": "related-model-proxy",
+      "bank": "gallardo-idle",
+      "recordedVehicle": "Lamborghini Gallardo (year and trim unspecified)",
+      "fidelity": "model-match-source-year-unverified",
       "exactModelVariant": false,
-      "identityGap": "Huracan EVO Spyder is not a 2004 Gallardo. Later 5.2-litre Gallardo recordings do not establish the 2004 car.",
-      "sourceLicense": "CC-BY-4.0",
-      "sourceUrl": "https://freesound.org/people/JaimeLopes/sounds/564375/",
+      "identityGap": "Publisher identifies Lamborghini Gallardo and engine start/revs. Source year, trim and engine/exhaust build are unspecified; the represented 2004 specification is not certified. One steady idle excerpt, not a measured full-RPM engine session.",
+      "sourceLicense": "CC-BY-2.0",
+      "sourceUrl": "https://www.flickr.com/photos/scubabrett22/8464649517/",
       "rightsReadiness": "ready-for-current-game-use",
       "candidateIds": [
         "pole-gallardo",
         "freesound-gallardo",
-        "audiosparx-gallardo"
+        "audiosparx-gallardo",
+        "flickr-gallardo-brett-levin"
       ],
       "previousBank": "huracan-v10",
-      "modelMatch": false
+      "modelMatch": true
     },
     {
       "carId": "lamborghini-huracan",
@@ -645,8 +646,8 @@
       "modelMatch": false
     }
   ],
-  "modelMatches": 5,
+  "modelMatches": 6,
   "fullyVerifiedExactSpecifications": 0,
-  "improvedAssignments": 13,
+  "improvedAssignments": 14,
   "candidateRegistry": "ENGINE-CANDIDATES.json"
 }

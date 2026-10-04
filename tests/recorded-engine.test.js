@@ -40,7 +40,7 @@ test('shipping recordings preserve explicit provenance, exact asset hashes and b
   assert.equal(createHash('sha256').update(bytes).digest('hex'),entry.sha256);
   assert.equal(bytes.length,entry.bytes);assert.ok(bytes.length<=RECORDING_BUDGET.downloadBytes);total+=bytes.length;
   assert.equal(bytes.toString('ascii',0,4),'RIFF');assert.equal(bytes.readUInt16LE(22),1);assert.equal(bytes.readUInt16LE(34),16);assert.equal(bytes.readUInt32LE(24),24000);
-  assert.ok(['CC0-1.0','CC-BY-3.0','CC-BY-4.0','Sonniss-GDC-2026-v2'].includes(source.license));assert.ok(source.author&&source.title&&source.sourceVehicle);assert.match(source.sourceUrl,/^https:\/\/(freesound.org|bigsoundbank.com|commons.wikimedia.org|sonniss.com)\//);assert.ok(source.use.length>60);
+  assert.ok(['CC0-1.0','CC-BY-2.0','CC-BY-3.0','CC-BY-4.0','Sonniss-GDC-2026-v2'].includes(source.license));assert.ok(source.author&&source.title&&source.sourceVehicle);assert.match(source.sourceUrl,/^https:\/\/(freesound.org|bigsoundbank.com|commons.wikimedia.org|sonniss.com|www\.flickr\.com)\//);assert.ok(source.use.length>60);
   for(const layer of entry.layers){
    const start=Math.round(layer.start*24000),end=Math.round(layer.end*24000);let power=0,peak=0;
    for(let i=start;i<end;i++){const value=bytes.readInt16LE(44+i*2)/32768;power+=value*value;peak=Math.max(peak,Math.abs(value));}
@@ -48,7 +48,7 @@ test('shipping recordings preserve explicit provenance, exact asset hashes and b
    assert.ok(Math.abs(bytes.readInt16LE(44+start*2)-bytes.readInt16LE(44+(end-1)*2))<=1,'loop endpoint is continuous');
   }
  }
- assert.equal(total,4173980);assert.equal(total,data.totalBytes);
+ assert.equal(total,4234024);assert.equal(total,data.totalBytes);
  assert.deepEqual(Object.keys(RECORDING_CARS).sort(),MANUFACTURER_VEHICLES.map(vehicle=>vehicle.id).sort());
  assert.deepEqual(Object.keys(RECORDING_MIXES).sort(),Object.keys(RECORDING_CARS).sort());
  for(const [id,recording] of Object.entries(RECORDING_CARS)){
@@ -57,11 +57,11 @@ test('shipping recordings preserve explicit provenance, exact asset hashes and b
   const source=data.recordings.find(entry=>entry.id===recording);assert.ok(source.cars.includes(id));
   assert.ok(RECORDING_MIXES[id][2]>0&&RECORDING_MIXES[id][2]<=1);
  }
- assert.equal(Object.keys(ENGINE_RECORDINGS).length,25);
- assert.equal(new Set(data.recordings.map(entry=>entry.sha256)).size,25,'families use genuinely different recordings');
- assert.equal(new Set(data.recordings.map(entry=>entry.sourceSha256)).size,25);
- assert.equal(new Set(Object.values(RECORDING_CARS)).size,21);
- assert.equal(data.activeBanks,21);
+ assert.equal(Object.keys(ENGINE_RECORDINGS).length,26);
+ assert.equal(new Set(data.recordings.map(entry=>entry.sha256)).size,26,'families use genuinely different recordings');
+ assert.equal(new Set(data.recordings.map(entry=>entry.sourceSha256)).size,26);
+ assert.equal(new Set(Object.values(RECORDING_CARS)).size,22);
+ assert.equal(data.activeBanks,22);
  assert.equal(recordingForVehicle({id:'unsupported-car'}),null);
  assert.equal(recordingForVehicle({id:'bmw-f22-eurofighter',powertrain:'electric'}),null,'never play combustion loops on an electric vehicle');
  const diesel=data.recordings.find(entry=>entry.id==='bmw-diesel');assert.equal(diesel.additionalSources.length,2);
@@ -92,6 +92,15 @@ test('adjacent rev bands crossfade at constant power, bounded pitch, and load/im
  assert.ok(recordedEngineFrame(bank,{...motion,load:0}).gain<recordedEngineFrame(bank,motion).gain*.4);
  assert.ok(recordedEngineFrame(bank,{...motion,focus:.82}).gain<recordedEngineFrame(bank,motion).gain);
  const idle=ENGINE_RECORDINGS['mustang-idle'];assert.ok(recordedEngineFrame(idle,{rev:1}).layers[0].gain<.3,'idle take fades as revs rise');
+});
+
+test('Gallardo keeps the approved soft mix and attenuates its single idle layer at high revs',()=>{
+ const selected=recordingForVehicle(car('lamborghini-gallardo')),mix=RECORDING_MIXES['lamborghini-gallardo'];
+ assert.equal(selected.id,'gallardo-idle');assert.equal(selected.layers.length,1);
+ assert.deepEqual(mix,[.95,.98,.87]);
+ const idle=recordedEngineFrame(selected,{rev:.22,load:1},mix),high=recordedEngineFrame(selected,{rev:1,load:1},mix);
+ assert.ok(high.layers[0].gain<.3&&high.layers[0].gain<idle.layers[0].gain*.4,'a stationary idle cannot dominate full revs');
+ assert.ok(high.gain<=.42&&idle.gain<=.42,'the approved recording gain ceiling stays bounded');
 });
 
 test('recordings are lazy, selected-car only, bounded to three voices and reused across normal updates',async()=>{
@@ -266,7 +275,7 @@ test('33-car source audit separates model matches from unresolved years, variant
   assert.ok(row.candidateIds.every(id=>candidates.candidates.some(candidate=>candidate.id===id)),row.carId);
  }
  const byId=Object.fromEntries(coverage.cars.map(row=>[row.carId,row]));
- assert.equal(coverage.modelMatches,5);assert.equal(coverage.improvedAssignments,13);
+ assert.equal(coverage.modelMatches,6);assert.equal(coverage.improvedAssignments,14);
  assert.equal(coverage.fullyVerifiedExactSpecifications,0,'unspecified target years/builds cannot become a 100% exact claim');
  for(const id of ['bugatti-veyron','bmw-i8','audi-r18','porsche-919-hybrid'])assert.equal(byId[id].fidelity,'wrong-architecture-proxy');
  assert.match(byId['ferrari-458-italia'].identityGap,/Spider/);assert.equal(byId['ferrari-458-italia'].exactModelVariant,false);
@@ -275,6 +284,12 @@ test('33-car source audit separates model matches from unresolved years, variant
  assert.equal(byId['ferrari-250-gto'].bank,'ferrari-250-gto');
  assert.equal(byId['ferrari-250-gto'].modelMatch,true);assert.equal(byId['ferrari-250-gto'].exactModelVariant,false);
  assert.match(byId['ferrari-250-gto'].identityGap,/1964.*not.*certified/);
+ assert.equal(byId['lamborghini-gallardo'].bank,'gallardo-idle');
+ assert.equal(byId['lamborghini-gallardo'].modelMatch,true);assert.equal(byId['lamborghini-gallardo'].exactModelVariant,false);
+ assert.match(byId['lamborghini-gallardo'].identityGap,/2004.*not.*certified/);
+ assert.deepEqual(oldSource['gallardo-idle'].cars,['lamborghini-gallardo']);
+ assert.deepEqual(oldSource['huracan-v10'].cars,['lamborghini-huracan']);
+ assert.doesNotMatch(oldSource['huracan-v10'].use,/Gallardo/);
  assert.equal(byId['lotus-elise'].bank,'lotus-elise');
  assert.equal(byId['lotus-elise'].modelMatch,true);assert.equal(byId['lotus-elise'].exactModelVariant,false);
  assert.match(byId['lotus-elise'].identityGap,/generation.*engine/);

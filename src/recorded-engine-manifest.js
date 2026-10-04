@@ -851,6 +851,27 @@ export const ENGINE_RECORDINGS = Object.freeze({
     ],
     "url": "/assets/audio/engines/ferrari-250-gto-v1.wav?v=c57d4798ac7b9090",
     "kind": "combustion"
+  },
+  "gallardo-idle": {
+    "id": "gallardo-idle",
+    "file": "gallardo-idle-v1.wav",
+    "bytes": 60044,
+    "sha256": "dbcecd6f1bb37631c2f3b7dbb3a2d21d92b94cacca954767285ba546c3f38dcf",
+    "duration": 1.25,
+    "sampleRate": 24000,
+    "sourceFile": "gallardo-brett-levin-flickr-8464649517.mp4",
+    "sourceSha256": "dc883ea35b4b52e33117d59537cf0ddeffc33bf2826ef0512ab2aa6641237ca0",
+    "layers": [
+      {
+        "start": 0.0,
+        "end": 1.25,
+        "rev": 0.22,
+        "sourceStart": 10.2,
+        "sourceDuration": 1.35
+      }
+    ],
+    "url": "/assets/audio/engines/gallardo-idle-v1.wav?v=dbcecd6f1bb37631",
+    "kind": "combustion"
   }
 });
 export const RECORDING_CARS = Object.freeze({
@@ -873,7 +894,7 @@ export const RECORDING_CARS = Object.freeze({
   "rimac-concept-one": "tesla-electric",
   "gma-t50": "murcielago-v12",
   "rimac-nevera": "tesla-electric",
-  "lamborghini-gallardo": "huracan-v10",
+  "lamborghini-gallardo": "gallardo-idle",
   "lamborghini-huracan": "huracan-v10",
   "bmw-i8": "audi-turbo-i4",
   "bmw-f22-eurofighter": "ferrari-355",

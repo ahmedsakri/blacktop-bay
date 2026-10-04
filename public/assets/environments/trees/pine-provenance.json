@@ -1,0 +1,239 @@
+{
+  "asset": "https://polyhaven.com/a/pine_sapling_small",
+  "authors": {
+    "Rico Cilliers": "Modeling",
+    "Rob Tuytel": "Photography"
+  },
+  "license": "CC0-1.0",
+  "changes": "Original sapling A trunk and branch positions retained. Each complete original needle/cone component assigned to its nearest original woody twig. Those 27 twig groups are orthographically baked from the source geometry, UVs, photographs and alpha into three crossed, locally oriented cutout planes per twig; no opaque canopy volumes and no arbitrary branch placement. Each plane has explicit opposing front faces with shared upward/spherical normals, preserving soft foliage lighting without backface normal inversion. Only distant trunk geometry is decimated. Textures are resized and WebP compressed. Z-up converted to Y-up; roots aligned to zero.",
+  "sourceGeometry": {
+    "trunkTriangles": 540,
+    "foliageTriangles": 141966,
+    "twigGroups": 27
+  },
+  "variants": {
+    "desktop": {
+      "file": "pine-sapling-small.glb",
+      "triangles": 864,
+      "primitives": 2,
+      "bytes": 660632,
+      "sha256": "1317851d8e0a1876799c818dd06f8909881bd1c51d8836d579290d52933241dc",
+      "minY": 0.0,
+      "height": 1.3196510076522827,
+      "radius": 0.4827106297016144,
+      "twigGroups": 27,
+      "canopyCards": 81,
+      "embeddedImages": 2,
+      "textureDimensions": [
+        [
+          512,
+          512
+        ],
+        [
+          1440,
+          1440
+        ]
+      ],
+      "alphaMode": "MASK",
+      "alphaCutoff": 0.36
+    },
+    "mobile": {
+      "file": "pine-sapling-small-mobile.glb",
+      "triangles": 864,
+      "primitives": 2,
+      "bytes": 382676,
+      "sha256": "c632cbd01d9a66f7d80781c16c0c63c9dae59dcfc6ed4eea8b64f852874d3148",
+      "minY": 0.0,
+      "height": 1.3196510076522827,
+      "radius": 0.4827106297016144,
+      "twigGroups": 27,
+      "canopyCards": 81,
+      "embeddedImages": 2,
+      "textureDimensions": [
+        [
+          256,
+          256
+        ],
+        [
+          1008,
+          1008
+        ]
+      ],
+      "alphaMode": "MASK",
+      "alphaCutoff": 0.36
+    },
+    "desktopFar": {
+      "file": "pine-sapling-small-far.glb",
+      "triangles": 513,
+      "primitives": 2,
+      "bytes": 213756,
+      "sha256": "e2361b36a34e1178c2d0c0157873a6e31c6208c4eaa6d102cdb51245c9f7359c",
+      "minY": 0.0,
+      "height": 1.3196510076522827,
+      "radius": 0.4827106297016144,
+      "twigGroups": 27,
+      "canopyCards": 81,
+      "embeddedImages": 2,
+      "textureDimensions": [
+        [
+          128,
+          128
+        ],
+        [
+          720,
+          720
+        ]
+      ],
+      "alphaMode": "MASK",
+      "alphaCutoff": 0.36
+    },
+    "mobileFar": {
+      "file": "pine-sapling-small-far-mobile.glb",
+      "triangles": 442,
+      "primitives": 2,
+      "bytes": 133108,
+      "sha256": "e205a56d6845c48686fa1b503775e2bcf3f514251b85d6d5f3446db35e6257d0",
+      "minY": 0.0,
+      "height": 1.3196510076522827,
+      "radius": 0.4827106297016144,
+      "twigGroups": 27,
+      "canopyCards": 81,
+      "embeddedImages": 2,
+      "textureDimensions": [
+        [
+          128,
+          128
+        ],
+        [
+          504,
+          504
+        ]
+      ],
+      "alphaMode": "MASK",
+      "alphaCutoff": 0.36
+    }
+  },
+  "sourceFiles": {
+    "source.gltf": {
+      "include": {
+        "textures/pine_sapling_small_twig_arm_1k.jpg": {
+          "size": 394056,
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/pine_sapling_small/pine_sapling_small_twig_arm_1k.jpg",
+          "md5": "b5062030fc42ec7bd12eb3f052054104"
+        },
+        "textures/pine_sapling_small_twig_diff_1k.jpg": {
+          "size": 477942,
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/pine_sapling_small/pine_sapling_small_twig_diff_1k.jpg",
+          "md5": "dacc918bb421968e9ccc1956d78a2dbe"
+        },
+        "textures/pine_sapling_small_bark_nor_gl_1k.jpg": {
+          "size": 1016849,
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/pine_sapling_small/pine_sapling_small_bark_nor_gl_1k.jpg",
+          "md5": "bb6e3a6eea777d992cef48fabfdc538c"
+        },
+        "pine_sapling_small.bin": {
+          "size": 17771796,
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/pine_sapling_small/pine_sapling_small.bin",
+          "md5": "76dd1802d8de128c812f2e124a258b35"
+        },
+        "textures/pine_sapling_small_bark_diff_1k.jpg": {
+          "size": 725265,
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/pine_sapling_small/pine_sapling_small_bark_diff_1k.jpg",
+          "md5": "7d3a558ed614c7e75594c7be3bf80311"
+        },
+        "textures/pine_sapling_small_bark_arm_1k.jpg": {
+          "size": 801278,
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/pine_sapling_small/pine_sapling_small_bark_arm_1k.jpg",
+          "md5": "21d1abd15e40951825a4f3da110b20ea"
+        },
+        "textures/pine_sapling_small_twig_nor_gl_1k.jpg": {
+          "size": 692711,
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/pine_sapling_small/pine_sapling_small_twig_nor_gl_1k.jpg",
+          "md5": "eebc5a81f8f6231d8e18ec4ad7292798"
+        }
+      },
+      "size": 11442,
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/pine_sapling_small/pine_sapling_small_1k.gltf",
+      "md5": "237a7672645631550ae571743aa9f55b"
+    },
+    "source.blend": {
+      "include": {
+        "textures/pine_sapling_small_bark_diff_1k.png": {
+          "size": 5568559,
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/pine_sapling_small/pine_sapling_small_bark_diff_1k.png",
+          "md5": "63688d7bcdd5ff5500f12bde192b197a"
+        },
+        "textures/pine_sapling_small_twig_mask_1k.png": {
+          "size": 149491,
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/pine_sapling_small/pine_sapling_small_twig_mask_1k.png",
+          "md5": "07f39f7450a4c5d9d812cf7cf73bceb6"
+        },
+        "textures/pine_sapling_small_bark_rough_1k.png": {
+          "size": 2488380,
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/pine_sapling_small/pine_sapling_small_bark_rough_1k.png",
+          "md5": "dca69b84d7846af93fbb31d0c1dafd2e"
+        },
+        "textures/pine_sapling_small_twig_alpha_1k.png": {
+          "size": 159896,
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/pine_sapling_small/pine_sapling_small_twig_alpha_1k.png",
+          "md5": "9890eccee0444fd263dad2133338583f"
+        },
+        "textures/pine_sapling_small_twig_rough_1k.png": {
+          "size": 835523,
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/pine_sapling_small/pine_sapling_small_twig_rough_1k.png",
+          "md5": "d4f7050fd60d51360c5515a969ffdf77"
+        },
+        "textures/pine_sapling_small_bark_disp_1k.png": {
+          "size": 1633203,
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/pine_sapling_small/pine_sapling_small_bark_disp_1k.png",
+          "md5": "a085234cf5c6697b53187347dafad026"
+        },
+        "textures/pine_sapling_small_twig_nor_gl_1k.png": {
+          "size": 2570882,
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/pine_sapling_small/pine_sapling_small_twig_nor_gl_1k.png",
+          "md5": "a2ea7fd10403a9bdde0ec78ab2dcddc7"
+        },
+        "textures/pine_sapling_small_twig_diff_1k.png": {
+          "size": 2475084,
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/pine_sapling_small/pine_sapling_small_twig_diff_1k.png",
+          "md5": "a85d23a577e4c9aa16338a60f076e038"
+        },
+        "textures/pine_sapling_small_bark_nor_gl_1k.png": {
+          "size": 5640903,
+          "url": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/pine_sapling_small/pine_sapling_small_bark_nor_gl_1k.png",
+          "md5": "a0e2bfeda173e20c494d79c6125effa5"
+        }
+      },
+      "size": 11966761,
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/blend/1k/pine_sapling_small/pine_sapling_small_1k.blend",
+      "md5": "6be94b5523379bf3e8c7ccdf0b7356ff"
+    },
+    "textures/pine_sapling_small_twig_diff_1k.jpg": {
+      "size": 477942,
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/pine_sapling_small/pine_sapling_small_twig_diff_1k.jpg",
+      "md5": "dacc918bb421968e9ccc1956d78a2dbe"
+    },
+    "pine_sapling_small.bin": {
+      "size": 17771796,
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/pine_sapling_small/pine_sapling_small.bin",
+      "md5": "76dd1802d8de128c812f2e124a258b35"
+    },
+    "textures/pine_sapling_small_bark_diff_1k.jpg": {
+      "size": 725265,
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/pine_sapling_small/pine_sapling_small_bark_diff_1k.jpg",
+      "md5": "7d3a558ed614c7e75594c7be3bf80311"
+    },
+    "textures/pine_sapling_small_twig_mask_1k.png": {
+      "size": 149491,
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/pine_sapling_small/pine_sapling_small_twig_mask_1k.png",
+      "md5": "07f39f7450a4c5d9d812cf7cf73bceb6"
+    },
+    "textures/pine_sapling_small_twig_alpha_1k.png": {
+      "size": 159896,
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/pine_sapling_small/pine_sapling_small_twig_alpha_1k.png",
+      "md5": "9890eccee0444fd263dad2133338583f"
+    }
+  },
+  "licenseUrl": "https://polyhaven.com/license",
+  "apiDocumentation": "https://polyhaven.com/our-api"
+}

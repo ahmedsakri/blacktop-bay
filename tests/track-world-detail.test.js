@@ -43,7 +43,7 @@ test('late or failed surface loading cannot resurrect disposed textures or attac
   const invalid=createTrackSurfaceLibrary({placeholder:()=>({width:1,height:1}),loadImage:async()=>({width:4096,height:4096,close(){}})});await invalid.ready;assert.equal(invalid.status.failed,11);assert.equal(invalid.status.loaded,0);invalid.dispose();
 });
 
-test('optional fjord rock maps reserve the correct dimensions and share normal surface teardown without changing other venues',async()=>{
+test('optional Summit and fjord rock maps reserve the correct dimensions and share normal surface teardown',async()=>{
  const rock=JSON.parse(readFileSync(new URL('../public/assets/environments/surfaces/fjord-rock-provenance.json',import.meta.url)));
  for(const low of [true,false]){
   const requested=[],library=createTrackSurfaceLibrary({low,rock:true,placeholder:()=>({}),loadImage:async url=>{

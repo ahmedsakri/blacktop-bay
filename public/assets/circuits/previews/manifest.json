@@ -9,7 +9,7 @@
     540
   ],
   "quality": 0.78,
-  "totalBytes": 1553848,
+  "totalBytes": 1559856,
   "entries": [
     {
       "id": "harbor",
@@ -531,7 +531,6 @@
       "sha256": "8b6707aaf033d2173e2d1bd284b743dc012a7f452ea8969573070f8b30fb9554"
     },
     {
-      "id": "summit",
       "sector": 0.13,
       "width": 960,
       "height": 540,
@@ -551,13 +550,13 @@
         "near": 0.1,
         "far": 1900
       },
-      "draws": 189,
-      "triangles": 296869,
+      "draws": 172,
+      "triangles": 299619,
       "surfaces": {
-        "loaded": 11,
+        "loaded": 13,
         "failed": 0,
-        "files": 11,
-        "estimatedBytes": 36350634.666666664
+        "files": 13,
+        "estimatedBytes": 47535445.333333336
       },
       "sky": {
         "family": "alpine",
@@ -569,30 +568,25 @@
         "height": 2048
       },
       "trees": {
-        "state": "disabled",
+        "state": "ready",
         "capacity": 12,
         "farCapacity": 128,
-        "candidates": 0,
+        "candidates": 207,
         "forestCandidates": 0,
-        "visible": 0,
-        "farVisible": 0,
-        "draws": 0,
-        "triangles": 0,
-        "url": "/assets/environments/trees/tree-small-02.glb?v=87fee78dc710aed0ff008de7b4c3e9ec45bb8d10da93300c1516ceac76f05a3a",
-        "farUrl": "/assets/environments/trees/tree-small-02-far.glb?v=f2d22737f142cf282abc149a23d019205b4511aeabef9badcbfe7ff1a3a5ec5a"
-      },
-      "water": {
-        "reflection": "shared-venue-environment",
-        "extraTextures": 0,
-        "extraRenderPasses": 0
+        "visible": 12,
+        "farVisible": 128,
+        "draws": 4,
+        "triangles": 76032,
+        "url": "/assets/environments/trees/pine-sapling-small.glb?v=1317851d8e0a1876799c818dd06f8909881bd1c51d8836d579290d52933241dc",
+        "farUrl": "/assets/environments/trees/pine-sapling-small-far.glb?v=e2361b36a34e1178c2d0c0157873a6e31c6208c4eaa6d102cdb51245c9f7359c"
       },
       "crowd": {
         "textured": 0,
-        "middle": 14,
+        "middle": 12,
         "far": 0,
         "assets": {
-          "requested": 18,
-          "loaded": 18,
+          "requested": 17,
+          "loaded": 17,
           "active": 0,
           "queued": 0,
           "disposed": false
@@ -697,11 +691,30 @@
           "gpuRedMax": 161,
           "gpuRedMean": 126.01226806640625,
           "gpuRedStdDev": 8.028356019351216
+        },
+        {
+          "name": "rockColor",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 17,
+          "gpuRedMax": 119,
+          "gpuRedMean": 76.72802734375,
+          "gpuRedStdDev": 12.476760843571933
+        },
+        {
+          "name": "rockNormal",
+          "width": 1024,
+          "height": 1024,
+          "gpuRedMin": 41,
+          "gpuRedMax": 200,
+          "gpuRedMean": 127.65301513671875,
+          "gpuRedStdDev": 15.7367883712953
         }
       ],
+      "id": "summit",
       "path": "/assets/circuits/previews/summit.webp",
-      "bytes": 43436,
-      "sha256": "2df03b4279298853b154cd09a8fca96a6fa3fa43607dacf4d2e5ce240b90eafb"
+      "bytes": 48024,
+      "sha256": "b1feb61a83d6cbba3bb640fc322d63eb24bb18879c23621e7dfc29f486bbd9cf"
     },
     {
       "id": "grandprix",
@@ -5548,7 +5561,6 @@
       "sha256": "4a63d06c8fdd30ee481b0755dd28e922e3cbeb519b9eebef8c9d351066bee1bd"
     },
     {
-      "id": "cedar-ridge",
       "sector": 0.13,
       "width": 960,
       "height": 540,
@@ -5568,8 +5580,8 @@
         "near": 0.1,
         "far": 1900
       },
-      "draws": 216,
-      "triangles": 201709,
+      "draws": 193,
+      "triangles": 211384,
       "surfaces": {
         "loaded": 11,
         "failed": 0,
@@ -5586,22 +5598,17 @@
         "height": 2048
       },
       "trees": {
-        "state": "disabled",
+        "state": "ready",
         "capacity": 12,
         "farCapacity": 128,
-        "candidates": 0,
+        "candidates": 104,
         "forestCandidates": 0,
-        "visible": 0,
-        "farVisible": 0,
-        "draws": 0,
-        "triangles": 0,
-        "url": "/assets/environments/trees/tree-small-02.glb?v=87fee78dc710aed0ff008de7b4c3e9ec45bb8d10da93300c1516ceac76f05a3a",
-        "farUrl": "/assets/environments/trees/tree-small-02-far.glb?v=f2d22737f142cf282abc149a23d019205b4511aeabef9badcbfe7ff1a3a5ec5a"
-      },
-      "water": {
-        "reflection": "shared-venue-environment",
-        "extraTextures": 0,
-        "extraRenderPasses": 0
+        "visible": 12,
+        "farVisible": 85,
+        "draws": 4,
+        "triangles": 53973,
+        "url": "/assets/environments/trees/pine-sapling-small.glb?v=1317851d8e0a1876799c818dd06f8909881bd1c51d8836d579290d52933241dc",
+        "farUrl": "/assets/environments/trees/pine-sapling-small-far.glb?v=e2361b36a34e1178c2d0c0157873a6e31c6208c4eaa6d102cdb51245c9f7359c"
       },
       "crowd": {
         "textured": 0,
@@ -5716,9 +5723,10 @@
           "gpuRedStdDev": 8.028356019351216
         }
       ],
+      "id": "cedar-ridge",
       "path": "/assets/circuits/previews/cedar-ridge.webp",
-      "bytes": 33936,
-      "sha256": "f07afb79a11019404839f8b5d7497c03a7e3bcb11a24a73f7199383356dc88ca"
+      "bytes": 34476,
+      "sha256": "be4f7e0367035c7219efdb6d1971b946a2825c4483e16b8938fcfe301eaa796b"
     },
     {
       "id": "neon-freight",
@@ -6240,7 +6248,6 @@
       "sha256": "ad82e7865639b7c6d065e588aa63ecd446be9914af2ef2f65889856ab7575052"
     },
     {
-      "id": "norway-fjord",
       "sector": 0.13,
       "width": 960,
       "height": 540,
@@ -6260,8 +6267,8 @@
         "near": 0.1,
         "far": 1900
       },
-      "draws": 156,
-      "triangles": 194949,
+      "draws": 128,
+      "triangles": 210189,
       "surfaces": {
         "loaded": 13,
         "failed": 0,
@@ -6278,30 +6285,25 @@
         "height": 2048
       },
       "trees": {
-        "state": "disabled",
+        "state": "ready",
         "capacity": 12,
         "farCapacity": 128,
-        "candidates": 0,
+        "candidates": 107,
         "forestCandidates": 0,
-        "visible": 0,
-        "farVisible": 0,
-        "draws": 0,
-        "triangles": 0,
-        "url": "/assets/environments/trees/tree-small-02.glb?v=87fee78dc710aed0ff008de7b4c3e9ec45bb8d10da93300c1516ceac76f05a3a",
-        "farUrl": "/assets/environments/trees/tree-small-02-far.glb?v=f2d22737f142cf282abc149a23d019205b4511aeabef9badcbfe7ff1a3a5ec5a"
-      },
-      "water": {
-        "reflection": "shared-venue-environment",
-        "extraTextures": 0,
-        "extraRenderPasses": 0
+        "visible": 12,
+        "farVisible": 95,
+        "draws": 4,
+        "triangles": 59103,
+        "url": "/assets/environments/trees/pine-sapling-small.glb?v=1317851d8e0a1876799c818dd06f8909881bd1c51d8836d579290d52933241dc",
+        "farUrl": "/assets/environments/trees/pine-sapling-small-far.glb?v=e2361b36a34e1178c2d0c0157873a6e31c6208c4eaa6d102cdb51245c9f7359c"
       },
       "crowd": {
         "textured": 0,
-        "middle": 14,
+        "middle": 2,
         "far": 0,
         "assets": {
-          "requested": 18,
-          "loaded": 18,
+          "requested": 9,
+          "loaded": 9,
           "active": 0,
           "queued": 0,
           "disposed": false
@@ -6426,9 +6428,10 @@
           "gpuRedStdDev": 15.7367883712953
         }
       ],
+      "id": "norway-fjord",
       "path": "/assets/circuits/previews/norway-fjord.webp",
-      "bytes": 33400,
-      "sha256": "0442b26af7786cd305573ef907917f590ba4f1539924effe7a31a75d802ba66e"
+      "bytes": 34280,
+      "sha256": "c4af6edd3baece15300014680ee4c20960f3cbd951daeb21dc20537182c20d19"
     },
     {
       "id": "san-francisco-hills",
