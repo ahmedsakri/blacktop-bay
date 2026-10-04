@@ -27,4 +27,8 @@ This release improves scenery, but does not establish Asphalt-level realism. Mou
 
 ## Publication
 
-Pending the normal Firebase predeploy test/build gate and live-file verification.
+Published `d26fe36` to https://camber-reign.web.app/ after **1,121/1,121 tests passed**, zero failures (438.85 seconds), and the production build passed (1.59 seconds). The earlier interrupted deploy had no live process and the new rock endpoint was still 404, so the normal gate was rerun; it was not bypassed.
+
+All **62 inspected live files** match the exact built bytes, covering the JavaScript/CSS bundles, landing page, licences, candidate metadata, all circuit previews, their manifest and all cliff assets. See `fjord-window-live-files-2026-10-04.json`. The published Norway lobby was opened in a fresh browser tab: car, circuit preview and controls rendered, with no reported console errors. Full gate log is retained at `../camber-reign-asset-sources/release-logs/fjord-window-deploy-2026-10-04.log`.
+
+This verifies this visual release. The subsequent user-approved Gallardo candidate is a separate change and is not part of `d26fe36`; its integration and listening decision are recorded separately.
