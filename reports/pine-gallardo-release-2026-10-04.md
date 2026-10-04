@@ -27,4 +27,8 @@ This is a verified improvement, not Asphalt-level completion. Young pine silhoue
 
 ## Publication
 
-Pending the normal full test/build/deploy gate and live-byte verification.
+Published source commit `872570a` to https://camber-reign.web.app/ after the normal Firebase gate passed **1,131/1,131 tests**, zero failures (617.84 seconds), and the production build passed (3.52 seconds). The build retains its existing large-bundle warning; this is not a failed build or a new performance measurement. The gate was not bypassed. Full log: `../camber-reign-asset-sources/release-logs/pine-gallardo-deploy-2026-10-04.log`.
+
+All **71 inspected live files** returned HTTP 200 and matched the exact production build bytes: the game bundles, landing page, notices, audio source/coverage/candidate manifests, approved Gallardo WAV, all 38 previews and their manifest, cliff surfaces and pine assets/provenance. See `pine-gallardo-live-files-2026-10-04.json`.
+
+A fresh post-deploy browser check could not run: the browser's admin-policy verification service was unavailable on two attempts and denied navigation. No alternate browser or indirect UI workaround was used. This limits the final production-page visual check; it does not replace or invalidate the completed pre-deploy actual-game checks and separately initiated live-byte verification above. No new physical-device test is claimed.
